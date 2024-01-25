@@ -1,0 +1,77 @@
+{
+  "multipart": [
+    {
+      "when": { "north": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out"}
+    },
+    {
+      "when": { "north": "false" },
+      "apply": { "model": "bwt:block/gear_box_side"}
+    },
+    {
+      "when": { "east": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out", "y": 90}
+    },
+    {
+      "when": { "east": "false" },
+      "apply": { "model": "bwt:block/gear_box_side", "y": 90}
+    },
+    {
+      "when": { "south": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out", "y": 180}
+    },
+    {
+      "when": { "south": "false" },
+      "apply": { "model": "bwt:block/gear_box_side", "y": 180}
+    },
+    {
+      "when": { "west": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out", "y": 270}
+    },
+    {
+      "when": { "west": "false" },
+      "apply": { "model": "bwt:block/gear_box_side", "y": 270}
+    },
+    {
+      "when": { "up": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out", "x": 270}
+    },
+    {
+      "when": { "up": "false" },
+      "apply": { "model": "bwt:block/gear_box_side", "x": 270}
+    },
+    {
+      "when": { "down": "true" },
+      "apply": { "model": "bwt:block/gear_box_axle_out", "x": 90}
+    },
+    {
+      "when": { "down": "false" },
+      "apply": { "model": "bwt:block/gear_box_side", "x": 90}
+    },
+    {
+      "when": { "facing": "north"},
+      "apply": { "model": "bwt:block/gear_box_face"}
+    },
+    {
+      "when": { "facing": "east"},
+      "apply": { "model": "bwt:block/gear_box_face", "y": 90}
+    },
+    {
+      "when": { "facing": "south"},
+      "apply": { "model": "bwt:block/gear_box_face", "y": 180}
+    },
+    {
+      "when": { "facing": "west"},
+      "apply": { "model": "bwt:block/gear_box_face", "y": 270}
+    },
+    {
+      "when": { "facing": "up"},
+      "apply": { "model": "bwt:block/gear_box_face", "x": 270}
+    },
+    {
+      "when": { "facing": "down"},
+      "apply": { "model": "bwt:block/gear_box_face", "x": 90}
+    }
+  ]
+}
+
