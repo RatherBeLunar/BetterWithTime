@@ -1,0 +1,8 @@
+{
+  "mech_bang": {
+    "subtitle": "subtitles.bwt.mech_bang",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  }
+}

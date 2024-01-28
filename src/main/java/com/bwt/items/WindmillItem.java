@@ -3,6 +3,7 @@ package com.bwt.items;
 import com.bwt.blocks.AxleBlock;
 import com.bwt.blocks.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.entities.WindmillEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
@@ -26,6 +27,7 @@ public class WindmillItem extends Item {
         if (blockState.isOf(BwtBlocks.axleBlock)) {
             context.getStack().decrement(1);
             world.setBlockState(blockPos, BwtBlocks.axlePowerSourceBlock.getDefaultState().with(AxlePowerSourceBlock.AXIS, blockState.get(AxleBlock.AXIS)));
+            WindmillEntity.spawnAtPos(world, blockPos);
         }
         return ActionResult.CONSUME;
     }

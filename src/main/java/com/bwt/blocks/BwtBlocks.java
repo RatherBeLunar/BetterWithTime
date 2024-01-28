@@ -77,6 +77,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block waterWheelBlock = Registry.register(Registries.BLOCK, new Identifier("bwt", "water_wheel"), new WaterWheelBlock(FabricBlockSettings.create()));
 //	public static final Block wickerBlock = Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker"), new WickerBlock(FabricBlockSettings.create()));
 	public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axleBlock.getSettings()));
+//	public static final Block windmillBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axlePowerSourceBlock.getSettings()));
 //	public static final Block woodenDetectorRailBlock = Registry.register(Registries.BLOCK, new Identifier("bwt", "wooden_detector_rail"), new WoodenDetectorRailBlock(FabricBlockSettings.create()));
 //	public static final Block woodenSidingBlock = Registry.register(Registries.BLOCK, new Identifier("bwt", "wooden_siding"), new WoodenSidingBlock(FabricBlockSettings.create()));
 //	public static final Block woolSlabBlock = Registry.register(Registries.BLOCK, new Identifier("bwt", "wool_slab"), new WoolSlabBlock(FabricBlockSettings.create()));
@@ -92,6 +93,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, new Identifier("bwt", "gear_box"), gearBoxBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "gear_box"), new BlockItem(gearBoxBlock, new FabricItemSettings()));
         Registry.register(Registries.BLOCK, new Identifier("bwt", "axle_power_source"), axlePowerSourceBlock);
+//        Registry.register(Registries.BLOCK, new Identifier("bwt", "windmill"), windmillBlock);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> content.add(gearBoxBlock));
     }
 }

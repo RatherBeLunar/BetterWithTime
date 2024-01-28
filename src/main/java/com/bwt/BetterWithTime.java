@@ -19,6 +19,7 @@ import net.minecraft.item.ItemGroups;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +34,9 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtItems items = new BwtItems();
 	public static final BwtEntities entities = new BwtEntities();
 
+	public static final Identifier MECH_BANG = new Identifier("bwt:mech_bang");
+	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
+
 
 
 	@Override
@@ -45,5 +49,6 @@ public class BetterWithTime implements ModInitializer {
 		blocks.onInitialize();
 		items.onInitialize();
 		entities.onInitialize();
+		Registry.register(Registries.SOUND_EVENT, MECH_BANG, MECH_BANG_SOUND);
 	}
 }

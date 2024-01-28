@@ -1,18 +1,19 @@
 package com.bwt.entities;
 
-import com.bwt.blocks.BwtBlocks;
+import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.minecraft.block.entity.BlockEntityType;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
 public class BwtEntities implements ModInitializer {
-    public static final BlockEntityType<WindmillBlockEntity> windmillBlockEntity = Registry.register(
-            Registries.BLOCK_ENTITY_TYPE,
-            new Identifier("tutorial", "windmill_block_entity"),
-            FabricBlockEntityTypeBuilder.create(WindmillBlockEntity::new, BwtBlocks.axlePowerSourceBlock).build()
+    public static final EntityType<WindmillEntity> windmillEntity = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier("bwt", "windmill"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, WindmillEntity::new).dimensions(EntityRectDimensions.fixed(WindmillEntity.width, WindmillEntity.height, WindmillEntity.length)).build()
     );
 
     @Override

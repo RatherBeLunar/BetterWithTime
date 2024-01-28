@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.BetterWithTime;
 import net.minecraft.block.*;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
@@ -7,7 +8,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
@@ -60,6 +64,11 @@ public class AxleBlock extends PillarBlock {
         };
     }
 
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return super.getCollisionShape(state, world, pos, context);
+    }
+
     public static boolean isPowered(BlockState blockState) {
         return blockState.get(MECH_POWER) > 0;
     }
@@ -91,6 +100,8 @@ public class AxleBlock extends PillarBlock {
         double d = pos.getX() + 0.5;
         double e = pos.getY() + 0.5;
         double f = pos.getZ() + 0.5;
+        world.playSound(null, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5,
+                BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1);
         ItemEntity itemEntity = new ItemEntity(world, d, e, f, Items.STICK.getDefaultStack());
         itemEntity.setVelocity(world.random.nextDouble() * -0.01 + 0.02, 0.2, world.random.nextDouble() * -0.01 + 0.02);
         world.spawnEntity(itemEntity);
