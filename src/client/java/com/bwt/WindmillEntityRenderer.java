@@ -37,8 +37,11 @@ public class WindmillEntityRenderer extends EntityRenderer<WindmillEntity> {
         super.render(entity, yaw, tickDelta, matrices, vertexConsumers, light);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(getRenderLayer(entity));
         matrices.push();
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(entity.getWorld().getTime() + tickDelta));
+        matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(entity.getYaw()));
+        matrices.push();
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(entity.getRotation()));
         this.model.render(matrices, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+        matrices.pop();
         matrices.pop();
     }
 }
