@@ -1,20 +1,15 @@
 package com.bwt.items;
 
-import com.bwt.blocks.AxleBlock;
 import com.bwt.blocks.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WindmillEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Position;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;

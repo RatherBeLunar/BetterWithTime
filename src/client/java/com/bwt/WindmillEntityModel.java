@@ -8,15 +8,13 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class WindmillEntityModel extends EntityModel<WindmillEntity> {
 
-    private static float localPi = 3.141593F;
+    private static final float bladeOffsetFromCenter = 15.0f;
+    private static final int bladeLength = (int)( ( WindmillEntity.height * 8.0f ) - bladeOffsetFromCenter) - 3;
+    private static final int bladeWidth = 16;
 
-    private static float bladeOffsetFromCenter = 15.0f;
-    private static int bladeLength = (int)( ( WindmillEntity.height * 8.0f ) - bladeOffsetFromCenter) - 3;
-    private static int bladeWidth = 16;
-
-    private static float shaftOffsetFromCenter = 2.5f;
-    private static int shaftLength = (int)( ( WindmillEntity.height * 8.0f ) - shaftOffsetFromCenter) - 2;
-    private static int shaftWidth = 4;
+    private static final float shaftOffsetFromCenter = 2.5f;
+    private static final int shaftLength = (int)( ( WindmillEntity.height * 8.0f ) - shaftOffsetFromCenter) - 2;
+    private static final int shaftWidth = 4;
 
     private final ModelPart sail0;
     private final ModelPart sail1;
@@ -41,6 +39,7 @@ public class WindmillEntityModel extends EntityModel<WindmillEntity> {
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
+        float localPi = 3.141593F;
         for (int i = 0; i < 4; i++) {
             modelPartData.addChild("shaft" + i,
                 ModelPartBuilder.create()

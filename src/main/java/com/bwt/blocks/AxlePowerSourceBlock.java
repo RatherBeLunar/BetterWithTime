@@ -1,14 +1,9 @@
 package com.bwt.blocks;
 
-import com.bwt.entities.BwtEntities;
-import com.bwt.entities.WindmillEntity;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 public class AxlePowerSourceBlock extends AxleBlock {
     public AxlePowerSourceBlock(Settings settings) {

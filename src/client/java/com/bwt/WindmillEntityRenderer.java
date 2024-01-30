@@ -1,7 +1,6 @@
 package com.bwt;
 
 import com.bwt.entities.WindmillEntity;
-import net.minecraft.client.model.Model;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
