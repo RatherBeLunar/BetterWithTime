@@ -38,11 +38,8 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block cornerBlock = new CornerBlock(FabricBlockSettings.create());
 //	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
 //	public static final Block detectorBlockBlock = new DetectorBlockBlock(FabricBlockSettings.create());
-    public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.create()
+    public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
         .hardness(2F)
-        .sounds(BlockSoundGroup.WOOD)
-        .burnable()
-        .solid()
     );
 //	public static final Block grateBlock = new GrateBlock(FabricBlockSettings.create());
 //	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create());
@@ -56,7 +53,10 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(FabricBlockSettings.create());
 //	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.create());
 //	public static final Block lensBlock = new LensBlock(FabricBlockSettings.create());
-//	public static final Block lightBlockBlock = new LightBlockBlock(FabricBlockSettings.create());
+	public static final Block lightBlockBlock = new LightBlock(FabricBlockSettings.copyOf(Blocks.GLASS)
+        .strength(0.4f)
+        .luminance(Blocks.createLightLevelFromLitBlockState(15))
+    );
 //	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.create());
 //	public static final Block miningChargeBlock = new MiningChargeBlock(FabricBlockSettings.create());
 //	public static final Block mouldingBlock = new MouldingBlock(FabricBlockSettings.create());
@@ -102,11 +102,15 @@ public class BwtBlocks implements ModInitializer {
         // Hibachi
         Registry.register(Registries.BLOCK, new Identifier("bwt", "hibachi"), hibachiBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "hibachi"), new BlockItem(hibachiBlock, new FabricItemSettings()));
+        // Light Block
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "light_block"), lightBlockBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "light_block"), new BlockItem(lightBlockBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
             content.add(axleBlock);
             content.add(hibachiBlock);
+            content.add(lightBlockBlock);
         });
 
 
