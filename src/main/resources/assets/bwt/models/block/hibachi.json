@@ -1,0 +1,23 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "bwt:block/hibachi_top",
+    "side": "bwt:block/hibachi_side",
+    "bottom": "bwt:block/hibachi_bottom",
+    "top": "bwt:block/hibachi_top"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "north" },
+        "east": { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "east" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "south" },
+        "west": { "uv": [ 0, 0, 16, 16 ], "texture": "#side", "cullface": "west" },
+        "down": { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "down" },
+        "up": { "uv": [ 0, 0, 16, 16 ], "texture": "#top", "cullface": "up" }
+      }
+    }
+  ]
+}
