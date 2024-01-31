@@ -25,7 +25,6 @@ public class BetterWithTime implements ModInitializer {
 	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
 
 
-
 	@Override
 	public void onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.

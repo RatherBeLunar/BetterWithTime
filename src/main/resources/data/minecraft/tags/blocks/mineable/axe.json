@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "bwt:gear_box"
+    "bwt:gear_box",
+    "bwt:axle"
   ]
 }
-

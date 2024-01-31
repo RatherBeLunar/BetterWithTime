@@ -212,6 +212,9 @@ public class AxleBlock extends PillarBlock {
 
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (world.isClient) {
+            return;
+        }
         updatePowerStates(state, world, pos);
     }
 }
