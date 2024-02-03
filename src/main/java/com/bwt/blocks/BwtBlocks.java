@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -27,7 +28,9 @@ public class BwtBlocks implements ModInitializer {
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axleBlock.getSettings()));
 //	public static final Block barrelBlock = new BarrelBlock(FabricBlockSettings.create());
 //	public static final Block bellowsBlock = new BellowsBlock(FabricBlockSettings.create());
-//	public static final Block blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.create());
+	public static final Block blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
+        .hardness(3.5f)
+    );
 //	public static final Block bloodWoodBlock = new BloodWoodBlock(FabricBlockSettings.create());
 //	Blood Wood Sapling
 //	public static final Block buddyBlockBlock = new BuddyBlockBlock(FabricBlockSettings.create());
@@ -105,12 +108,16 @@ public class BwtBlocks implements ModInitializer {
         // Light Block
         Registry.register(Registries.BLOCK, new Identifier("bwt", "light_block"), lightBlockBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "light_block"), new BlockItem(lightBlockBlock, new FabricItemSettings()));
+        // Block Dispenser
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "block_dispenser"), blockDispenserBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "block_dispenser"), new BlockItem(blockDispenserBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
             content.add(axleBlock);
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
+            content.add(blockDispenserBlock);
         });
 
 

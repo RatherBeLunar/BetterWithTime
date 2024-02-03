@@ -83,8 +83,8 @@ public class GearBoxBlock extends MechPowerBlockBase {
         if (!player.getMainHandStack().isEmpty()) {
             return ActionResult.PASS;
         }
-        world.playSound(null, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5,
-                state.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
+        world.playSound(null, pos, state.getSoundGroup().getPlaceSound(),
+                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
         BlockState updatedState = getNextOrientation(state);
         // Prevent exploits by turning power off and wait for scheduled reload of power state
         updatedState = updatedState.with(MECH_POWERED, false);
@@ -195,8 +195,8 @@ public class GearBoxBlock extends MechPowerBlockBase {
     }
 
     private void playMechSound(World world, BlockPos pos) {
-        world.playSound(null, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5,
-                SoundEvents.BLOCK_CHEST_OPEN, SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
+        world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN,
+                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
 //        world.addSyncedBlockEvent(pos, this, 0, 0);
 //        world.emitGameEvent(entity, GameEvent.NOTE_BLOCK_PLAY, pos);
     }

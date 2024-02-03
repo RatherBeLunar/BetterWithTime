@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:wither_immune",
+    "#minecraft:fire",
+    "#minecraft:wither_immune",
+    "#minecraft:portals"
+  ]
+}

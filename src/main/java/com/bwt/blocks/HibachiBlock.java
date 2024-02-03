@@ -54,15 +54,15 @@ public class HibachiBlock extends Block {
         }
         if (lit) {
             if (world.getBlockState(pos.up()).isAir()) {
-                world.playSound(null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f,
-                    SoundEvents.ENTITY_GHAST_SHOOT, SoundCategory.BLOCKS, 1F, world.random.nextFloat() * 0.4F + 1F);
+                world.playSound(null, pos, SoundEvents.ENTITY_GHAST_SHOOT,
+                        SoundCategory.BLOCKS, 1F, world.random.nextFloat() * 0.4F + 1F);
                 world.setBlockState(pos.up(), Blocks.FIRE.getDefaultState());
             }
         }
         else {
             if (world.getBlockState(pos.up()).isIn(BlockTags.FIRE)) {
-                world.playSound(null, pos.getX() + 0.5f, pos.getY() + 0.5f, pos.getZ() + 0.5f,
-                    SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+                world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH,
+                        SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
                 world.removeBlock(pos.up(), false);
             }
         }

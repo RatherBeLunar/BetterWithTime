@@ -35,7 +35,7 @@ public class WindmillItem extends Item {
         }
 
         if (world instanceof ServerWorld && context.getPlayer() != null) {
-            Vec3d middleOfAxle = new Vec3d(blockPos.getX() + 0.5, blockPos.getY() + 0.5, blockPos.getZ() + 0.5);
+            Vec3d middleOfAxle = blockPos.toCenterPos();
             Vec3d playerPos = context.getPlayer().getPos();
             Vec3d difference = playerPos.subtract(middleOfAxle);
             Direction placementDirection = Direction.from(

@@ -16,6 +16,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -84,8 +85,8 @@ public class AxleBlock extends PillarBlock {
         }
         BlockState updatedState = getNextOrientation(state);
         world.setBlockState(pos, updatedState);
-        world.playSound(null, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5,
-                updatedState.getSoundGroup().getPlaceSound(), SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
+        world.playSound(null, pos, updatedState.getSoundGroup().getPlaceSound(),
+                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
         updatePowerStates(updatedState, world, pos);
         return ActionResult.SUCCESS;
     }
@@ -93,12 +94,9 @@ public class AxleBlock extends PillarBlock {
     public BlockState breakAxle(World world, BlockPos pos) {
         BlockState airState = Blocks.AIR.getDefaultState();
         world.setBlockState(pos, airState);
-        double d = pos.getX() + 0.5;
-        double e = pos.getY() + 0.5;
-        double f = pos.getZ() + 0.5;
-        world.playSound(null, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5,
-                BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1);
-        ItemEntity itemEntity = new ItemEntity(world, d, e, f, Items.STICK.getDefaultStack());
+        Vec3d centerPos = pos.toCenterPos();
+        world.playSound(null, pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1);
+        ItemEntity itemEntity = new ItemEntity(world, centerPos.x, centerPos.y, centerPos.z, Items.STICK.getDefaultStack());
         itemEntity.setVelocity(world.random.nextDouble() * -0.01 + 0.02, 0.2, world.random.nextDouble() * -0.01 + 0.02);
         world.spawnEntity(itemEntity);
         return airState;

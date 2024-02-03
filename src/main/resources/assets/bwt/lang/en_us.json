@@ -101,5 +101,6 @@
   "item.bwt.wolf_chop": "Wolf Chop",
   "item.bwt.wood_blade": "Wood Blade",
   "block.bwt.wooden_siding": "Wooden Siding",
-  "block.bwt.wool_slab": "Wool Slab"
+  "block.bwt.wool_slab": "Wool Slab",
+  "container.bwt.block_dispenser": "Block Dispenser"
 }
