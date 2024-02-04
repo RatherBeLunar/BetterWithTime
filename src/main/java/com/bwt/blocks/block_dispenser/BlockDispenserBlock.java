@@ -128,6 +128,7 @@ public class BlockDispenserBlock extends DispenserBlock {
             ItemStack takenOut = dispenserBehavior.dispense(blockPointer, stackToPlace);
             blockEntity.take(takenOut.getItem(), takenOut.getCount());
         }
+        blockEntity.advanceSelectedSlot();
     }
 
     public void consumeBlockOrEntity(ServerWorld world, BlockState state, BlockPos pos) {
@@ -150,9 +151,6 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
         inhaleBehavior.inhale(blockPointer);
         blockEntity.insert(inhaledItems.copy());
-        if (inhaledItems.getCount() > 0) {
-            blockEntity.advanceSelectedSlot();
-        }
     }
 
     protected DispenserBehavior getDispenseBehaviorForItem(World world, BlockDispenserBlockEntity entity, ItemStack stack) {

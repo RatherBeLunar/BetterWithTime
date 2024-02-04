@@ -124,19 +124,28 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements S
         }
 
         int invSize = inventory.size();
-        for (int currentSlot = selectedSlot; currentSlot < invSize + selectedSlot; currentSlot++ )
+        for (int currentSlot = 0; currentSlot < invSize; currentSlot++ )
         {
-            ItemStack invStack = inventory.get(currentSlot % invSize);
-            if (invStack.isEmpty()) {
-                invStack = stack.copyAndEmpty();
-                setStack(currentSlot, invStack);
-            }
-            else if (invStack.getItem().equals(stack.getItem())) {
+            ItemStack invStack = inventory.get(currentSlot);
+            if (invStack.getItem().equals(stack.getItem())) {
                 int space = invStack.getMaxCount() - invStack.getCount();
                 int inserted = Math.min(space, stack.getCount());
                 invStack.increment(inserted);
                 setStack(currentSlot, invStack);
                 stack.decrement(inserted);
+            }
+            if (stack.getCount() <= 0) {
+                return stack;
+            }
+        }
+        if (stack.getCount() <= 0) {
+            return stack;
+        }
+        for (int currentSlot = 0; currentSlot < invSize; currentSlot++ ) {
+            ItemStack invStack = inventory.get(currentSlot);
+            if (invStack.isEmpty()) {
+                invStack = stack.copyAndEmpty();
+                setStack(currentSlot, invStack);
             }
             if (stack.getCount() <= 0) {
                 return stack;
