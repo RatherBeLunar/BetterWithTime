@@ -40,6 +40,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements S
 
     public void setSelectedSlot(int slotToSelect) {
         this.selectedSlot = Math.max(slotToSelect, 0) % INVENTORY_SIZE;
+        this.markDirty();
     }
 
     private final PropertyDelegate propertyDelegate = new PropertyDelegate() {
@@ -74,7 +75,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements S
         // Wrap around inventory, including a return to the selected slot
         for (int currentSlot = selectedSlot + 1; currentSlot <= invSize + selectedSlot; currentSlot++ )
         {
-            if (inventory.get(currentSlot % invSize) != ItemStack.EMPTY)
+            if (!inventory.get(currentSlot % invSize).isEmpty())
             {
                 return currentSlot % invSize;
             }
@@ -90,11 +91,12 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements S
     public ItemStack getCurrentItemToDispense() {
         ItemStack itemStack = inventory.get(selectedSlot);
 
-        if (itemStack != ItemStack.EMPTY) {
+        if (!itemStack.isEmpty()) {
             return itemStack;
         }
 
         int newSlot = findNextValidSlotIndex();
+        setSelectedSlot(newSlot);
 
         return inventory.get(newSlot);
     }
@@ -159,7 +161,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements S
                 int available = invStack.getCount();
                 int removed = Math.min(count, available);
                 invStack.decrement(removed);
-                setStack(currentSlot, invStack);
+                setStack(currentSlot % invSize, invStack);
                 count -= removed;
             }
             if (count <= 0) {

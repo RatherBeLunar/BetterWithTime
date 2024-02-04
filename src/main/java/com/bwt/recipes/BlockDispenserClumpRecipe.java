@@ -40,6 +40,13 @@ public class BlockDispenserClumpRecipe implements Recipe<BlockDispenserBlockEnti
 
     @Override
     public boolean matches(BlockDispenserBlockEntity inventory, World world) {
+        // We could make this >= itemCount, but we want to match any number of ingredients
+        // That way, if you have < itemCount, the ingredient doesn't get spit out
+        return inventory.getItems().stream().filter(item).mapToInt(ItemStack::getCount).sum() > 0;
+    }
+
+    public boolean canAfford(BlockDispenserBlockEntity inventory) {
+        // This function is similar to matches, but is called manually after matching
         return inventory.getItems().stream().filter(item).mapToInt(ItemStack::getCount).sum() >= itemCount;
     }
 
@@ -123,7 +130,7 @@ public class BlockDispenserClumpRecipe implements Recipe<BlockDispenserBlockEnti
         Codec<BlockDispenserClumpRecipe> CODEC = RecordCodecBuilder.create(
                 instance->instance.group(
                     Ingredient.DISALLOW_EMPTY_CODEC
-                            .fieldOf("item")
+                            .fieldOf("ingredient")
                             .forGetter(BlockDispenserClumpRecipe::getItem),
                     Codec.INT
                             .fieldOf("itemCount")

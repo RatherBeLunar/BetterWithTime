@@ -28,7 +28,7 @@ public class ItemClumpDispenserBehavior extends BlockDispenserBehavior {
             BlockPos blockPos = pointer.pos().offset(direction);
 
             try {
-                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, recipe.getOutput(), direction);
+                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, recipe.getOutput().copy(), direction);
                 setSuccess(blockItem.place(context).isAccepted());
             } catch (Exception exception) {
                 LOGGER.error("Error trying to place block at {}", blockPos, exception);

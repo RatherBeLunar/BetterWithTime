@@ -5,12 +5,8 @@ import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtTags;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.dispenser.DispenserBehavior;
-import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -22,8 +18,6 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -40,7 +34,7 @@ import java.util.Optional;
 
 public class BlockDispenserBlock extends DispenserBlock {
     private static final Map<Item, DispenserBehavior> BLOCK_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new BlockDispenserBehavior()));
-    private static final Map<Item, DispenserBehavior> ITEM_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new ItemDispenserBehavior()));
+    private static final Map<Item, DispenserBehavior> ITEM_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultItemDispenserBehavior()));
     private static final Map<Block, BlockInhaleBehavior> BLOCK_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultBlockInhaleBehavior()));
 
     public BlockDispenserBlock(Settings settings) {
@@ -65,7 +59,9 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        world.scheduleBlockTick(pos, this, 4);
+        if (isReceivingPower(world, pos)) {
+            world.scheduleBlockTick(pos, this, 4);
+        }
     }
 
     @Override
@@ -118,13 +114,11 @@ public class BlockDispenserBlock extends DispenserBlock {
         BlockState targetState = world.getBlockState(targetPos);
 
         if (!targetState.isIn(BlockTags.REPLACEABLE)) {
-            playFailClick(world, pos);
             return;
         }
 
         ItemStack stackToPlace = blockEntity.getCurrentItemToDispense();
-        if (stackToPlace == ItemStack.EMPTY) {
-            playFailClick(world, pos);
+        if (stackToPlace.isEmpty()) {
             return;
         }
 
@@ -155,8 +149,10 @@ public class BlockDispenserBlock extends DispenserBlock {
             return;
         }
         inhaleBehavior.inhale(blockPointer);
-        blockEntity.insert(inhaledItems);
-        blockEntity.advanceSelectedSlot();
+        blockEntity.insert(inhaledItems.copy());
+        if (inhaledItems.getCount() > 0) {
+            blockEntity.advanceSelectedSlot();
+        }
     }
 
     protected DispenserBehavior getDispenseBehaviorForItem(World world, BlockDispenserBlockEntity entity, ItemStack stack) {
@@ -177,11 +173,12 @@ public class BlockDispenserBlock extends DispenserBlock {
 
         // Proceeding with clump recipe behavior
         BlockDispenserClumpRecipe recipe = match.get();
-        return new ItemClumpDispenserBehavior(recipe, stack.getItem());
-//        recipe.spendIngredientsFromInventory(entity);
-//
-//        ItemStack output = recipe.getResult(null).copy();
-//        return BLOCK_BEHAVIORS.get(output.getItem());
+        if (recipe.canAfford(entity)) {
+            return new ItemClumpDispenserBehavior(recipe, stack.getItem());
+        }
+        else {
+            return BlockDispenserBehavior.NOOP;
+        }
     }
 
     protected BlockInhaleBehavior getInhaleBehaviorForItem(ServerWorld world, BlockDispenserBlockEntity blockEntity, BlockState targetState) {
@@ -191,14 +188,9 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (targetState.isOf(Blocks.NETHER_PORTAL)) {
             return new VoidInhaleBehavior();
         }
+        if (targetState.getBlock() instanceof CropBlock) {
+            return new CropInhaleBehavior();
+        }
         return BLOCK_INHALE_BEHAVIORS.get(targetState.getBlock());
-    }
-
-    private void playSuccessClick(World world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS);
-    }
-
-    private void playFailClick(World world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.BLOCKS);
     }
 }

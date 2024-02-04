@@ -18,6 +18,6 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
 
     @Override
     public void inhale(BlockPointer blockPointer) {
-        blockPointer.world().breakBlock(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)), false);
+        breakBlockNoItems(blockPointer.world(), blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
     }
 }

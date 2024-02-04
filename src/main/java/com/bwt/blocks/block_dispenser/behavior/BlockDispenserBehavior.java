@@ -32,6 +32,11 @@ public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
                 LOGGER.error("Error trying to place block at {}", blockPos, exception);
             }
         }
-        return returnStack;
+        if (isSuccess()) {
+            return returnStack;
+        }
+        else {
+            return ItemStack.EMPTY;
+        }
     }
 }
