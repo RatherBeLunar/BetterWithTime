@@ -2,6 +2,7 @@ package com.bwt;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreen;
+import com.bwt.blocks.cauldron.CauldronScreen;
 import com.bwt.entities.BwtEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -26,5 +27,6 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		BlockRenderLayerMap.INSTANCE.putBlock(BwtBlocks.lightBlockBlock, RenderLayer.getCutout());
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
+		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
 	}
 }

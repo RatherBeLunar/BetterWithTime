@@ -3,6 +3,7 @@ package com.bwt;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
+import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
@@ -42,9 +43,11 @@ public class BetterWithTime implements ModInitializer {
 //					)
 //			);
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	static {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
+		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
 	}
 
 	@Override

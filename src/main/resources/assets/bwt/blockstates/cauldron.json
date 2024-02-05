@@ -1,0 +1,35 @@
+{
+  "multipart": [
+    {
+      "apply": { "model": "bwt:block/cauldron/cauldron"}
+    },
+    {
+      "when": { "level": 1 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_1"}
+    },
+    {
+      "when": { "level": 2 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_2"}
+    },
+    {
+      "when": { "level": 3 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_3"}
+    },
+    {
+      "when": { "level": 4 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_4"}
+    },
+    {
+      "when": { "level": 5 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_5"}
+    },
+    {
+      "when": { "level": 6 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_6"}
+    },
+    {
+      "when": { "level": 7 },
+      "apply": { "model": "bwt:block/cauldron/cauldron_stew_7"}
+    }
+  ]
+}

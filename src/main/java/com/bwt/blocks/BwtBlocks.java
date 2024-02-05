@@ -1,12 +1,14 @@
 package com.bwt.blocks;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
+import com.bwt.blocks.cauldron.CauldronBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
@@ -34,6 +36,15 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block bloodWoodBlock = new BloodWoodBlock(FabricBlockSettings.create());
 //	Blood Wood Sapling
 //	public static final Block buddyBlockBlock = new BuddyBlockBlock(FabricBlockSettings.create());
+	public static final Block cauldronBlock = new CauldronBlock(FabricBlockSettings.create()
+        .solidBlock(Blocks::never)
+        .notSolid()
+        .nonOpaque()
+        .hardness(3.5f)
+        .resistance(10f)
+        .sounds(BlockSoundGroup.METAL)
+        .mapColor(MapColor.BLACK)
+    );
 //	public static final Block canvasBlock = new CanvasBlock(FabricBlockSettings.create());
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
 //	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.create());
@@ -75,7 +86,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
 //	public static final Block slatsBlock = new SlatsBlock(FabricBlockSettings.create());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
-//	public static final Block stewingPotBlock = new StewingPotBlock(FabricBlockSettings.create());
+
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
 //	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
 //	public static final Block unfiredPotteryBlock = new UnfiredPotteryBlock(FabricBlockSettings.create());
@@ -111,6 +122,9 @@ public class BwtBlocks implements ModInitializer {
         // Block Dispenser
         Registry.register(Registries.BLOCK, new Identifier("bwt", "block_dispenser"), blockDispenserBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "block_dispenser"), new BlockItem(blockDispenserBlock, new FabricItemSettings()));
+        // Cauldron / Stewing Pot
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "cauldron"), cauldronBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "cauldron"), new BlockItem(cauldronBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
@@ -118,6 +132,10 @@ public class BwtBlocks implements ModInitializer {
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
+        });
+
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
+            content.add(cauldronBlock);
         });
 
 
