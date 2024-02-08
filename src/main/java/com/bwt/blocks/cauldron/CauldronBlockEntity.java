@@ -2,6 +2,7 @@ package com.bwt.blocks.cauldron;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
+import com.bwt.recipes.AbstractCookingPotRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.CauldronRecipe;
 import net.minecraft.block.BlockState;
@@ -27,8 +28,8 @@ public class CauldronBlockEntity extends AbstractCookingPotBlockEntity<CauldronB
         return new CauldronScreenHandler(syncId, playerInventory, this, propertyDelegate);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, CauldronBlockEntity blockEntity) {
-        blockEntity.cookProgressTicks = (blockEntity.cookProgressTicks + 1) % 200;
-        blockEntity.markDirty();
+
+    public static <I extends AbstractCookingPotBlockEntity<I, R>, R extends AbstractCookingPotRecipe<I>> void tick(World world, BlockPos pos, BlockState state, I blockEntity) {
+        AbstractCookingPotBlockEntity.tick(world, pos, state, blockEntity);
     }
 }

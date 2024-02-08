@@ -45,7 +45,7 @@ public class CauldronBlock extends AbstractCookingPotBlock {
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return CauldronBlock.validateTicker(world, type, BwtBlockEntities.cauldronBlockEntity);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> givenType) {
+        return CauldronBlock.validateTicker(world, givenType, BwtBlockEntities.cauldronBlockEntity);
     }
 }

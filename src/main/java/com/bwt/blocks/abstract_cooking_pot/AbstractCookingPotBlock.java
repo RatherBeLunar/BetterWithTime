@@ -1,5 +1,6 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
+import com.bwt.recipes.AbstractCookingPotRecipe;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -54,7 +55,7 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity {
     }
 
     @Nullable
-    protected static <T extends BlockEntity> BlockEntityTicker<T> validateTicker(World world, BlockEntityType<T> givenType, BlockEntityType<? extends AbstractCookingPotBlockEntity> expectedType) {
-        return world.isClient ? null : AbstractCookingPotBlock.validateTicker(givenType, expectedType, AbstractCookingPotBlockEntity::tick);
+    protected static <T extends BlockEntity, I extends AbstractCookingPotBlockEntity<I, R>, R extends AbstractCookingPotRecipe<I>> BlockEntityTicker<T> validateTicker(World world, BlockEntityType<T> givenType, BlockEntityType<I> expectedType) {
+        return world.isClient ? null : BlockWithEntity.validateTicker(givenType, expectedType, I::tick);
     }
 }
