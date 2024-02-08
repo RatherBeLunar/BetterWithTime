@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:porkchop"
+      },
+      "count": 4
+    }
+  ],
+  "result": {
+    "item": "minecraft:cooked_porkchop",
+    "count": 4
+  }
+}

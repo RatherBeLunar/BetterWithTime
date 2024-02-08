@@ -33,15 +33,6 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtTags tags = new BwtTags();
 	public static final Identifier MECH_BANG = new Identifier("bwt:mech_bang");
 	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
-//	public static final ScreenHandlerType<Generic4x4ContainerScreenHandler> generic4x4ContainerScreenHandler =
-//			Registry.register(
-//					Registries.SCREEN_HANDLER,
-//					new Identifier(("generic_4x4")),
-//					new ScreenHandlerType<>(
-//							Generic4x4ContainerScreenHandler::new,
-//							FeatureFlags.VANILLA_FEATURES
-//					)
-//			);
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 

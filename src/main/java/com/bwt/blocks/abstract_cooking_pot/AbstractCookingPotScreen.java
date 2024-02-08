@@ -1,4 +1,4 @@
-package com.bwt.blocks.cauldron;
+package com.bwt.blocks.abstract_cooking_pot;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
@@ -8,12 +8,12 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class CauldronScreen extends HandledScreen<CauldronScreenHandler> {
+public class AbstractCookingPotScreen extends HandledScreen<AbstractCookingPotScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/cauldron.png");
 
     static final int fireIconHeight = 12;
 
-    public CauldronScreen(CauldronScreenHandler handler, PlayerInventory inventory, Text title) {
+    public AbstractCookingPotScreen(AbstractCookingPotScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         backgroundHeight = 193;
         playerInventoryTitleY = backgroundHeight - 94;

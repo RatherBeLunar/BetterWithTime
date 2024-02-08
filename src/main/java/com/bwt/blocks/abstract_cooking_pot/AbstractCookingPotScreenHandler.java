@@ -1,4 +1,4 @@
-package com.bwt.blocks.cauldron;
+package com.bwt.blocks.abstract_cooking_pot;
 
 import com.bwt.BetterWithTime;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,16 +12,16 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.MathHelper;
 
-public class CauldronScreenHandler extends ScreenHandler {
+public class AbstractCookingPotScreenHandler extends ScreenHandler {
     private final Inventory inventory;
     private static final int SIZE = 27;
     private final PropertyDelegate propertyDelegate;
 
-    public CauldronScreenHandler(int syncId, PlayerInventory playerInventory) {
+    public AbstractCookingPotScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(2));
     }
 
-    public CauldronScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
+    public AbstractCookingPotScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
         super(BetterWithTime.cauldronScreenHandler, syncId);
         checkSize(inventory, SIZE);
         this.inventory = inventory;
