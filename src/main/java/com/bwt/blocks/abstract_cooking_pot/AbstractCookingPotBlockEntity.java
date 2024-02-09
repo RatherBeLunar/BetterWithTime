@@ -144,9 +144,14 @@ public abstract class AbstractCookingPotBlockEntity<I extends AbstractCookingPot
         return getDisplayName();
     }
 
+    @Override
+    public void markDirty() {
+        super.markDirty();
+    }
+
     public static <I extends AbstractCookingPotBlockEntity<I, R>, R extends AbstractCookingPotRecipe<I>> void tick(World world, BlockPos pos, BlockState state, I blockEntity) {
         blockEntity.cookProgressTicks = (blockEntity.cookProgressTicks + 1) % 200;
-        blockEntity.markDirty();
+//        blockEntity.markDirty();
 
         if (blockEntity.cookProgressTicks != 0) {
             return;
