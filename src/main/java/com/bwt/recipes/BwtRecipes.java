@@ -10,8 +10,8 @@ import net.minecraft.util.Identifier;
 public class BwtRecipes implements ModInitializer {
     public static final RecipeType<BlockDispenserClumpRecipe> BLOCK_DISPENSER_CLUMP_RECIPE_TYPE = new RecipeType<>() { public String toString() { return "block_dispenser_clump"; } };
     public static final RecipeSerializer<BlockDispenserClumpRecipe> BLOCK_DISPENSER_CLUMP_RECIPE_SERIALIZER = new BlockDispenserClumpRecipe.Serializer();
-    public static final RecipeType<CauldronRecipe> CAULDRON_RECIPE_TYPE = new RecipeType<>() { public String toString() { return "cauldron"; } };
-    public static final RecipeSerializer<CauldronRecipe> CAULDRON_RECIPE_SERIALIZER = new AbstractCookingPotRecipe.Serializer<>(CauldronRecipe::new);
+    public static final CauldronRecipeType CAULDRON_RECIPE_TYPE = new CauldronRecipeType();
+    public static final CauldronRecipe.Serializer CAULDRON_RECIPE_SERIALIZER = new CauldronRecipe.Serializer(CauldronRecipe::new);
     @Override
     public void onInitialize() {
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_TYPE);

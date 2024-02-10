@@ -127,7 +127,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ )
         {
             ItemStack invStack = inventory.get(currentSlot);
-            if (invStack.getItem().equals(stack.getItem())) {
+            if (invStack.isOf(stack.getItem())) {
                 int space = invStack.getMaxCount() - invStack.getCount();
                 int inserted = Math.min(space, stack.getCount());
                 invStack.increment(inserted);
@@ -166,7 +166,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             if (invStack.isEmpty()) {
                 continue;
             }
-            else if (invStack.getItem().equals(item)) {
+            else if (invStack.isOf(item)) {
                 int available = invStack.getCount();
                 int removed = Math.min(count, available);
                 invStack.decrement(removed);

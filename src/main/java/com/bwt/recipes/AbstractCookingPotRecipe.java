@@ -3,7 +3,6 @@ package com.bwt.recipes;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -16,34 +15,32 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
-public abstract class AbstractCookingPotRecipe<I extends AbstractCookingPotBlockEntity> implements Recipe<I> {
-    protected final RecipeType<? extends AbstractCookingPotRecipe<I>> type;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCookingPotBlockEntity> {
+    protected final AbstractCookingPotRecipeType type;
     protected final String group;
     protected final CookingRecipeCategory category;
     final DefaultedList<IngredientWithCount> ingredients;
-    protected final ItemStack result;
+    protected final DefaultedList<ItemStack> results;
 
-    public AbstractCookingPotRecipe(RecipeType<? extends AbstractCookingPotRecipe<I>> type, String group, CookingRecipeCategory category, DefaultedList<IngredientWithCount> ingredients, ItemStack result) {
+    public AbstractCookingPotRecipe(AbstractCookingPotRecipeType type, String group, CookingRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
         this.type = type;
         this.group = group;
         this.category = category;
-        this.ingredients = ingredients;
-        this.result = result;
+        this.ingredients = DefaultedList.copyOf(IngredientWithCount.EMPTY, ingredients.toArray(new IngredientWithCount[0]));
+        this.results = DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
     }
 
     @Override
-    public boolean matches(I inventory, World world) {
+    public boolean matches(AbstractCookingPotBlockEntity inventory, World world) {
         for (IngredientWithCount ingredient : ingredients) {
             if (!inventory.containsAny(ingredient::test)) {
                 return false;
             }
         }
         return true;
-    }
-
-    @Override
-    public ItemStack craft(I inventory, DynamicRegistryManager registryManager) {
-        return this.result.copy();
     }
 
     @Override
@@ -58,9 +55,12 @@ public abstract class AbstractCookingPotRecipe<I extends AbstractCookingPotBlock
         return defaultedList;
     }
 
-    @Override
-    public ItemStack getResult(DynamicRegistryManager registryManager) {
-        return this.result;
+    public DefaultedList<IngredientWithCount> getIngredientsWithCount() {
+        return ingredients;
+    }
+
+    public List<ItemStack> getResults() {
+        return results.stream().map(ItemStack::copy).collect(Collectors.toList());
     }
 
     @Override
@@ -87,12 +87,25 @@ public abstract class AbstractCookingPotRecipe<I extends AbstractCookingPotBlock
         return false;
     }
 
+    @Override
+    public ItemStack craft(AbstractCookingPotBlockEntity inventory, DynamicRegistryManager registryManager) {
+        return getResult(registryManager);
+    }
 
-    public static class Serializer<R extends AbstractCookingPotRecipe<?>> implements RecipeSerializer<R> {
-        private final AbstractCookingPotRecipe.RecipeFactory<R> recipeFactory;
-        private final Codec<R> codec;
+    @Override
+    public ItemStack getResult(DynamicRegistryManager registryManager) {
+        if (results.size() == 1) {
+            return results.getFirst();
+        }
+        throw new IllegalCallerException("Too many results. Use getResults instead");
+    }
 
-        public Serializer(R.RecipeFactory<R> recipeFactory) {
+
+    public static class Serializer implements RecipeSerializer<AbstractCookingPotRecipe> {
+        private final AbstractCookingPotRecipe.RecipeFactory<AbstractCookingPotRecipe> recipeFactory;
+        private final Codec<AbstractCookingPotRecipe> codec;
+
+        public Serializer(AbstractCookingPotRecipe.RecipeFactory<AbstractCookingPotRecipe> recipeFactory) {
             this.recipeFactory = recipeFactory;
             this.codec = RecordCodecBuilder.create(
                     instance->instance.group(
@@ -104,31 +117,31 @@ public abstract class AbstractCookingPotRecipe<I extends AbstractCookingPotBlock
                             IngredientWithCount.Serializer.DISALLOW_EMPTY_CODEC
                                     .listOf()
                                     .fieldOf("ingredients")
-                                    .xmap(
-                                            list -> DefaultedList.copyOf(IngredientWithCount.EMPTY, list.toArray(new IngredientWithCount[0])),
-                                            x -> x
-                                    )
                                     .forGetter(recipe -> recipe.ingredients),
-                            ItemStack.RECIPE_RESULT_CODEC.fieldOf("result")
-                                    .forGetter(recipe -> recipe.result)
+                            ItemStack.RECIPE_RESULT_CODEC
+                                    .listOf()
+                                    .fieldOf("results")
+                                    .forGetter(AbstractCookingPotRecipe::getResults)
                     ).apply(instance, recipeFactory::create)
             );
         }
 
         @Override
-        public Codec<R> codec() {
+        public Codec<AbstractCookingPotRecipe> codec() {
             return codec;
         }
 
         @Override
-        public R read(PacketByteBuf buf) {
+        public AbstractCookingPotRecipe read(PacketByteBuf buf) {
             String group = buf.readString();
             CookingRecipeCategory category = buf.readEnumConstant(CookingRecipeCategory.class);
-            int i = buf.readVarInt();
-            DefaultedList<IngredientWithCount> ingredients = DefaultedList.ofSize(i, IngredientWithCount.EMPTY);
+            int ingredientsSize = buf.readVarInt();
+            DefaultedList<IngredientWithCount> ingredients = DefaultedList.ofSize(ingredientsSize, IngredientWithCount.EMPTY);
             ingredients.replaceAll(ignored -> IngredientWithCount.SERIALIZER.read(buf));
-            ItemStack result = buf.readItemStack();
-            return this.recipeFactory.create(group, category, ingredients, result);
+            int resultsSize = buf.readVarInt();
+            DefaultedList<ItemStack> results = DefaultedList.ofSize(resultsSize, ItemStack.EMPTY);
+            results.replaceAll(ignored -> buf.readItemStack());
+            return this.recipeFactory.create(group, category, ingredients, results);
         }
 
         @Override
@@ -136,14 +149,17 @@ public abstract class AbstractCookingPotRecipe<I extends AbstractCookingPotBlock
             buf.writeString(recipe.group);
             buf.writeEnumConstant(recipe.category);
             buf.writeVarInt(recipe.ingredients.size());
-            for (Object ingredient : recipe.ingredients) {
-                IngredientWithCount.SERIALIZER.write(buf, ((IngredientWithCount) ingredient));
+            for (IngredientWithCount ingredient : recipe.ingredients) {
+                IngredientWithCount.SERIALIZER.write(buf, ingredient);
             }
-            buf.writeItemStack(recipe.result);
+            buf.writeVarInt(recipe.results.size());
+            for (ItemStack stack : recipe.getResults()) {
+                buf.writeItemStack(stack);
+            }
         }
     }
 
-    public interface RecipeFactory<T extends AbstractCookingPotRecipe<? extends Inventory>> {
-        T create(String group, CookingRecipeCategory category, DefaultedList<IngredientWithCount> ingredients, ItemStack result);
+    public interface RecipeFactory<T extends AbstractCookingPotRecipe> {
+        T create(String group, CookingRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results);
     }
 }

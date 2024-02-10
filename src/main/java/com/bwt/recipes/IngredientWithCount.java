@@ -48,7 +48,7 @@ public class IngredientWithCount implements CustomIngredient {
         return SERIALIZER;
     }
 
-    private Ingredient getIngredient() {
+    public Ingredient getIngredient() {
         return ingredient;
     }
 

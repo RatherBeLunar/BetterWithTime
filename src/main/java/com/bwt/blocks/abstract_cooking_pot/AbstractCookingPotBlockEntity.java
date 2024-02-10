@@ -2,7 +2,10 @@ package com.bwt.blocks.abstract_cooking_pot;
 
 import com.bwt.block_entities.ImplementedInventory;
 import com.bwt.recipes.AbstractCookingPotRecipe;
+import com.bwt.recipes.AbstractCookingPotRecipeType;
+import com.bwt.recipes.IngredientWithCount;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -13,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -25,10 +27,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
-public abstract class AbstractCookingPotBlockEntity<I extends AbstractCookingPotBlockEntity<I, R>, R extends AbstractCookingPotRecipe<I>> extends LootableContainerBlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, SidedInventory {
+public abstract class AbstractCookingPotBlockEntity extends LootableContainerBlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, SidedInventory {
     public static final int INVENTORY_SIZE = 27;
     protected static final int[] AVAILABLE_SLOTS = IntStream.range(0, INVENTORY_SIZE).toArray();
     protected DefaultedList<ItemStack> inventory = DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
@@ -36,7 +40,7 @@ public abstract class AbstractCookingPotBlockEntity<I extends AbstractCookingPot
     protected int ticksToCompleteCook;
     protected int cookProgressTicks;
 
-    public RecipeType<R> recipeType;
+    public AbstractCookingPotRecipeType recipeType;
 
     protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
 
@@ -66,8 +70,8 @@ public abstract class AbstractCookingPotBlockEntity<I extends AbstractCookingPot
     };
 
     public AbstractCookingPotBlockEntity(
-            BlockEntityType<I> blockEntityType,
-            RecipeType<R> recipeType,
+            BlockEntityType<? extends AbstractCookingPotBlockEntity> blockEntityType,
+            AbstractCookingPotRecipeType recipeType,
             BlockPos pos,
             BlockState state
     ) {
@@ -144,27 +148,113 @@ public abstract class AbstractCookingPotBlockEntity<I extends AbstractCookingPot
         return getDisplayName();
     }
 
-    @Override
-    public void markDirty() {
-        super.markDirty();
-    }
-
-    public static <I extends AbstractCookingPotBlockEntity<I, R>, R extends AbstractCookingPotRecipe<I>> void tick(World world, BlockPos pos, BlockState state, I blockEntity) {
+    public static void tick(World world, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
         blockEntity.cookProgressTicks = (blockEntity.cookProgressTicks + 1) % 200;
-//        blockEntity.markDirty();
 
-        if (blockEntity.cookProgressTicks != 0) {
+        FireData fireData = getFireData(world, pos);
+        if (!fireData.anyFire()) {
             return;
         }
 
         RecipeManager recipeManager = world.getRecipeManager();
-        List<RecipeEntry<R>> matches = recipeManager.getAllMatches(blockEntity.recipeType, blockEntity, world);
+        List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(blockEntity.recipeType, blockEntity, world);
         if (matches.isEmpty()) {
             return;
         }
         // Get biggest
-        matches.sort(Comparator.comparing((RecipeEntry<R> match) -> match.value().getIngredients().size()).reversed());
-        R recipe = matches.get(0).value();
-        recipe.craft(blockEntity, world.getRegistryManager());
+        Iterator<RecipeEntry<AbstractCookingPotRecipe>> matchIterator = matches.stream().sorted(
+                Comparator.comparing(
+                    (RecipeEntry<AbstractCookingPotRecipe> match)
+                            -> match.value().getIngredients().size()
+                ).reversed()
+        ).iterator();
+        while (matchIterator.hasNext()) {
+            AbstractCookingPotRecipe match = matchIterator.next().value();
+            blockEntity.cookRecipe(match);
+        }
+
+    }
+
+    public record FireData(int unstokedCount, int stokedCount) {
+        public boolean anyFire() {return (unstokedCount + stokedCount) > 0;}
+    }
+
+    public static FireData getFireData(World world, BlockPos pos) {
+        int unstokedCount = 0;
+        int stokedCount = 0;
+        BlockPos below = pos.down();
+        for (int x = -1; x <= 1; x++) {
+            for (int z = -1; z <= 1; z++) {
+                BlockState state = world.getBlockState(below.offset(Direction.Axis.X, x).offset(Direction.Axis.Y, z));
+                if (state.isOf(Blocks.FIRE)) {
+                    unstokedCount += 1;
+                }
+            }
+        }
+        return new FireData(unstokedCount, stokedCount);
+    }
+
+    public boolean recipeFits(AbstractCookingPotRecipe recipe) {
+        long emptySlotsAvailable = inventory.stream().filter(ItemStack::isEmpty).count();
+
+        for (ItemStack result : recipe.getResults()) {
+            // Find matching stacks and try to insert there first
+            Optional<Integer> space = inventory.stream()
+                    .filter(invStack -> ItemStack.areItemsEqual(invStack, result))
+                    .map(invStack -> invStack.getMaxCount() - invStack.getCount())
+                    .reduce(Integer::sum);
+            emptySlotsAvailable -= (result.getCount() - space.orElse(0)) % result.getMaxCount();
+            if (emptySlotsAvailable < 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void cookRecipe(AbstractCookingPotRecipe recipe) {
+        // Spend ingredients
+        for (IngredientWithCount ingredientWithCount : recipe.getIngredientsWithCount()) {
+            int countToSpend = ingredientWithCount.getCount();
+            for (ItemStack stack : inventory) {
+                if (countToSpend <= 0) {
+                    break;
+                }
+                if (!ingredientWithCount.getIngredient().test(stack)) {
+                    continue;
+                }
+                int taken = Math.min(countToSpend, stack.getCount());
+                stack.decrement(taken);
+                countToSpend -= taken;
+            }
+            if (countToSpend > 0) {
+                markDirty();
+                return;
+            }
+        }
+        // Add results
+        for (ItemStack result : recipe.getResults()) {
+            int countToAdd = result.getCount();
+            for (int i = 0; i < inventory.size(); i++) {
+                ItemStack stack = getStack(i);
+                if (countToAdd <= 0) {
+                    break;
+                }
+                if (stack.isEmpty()) {
+                    setStack(i, result);
+                    break;
+                }
+                if (!ItemStack.areItemsEqual(result, stack)) {
+                    continue;
+                }
+                int added = Math.min(countToAdd, stack.getMaxCount() - stack.getCount());
+                stack.increment(added);
+                countToAdd -= added;
+            }
+            if (countToAdd > 0) {
+                markDirty();
+                return;
+            }
+        }
+        markDirty();
     }
 }
