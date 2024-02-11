@@ -17,11 +17,6 @@ public class CauldronBlockEntity extends AbstractCookingPotBlockEntity {
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new CauldronScreenHandler(syncId, playerInventory, this, propertyDelegate);
-    }
-
-    @Override
-    protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return new CauldronScreenHandler(syncId, playerInventory, this, propertyDelegate);
+        return new CauldronScreenHandler(syncId, playerInventory, this.inventory, propertyDelegate);
     }
 }

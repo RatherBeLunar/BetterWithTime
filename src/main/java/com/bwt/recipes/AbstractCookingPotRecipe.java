@@ -5,10 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.collection.DefaultedList;
@@ -16,9 +13,10 @@ import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCookingPotBlockEntity> {
+public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCookingPotBlockEntity.Inventory> {
     protected final AbstractCookingPotRecipeType type;
     protected final String group;
     protected final CookingRecipeCategory category;
@@ -34,9 +32,13 @@ public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCooking
     }
 
     @Override
-    public boolean matches(AbstractCookingPotBlockEntity inventory, World world) {
+    public boolean matches(AbstractCookingPotBlockEntity.Inventory inventory, World world) {
         for (IngredientWithCount ingredient : ingredients) {
-            if (!inventory.containsAny(ingredient::test)) {
+            Optional<Integer> matchingCount = inventory.getHeldStacks().stream()
+                    .filter(stack -> ingredient.ingredient().test(stack))
+                    .map(ItemStack::getCount)
+                    .reduce(Integer::sum);
+            if (matchingCount.orElse(0) < ingredient.count()) {
                 return false;
             }
         }
@@ -88,14 +90,14 @@ public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCooking
     }
 
     @Override
-    public ItemStack craft(AbstractCookingPotBlockEntity inventory, DynamicRegistryManager registryManager) {
+    public ItemStack craft(AbstractCookingPotBlockEntity.Inventory inventory, DynamicRegistryManager registryManager) {
         return getResult(registryManager);
     }
 
     @Override
     public ItemStack getResult(DynamicRegistryManager registryManager) {
         if (results.size() == 1) {
-            return results.getFirst();
+            return results.get(0);
         }
         throw new IllegalCallerException("Too many results. Use getResults instead");
     }

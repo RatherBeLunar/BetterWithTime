@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -12,22 +13,18 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IngredientWithCount implements CustomIngredient {
+public record IngredientWithCount(Ingredient ingredient, int count) implements CustomIngredient {
     public static final IngredientWithCount.Serializer SERIALIZER = new IngredientWithCount.Serializer();
     public static final IngredientWithCount EMPTY = new IngredientWithCount(Ingredient.EMPTY, 0);
-
-    private final Ingredient ingredient;
-    private final int count;
-
-    public IngredientWithCount(Ingredient ingredient, int count) {
-        this.ingredient = ingredient;
-        this.count = count;
-    }
 
     @Override
     public boolean test(ItemStack stack) {
         if (!ingredient.test(stack)) return false;
         return stack.getCount() >= count;
+    }
+
+    public boolean test(ItemVariant itemVariant) {
+        return ingredient.test(itemVariant.toStack());
     }
 
     @Override
@@ -48,14 +45,6 @@ public class IngredientWithCount implements CustomIngredient {
         return SERIALIZER;
     }
 
-    public Ingredient getIngredient() {
-        return ingredient;
-    }
-
-    public int getCount() {
-        return count;
-    }
-
     public static class Serializer implements CustomIngredientSerializer<IngredientWithCount> {
         private static final Identifier ID = new Identifier("bwt", "ingredient_with_count");
         public static final Codec<IngredientWithCount> ALLOW_EMPTY_CODEC = createCodec(Ingredient.ALLOW_EMPTY_CODEC);
@@ -64,8 +53,8 @@ public class IngredientWithCount implements CustomIngredient {
         public static Codec<IngredientWithCount> createCodec(Codec<Ingredient> ingredientCodec) {
             return RecordCodecBuilder.create(instance ->
                     instance.group(
-                            ingredientCodec.fieldOf("ingredient").forGetter(IngredientWithCount::getIngredient),
-                            Codec.INT.optionalFieldOf("count", 1).forGetter(IngredientWithCount::getCount)
+                            ingredientCodec.fieldOf("ingredient").forGetter(IngredientWithCount::ingredient),
+                            Codec.INT.optionalFieldOf("count", 1).forGetter(IngredientWithCount::count)
                     ).apply(instance, IngredientWithCount::new)
             );
         }
