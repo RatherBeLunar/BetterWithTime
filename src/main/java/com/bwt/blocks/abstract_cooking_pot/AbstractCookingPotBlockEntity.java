@@ -11,6 +11,8 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
@@ -30,7 +32,6 @@ import net.minecraft.world.World;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
     protected static final int INVENTORY_SIZE = 27;
@@ -192,24 +193,6 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
     }
 
-    public boolean recipeFits(AbstractCookingPotRecipe recipe) {
-        long emptySlotsAvailable = inventory.heldStacks.stream().filter(ItemStack::isEmpty).count();
-
-        for (ItemStack result : recipe.getResults()) {
-            // Find matching stacks and try to insert there first
-            Optional<Integer> space = inventory.heldStacks.stream()
-                    .filter(invStack -> ItemStack.areItemsEqual(invStack, result))
-                    .map(invStack -> invStack.getMaxCount() - invStack.getCount())
-                    .reduce(Integer::sum);
-            emptySlotsAvailable -= (result.getCount() - space.orElse(0)) % result.getMaxCount();
-            if (emptySlotsAvailable < 0) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-
     public boolean cookRecipe(AbstractCookingPotRecipe recipe) {
         try (Transaction transaction = Transaction.openOuter()) {
             // Spend ingredients
@@ -238,6 +221,18 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
             }
             transaction.commit();
             return true;
+        }
+    }
+
+    public static void onEntityCollided(Entity entity, AbstractCookingPotBlockEntity blockEntity) {
+        ItemStack itemStack;
+        if (entity instanceof ItemEntity itemEntity && !(itemStack = itemEntity.getStack()).isEmpty()) {
+            int count = itemStack.getCount();
+            try (Transaction transaction = Transaction.openOuter()) {
+                long inserted = StorageUtil.insertStacking(blockEntity.inventoryWrapper.getSlots(), ItemVariant.of(itemStack), count, transaction);
+                itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
+                transaction.commit();
+            }
         }
     }
 }

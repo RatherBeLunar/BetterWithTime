@@ -5,6 +5,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.Entity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
@@ -56,5 +57,16 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity {
     @Nullable
     protected static <A extends BlockEntity, E extends AbstractCookingPotBlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
         return world.isClient ? null : BlockWithEntity.validateTicker(givenType, expectedType, E::tick);
+    }
+
+    @Override
+    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
+        if (world.isClient) {
+            return;
+        }
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof AbstractCookingPotBlockEntity cookingPotBlockEntity) {
+            AbstractCookingPotBlockEntity.onEntityCollided(entity, cookingPotBlockEntity);
+        }
     }
 }
