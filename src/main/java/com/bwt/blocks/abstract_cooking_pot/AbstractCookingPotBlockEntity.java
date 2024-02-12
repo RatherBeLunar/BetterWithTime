@@ -33,13 +33,17 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
-    public static final int INVENTORY_SIZE = 27;
+    protected static final int INVENTORY_SIZE = 27;
+    protected static final int primaryFireFactor = 5;
+    protected static final int secondaryFireFactor = 1; // This was changed to 3 later
+    // "Time" is used loosely here, since the rate of change is affected by the amount of fire surrounding the pot
+    public static final int timeToCompleteCook = 150 * ( primaryFireFactor + ( secondaryFireFactor * 8 ) );
+    protected int cookProgressTime;
+
 
     public final AbstractCookingPotBlockEntity.Inventory inventory = new AbstractCookingPotBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
-    protected int ticksToCompleteCook;
-    protected int cookProgressTicks;
 
     public AbstractCookingPotRecipeType recipeType;
 
@@ -47,8 +51,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         @Override
         public int get(int index) {
             return switch (index) {
-                case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTicks;
-                case 1 -> AbstractCookingPotBlockEntity.this.ticksToCompleteCook;
+                case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime;
                 default -> 0;
             };
         }
@@ -56,16 +59,14 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         @Override
         public void set(int index, int value) {
             switch (index) {
-                case 0:
-                    AbstractCookingPotBlockEntity.this.cookProgressTicks = value;
-                case 1:
-                    AbstractCookingPotBlockEntity.this.ticksToCompleteCook = value;
+                case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime = value;
+                default -> {}
             }
         }
 
         @Override
         public int size() {
-            return 2;
+            return 1;
         }
     };
 
@@ -76,7 +77,6 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
             BlockState state
     ) {
         super(blockEntityType, pos, state);
-        ticksToCompleteCook = 200;
         this.recipeType = recipeType;
     }
 
@@ -84,16 +84,14 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE));
-        this.cookProgressTicks = nbt.getInt("cookProgressTicks");
-        this.ticksToCompleteCook = nbt.getInt("ticksToCompleteCook");
+        this.cookProgressTime = nbt.getInt("cookProgressTicks");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.put("Inventory", this.inventory.toNbtList());
-        nbt.putInt("cookProgressTicks", this.cookProgressTicks);
-        nbt.putInt("ticksToCompleteCook", this.ticksToCompleteCook);
+        nbt.putInt("cookProgressTicks", this.cookProgressTime);
     }
 
     @Override
@@ -109,10 +107,10 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
-        FireData fireData = getFireData(world, pos);
-        if (!fireData.anyFire()) {
-            if (blockEntity.cookProgressTicks != 0) {
-                blockEntity.cookProgressTicks = 0;
+        FireData fireData = FireData.fromWorld(world, pos);
+        if (fireData.fireFactor <= 0) {
+            if (blockEntity.cookProgressTime != 0) {
+                blockEntity.cookProgressTime = 0;
                 blockEntity.markDirty();
             }
             return;
@@ -121,16 +119,16 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         RecipeManager recipeManager = world.getRecipeManager();
         List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(blockEntity.recipeType, blockEntity.inventory, world);
         if (matches.isEmpty()) {
-            if (blockEntity.cookProgressTicks != 0) {
-                blockEntity.cookProgressTicks = 0;
+            if (blockEntity.cookProgressTime != 0) {
+                blockEntity.cookProgressTime = 0;
                 blockEntity.markDirty();
             }
             return;
         }
 
-        blockEntity.cookProgressTicks = blockEntity.cookProgressTicks + 1;
-        if (blockEntity.cookProgressTicks >= 200) {
-            blockEntity.cookProgressTicks = 0;
+        blockEntity.cookProgressTime = blockEntity.cookProgressTime + fireData.fireFactor;
+        if (blockEntity.cookProgressTime >= timeToCompleteCook) {
+            blockEntity.cookProgressTime = 0;
             blockEntity.markDirty();
         }
         else {
@@ -154,24 +152,35 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
     }
 
-    public record FireData(int unstokedCount, int stokedCount) {
-        public boolean anyFire() {return (unstokedCount + stokedCount) > 0;}
-    }
+    // TODO: move fire logic into shared helper class
+    public enum FireType {UNSTOKED, STOKED}
 
-    public static FireData getFireData(World world, BlockPos pos) {
-        int unstokedCount = 0;
-        int stokedCount = 0;
-        BlockPos below = pos.down();
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockState state = world.getBlockState(below.offset(Direction.Axis.X, x).offset(Direction.Axis.Y, z));
-                if (state.isOf(Blocks.FIRE)) {
-                    unstokedCount += 1;
+    public record FireData(int fireFactor, FireType fireType) {
+        public static FireData fromWorld(World world, BlockPos pos) {
+            int fireCount = 0;
+            FireType fireType = FireType.UNSTOKED;
+            BlockPos below = pos.down();
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    BlockState state = world.getBlockState(below.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z));
+                    if (x == 0 && z == 0 && !state.isOf(Blocks.FIRE) /* && !state.isOf(BwtBlocks.STOKED_FIRE) */) {
+                        return new FireData(0, FireType.UNSTOKED);
+                    }
+                    if (state.isOf(Blocks.FIRE)) {
+                        fireCount += 1;
+                    }
+//                    if (state.isOf(BwtBlocks.STOKED_FIRE)) {
+//                        fireFactor += 1;
+//                        fireType = FireType.STOKED;
+//                    }
                 }
             }
+            int fireFactor = primaryFireFactor + (fireCount - 1) * secondaryFireFactor;
+            return new FireData(fireFactor, fireType);
         }
-        return new FireData(unstokedCount, stokedCount);
     }
+
+
 
     public class Inventory extends SimpleInventory {
         public Inventory(int size) {

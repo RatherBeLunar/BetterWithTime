@@ -79,10 +79,7 @@ public class CauldronScreenHandler extends ScreenHandler {
 
     public float getCookProgress() {
         int cookProgress = this.propertyDelegate.get(0);
-        int ticksToCompleteCook = this.propertyDelegate.get(1);
-        if (ticksToCompleteCook == 0) {
-            ticksToCompleteCook = 200;
-        }
-        return MathHelper.clamp((float)cookProgress / (float)ticksToCompleteCook, 0.0f, 1.0f);
+        int timeToCompleteCook = CauldronBlockEntity.timeToCompleteCook;
+        return MathHelper.clamp((float)cookProgress / (float)timeToCompleteCook, 0.0f, 1.0f);
     }
 }

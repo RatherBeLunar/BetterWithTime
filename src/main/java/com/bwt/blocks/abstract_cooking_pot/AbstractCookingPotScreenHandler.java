@@ -1,6 +1,7 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
 import com.bwt.BetterWithTime;
+import com.bwt.blocks.cauldron.CauldronBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -79,10 +80,7 @@ public class AbstractCookingPotScreenHandler extends ScreenHandler {
 
     public float getCookProgress() {
         int cookProgress = this.propertyDelegate.get(0);
-        int ticksToCompleteCook = this.propertyDelegate.get(1);
-        if (ticksToCompleteCook == 0) {
-            ticksToCompleteCook = 200;
-        }
-        return MathHelper.clamp((float)cookProgress / (float)ticksToCompleteCook, 0.0f, 1.0f);
+        int timeToCompleteCook = CauldronBlockEntity.timeToCompleteCook;
+        return MathHelper.clamp((float)cookProgress / (float)timeToCompleteCook, 0.0f, 1.0f);
     }
 }
