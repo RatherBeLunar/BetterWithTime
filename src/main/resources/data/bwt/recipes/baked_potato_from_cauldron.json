@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:potato"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:baked_potato"
+    }
+  ]
+}

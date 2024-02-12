@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:beef"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:cooked_beef"
+    }
+  ]
+}
