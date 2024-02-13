@@ -76,7 +76,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block mouldingBlock = new MouldingBlock(FabricBlockSettings.create());
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
 //	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(FabricBlockSettings.create());
-//	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.create());
+	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f));
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
 //	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
@@ -125,6 +125,9 @@ public class BwtBlocks implements ModInitializer {
         // Cauldron / Stewing Pot
         Registry.register(Registries.BLOCK, new Identifier("bwt", "cauldron"), cauldronBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "cauldron"), new BlockItem(cauldronBlock, new FabricItemSettings()));
+        // Obsidian pressure plate
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_pressure_plate"), obsidianPressuePlateBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
@@ -132,12 +135,11 @@ public class BwtBlocks implements ModInitializer {
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
+            content.add(obsidianPressuePlateBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(cauldronBlock);
         });
-
-
     }
 }
