@@ -27,6 +27,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.Comparator;
@@ -224,6 +225,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
     }
 
+    // Pick up items from above like a hopper
     public static void onEntityCollided(Entity entity, AbstractCookingPotBlockEntity blockEntity) {
         ItemStack itemStack;
         if (entity instanceof ItemEntity itemEntity && !(itemStack = itemEntity.getStack()).isEmpty()) {
@@ -232,7 +234,33 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                 long inserted = StorageUtil.insertStacking(blockEntity.inventoryWrapper.getSlots(), ItemVariant.of(itemStack), count, transaction);
                 itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
                 transaction.commit();
+                blockEntity.inventory.markDirty();
             }
         }
+    }
+
+    // Update fill level texture
+    @Override
+    public void markDirty() {
+        super.markDirty();
+        if (this.world == null) {
+            return;
+        }
+        BlockState blockState = this.world.getBlockState(this.pos);
+        this.world.setBlockState(this.pos, blockState.with(AbstractCookingPotBlock.LEVEL, getFillLevel()), AbstractCookingPotBlock.NOTIFY_LISTENERS);
+    }
+
+    public int getFillLevel() {
+        if (inventory == null) {
+            return 0;
+        }
+        float f = 0.0f;
+        for (int i = 0; i < inventory.size(); ++i) {
+            ItemStack itemStack = inventory.getStack(i);
+            if (itemStack.isEmpty()) continue;
+            f += (float)itemStack.getCount() / (float)Math.min(inventory.getMaxCountPerStack(), itemStack.getMaxCount());
+        }
+        // TODO we use a LEVEL_8 property but we'd like a LEVEL_7 probably
+        return MathHelper.lerpPositive(f / (float) inventory.size(), 0, 7);
     }
 }
