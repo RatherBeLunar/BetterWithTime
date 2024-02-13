@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:wolfchop"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:cooked_wolfchop"
+    }
+  ]
+}

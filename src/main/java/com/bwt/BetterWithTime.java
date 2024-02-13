@@ -9,6 +9,18 @@ import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtTags;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.minecraft.entity.EntityType;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.condition.EntityPropertiesLootCondition;
+import net.minecraft.loot.context.LootContext;
+import net.minecraft.loot.entry.ItemEntry;
+import net.minecraft.loot.function.FurnaceSmeltLootFunction;
+import net.minecraft.loot.function.LootingEnchantLootFunction;
+import net.minecraft.loot.function.SetCountLootFunction;
+import net.minecraft.loot.provider.number.UniformLootNumberProvider;
+import net.minecraft.predicate.entity.EntityFlagsPredicate;
+import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
@@ -36,6 +48,8 @@ public class BetterWithTime implements ModInitializer {
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
+	private static final Identifier WOLF_LOOT_TABLE_ID = EntityType.WOLF.getLootTableId();
+
 	static {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
 		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
@@ -55,5 +69,21 @@ public class BetterWithTime implements ModInitializer {
 		recipes.onInitialize();
 		tags.onInitialize();
 		Registry.register(Registries.SOUND_EVENT, MECH_BANG, MECH_BANG_SOUND);
+
+		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
+			if (source.isBuiltin() && id.equals(WOLF_LOOT_TABLE_ID)) {
+				LootPool.Builder poolBuilder = LootPool.builder()
+						.with(ItemEntry.builder(BwtItems.wolfChopItem)
+								.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 3.0f)))
+						).apply(
+                                FurnaceSmeltLootFunction.builder()
+                                        .conditionally(
+                                                EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true)))
+                                        )
+						).apply(LootingEnchantLootFunction.builder(UniformLootNumberProvider.create(0.0f, 1.0f)));
+
+				tableBuilder.pool(poolBuilder);
+			}
+		});
 	}
 }

@@ -3,8 +3,10 @@ package com.bwt.items;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.item.FoodComponents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -19,6 +21,10 @@ public class BwtItems implements ModInitializer {
 //	public static final Item coalDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "coal_dust"), new CoalDustItem(new FabricItemSettings()));
 //	public static final Item compositeBowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "composite_bow"), new CompositeBowItem(new FabricItemSettings()));
 //	public static final Item concentratedHellfireItem = Registry.register(Registries.ITEM, new Identifier("bwt", "concentrated_hellfire"), new ConcentratedHellfireItem(new FabricItemSettings()));
+public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolfchop"), new Item(
+        new FabricItemSettings()
+                .food(FoodComponents.COOKED_PORKCHOP))
+);
 //	public static final Item donutItem = Registry.register(Registries.ITEM, new Identifier("bwt", "donut"), new DonutItem(new FabricItemSettings()));
 //	public static final Item dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DungItem(new FabricItemSettings()));
 //	public static final Item dynamiteItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dynamite"), new DynamiteItem(new FabricItemSettings()));
@@ -65,7 +71,10 @@ public class BwtItems implements ModInitializer {
     public static final Item windmillItem = Registry.register(Registries.ITEM, new Identifier("bwt", "windmill"), new WindmillItem(
             new FabricItemSettings().maxCount(1)
     ));
-//	public static final Item wolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wolf_chop"), new WolfChopItem(new FabricItemSettings()));
+	public static final Item wolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wolfchop"), new Item(
+            new FabricItemSettings()
+                    .food(FoodComponents.PORKCHOP))
+    );
 //	public static final Item woodBladeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wood_blade"), new WoodBladeItem(new FabricItemSettings()));
 
 
@@ -73,7 +82,15 @@ public class BwtItems implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> content.addAfter(net.minecraft.item.Items.WATER_BUCKET, cementBucketItem));
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> content.add(windmillItem));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
+            content.addAfter(Items.WATER_BUCKET, cementBucketItem);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
+            content.add(windmillItem);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(content -> {
+            content.addAfter(Items.COOKED_PORKCHOP, wolfChopItem);
+            content.addAfter(wolfChopItem, cookedWolfChopItem);
+        });
     }
 }
