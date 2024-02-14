@@ -1,5 +1,6 @@
 package com.bwt.items;
 
+import com.bwt.blocks.BwtBlocks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -41,7 +42,8 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item haftItem = Registry.register(Registries.ITEM, new Identifier("bwt", "haft"), new HaftItem(new FabricItemSettings()));
 //	public static final Item hellfireDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hellfire_dust"), new HellfireDustItem(new FabricItemSettings()));
 //	public static final Item hempFiberItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_fiber"), new HempFiberItem(new FabricItemSettings()));
-//	public static final Item hempSeedItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_seed"), new HempSeedItem(new FabricItemSettings()));
+	public static final Item hempItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp"), new Item(new FabricItemSettings()));
+	public static final Item hempSeedsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_seeds"), new HempSeedsItem(BwtBlocks.hempCropBlock, new FabricItemSettings()));
 //	public static final Item kibbleItem = Registry.register(Registries.ITEM, new Identifier("bwt", "kibble"), new KibbleItem(new FabricItemSettings()));
 //	public static final Item mouldItem = Registry.register(Registries.ITEM, new Identifier("bwt", "mould"), new MouldItem(new FabricItemSettings()));
 //	public static final Item netherBrickItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nether_brick"), new NetherBrickItem(new FabricItemSettings()));
@@ -91,6 +93,10 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(content -> {
             content.addAfter(Items.COOKED_PORKCHOP, wolfChopItem);
             content.addAfter(wolfChopItem, cookedWolfChopItem);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.WHEAT_SEEDS, hempSeedsItem);
+            content.addAfter(Items.WHEAT, hempItem);
         });
     }
 }

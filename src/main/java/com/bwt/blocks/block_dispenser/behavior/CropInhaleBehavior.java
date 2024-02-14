@@ -1,5 +1,6 @@
 package com.bwt.blocks.block_dispenser.behavior;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CropBlock;
@@ -23,6 +24,11 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
         }
         int age = cropBlock.getAge(state);
         int maxAge = cropBlock.getMaxAge();
+        if (state.isOf(BwtBlocks.hempCropBlock)) {
+            // Bottom hemp blocks stay at age 7 out of 8 to keep growing.
+            // allow those pieces to be inhaled as well
+            maxAge -= 1;
+        }
         if (age < maxAge) {
             noop = true;
             return ItemStack.EMPTY;
@@ -38,7 +44,7 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
         if (droppedStacks.size() > 1) {
             return droppedStacks.stream()
                     .filter(dropStack -> !dropStack.getItem().equals(cropBlock.getPickStack(blockPointer.world(), blockPointer.pos(), state).getItem()))
-                    .findAny().get();
+                    .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {
             return droppedStacks.get(0);

@@ -57,7 +57,7 @@ public class BwtBlocks implements ModInitializer {
     );
 //	public static final Block grateBlock = new GrateBlock(FabricBlockSettings.create());
 //	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create());
-//	public static final Block hempBlock = new HempBlock(FabricBlockSettings.create());
+	public static final Block hempCropBlock = new HempCropBlock(FabricBlockSettings.copyOf(Blocks.SUGAR_CANE));
 	public static final Block hibachiBlock = new HibachiBlock(FabricBlockSettings.create()
         .hardness(3.5f)
         .sounds(BlockSoundGroup.STONE)
@@ -128,6 +128,8 @@ public class BwtBlocks implements ModInitializer {
         // Obsidian pressure plate
         Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_pressure_plate"), obsidianPressuePlateBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new FabricItemSettings()));
+        // Hemp crop
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "hemp_crop_block"), hempCropBlock);
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);

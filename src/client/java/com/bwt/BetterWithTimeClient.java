@@ -25,7 +25,10 @@ public class BetterWithTimeClient implements ClientModInitializer {
 //		BlockEntityRendererRegistry.register(BwtEntities.windmillBlockEntity, WindmillBlockEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
-		BlockRenderLayerMap.INSTANCE.putBlock(BwtBlocks.lightBlockBlock, RenderLayer.getCutout());
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+				BwtBlocks.lightBlockBlock,
+				BwtBlocks.hempCropBlock
+		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
 	}

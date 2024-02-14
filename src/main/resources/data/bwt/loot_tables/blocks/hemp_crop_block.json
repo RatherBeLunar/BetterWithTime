@@ -1,0 +1,57 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
+    }
+  ],
+  "pools": [
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "bwt:hemp_crop_block",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "age": "8"
+          }
+        },
+        {
+          "block": "bwt:hemp_crop_block",
+          "condition": "minecraft:random_chance",
+          "chance": 0.5
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bwt:hemp_seeds"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "block": "bwt:hemp_crop_block",
+          "condition": "minecraft:block_state_property",
+          "properties": {
+            "age": {
+              "min": "7",
+              "max": "8"
+            }
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "bwt:hemp"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "bwt:blocks/hemp_crop_block"
+}
