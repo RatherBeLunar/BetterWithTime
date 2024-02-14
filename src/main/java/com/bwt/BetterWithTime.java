@@ -10,7 +10,13 @@ import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtTags;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
+import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.EntityPropertiesLootCondition;
 import net.minecraft.loot.context.LootContext;
@@ -85,5 +91,18 @@ public class BetterWithTime implements ModInitializer {
 				tableBuilder.pool(poolBuilder);
 			}
 		});
+
+		// Drop hemp seeds from tilled grass 1/25th of the time
+		TillableBlockRegistry.register(
+			Blocks.GRASS_BLOCK,
+			HoeItem::canTillFarmland,
+			context -> {
+				BlockState result = Blocks.FARMLAND.getDefaultState();
+				HoeItem.createTillAction(result).accept(context);
+				if (context.getWorld().getRandom().nextInt(25) == 0) {
+					Block.dropStack(context.getWorld(), context.getBlockPos(), context.getSide(), new ItemStack(BwtItems.hempSeedsItem));
+				}
+			}
+		);
 	}
 }
