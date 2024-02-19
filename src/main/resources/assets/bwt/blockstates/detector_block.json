@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,powered=false": {
+      "model": "bwt:block/detector_block",
+      "x": 90
+    },
+    "facing=down,powered=true": {
+      "model": "bwt:block/detector_block_powered",
+      "x": 90
+    },
+    "facing=east,powered=false": {
+      "model": "bwt:block/detector_block",
+      "y": 90
+    },
+    "facing=east,powered=true": {
+      "model": "bwt:block/detector_block_powered",
+      "y": 90
+    },
+    "facing=north,powered=false": {
+      "model": "bwt:block/detector_block"
+    },
+    "facing=north,powered=true": {
+      "model": "bwt:block/detector_block_powered"
+    },
+    "facing=south,powered=false": {
+      "model": "bwt:block/detector_block",
+      "y": 180
+    },
+    "facing=south,powered=true": {
+      "model": "bwt:block/detector_block_powered",
+      "y": 180
+    },
+    "facing=up,powered=false": {
+      "model": "bwt:block/detector_block",
+      "x": 270
+    },
+    "facing=up,powered=true": {
+      "model": "bwt:block/detector_block_powered",
+      "x": 270
+    },
+    "facing=west,powered=false": {
+      "model": "bwt:block/detector_block",
+      "y": 270
+    },
+    "facing=west,powered=true": {
+      "model": "bwt:block/detector_block_powered",
+      "y": 270
+    }
+  }
+}

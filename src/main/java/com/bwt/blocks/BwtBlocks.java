@@ -2,6 +2,8 @@ package com.bwt.blocks;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.cauldron.CauldronBlock;
+import com.bwt.blocks.detector.DetectorBlock;
+import com.bwt.blocks.detector.DetectorLogicBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -51,7 +53,8 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
 //	public static final Block cornerBlock = new CornerBlock(FabricBlockSettings.create());
 //	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
-//	public static final Block detectorBlockBlock = new DetectorBlockBlock(FabricBlockSettings.create());
+	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
+	public static final Block detectorLogicBlock = new DetectorLogicBlock(FabricBlockSettings.copyOf(Blocks.AIR));
     public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
         .hardness(2F)
     );
@@ -130,6 +133,10 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new FabricItemSettings()));
         // Hemp crop
         Registry.register(Registries.BLOCK, new Identifier("bwt", "hemp_crop_block"), hempCropBlock);
+        // Detector Block
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_block"), detectorBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "detector_block"), new BlockItem(detectorBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_logic_block"), detectorLogicBlock);
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
@@ -138,6 +145,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
             content.add(obsidianPressuePlateBlock);
+            content.add(detectorBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {

@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 
 public class BwtTags implements ModInitializer {
     public static final TagKey<Block> BLOCK_DISPENSER_INHALE_NOOP = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "block_dispenser_inhale_noop"));
+    public static final TagKey<Block> DETECTABLE_SMALL_CROPS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "detectable_small_crops"));
 
     @Override
     public void onInitialize() {

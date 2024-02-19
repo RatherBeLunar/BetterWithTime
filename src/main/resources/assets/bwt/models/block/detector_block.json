@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "front": "bwt:block/detector_block_face",
+    "side": "bwt:block/detector_block_side",
+    "top": "bwt:block/detector_block_top",
+    "bottom": "bwt:block/detector_block_bottom"
+  }
+}

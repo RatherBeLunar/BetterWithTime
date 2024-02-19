@@ -99,7 +99,7 @@ public class HempCropBlock extends CropBlock {
             }
         }
         if (newAge != currentAge) {
-            world.setBlockState(pos, this.withAge(newAge), Block.NOTIFY_LISTENERS);
+            world.setBlockState(pos, this.withAge(newAge), Block.NOTIFY_ALL);
         }
     }
 }

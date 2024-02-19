@@ -43,7 +43,6 @@ public class BetterWithTime implements ModInitializer {
     public static final Logger LOGGER = LoggerFactory.getLogger("betterwithtime");
 
 	public static final BwtBlocks blocks = new BwtBlocks();
-
 	public static final BwtBlockEntities blockEntities = new BwtBlockEntities();
 	public static final BwtItems items = new BwtItems();
 	public static final BwtEntities entities = new BwtEntities();

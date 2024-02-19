@@ -15,9 +15,8 @@ public class EntityRectDimensions extends EntityDimensions {
 
     @Override
     public Box getBoxAt(double x, double y, double z) {
-        float f = this.width / 2.0f;
-        float f1 = this.length / 2.0f;
-        float g = this.height;
-        return new Box(x - (double)f, y, z - (double)f1, x + (double)f, y + (double)g, z + (double)f1);
+        double half_width = this.width / 2.0f;
+        double half_height = this.length / 2.0f;
+        return new Box(x - half_width, y, z - half_height, x + half_width, y + (double)this.height, z + half_height);
     }
 }

@@ -50,7 +50,7 @@ public class HibachiBlock extends Block {
 
         boolean lit = world.isReceivingRedstonePower(pos);
         if (state.get(LIT) != lit) {
-            world.setBlockState(pos, state.cycle(LIT), Block.NOTIFY_LISTENERS);
+            world.setBlockState(pos, state.cycle(LIT), Block.NOTIFY_ALL);
         }
         if (lit) {
             if (world.getBlockState(pos.up()).isAir()) {
