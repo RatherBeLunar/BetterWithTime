@@ -1,4 +1,4 @@
-package com.bwt.blocks.abstract_cooking_pot;
+package com.bwt.blocks.mill_stone;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
@@ -8,14 +8,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class AbstractCookingPotScreen extends HandledScreen<AbstractCookingPotScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/cauldron.png");
+public class MillStoneScreen extends HandledScreen<MillStoneScreenHandler> {
+    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/mill_stone.png");
 
-    static final int fireIconHeight = 12;
+    static final int gearIconHeight = 12;
 
-    public AbstractCookingPotScreen(AbstractCookingPotScreenHandler handler, PlayerInventory inventory, Text title) {
+    public MillStoneScreen(MillStoneScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        backgroundHeight = 193;
+        backgroundHeight = 158;
         playerInventoryTitleY = backgroundHeight - 94;
     }
 
@@ -28,20 +28,20 @@ public class AbstractCookingPotScreen extends HandledScreen<AbstractCookingPotSc
         int y = (height - backgroundHeight) / 2;
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
-        // draw the cooking indicator
+        // draw the gear indicator
 
-        float cookProgress = this.handler.getCookProgress();
-        if ( cookProgress > 0 )
+        float grindProgress = this.handler.getGrindProgress();
+        if ( grindProgress > 0 )
         {
-            int scaledIconHeight = Math.round(fireIconHeight * cookProgress);
+            int scaledIconHeight = Math.round(gearIconHeight * grindProgress);
             context.drawTexture(
-                TEXTURE,
-                x + 81,
-                y + 19 + fireIconHeight - scaledIconHeight,
-                176,
-                fireIconHeight - scaledIconHeight,
-                14,
-                scaledIconHeight + 2
+                    TEXTURE,
+                    x + 80,
+                    y + 18 + gearIconHeight - scaledIconHeight,
+                    176,
+                    gearIconHeight - scaledIconHeight,
+                    14,
+                    scaledIconHeight + 2
             );
         }
     }

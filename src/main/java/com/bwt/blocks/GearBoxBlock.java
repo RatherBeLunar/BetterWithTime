@@ -25,7 +25,7 @@ import net.minecraft.world.WorldAccess;
 
 import java.util.List;
 
-public class GearBoxBlock extends MechPowerBlockBase {
+public class GearBoxBlock extends Block implements MechPowerBlockBase {
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty NORTH = ConnectingBlock.NORTH;
     public static final BooleanProperty EAST = ConnectingBlock.EAST;
@@ -43,8 +43,8 @@ public class GearBoxBlock extends MechPowerBlockBase {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+        MechPowerBlockBase.super.appendProperties(builder);
         builder.add(FACING, NORTH, EAST, SOUTH, WEST, UP, DOWN, POWERED);
     }
 
@@ -56,7 +56,7 @@ public class GearBoxBlock extends MechPowerBlockBase {
 
     @Override
     public boolean isMechPowered(BlockState blockState) {
-        return super.isMechPowered(blockState) && !blockState.get(POWERED);
+        return MechPowerBlockBase.super.isMechPowered(blockState) && !blockState.get(POWERED);
     }
 
     public BlockState getNextOrientation(BlockState blockState) {

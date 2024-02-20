@@ -3,6 +3,7 @@ package com.bwt;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreen;
 import com.bwt.blocks.cauldron.CauldronScreen;
+import com.bwt.blocks.mill_stone.MillStoneScreen;
 import com.bwt.entities.BwtEntities;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -31,5 +32,6 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
+		HandledScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
 	}
 }

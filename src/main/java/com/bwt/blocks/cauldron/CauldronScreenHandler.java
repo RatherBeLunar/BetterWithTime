@@ -18,7 +18,7 @@ public class CauldronScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public CauldronScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(2));
+        this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(1));
     }
 
     public CauldronScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {

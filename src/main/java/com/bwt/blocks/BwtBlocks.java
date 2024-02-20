@@ -4,6 +4,7 @@ import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
+import com.bwt.blocks.mill_stone.MillStoneBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -74,7 +75,7 @@ public class BwtBlocks implements ModInitializer {
         .strength(0.4f)
         .luminance(Blocks.createLightLevelFromLitBlockState(15))
     );
-//	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.create());
+	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
 //	public static final Block miningChargeBlock = new MiningChargeBlock(FabricBlockSettings.create());
 //	public static final Block mouldingBlock = new MouldingBlock(FabricBlockSettings.create());
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
@@ -137,6 +138,9 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_block"), detectorBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "detector_block"), new BlockItem(detectorBlock, new FabricItemSettings()));
         Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_logic_block"), detectorLogicBlock);
+        // Mill Stone
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "mill_stone"), millStoneBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "mill_stone"), new BlockItem(millStoneBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);
@@ -146,6 +150,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(blockDispenserBlock);
             content.add(obsidianPressuePlateBlock);
             content.add(detectorBlock);
+            content.add(millStoneBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {

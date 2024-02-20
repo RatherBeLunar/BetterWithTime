@@ -3,6 +3,7 @@ package com.bwt.block_entities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.blocks.cauldron.CauldronBlockEntity;
+import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
@@ -20,6 +21,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             new Identifier("bwt", "cauldron_block_entity"),
             FabricBlockEntityTypeBuilder.create(CauldronBlockEntity::new, BwtBlocks.cauldronBlock).build()
+    );
+    public static final BlockEntityType<MillStoneBlockEntity> millStoneBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier("bwt", "mill_stone_block_entity"),
+            FabricBlockEntityTypeBuilder.create(MillStoneBlockEntity::new, BwtBlocks.millStoneBlock).build()
     );
 
     @Override

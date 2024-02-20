@@ -12,33 +12,28 @@ import net.minecraft.world.World;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class MechPowerBlockBase extends Block {
-    static public final int tickRate = 10;
+public interface MechPowerBlockBase {
+    int turnOnTickRate = 10;
+    int turnOffTickRate = 9;
 
-    static public final int turnOnTickRate = 10;
-    static public final int turnOffTickRate = 9;
+    BooleanProperty MECH_POWERED = BooleanProperty.of("mech_powered");
 
-    public static final BooleanProperty MECH_POWERED = BooleanProperty.of("mech_powered");
+    static int getTurnOnTickRate() { return turnOnTickRate; }
+    static int getTurnOffTickRate() { return turnOffTickRate; }
 
-
-    public MechPowerBlockBase(Settings settings) {
-        super(settings);
-    }
-
-    @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    default void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(MECH_POWERED);
     }
 
-    public boolean isMechPowered(BlockState blockState) {
+    default boolean isMechPowered(BlockState blockState) {
         return blockState.get(MECH_POWERED);
     }
 
-    public List<BlockPos> getValidInputFaces(BlockState blockState, BlockPos pos) {
+    default List<BlockPos> getValidInputFaces(BlockState blockState, BlockPos pos) {
         return Arrays.stream(Direction.values()).map(pos::offset).toList();
     }
 
-    public boolean isReceivingMechPower(World world, BlockState blockState, BlockPos pos) {
+    default boolean isReceivingMechPower(World world, BlockState blockState, BlockPos pos) {
         for (BlockPos inputBlockPos : getValidInputFaces(blockState, pos)) {
             BlockState inputBlockState = world.getBlockState(inputBlockPos);
             if (!(inputBlockState.isOf(BwtBlocks.axleBlock) || inputBlockState.isOf(BwtBlocks.axlePowerSourceBlock))) {

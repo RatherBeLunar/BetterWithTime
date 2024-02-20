@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
+import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
 import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
@@ -52,12 +53,14 @@ public class BetterWithTime implements ModInitializer {
 	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	private static final Identifier WOLF_LOOT_TABLE_ID = EntityType.WOLF.getLootTableId();
 
 	static {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
 		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
+		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "mill_stone"), millStoneScreenHandler);
 	}
 
 	@Override

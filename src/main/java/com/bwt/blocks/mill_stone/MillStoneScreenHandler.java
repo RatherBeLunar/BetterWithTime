@@ -1,7 +1,6 @@
-package com.bwt.blocks.abstract_cooking_pot;
+package com.bwt.blocks.mill_stone;
 
 import com.bwt.BetterWithTime;
-import com.bwt.blocks.cauldron.CauldronBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -13,40 +12,36 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.util.math.MathHelper;
 
-public class AbstractCookingPotScreenHandler extends ScreenHandler {
+public class MillStoneScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    private static final int SIZE = 27;
+    private static final int SIZE = 3;
     private final PropertyDelegate propertyDelegate;
 
-    public AbstractCookingPotScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(2));
+    public MillStoneScreenHandler(int syncId, PlayerInventory playerInventory) {
+        this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(1));
     }
 
-    public AbstractCookingPotScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
-        super(BetterWithTime.cauldronScreenHandler, syncId);
+    public MillStoneScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
+        super(BetterWithTime.millStoneScreenHandler, syncId);
         checkSize(inventory, SIZE);
         this.inventory = inventory;
         this.propertyDelegate = propertyDelegate;
         inventory.onOpen(playerInventory.player);
         this.addProperties(propertyDelegate);
 
-        int m;
-        int l;
-        // Cauldron inventory
-        for (m = 0; m < 3; ++m) {
-            for (l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(inventory, l + m * 9, 8 + l * 18, 43 + m * 18));
-            }
+        // Mill Stone inventory
+        for (int m = 0; m < 3; ++m) {
+            this.addSlot(new Slot(inventory, m, 8 + (m + 3) * 18, 43));
         }
         // Player inventory
-        for (m = 0; m < 3; ++m) {
-            for (l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 111 + m * 18));
+        for (int m = 0; m < 3; ++m) {
+            for (int l = 0; l < 9; ++l) {
+                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 76 + m * 18));
             }
         }
         // Player hotbar
-        for (m = 0; m < 9; ++m) {
-            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 169));
+        for (int m = 0; m < 9; ++m) {
+            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 134));
         }
     }
 
@@ -78,9 +73,9 @@ public class AbstractCookingPotScreenHandler extends ScreenHandler {
         return itemStack;
     }
 
-    public float getCookProgress() {
-        int cookProgress = this.propertyDelegate.get(0);
-        int timeToCompleteCook = CauldronBlockEntity.timeToCompleteCook;
-        return MathHelper.clamp((float)cookProgress / (float)timeToCompleteCook, 0.0f, 1.0f);
+    public float getGrindProgress() {
+        int grindProgress = this.propertyDelegate.get(0);
+        int timeToGrind = MillStoneBlockEntity.timeToGrind;
+        return MathHelper.clamp((float)grindProgress / (float)timeToGrind, 0.0f, 1.0f);
     }
 }
