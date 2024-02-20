@@ -1,0 +1,17 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:sunflower"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "item": "minecraft:yellow_dye"
+    }
+  ]
+}

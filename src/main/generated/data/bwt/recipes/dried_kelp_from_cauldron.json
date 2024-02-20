@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:kelp"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:dried_kelp"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:hemp"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 4,
+      "item": "bwt:hemp_fiber"
+    }
+  ]
+}

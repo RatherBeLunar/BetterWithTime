@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cocoa_beans"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:brown_dye"
+    }
+  ]
+}

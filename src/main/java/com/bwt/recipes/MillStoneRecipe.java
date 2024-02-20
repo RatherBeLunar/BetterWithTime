@@ -4,6 +4,15 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.advancement.AdvancementRequirements;
+import net.minecraft.advancement.AdvancementRewards;
+import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -12,12 +21,13 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MillStoneRecipe implements Recipe<MillStoneBlockEntity.Inventory> {
@@ -40,7 +50,7 @@ public class MillStoneRecipe implements Recipe<MillStoneBlockEntity.Inventory> {
 
     @Override
     public RecipeSerializer<?> getSerializer() {
-        return BwtRecipes.CAULDRON_RECIPE_SERIALIZER;
+        return BwtRecipes.MILL_STONE_RECIPE_SERIALIZER;
     }
 
     @Override
@@ -174,5 +184,117 @@ public class MillStoneRecipe implements Recipe<MillStoneBlockEntity.Inventory> {
 
     public interface RecipeFactory<T extends MillStoneRecipe> {
         T create(String group, CraftingRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results);
+    }
+
+    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
+        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
+        protected DefaultedList<IngredientWithCount> ingredients = DefaultedList.of();
+        protected DefaultedList<ItemStack> results = DefaultedList.of();
+        protected final Map<String, AdvancementCriterion<?>> criteria = new LinkedHashMap<>();
+        @Nullable
+        protected String group;
+
+        public static JsonBuilder create() {
+            return new JsonBuilder();
+        }
+
+        MillStoneRecipe.RecipeFactory<MillStoneRecipe> getRecipeFactory() {
+            return MillStoneRecipe::new;
+        }
+
+        public JsonBuilder category(CraftingRecipeCategory category) {
+            this.category = category;
+            return this;
+        }
+
+        public JsonBuilder ingredients(IngredientWithCount... ingredients) {
+            for (IngredientWithCount ingredient : ingredients) {
+                this.ingredient(ingredient);
+            }
+            return this;
+        }
+
+        public JsonBuilder ingredient(IngredientWithCount ingredient) {
+            this.ingredients.add(ingredient);
+            return this;
+        }
+
+        public JsonBuilder ingredient(ItemStack itemStack) {
+            this.criterion(RecipeProvider.hasItem(itemStack.getItem()), RecipeProvider.conditionsFromItem(itemStack.getItem()));
+            return this.ingredient(IngredientWithCount.fromStack(itemStack));
+        }
+
+        public JsonBuilder ingredient(Item item, int count) {
+            return this.ingredient(new ItemStack(item, count));
+        }
+
+        public JsonBuilder ingredient(Item item) {
+            return this.ingredient(item, 1);
+        }
+
+        public JsonBuilder results(ItemStack... itemStacks) {
+            this.results.addAll(Arrays.asList(itemStacks));
+            return this;
+        }
+
+        public JsonBuilder result(ItemStack itemStack) {
+            this.results.add(itemStack);
+            return this;
+        }
+
+        public JsonBuilder result(Item item, int count) {
+            this.results.add(new ItemStack(item, count));
+            return this;
+        }
+
+        public JsonBuilder result(Item item) {
+            return this.result(item, 1);
+        }
+
+        @Override
+        public JsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
+            this.criteria.put(string, advancementCriterion);
+            return this;
+        }
+
+        @Override
+        public JsonBuilder group(@Nullable String string) {
+            this.group = string;
+            return this;
+        }
+
+        @Override
+        public Item getOutputItem() {
+            return results.get(0).getItem();
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter) {
+            this.offerTo(exporter,
+                    RecipeProvider.getItemPath(results.get(0).getItem())
+                    + "_from_milling_"
+                    + RecipeProvider.getItemPath(this.ingredients.get(0).getMatchingStacks().get(0).getItem())
+            );
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            this.validate(recipeId);
+            Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+            this.criteria.forEach(advancementBuilder::criterion);
+            MillStoneRecipe millStoneRecipe = this.getRecipeFactory().create(
+                    Objects.requireNonNullElse(this.group, ""),
+                    this.category,
+                    this.ingredients,
+                    this.results
+            );
+            exporter.accept(recipeId, millStoneRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/" + this.category.asString() + "/")));
+        }
+
+        private void validate(Identifier recipeId) {
+            if (this.criteria.isEmpty()) {
+                throw new IllegalStateException("No way of obtaining recipe " + recipeId);
+            }
+        }
     }
 }

@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:azure_bluet"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:light_gray_dye"
+    }
+  ]
+}

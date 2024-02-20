@@ -4,10 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
-import net.minecraft.item.FoodComponents;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
@@ -22,26 +19,32 @@ public class BwtItems implements ModInitializer {
 //	public static final Item coalDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "coal_dust"), new CoalDustItem(new FabricItemSettings()));
 //	public static final Item compositeBowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "composite_bow"), new CompositeBowItem(new FabricItemSettings()));
 //	public static final Item concentratedHellfireItem = Registry.register(Registries.ITEM, new Identifier("bwt", "concentrated_hellfire"), new ConcentratedHellfireItem(new FabricItemSettings()));
-public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolfchop"), new Item(
+public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolf_chop"), new Item(
         new FabricItemSettings()
                 .food(FoodComponents.COOKED_PORKCHOP))
 );
-//	public static final Item donutItem = Registry.register(Registries.ITEM, new Identifier("bwt", "donut"), new DonutItem(new FabricItemSettings()));
+	public static final Item donutItem = Registry.register(Registries.ITEM, new Identifier("bwt", "donut"), new Item(new FabricItemSettings()
+            .food(new FoodComponent.Builder()
+                    .hunger(1)
+                    .saturationModifier(0.5f)
+                    .alwaysEdible()
+                    .build())
+    ));
 //	public static final Item dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DungItem(new FabricItemSettings()));
 //	public static final Item dynamiteItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dynamite"), new DynamiteItem(new FabricItemSettings()));
 //	public static final Item elementItem = Registry.register(Registries.ITEM, new Identifier("bwt", "element"), new ElementItem(new FabricItemSettings()));
 //	public static final Item enderSpectaclesItem = Registry.register(Registries.ITEM, new Identifier("bwt", "ender_spectacles"), new EnderSpectaclesItem(new FabricItemSettings()));
 //	public static final Item fabricItem = Registry.register(Registries.ITEM, new Identifier("bwt", "fabric"), new FabricItem(new FabricItemSettings()));
 //	public static final Item filamentItem = Registry.register(Registries.ITEM, new Identifier("bwt", "filament"), new FilamentItem(new FabricItemSettings()));
-//	public static final Item flourItem = Registry.register(Registries.ITEM, new Identifier("bwt", "flour"), new FlourItem(new FabricItemSettings()));
+	public static final Item flourItem = Registry.register(Registries.ITEM, new Identifier("bwt", "flour"), new Item(new FabricItemSettings()));
 //	public static final Item foulFoodItem = Registry.register(Registries.ITEM, new Identifier("bwt", "foul_food"), new FoulFoodItem(new FabricItemSettings()));
 //	public static final Item fuseItem = Registry.register(Registries.ITEM, new Identifier("bwt", "fuse"), new FuseItem(new FabricItemSettings()));
-//	public static final Item gearItem = Registry.register(Registries.ITEM, new Identifier("bwt", "gear"), new GearItem(new FabricItemSettings()));
+	public static final Item gearItem = Registry.register(Registries.ITEM, new Identifier("bwt", "gear"), new Item(new FabricItemSettings()));
 //	public static final Item glueItem = Registry.register(Registries.ITEM, new Identifier("bwt", "glue"), new GlueItem(new FabricItemSettings()));
 //	public static final Item groundNetherrackItem = Registry.register(Registries.ITEM, new Identifier("bwt", "ground_netherrack"), new GroundNetherrackItem(new FabricItemSettings()));
 //	public static final Item haftItem = Registry.register(Registries.ITEM, new Identifier("bwt", "haft"), new HaftItem(new FabricItemSettings()));
 //	public static final Item hellfireDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hellfire_dust"), new HellfireDustItem(new FabricItemSettings()));
-//	public static final Item hempFiberItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_fiber"), new HempFiberItem(new FabricItemSettings()));
+	public static final Item hempFiberItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_fiber"), new Item(new FabricItemSettings()));
 	public static final Item hempItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp"), new Item(new FabricItemSettings()));
 	public static final Item hempSeedsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "hemp_seeds"), new HempSeedsItem(BwtBlocks.hempCropBlock, new FabricItemSettings()));
 //	public static final Item kibbleItem = Registry.register(Registries.ITEM, new Identifier("bwt", "kibble"), new KibbleItem(new FabricItemSettings()));
@@ -58,7 +61,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item rottedArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rotted_arrow"), new RottedArrowItem(new FabricItemSettings()));
 //	public static final Item sailItem = Registry.register(Registries.ITEM, new Identifier("bwt", "sail"), new SailItem(new FabricItemSettings()));
 //	public static final Item sawDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "saw_dust"), new SawDustItem(new FabricItemSettings()));
-//	public static final Item scouredLeatherItem = Registry.register(Registries.ITEM, new Identifier("bwt", "scoured_leather"), new ScouredLeatherItem(new FabricItemSettings()));
+	public static final Item scouredLeatherItem = Registry.register(Registries.ITEM, new Identifier("bwt", "scoured_leather"), new Item(new FabricItemSettings()));
 //	public static final Item soulforgedSteelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soulforged_steel"), new SoulforgedSteelItem(new FabricItemSettings()));
 //	public static final Item soulDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soul_dust"), new SoulDustItem(new FabricItemSettings()));
 //	public static final Item soapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soap"), new SoapItem(new FabricItemSettings()));
@@ -73,7 +76,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
     public static final Item windmillItem = Registry.register(Registries.ITEM, new Identifier("bwt", "windmill"), new WindmillItem(
             new FabricItemSettings().maxCount(1)
     ));
-	public static final Item wolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wolfchop"), new Item(
+	public static final Item wolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wolf_chop"), new Item(
             new FabricItemSettings()
                     .food(FoodComponents.PORKCHOP))
     );

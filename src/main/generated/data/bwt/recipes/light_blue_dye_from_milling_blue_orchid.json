@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:blue_orchid"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:light_blue_dye"
+    }
+  ]
+}

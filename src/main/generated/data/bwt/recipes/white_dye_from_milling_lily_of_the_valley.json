@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:lily_of_the_valley"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:white_dye"
+    }
+  ]
+}

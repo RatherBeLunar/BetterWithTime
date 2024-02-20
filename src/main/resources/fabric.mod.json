@@ -1,6 +1,6 @@
 {
 	"schemaVersion": 1,
-	"id": "betterwithtime",
+	"id": "bwt",
 	"version": "${version}",
 	"name": "BetterWithTime",
 	"description": "This is an example description! Tell everyone what your mod is about!",

@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:wither_rose"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:black_dye"
+    }
+  ]
+}

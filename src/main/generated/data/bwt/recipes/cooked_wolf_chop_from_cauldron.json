@@ -4,13 +4,13 @@
   "ingredients": [
     {
       "ingredient": {
-        "item": "bwt:wolfchop"
+        "item": "bwt:wolf_chop"
       }
     }
   ],
   "results": [
     {
-      "item": "bwt:cooked_wolfchop"
+      "item": "bwt:cooked_wolf_chop"
     }
   ]
 }

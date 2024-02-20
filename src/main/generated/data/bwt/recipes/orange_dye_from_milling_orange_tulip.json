@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:orange_tulip"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:orange_dye"
+    }
+  ]
+}

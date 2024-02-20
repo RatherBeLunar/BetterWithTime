@@ -17,6 +17,10 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     public static final IngredientWithCount.Serializer SERIALIZER = new IngredientWithCount.Serializer();
     public static final IngredientWithCount EMPTY = new IngredientWithCount(Ingredient.EMPTY, 0);
 
+    public static IngredientWithCount fromStack(ItemStack stack) {
+        return new IngredientWithCount(Ingredient.ofStacks(stack), stack.getCount());
+    }
+
     @Override
     public boolean test(ItemStack stack) {
         if (!ingredient.test(stack)) return false;

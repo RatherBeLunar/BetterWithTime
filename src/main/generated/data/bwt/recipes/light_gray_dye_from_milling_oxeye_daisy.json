@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:oxeye_daisy"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:light_gray_dye"
+    }
+  ]
+}

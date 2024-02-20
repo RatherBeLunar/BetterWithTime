@@ -1,0 +1,17 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:bone"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "item": "minecraft:bone_meal"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:sugar_cane"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:sugar"
+    }
+  ]
+}
