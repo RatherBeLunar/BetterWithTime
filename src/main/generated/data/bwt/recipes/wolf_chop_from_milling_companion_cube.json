@@ -1,0 +1,24 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:companion_cube"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:wolf_chop"
+    },
+    {
+      "count": 3,
+      "item": "minecraft:red_dye"
+    },
+    {
+      "count": 10,
+      "item": "minecraft:string"
+    }
+  ]
+}

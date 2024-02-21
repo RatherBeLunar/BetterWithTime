@@ -1,5 +1,6 @@
 package com.bwt.generation;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.CauldronRecipe;
 import com.bwt.recipes.MillStoneRecipe;
@@ -69,6 +70,8 @@ public class RecipeGenerator extends FabricRecipeProvider {
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.WHEAT).result(BwtItems.flourItem).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.SUGAR_CANE).result(Items.SUGAR).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.BONE).result(Items.BONE_MEAL, 3).offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(BwtBlocks.companionCubeBlock.asItem())
+                .result(BwtItems.wolfChopItem).result(Items.RED_DYE, 3).result(Items.STRING, 10).offerTo(exporter);
 
         // Dyes
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.INK_SAC).result(Items.BLACK_DYE).offerTo(exporter);
