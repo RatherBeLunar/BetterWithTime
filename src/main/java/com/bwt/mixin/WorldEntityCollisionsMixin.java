@@ -2,21 +2,19 @@ package com.bwt.mixin;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserPlacementContext;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.item.BlockItem;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.item.ItemPlacementContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockItem.class)
 public abstract class WorldEntityCollisionsMixin {
-    @Redirect(method = "canPlace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canPlace(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Z"))
-    public boolean canPlace(World instance, BlockState state, BlockPos pos, ShapeContext shapeContext) {
-        if (shapeContext instanceof BlockDispenserPlacementContext) {
-            return true;
+    @Inject(method = "canPlace", at = @At(value = "HEAD"), cancellable = true)
+    public void canPlace(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
+        if (context instanceof BlockDispenserPlacementContext) {
+            cir.setReturnValue(true);
         }
-        return instance.canPlace(state, pos, shapeContext);
     }
 }
