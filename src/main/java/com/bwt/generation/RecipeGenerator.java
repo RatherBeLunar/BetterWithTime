@@ -8,6 +8,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.CampfireCookingRecipe;
@@ -15,6 +16,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.tag.ItemTags;
 
 public class RecipeGenerator extends FabricRecipeProvider {
     public RecipeGenerator(FabricDataOutput generator) {
@@ -25,6 +27,19 @@ public class RecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
         generateMillStoneRecipes(exporter);
         generateFoods(exporter);
+        generateCraftingRecipes(exporter);
+    }
+
+    public void generateCraftingRecipes(RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.gearItem, 2)
+                .pattern(" s ")
+                .pattern("sps")
+                .pattern(" s ")
+                .input('s', Items.STICK)
+                .input('p', ItemTags.PLANKS)
+                .criterion(FabricRecipeProvider.hasItem(Items.STICK), FabricRecipeProvider.conditionsFromItem(Items.STICK))
+                .criterion("has_planks", FabricRecipeProvider.conditionsFromTag(ItemTags.PLANKS))
+                .offerTo(exporter);
     }
 
     public void addNewGenericFood(Item input, Item output, RecipeExporter exporter) {
