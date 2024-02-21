@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/orientable",
+  "textures": {
+    "front": "bwt:block/companion_cube_front",
+    "side": "bwt:block/companion_cube_side",
+    "top": "bwt:block/companion_cube_top"
+  }
+}

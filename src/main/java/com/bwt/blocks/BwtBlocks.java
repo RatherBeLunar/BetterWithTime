@@ -50,7 +50,7 @@ public class BwtBlocks implements ModInitializer {
     );
 //	public static final Block canvasBlock = new CanvasBlock(FabricBlockSettings.create());
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
-//	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.create());
+	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL));
 //	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
 //	public static final Block cornerBlock = new CornerBlock(FabricBlockSettings.create());
 //	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
@@ -141,6 +141,9 @@ public class BwtBlocks implements ModInitializer {
         // Mill Stone
         Registry.register(Registries.BLOCK, new Identifier("bwt", "mill_stone"), millStoneBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "mill_stone"), new BlockItem(millStoneBlock, new FabricItemSettings()));
+        // Companion Cube
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_cube"), companionCubeBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "companion_cube"), new BlockItem(companionCubeBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(gearBoxBlock);

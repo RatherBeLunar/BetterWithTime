@@ -1,11 +1,10 @@
 package com.bwt.generation;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.data.client.BlockStateModelGenerator;
-import net.minecraft.data.client.ItemModelGenerator;
-import net.minecraft.data.client.Models;
+import net.minecraft.data.client.*;
 import net.minecraft.item.Items;
 
 public class ModelGenerator extends FabricModelProvider {
@@ -15,7 +14,16 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        // ...
+        TexturedModel.ORIENTABLE.upload(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.companionCubeBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(BwtBlocks.companionCubeBlock)
+                        )
+                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+        );
     }
 
     @Override

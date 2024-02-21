@@ -4,16 +4,20 @@ import com.bwt.blocks.block_dispenser.behavior.*;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtTags;
+import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.*;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -21,14 +25,17 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.TypeFilter;
 import net.minecraft.util.Util;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,9 +43,14 @@ public class BlockDispenserBlock extends DispenserBlock {
     private static final Map<Item, DispenserBehavior> BLOCK_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new BlockDispenserBehavior()));
     private static final Map<Item, DispenserBehavior> ITEM_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultItemDispenserBehavior()));
     private static final Map<Block, BlockInhaleBehavior> BLOCK_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultBlockInhaleBehavior()));
+    private static final Map<EntityType<? extends Entity>, EntityInhaleBehavior> ENTITY_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(null));
 
     public BlockDispenserBlock(Settings settings) {
         super(settings);
+    }
+
+    public static void registerEntityInhaleBehavior(EntityType<?> entityType, EntityInhaleBehavior behavior) {
+        ENTITY_INHALE_BEHAVIORS.put(entityType, behavior);
     }
 
     @Override
@@ -139,9 +151,15 @@ public class BlockDispenserBlock extends DispenserBlock {
 
         BlockPos targetPos = pos.offset(state.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
+        Optional<? extends Entity> optionalEntity = this.getInhaleableEntity(world, targetPos);
+        if (optionalEntity.isPresent()) {
+            Entity entity = optionalEntity.get();
+            inhaleEntity(blockEntity, entity);
+            return;
+        }
 
         BlockPointer blockPointer = new BlockPointer(world, pos, state, blockEntity);
-        BlockInhaleBehavior inhaleBehavior = this.getInhaleBehaviorForItem(world, blockEntity, targetState);
+        BlockInhaleBehavior inhaleBehavior = this.getInhaleBehaviorForItem(targetState);
         if (inhaleBehavior == BlockInhaleBehavior.NOOP) {
             return;
         }
@@ -179,7 +197,25 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
     }
 
-    protected BlockInhaleBehavior getInhaleBehaviorForItem(ServerWorld world, BlockDispenserBlockEntity blockEntity, BlockState targetState) {
+    protected Optional<Entity> getInhaleableEntity(World world, BlockPos targetPos) {
+        ArrayList<Entity> entities = Lists.newArrayList();
+        world.collectEntitiesByType(
+                TypeFilter.instanceOf(Entity.class),
+                new Box(targetPos),
+                EntityPredicates.EXCEPT_SPECTATOR.and(entity -> entity.getType().isIn(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)),
+                entities
+        );
+        return entities.stream().findAny();
+    }
+
+    protected <T extends Entity> void inhaleEntity(BlockDispenserBlockEntity blockEntity, T entity) {
+        EntityInhaleBehavior entityInhaleBehavior = ENTITY_INHALE_BEHAVIORS.get(entity.getType());
+        entityInhaleBehavior.inhale(entity);
+        blockEntity.insert(entityInhaleBehavior.getInhaledItems(entity).copy());
+        entityInhaleBehavior.getDroppedItems(entity).forEach(entity::dropStack);
+    }
+
+    protected BlockInhaleBehavior getInhaleBehaviorForItem(BlockState targetState) {
         if (targetState.isIn(BwtTags.BLOCK_DISPENSER_INHALE_NOOP)) {
             return BlockInhaleBehavior.NOOP;
         }

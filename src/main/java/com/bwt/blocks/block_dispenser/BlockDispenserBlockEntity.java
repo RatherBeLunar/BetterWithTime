@@ -107,7 +107,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             if (invStack.isEmpty()) {
                 return true;
             }
-            if (invStack.getItem() != stack.getItem()) {
+            if (!ItemStack.canCombine(invStack, stack)) {
                 continue;
             }
             count -= (invStack.getMaxCount() - invStack.getCount());
@@ -127,7 +127,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ )
         {
             ItemStack invStack = inventory.get(currentSlot);
-            if (invStack.isOf(stack.getItem())) {
+            if (ItemStack.canCombine(invStack, stack)) {
                 int space = invStack.getMaxCount() - invStack.getCount();
                 int inserted = Math.min(space, stack.getCount());
                 invStack.increment(inserted);
