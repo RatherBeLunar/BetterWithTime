@@ -15,6 +15,7 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldView;
 
 public class HempCropBlock extends CropBlock {
     private static final VoxelShape[] AGE_TO_SHAPE = new VoxelShape[]{
@@ -69,6 +70,11 @@ public class HempCropBlock extends CropBlock {
     }
 
     @Override
+    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
+        return world.getBlockState(pos.down()).isOf(this) || super.canPlaceAt(state, world, pos);
+    }
+
+    @Override
     protected int getGrowthAmount(World world) {
         return 1;
     }
@@ -83,7 +89,12 @@ public class HempCropBlock extends CropBlock {
             || (upState.isOf(BwtBlocks.lightBlockBlock) && upState.get(LightBlock.LIT))
             || (up2State.isOf(BwtBlocks.lightBlockBlock) && up2State.get(LightBlock.LIT))
         ) {
-            super.randomTick(state, world, pos, random);
+            if (world.getBaseLightLevel(pos, 0) >= 9
+                && (this.getAge(state)) < this.getMaxAge()
+                && random.nextInt((int)(25.0f / (CropBlock.getAvailableMoisture(this, world, pos))) + 1) == 0
+            ) {
+                applyGrowth(world, pos, state);
+            }
         }
     }
 
