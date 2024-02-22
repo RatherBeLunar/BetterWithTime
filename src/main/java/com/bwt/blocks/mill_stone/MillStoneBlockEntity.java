@@ -92,10 +92,9 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
 
         // Get biggest
         Iterator<RecipeEntry<MillStoneRecipe>> matchIterator = matches.stream().sorted(
-                Comparator.comparing(
-                        (RecipeEntry<MillStoneRecipe> match)
-                                -> match.value().getIngredients().size()
-                ).reversed()
+                Comparator.comparing((RecipeEntry<MillStoneRecipe> match) -> match.value().getIngredients().size())
+                        .thenComparing((RecipeEntry<MillStoneRecipe> match) -> match.value().getResults().size())
+                .reversed()
         ).iterator();
 
         while (matchIterator.hasNext()) {

@@ -49,9 +49,14 @@ public class GearBoxBlock extends Block implements MechPowerBlockBase {
     }
 
     @Override
-    public List<BlockPos> getValidInputFaces(BlockState blockState, BlockPos pos) {
+    public List<BlockPos> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
         Direction direction = blockState.get(FACING);
         return List.of(pos.offset(direction));
+    }
+
+    @Override
+    public List<BlockPos> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
+        return List.of();
     }
 
     @Override

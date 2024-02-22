@@ -111,10 +111,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCooking
 
     @Override
     public ItemStack getResult(DynamicRegistryManager registryManager) {
-        if (results.size() == 1) {
-            return results.get(0);
-        }
-        throw new IllegalCallerException("Too many results. Use getResults instead");
+        return results.get(0);
     }
 
 

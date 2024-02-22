@@ -29,15 +29,22 @@ public interface MechPowerBlockBase {
         return blockState.get(MECH_POWERED);
     }
 
-    default List<BlockPos> getValidInputFaces(BlockState blockState, BlockPos pos) {
+    default List<BlockPos> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
         return Arrays.stream(Direction.values()).map(pos::offset).toList();
     }
 
+    default List<BlockPos> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
+        return Arrays.stream(Direction.values())
+                .filter(direction -> !direction.equals(Direction.DOWN))
+                .map(pos::offset)
+                .toList();
+    }
+
     default boolean isReceivingMechPower(World world, BlockState blockState, BlockPos pos) {
-        for (BlockPos inputBlockPos : getValidInputFaces(blockState, pos)) {
+        for (BlockPos inputBlockPos : getValidAxleInputFaces(blockState, pos)) {
             BlockState inputBlockState = world.getBlockState(inputBlockPos);
             if (!(inputBlockState.isOf(BwtBlocks.axleBlock) || inputBlockState.isOf(BwtBlocks.axlePowerSourceBlock))) {
-                return false;
+                continue;
             }
 
             Vec3i directionVector = pos.subtract(inputBlockPos);
@@ -49,6 +56,12 @@ public interface MechPowerBlockBase {
             Direction.Axis axis = direction.getAxis();
             if (inputBlockState.get(AxleBlock.AXIS).equals(axis) && AxleBlock.isPowered(inputBlockState)) {
                 return true;
+            }
+        }
+        for (BlockPos handCrankPos : getValidHandCrankFaces(blockState, pos)) {
+            BlockState handCrankBlockState = world.getBlockState(handCrankPos);
+            if (handCrankBlockState.isOf(BwtBlocks.handCrankBlock) && HandCrankBlock.isPowered(handCrankBlockState)) {
+               return true;
             }
         }
         return false;

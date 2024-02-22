@@ -60,7 +60,12 @@ public class BwtBlocks implements ModInitializer {
         .hardness(2F)
     );
 //	public static final Block grateBlock = new GrateBlock(FabricBlockSettings.create());
-//	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create());
+	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create()
+        .hardness(0.5f)
+        .sounds(BlockSoundGroup.WOOD)
+        .solid()
+        .nonOpaque()
+    );
 	public static final Block hempCropBlock = new HempCropBlock(FabricBlockSettings.copyOf(Blocks.SUGAR_CANE));
 	public static final Block hibachiBlock = new HibachiBlock(FabricBlockSettings.create()
         .hardness(3.5f)
@@ -144,20 +149,28 @@ public class BwtBlocks implements ModInitializer {
         // Companion Cube
         Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_cube"), companionCubeBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "companion_cube"), new BlockItem(companionCubeBlock, new FabricItemSettings()));
+        // Hand Crank
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "hand_crank"), handCrankBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "hand_crank"), new BlockItem(handCrankBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
-            content.add(gearBoxBlock);
             content.add(axleBlock);
+            content.add(gearBoxBlock);
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
             content.add(obsidianPressuePlateBlock);
             content.add(detectorBlock);
             content.add(millStoneBlock);
+            content.add(handCrankBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(cauldronBlock);
+        });
+
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {
+            content.add(companionCubeBlock);
         });
     }
 }

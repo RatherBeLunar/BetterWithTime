@@ -38,7 +38,7 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
     }
 
     @Override
-    public List<BlockPos> getValidInputFaces(BlockState blockState, BlockPos pos) {
+    public List<BlockPos> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
         return List.of(pos.up(), pos.down());
     }
 

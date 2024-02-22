@@ -118,10 +118,7 @@ public class MillStoneRecipe implements Recipe<MillStoneBlockEntity.Inventory> {
 
     @Override
     public ItemStack getResult(DynamicRegistryManager registryManager) {
-        if (results.size() == 1) {
-            return results.get(0);
-        }
-        throw new IllegalCallerException("Too many results. Use getResults instead");
+        return results.get(0);
     }
 
     public static class Serializer implements RecipeSerializer<MillStoneRecipe> {
