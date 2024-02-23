@@ -58,6 +58,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item potashItem = Registry.register(Registries.ITEM, new Identifier("bwt", "potash"), new PotashItem(new FabricItemSettings()));
 //	public static final Item redstoneEyeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "redstone_eye"), new RedstoneEyeItem(new FabricItemSettings()));
 //	public static final Item refinedToolsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_tools"), new RefinedToolsItem(new FabricItemSettings()));
+	public static final Item ropeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rope"), new RopeItem(new FabricItemSettings()));
 //	public static final Item rottedArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rotted_arrow"), new RottedArrowItem(new FabricItemSettings()));
 //	public static final Item sailItem = Registry.register(Registries.ITEM, new Identifier("bwt", "sail"), new SailItem(new FabricItemSettings()));
 //	public static final Item sawDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "saw_dust"), new SawDustItem(new FabricItemSettings()));
@@ -96,10 +97,18 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(content -> {
             content.addAfter(Items.COOKED_PORKCHOP, wolfChopItem);
             content.addAfter(wolfChopItem, cookedWolfChopItem);
+            content.addAfter(Items.BREAD, donutItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.WHEAT_SEEDS, hempSeedsItem);
             content.addAfter(Items.WHEAT, hempItem);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(content -> {
+            content.add(hempFiberItem);
+            content.add(ropeItem);
+            content.add(gearItem);
+            content.add(flourItem);
+            content.add(scouredLeatherItem);
         });
     }
 }

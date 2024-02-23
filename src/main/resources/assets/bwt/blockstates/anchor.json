@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=up": {
+      "model": "bwt:block/anchor"
+    },
+    "facing=down": {
+      "model": "bwt:block/anchor",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "bwt:block/anchor",
+      "x": 90,
+      "y": 90
+    },
+    "facing=west": {
+      "model": "bwt:block/anchor",
+      "x": 90,
+      "y": 270
+    },
+    "facing=north": {
+      "model": "bwt:block/anchor",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "bwt:block/anchor",
+      "x": 270
+    }
+  }
+}

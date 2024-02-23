@@ -21,7 +21,12 @@ import net.minecraft.util.Identifier;
 
 public class BwtBlocks implements ModInitializer {
 
-//	public static final Block anchorBlock = new AnchorBlock(FabricBlockSettings.create());
+	public static final Block anchorBlock = new AnchorBlock(FabricBlockSettings.create()
+        .hardness(2f)
+        .sounds(BlockSoundGroup.STONE)
+        .nonOpaque()
+        .solid()
+    );
 //	public static final Block anvilBlock = new AnvilBlock(FabricBlockSettings.create());
 	public static final Block axleBlock = new AxleBlock(FabricBlockSettings.create()
         .hardness(2F)
@@ -90,7 +95,10 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
 //	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
 //	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.create());
-//	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create());
+	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create()
+        .hardness(0.5f)
+        .sounds(BlockSoundGroup.GRASS)
+    );
 //	public static final Block sawBlock = new SawBlock(FabricBlockSettings.create());
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
 //	public static final Block slatsBlock = new SlatsBlock(FabricBlockSettings.create());
@@ -108,9 +116,6 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block woodenDetectorRailBlock = new WoodenDetectorRailBlock(FabricBlockSettings.create());
 //	public static final Block woodenSidingBlock = new WoodenSidingBlock(FabricBlockSettings.create());
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
-
-
-
 
 
     @Override
@@ -152,6 +157,11 @@ public class BwtBlocks implements ModInitializer {
         // Hand Crank
         Registry.register(Registries.BLOCK, new Identifier("bwt", "hand_crank"), handCrankBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "hand_crank"), new BlockItem(handCrankBlock, new FabricItemSettings()));
+        // Anchor
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "anchor"), anchorBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "anchor"), new BlockItem(anchorBlock, new FabricItemSettings()));
+        // Rope
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "rope"), ropeBlock);
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);

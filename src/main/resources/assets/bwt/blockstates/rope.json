@@ -1,0 +1,15 @@
+{
+  "multipart": [
+    {
+      "apply": { "model": "bwt:block/rope" }
+    },
+    {
+      "when": { "anchored_above": "true" },
+      "apply": { "model": "bwt:block/rope_extension_above" }
+    },
+    {
+      "when": { "anchored_below": "true" },
+      "apply": { "model": "bwt:block/rope_extension_below" }
+    }
+  ]
+}

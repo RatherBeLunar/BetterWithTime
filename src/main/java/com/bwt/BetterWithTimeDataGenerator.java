@@ -1,5 +1,6 @@
 package com.bwt;
 
+import com.bwt.generation.BlockTagGenerator;
 import com.bwt.generation.EntityTypeTagGenerator;
 import com.bwt.generation.ModelGenerator;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
@@ -14,5 +15,6 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(RecipeGenerator::new);
 		pack.addProvider(ModelGenerator::new);
 		pack.addProvider(EntityTypeTagGenerator::new);
+		pack.addProvider(BlockTagGenerator::new);
 	}
 }
