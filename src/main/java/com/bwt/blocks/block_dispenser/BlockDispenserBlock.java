@@ -202,7 +202,10 @@ public class BlockDispenserBlock extends DispenserBlock {
         world.collectEntitiesByType(
                 TypeFilter.instanceOf(Entity.class),
                 new Box(targetPos),
-                EntityPredicates.EXCEPT_SPECTATOR.and(entity -> entity.getType().isIn(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)),
+                EntityPredicates.EXCEPT_SPECTATOR.and(entity ->
+                        entity.getType().isIn(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)
+                        && ENTITY_INHALE_BEHAVIORS.getOrDefault(entity.getType(), EntityInhaleBehavior.NOOP).canInhale(entity)
+                ),
                 entities
         );
         return entities.stream().findAny();

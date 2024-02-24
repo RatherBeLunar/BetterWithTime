@@ -18,6 +18,7 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
         getOrCreateTagBuilder(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)
                 .add(EntityType.WOLF)
                 .add(EntityType.CHICKEN)
+                .add(EntityType.SHEEP)
                 .add(EntityType.MINECART)
                 .add(EntityType.FURNACE_MINECART)
                 .add(EntityType.CHEST_MINECART)
