@@ -1,4 +1,4 @@
-package com.bwt.blocks.block_dispenser.behavior;
+package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
@@ -9,16 +9,18 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.WolfEntity;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Util;
 import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Map;
+import java.util.stream.Stream;
 
 public interface EntityInhaleBehavior {
     default ItemStack getInhaledItems(Entity entity) {
@@ -42,8 +44,6 @@ public interface EntityInhaleBehavior {
 
     static void registerBehaviors() {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.WOLF, new EntityInhaleBehavior() {
-            Text name;
-
             @Override
             public boolean canInhale(Entity entity) {
                 return (entity instanceof WolfEntity wolf) && !wolf.isBaby();
@@ -54,16 +54,12 @@ public interface EntityInhaleBehavior {
                 WolfEntity wolf = ((WolfEntity) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
                 wolf.playSound(SoundEvents.ENTITY_WOLF_DEATH, 0.4f, wolf.getSoundPitch());
-                name = wolf.getCustomName();
             }
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
                 ItemStack itemStack = new ItemStack(BwtBlocks.companionCubeBlock);
-                if (name != null) {
-                    itemStack.setCustomName(name);
-                    name = null;
-                }
+                itemStack.setCustomName(entity.getCustomName());
                 return itemStack;
             }
 
@@ -73,8 +69,6 @@ public interface EntityInhaleBehavior {
             }
         });
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.CHICKEN, new EntityInhaleBehavior() {
-            Text name;
-
             @Override
             public boolean canInhale(Entity entity) {
                 return (entity instanceof ChickenEntity chicken) && !chicken.isBaby();
@@ -87,16 +81,12 @@ public interface EntityInhaleBehavior {
                 }
                 chicken.remove(Entity.RemovalReason.KILLED);
                 chicken.playSound(SoundEvents.ENTITY_CHICKEN_DEATH, 0.4f, chicken.getSoundPitch());
-                name = chicken.getCustomName();
             }
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
                 ItemStack itemStack = new ItemStack(Items.EGG);
-                if (name != null) {
-                    itemStack.setCustomName(name);
-                    name = null;
-                }
+                itemStack.setCustomName(entity.getCustomName());
                 return itemStack;
             }
 
@@ -148,5 +138,60 @@ public interface EntityInhaleBehavior {
                 return DefaultedList.copyOf(ItemStack.EMPTY, new ItemStack(Items.STRING));
             }
         });
+
+        EntityInhaleBehavior minecartBehavior = new EntityInhaleBehavior() {
+            @Override
+            public boolean canInhale(Entity entity) {
+                return (entity instanceof AbstractMinecartEntity minecart) && minecart.isAlive();
+            }
+
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof AbstractMinecartEntity minecart)) {
+                    return;
+                }
+                minecart.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+        };
+        Stream.of(
+                EntityType.MINECART,
+                EntityType.CHEST_MINECART,
+                EntityType.COMMAND_BLOCK_MINECART,
+                EntityType.COMMAND_BLOCK_MINECART,
+                EntityType.FURNACE_MINECART,
+                EntityType.HOPPER_MINECART,
+                EntityType.TNT_MINECART
+        ).forEach(minecart -> BlockDispenserBlock.registerEntityInhaleBehavior(minecart, minecartBehavior));
+
+
+        EntityInhaleBehavior boatBehavior = new EntityInhaleBehavior() {
+            @Override
+            public boolean canInhale(Entity entity) {
+                return (entity instanceof BoatEntity boat) && boat.isAlive();
+            }
+
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof BoatEntity boat)) {
+                    return;
+                }
+                boat.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+        };
+        Stream.of(EntityType.BOAT, EntityType.CHEST_BOAT).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
     }
 }

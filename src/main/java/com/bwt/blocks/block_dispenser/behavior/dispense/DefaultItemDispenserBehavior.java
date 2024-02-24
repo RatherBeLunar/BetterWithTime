@@ -1,4 +1,4 @@
-package com.bwt.blocks.block_dispenser.behavior;
+package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;

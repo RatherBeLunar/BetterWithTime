@@ -1,8 +1,7 @@
 {
   "variants": {
     "facing=down": {
-      "model": "bwt:block/block_dispenser",
-      "x": 90
+      "model": "bwt:block/block_dispenser_down"
     },
     "facing=east": {
       "model": "bwt:block/block_dispenser",
@@ -16,8 +15,7 @@
       "y": 180
     },
     "facing=up": {
-      "model": "bwt:block/block_dispenser",
-      "x": 270
+      "model": "bwt:block/block_dispenser_up"
     },
     "facing=west": {
       "model": "bwt:block/block_dispenser",

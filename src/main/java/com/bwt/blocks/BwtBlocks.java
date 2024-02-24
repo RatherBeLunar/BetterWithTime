@@ -39,7 +39,7 @@ public class BwtBlocks implements ModInitializer {
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axleBlock.getSettings()));
 //	public static final Block barrelBlock = new BarrelBlock(FabricBlockSettings.create());
 //	public static final Block bellowsBlock = new BellowsBlock(FabricBlockSettings.create());
-	public static final Block blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
+	public static final BlockDispenserBlock blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
         .hardness(3.5f)
     );
 //	public static final Block bloodWoodBlock = new BloodWoodBlock(FabricBlockSettings.create());

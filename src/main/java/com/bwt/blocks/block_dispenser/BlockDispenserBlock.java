@@ -1,6 +1,9 @@
 package com.bwt.blocks.block_dispenser;
 
-import com.bwt.blocks.block_dispenser.behavior.*;
+import com.bwt.blocks.block_dispenser.behavior.dispense.BlockDispenserBehavior;
+import com.bwt.blocks.block_dispenser.behavior.dispense.DefaultItemDispenserBehavior;
+import com.bwt.blocks.block_dispenser.behavior.dispense.ItemClumpDispenserBehavior;
+import com.bwt.blocks.block_dispenser.behavior.inhale.*;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtTags;
@@ -13,10 +16,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
@@ -46,8 +46,49 @@ public class BlockDispenserBlock extends DispenserBlock {
         super(settings);
     }
 
+    protected void inheritItemBehavior(Item... items) {
+        for (Item item : items) {
+            ITEM_BEHAVIORS.put(item, getBehaviorForItem(item.getDefaultStack()));
+        }
+    }
+
+    public void registerItemDispenseBehaviors() {
+        inheritItemBehavior(
+                Items.ARMOR_STAND,
+                Items.MINECART,
+                Items.CHEST_MINECART,
+                Items.COMMAND_BLOCK_MINECART,
+                Items.COMMAND_BLOCK_MINECART,
+                Items.FURNACE_MINECART,
+                Items.HOPPER_MINECART,
+                Items.TNT_MINECART,
+                Items.OAK_BOAT,
+                Items.SPRUCE_BOAT,
+                Items.BIRCH_BOAT,
+                Items.JUNGLE_BOAT,
+                Items.DARK_OAK_BOAT,
+                Items.ACACIA_BOAT,
+                Items.CHERRY_BOAT,
+                Items.MANGROVE_BOAT,
+                Items.BAMBOO_RAFT,
+                Items.OAK_CHEST_BOAT,
+                Items.SPRUCE_CHEST_BOAT,
+                Items.BIRCH_CHEST_BOAT,
+                Items.JUNGLE_CHEST_BOAT,
+                Items.DARK_OAK_CHEST_BOAT,
+                Items.ACACIA_CHEST_BOAT,
+                Items.CHERRY_CHEST_BOAT,
+                Items.MANGROVE_CHEST_BOAT,
+                Items.BAMBOO_CHEST_RAFT
+        );
+    }
+
     public static void registerEntityInhaleBehavior(EntityType<?> entityType, EntityInhaleBehavior behavior) {
         ENTITY_INHALE_BEHAVIORS.put(entityType, behavior);
+    }
+
+    public void registerEntityInhaleBehaviors() {
+        EntityInhaleBehavior.registerBehaviors();
     }
 
     @Override
@@ -124,13 +165,9 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (blockEntity == null) {
             return;
         }
-        
+
         BlockPos targetPos = pos.offset(state.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
-
-        if (!targetState.isIn(BlockTags.REPLACEABLE)) {
-            return;
-        }
 
         ItemStack stackToPlace = blockEntity.getCurrentItemToDispense();
         if (stackToPlace.isEmpty()) {
@@ -138,7 +175,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
 
         BlockPointer blockPointer = new BlockPointer(world, pos, state, blockEntity);
-        DispenserBehavior dispenserBehavior = this.getDispenseBehaviorForItem(world, blockEntity, stackToPlace);
+        DispenserBehavior dispenserBehavior = this.getDispenseBehaviorForItem(world, targetState, blockEntity, stackToPlace);
         if (dispenserBehavior != DispenserBehavior.NOOP) {
             ItemStack takenOut = dispenserBehavior.dispense(blockPointer, stackToPlace);
             blockEntity.take(takenOut.getItem(), takenOut.getCount());
@@ -174,9 +211,12 @@ public class BlockDispenserBlock extends DispenserBlock {
         blockEntity.insert(inhaledItems.copy());
     }
 
-    protected DispenserBehavior getDispenseBehaviorForItem(World world, BlockDispenserBlockEntity entity, ItemStack stack) {
+    protected DispenserBehavior getDispenseBehaviorForItem(World world, BlockState targetState, BlockDispenserBlockEntity entity, ItemStack stack) {
         // Block Behavior. Block items will not clump
         if (stack.getItem() instanceof BlockItem) {
+            if (!targetState.isIn(BlockTags.REPLACEABLE)) {
+                return BlockDispenserBehavior.NOOP;
+            }
             return BLOCK_BEHAVIORS.get(stack.getItem());
         }
 
@@ -192,7 +232,7 @@ public class BlockDispenserBlock extends DispenserBlock {
 
         // Proceeding with clump recipe behavior
         BlockDispenserClumpRecipe recipe = match.get();
-        if (recipe.canAfford(entity)) {
+        if (recipe.canAfford(entity) && targetState.isIn(BlockTags.REPLACEABLE)) {
             return new ItemClumpDispenserBehavior(recipe, stack.getItem());
         }
         else {

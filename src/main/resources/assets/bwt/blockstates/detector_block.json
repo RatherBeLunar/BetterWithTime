@@ -1,12 +1,10 @@
 {
   "variants": {
     "facing=down,powered=false": {
-      "model": "bwt:block/detector_block",
-      "x": 90
+      "model": "bwt:block/detector_block_down"
     },
     "facing=down,powered=true": {
-      "model": "bwt:block/detector_block_powered",
-      "x": 90
+      "model": "bwt:block/detector_block_down_powered"
     },
     "facing=east,powered=false": {
       "model": "bwt:block/detector_block",
@@ -31,12 +29,10 @@
       "y": 180
     },
     "facing=up,powered=false": {
-      "model": "bwt:block/detector_block",
-      "x": 270
+      "model": "bwt:block/detector_block_up"
     },
     "facing=up,powered=true": {
-      "model": "bwt:block/detector_block_powered",
-      "x": 270
+      "model": "bwt:block/detector_block_up_powered"
     },
     "facing=west,powered=false": {
       "model": "bwt:block/detector_block",

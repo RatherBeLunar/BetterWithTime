@@ -1,4 +1,4 @@
-package com.bwt.blocks.block_dispenser.behavior;
+package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;

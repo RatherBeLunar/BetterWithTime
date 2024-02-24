@@ -1,4 +1,4 @@
-package com.bwt.blocks.block_dispenser.behavior;
+package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
