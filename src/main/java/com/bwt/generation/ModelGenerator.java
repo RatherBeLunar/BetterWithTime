@@ -24,6 +24,8 @@ public class ModelGenerator extends FabricModelProvider {
                         )
                 ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
         );
+        blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
+        blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
     }
 
     @Override

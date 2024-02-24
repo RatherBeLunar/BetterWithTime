@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.block.MapColor;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroups;
@@ -91,6 +92,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
 //	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(FabricBlockSettings.create());
 	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f));
+	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL).strength(50.0f, 1200.0f));
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
 //	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
@@ -103,7 +105,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
 //	public static final Block slatsBlock = new SlatsBlock(FabricBlockSettings.create());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
-
+    public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
 //	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
 //	public static final Block unfiredPotteryBlock = new UnfiredPotteryBlock(FabricBlockSettings.create());
@@ -162,6 +164,12 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("bwt", "anchor"), new BlockItem(anchorBlock, new FabricItemSettings()));
         // Rope
         Registry.register(Registries.BLOCK, new Identifier("bwt", "rope"), ropeBlock);
+        // Stone Detector Rail
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "stone_detector_rail"), stoneDetectorRailBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "stone_detector_rail"), new BlockItem(stoneDetectorRailBlock, new FabricItemSettings()));
+        // Obsidian Detector Rail
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_detector_rail"), obsidianDetectorRailBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_detector_rail"), new BlockItem(obsidianDetectorRailBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
@@ -173,6 +181,8 @@ public class BwtBlocks implements ModInitializer {
             content.add(detectorBlock);
             content.add(millStoneBlock);
             content.add(handCrankBlock);
+            content.add(stoneDetectorRailBlock);
+            content.add(obsidianDetectorRailBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {

@@ -4,9 +4,10 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "ExampleMixin",
-    "WorldEntityCollisionsMixin"
+    "WorldEntityCollisionsMixin",
+    "DetectorRailMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  }
 }

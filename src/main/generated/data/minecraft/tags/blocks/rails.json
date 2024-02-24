@@ -1,0 +1,7 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:stone_detector_rail",
+    "bwt:obsidian_detector_rail"
+  ]
+}
