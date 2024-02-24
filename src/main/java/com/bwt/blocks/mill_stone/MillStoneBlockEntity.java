@@ -14,6 +14,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -32,7 +33,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
+public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected int grindProgressTime;
     public static final int timeToGrind = 200;
     protected static final int INVENTORY_SIZE = 3;
@@ -182,6 +183,46 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
     @Override
     public Text getDisplayName() {
         return Text.translatable(getCachedState().getBlock().getTranslationKey());
+    }
+
+    @Override
+    public int size() {
+        return inventory.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return inventory.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return inventory.getStack(slot);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        return inventory.removeStack(slot, amount);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return inventory.removeStack(slot);
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        inventory.setStack(slot, stack);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return inventory.canPlayerUse(player);
+    }
+
+    @Override
+    public void clear() {
+        inventory.clear();
     }
 
     public class Inventory extends SimpleInventory {

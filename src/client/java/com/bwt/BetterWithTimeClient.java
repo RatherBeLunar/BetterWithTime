@@ -28,7 +28,9 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BwtBlocks.lightBlockBlock,
-				BwtBlocks.hempCropBlock
+				BwtBlocks.hempCropBlock,
+				BwtBlocks.stoneDetectorRailBlock,
+				BwtBlocks.obsidianDetectorRailBlock
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);

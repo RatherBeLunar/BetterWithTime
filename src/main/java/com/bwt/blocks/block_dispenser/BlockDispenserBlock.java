@@ -23,10 +23,7 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypeFilter;
-import net.minecraft.util.Util;
+import net.minecraft.util.*;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
@@ -74,6 +71,12 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (isReceivingPower(world, pos)) {
             world.scheduleBlockTick(pos, this, 4);
         }
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        ItemScatterer.onStateReplaced(state, newState, world, pos);
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override

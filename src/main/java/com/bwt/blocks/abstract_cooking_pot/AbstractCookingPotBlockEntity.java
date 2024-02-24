@@ -13,6 +13,8 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
@@ -31,7 +33,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory {
+public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 27;
     protected static final int primaryFireFactor = 5;
     protected static final int secondaryFireFactor = 1; // This was changed to 3 later
@@ -172,7 +174,45 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
     }
 
+    @Override
+    public int size() {
+        return inventory.size();
+    }
 
+    @Override
+    public boolean isEmpty() {
+        return inventory.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return inventory.getStack(slot);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        return inventory.removeStack(slot, amount);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return inventory.removeStack(slot);
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        inventory.setStack(slot, stack);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return inventory.canPlayerUse(player);
+    }
+
+    @Override
+    public void clear() {
+        inventory.clear();
+    }
 
     public class Inventory extends SimpleInventory {
         public Inventory(int size) {

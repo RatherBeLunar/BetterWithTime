@@ -9,6 +9,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -52,6 +53,12 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return VoxelShapes.fullCube();
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        ItemScatterer.onStateReplaced(state, newState, world, pos);
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Nullable

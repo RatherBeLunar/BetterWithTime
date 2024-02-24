@@ -18,6 +18,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
@@ -57,6 +58,12 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
     @Override
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         schedulePowerUpdate(state, world, pos);
+    }
+
+    @Override
+    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        ItemScatterer.onStateReplaced(state, newState, world, pos);
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override
