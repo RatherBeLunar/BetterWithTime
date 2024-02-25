@@ -1,8 +1,8 @@
 package com.bwt.blocks;
 
 import com.bwt.BetterWithTime;
+import com.bwt.items.BwtItems;
 import net.minecraft.block.*;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -16,7 +16,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
@@ -91,15 +90,11 @@ public class AxleBlock extends PillarBlock {
         return ActionResult.SUCCESS;
     }
 
-    public BlockState breakAxle(World world, BlockPos pos) {
-        BlockState airState = Blocks.AIR.getDefaultState();
-        world.setBlockState(pos, airState);
-        Vec3d centerPos = pos.toCenterPos();
+    public void breakAxle(World world, BlockPos pos) {
+        world.removeBlock(pos, false);
         world.playSound(null, pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1);
-        ItemEntity itemEntity = new ItemEntity(world, centerPos.x, centerPos.y, centerPos.z, Items.STICK.getDefaultStack());
-        itemEntity.setVelocity(world.random.nextDouble() * -0.01 + 0.02, 0.2, world.random.nextDouble() * -0.01 + 0.02);
-        world.spawnEntity(itemEntity);
-        return airState;
+        dropStack(world, pos, Items.STICK.getDefaultStack());
+        dropStack(world, pos, BwtItems.hempFiberItem.getDefaultStack());
     }
 
     public BlockState updatePowerState(BlockState state, BlockState neighborState, BlockPos neighborPos) {

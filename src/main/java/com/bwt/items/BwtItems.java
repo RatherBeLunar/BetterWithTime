@@ -74,6 +74,9 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item tannedLeatherCapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_cap"), new TannedLeatherCapItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherPantsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_pants"), new TannedLeatherPantsItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherTunicItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_tunic"), new TannedLeatherTunicItem(new FabricItemSettings()));
+    public static final Item waterWheelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "water_wheel"), new WaterWheelItem(
+            new FabricItemSettings().maxCount(1)
+    ));
     public static final Item windmillItem = Registry.register(Registries.ITEM, new Identifier("bwt", "windmill"), new WindmillItem(
             new FabricItemSettings().maxCount(1)
     ));
@@ -93,6 +96,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(windmillItem);
+            content.add(waterWheelItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK).register(content -> {
             content.addAfter(Items.COOKED_PORKCHOP, wolfChopItem);

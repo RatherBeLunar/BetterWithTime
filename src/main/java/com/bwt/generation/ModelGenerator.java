@@ -40,6 +40,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.scouredLeatherItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
     }

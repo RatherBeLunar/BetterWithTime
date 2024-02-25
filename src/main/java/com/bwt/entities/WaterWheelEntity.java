@@ -17,39 +17,36 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public class WindmillEntity extends RectangularEntity {
-    public static final float height = 12.8f;
-    public static final float width = 12.8f;
+public class WaterWheelEntity extends RectangularEntity {
+    public static final float height = 4.8f;
+    public static final float width = 4.8f;
     public static final float length = 0.8f;
-
-    private static final float rotationPerTick = -0.12F;
-    private static final float rotationPerTickInStorm = -2.0F;
-    private static final float rotationPerTickInNether = -0.07F;
 
     private int ticksBeforeNextFullUpdate = 20;
     private float rotation = 0;
+    private float prevRotation = 0;
 
-    private static final TrackedData<Float> rotationSpeed = DataTracker.registerData(WindmillEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    private static final TrackedData<Float> rotationSpeed = DataTracker.registerData(WaterWheelEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
 
-    public WindmillEntity(EntityType<? extends Entity> entityType, World world) {
+    public WaterWheelEntity(EntityType<? extends Entity> entityType, World world) {
         super(entityType, world);
         this.intersectionChecked = true;
     }
 
-    public WindmillEntity(World world, Vec3d pos, Direction facing) {
-        this(BwtEntities.windmillEntity, world);
+    public WaterWheelEntity(World world, Vec3d pos, Direction facing) {
+        this(BwtEntities.waterWheelEntity, world);
         setPosition(pos);
         setYaw(facing.asRotation());
     }
@@ -60,8 +57,8 @@ public class WindmillEntity extends RectangularEntity {
     }
 
     @Override
-    protected Entity.MoveEffect getMoveEffect() {
-        return Entity.MoveEffect.NONE;
+    protected MoveEffect getMoveEffect() {
+        return MoveEffect.NONE;
     }
 
     @Override
@@ -73,12 +70,23 @@ public class WindmillEntity extends RectangularEntity {
         return rotation;
     }
 
+    protected void setRotation(float rotation) {
+        rotation = (rotation + 360f) % 360f;
+        this.prevRotation = this.rotation;
+        this.rotation = rotation;
+    }
+
+    public float getPrevRotation() {
+        return prevRotation;
+    }
+
     public float getRotationSpeed() {
         return getDataTracker().get(rotationSpeed);
     }
 
     public void setRotationSpeed(float speed) {
         getDataTracker().set(rotationSpeed, speed);
+        setCustomName(Text.of(Float.valueOf(speed).toString()));
     }
 
     @Override
@@ -104,13 +112,13 @@ public class WindmillEntity extends RectangularEntity {
     public boolean tryToSpawn() {
         if (placementBlockedByBlock()) {
             if(MinecraftClient.getInstance().player != null) {
-                MinecraftClient.getInstance().player.sendMessage(Text.of("Not enough room to place Wind Mill (They are friggin HUGE!)"));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Not enough room to place Water Wheel"));
             }
             return false;
         }
         if (placementBlockedByEntity()) {
             if(MinecraftClient.getInstance().player != null) {
-                MinecraftClient.getInstance().player.sendMessage(Text.of("Wind Mill placement is obstructed by something, or by you"));
+                MinecraftClient.getInstance().player.sendMessage(Text.of("Water Wheel placement is obstructed by something, or by you"));
             }
             return false;
         }
@@ -130,7 +138,7 @@ public class WindmillEntity extends RectangularEntity {
         return BlockPos.stream(getBoundingBox())
                 // Ignore the axle we're on
                 .filter(blockPos -> !blockPos.equals(this.getBlockPos()))
-                .anyMatch(blockPos -> !getWorld().getBlockState(blockPos).isAir());
+                .anyMatch(blockPos -> !getWorld().getBlockState(blockPos).isAir() && !getWorld().getFluidState(blockPos).isIn(FluidTags.WATER));
     }
 
     @Override
@@ -181,7 +189,6 @@ public class WindmillEntity extends RectangularEntity {
         }
 
         if (getWorld().isClient) {
-            float prevRotation = rotation;
             updateRotation();
         }
         else {
@@ -190,46 +197,42 @@ public class WindmillEntity extends RectangularEntity {
                 ticksBeforeNextFullUpdate = 20;
                 fullUpdate();
             }
-            updateRotation();
         }
     }
 
     public float computeRotation() {
-        World world = getWorld();
+        return Math.min(1, Math.max(getClockwiseRotationForce(), -1));
+    }
 
-        float rotationAmount;
-        // Nether
-        if (world.getDimension().ultrawarm()) {
-            rotationAmount = rotationPerTickInNether;
-        }
-        // End dimension or modded
-        else if (!world.getDimension().natural()) {
-            rotationAmount = 0.0f;
-        }
-        // Overworld, sky blocked
-        else if (!world.isSkyVisible(getBlockPos())) {
-            rotationAmount = 0.0f;
-        }
-        // Overworld, raining
-        else if (world.isRaining()) {
-            rotationAmount = rotationPerTickInStorm;
-        }
-        // Overworld, not raining
-        else {
-            rotationAmount = rotationPerTick;
-        }
-        return rotationAmount;
+    protected float getClockwiseRotationForce() {
+        World world = getWorld();
+        return BlockPos.stream(getBoundingBox())
+            .map(blockPos -> {
+               FluidState fluidState = world.getFluidState(blockPos);
+               if (!fluidState.isIn(FluidTags.WATER)) {
+                   return 0f;
+               }
+               Vec3d fluidVelocity = fluidState.getVelocity(world, blockPos);
+               Vec3i facingVector = getHorizontalFacing().rotateYClockwise().getVector();
+               Vec2f fluidVelocity2d = new Vec2f(
+                       (float) (fluidVelocity.getX() * facingVector.getX() + fluidVelocity.getZ() * facingVector.getZ()),
+                       (float) fluidVelocity.getY()
+               );
+               Vec3d centerToPointVector = blockPos.toCenterPos().subtract(getPos());
+               // This vector isn't to the edge of the whole water wheel, but to the application of force
+               // The addition of X and Z here is possible since only one will be non-zero
+               Vec2f centerToPointVector2d = new Vec2f((float) (centerToPointVector.getX() + centerToPointVector.getZ()), (float) centerToPointVector.getY());
+               // Tangent vector, clockwise along the circle, normalized to 1 magnitude
+               Vec2f tangentUnitVector = new Vec2f(centerToPointVector2d.y, -centerToPointVector2d.x).normalize();
+               // Component of fluid velocity along clockwise tangent unit vector
+               return fluidVelocity2d.dot(tangentUnitVector);
+            })
+            .reduce(Float::sum)
+            .orElse(0f);
     }
 
     protected void updateRotation() {
-        rotation += this.getDataTracker().get(rotationSpeed);
-
-        if (rotation > 360f) {
-            rotation -= 360f;
-        }
-        else if (rotation < -360f) {
-            rotation += 360f;
-        }
+        setRotation(rotation + this.getDataTracker().get(rotationSpeed));
     }
 
     protected void fullUpdate() {
@@ -243,12 +246,7 @@ public class WindmillEntity extends RectangularEntity {
 
         boolean powered = currentSpeed > 0.01f || currentSpeed < -0.01f;
 
-        BlockState blockState = getWorld().getBlockState(getBlockPos());
-        getWorld().setBlockState(
-                getBlockPos(),
-                (powered ? BwtBlocks.axlePowerSourceBlock : BwtBlocks.axleBlock).getDefaultState()
-                        .with(AxleBlock.AXIS, blockState.get(AxleBlock.AXIS))
-        );
+        setHostAxlePower(powered);
     }
 
     @Override
@@ -262,7 +260,7 @@ public class WindmillEntity extends RectangularEntity {
         boolean bl = source.getAttacker() instanceof PlayerEntity && ((PlayerEntity)source.getAttacker()).getAbilities().creativeMode;
         if (!bl /* && this.getDamageWobbleStrength() > 40.0f || this.shouldAlwaysKill(source) */) {
             destroyWithDrop();
-        } else /* if (bl) */{
+        } else /* if (pushedByFluids) */{
             discard();
         }
         return true;
@@ -270,25 +268,33 @@ public class WindmillEntity extends RectangularEntity {
 
     public void destroyWithDrop() {
         if (isRemoved()) return;
-        dropStack(BwtItems.windmillItem.getDefaultStack(), 0.5f);
+        dropStack(BwtItems.waterWheelItem.getDefaultStack(), 0.5f);
         kill();
     }
 
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
+        setHostAxlePower(false);
+    }
+
+    protected void setHostAxlePower(boolean powered) {
         World world = getWorld();
         BlockPos pos = getBlockPos();
         BlockState hostBlockState = world.getBlockState(pos);
-        if (hostBlockState.isOf(BwtBlocks.axlePowerSourceBlock)) {
-             world.setBlockState(pos, BwtBlocks.axleBlock.getDefaultState()
+        if (!powered && hostBlockState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+            world.setBlockState(pos, BwtBlocks.axleBlock.getDefaultState()
+                    .with(AxleBlock.AXIS, hostBlockState.get(AxleBlock.AXIS)));
+        }
+        if (powered && hostBlockState.isOf(BwtBlocks.axleBlock)) {
+            world.setBlockState(pos, BwtBlocks.axlePowerSourceBlock.getDefaultState()
                     .with(AxleBlock.AXIS, hostBlockState.get(AxleBlock.AXIS)));
         }
     }
 
     @Override
     public ItemStack getPickBlockStack() {
-        return new ItemStack(BwtItems.windmillItem);
+        return new ItemStack(BwtItems.waterWheelItem);
     }
 
     @Override

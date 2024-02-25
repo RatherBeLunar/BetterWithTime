@@ -19,13 +19,16 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class BetterWithTimeClient implements ClientModInitializer {
 	public static final EntityModelLayer MODEL_WINDMILL_LAYER = new EntityModelLayer(new Identifier("bwt", "windmill"), "main");
+	public static final EntityModelLayer MODEL_WATER_WHEEL_LAYER = new EntityModelLayer(new Identifier("bwt", "water_wheel"), "main");
 
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 //		BlockEntityRendererRegistry.register(BwtEntities.windmillBlockEntity, WindmillBlockEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
+		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.hempCropBlock,

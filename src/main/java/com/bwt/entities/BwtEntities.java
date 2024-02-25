@@ -20,6 +20,16 @@ public class BwtEntities implements ModInitializer {
                 .dimensions(EntityRectDimensions.fixed(WindmillEntity.width, WindmillEntity.height, WindmillEntity.length))
                 .build()
     );
+    public static final EntityType<WaterWheelEntity> waterWheelEntity = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier("bwt", "water_wheel"),
+            FabricEntityTypeBuilder.create(
+                SpawnGroup.MISC,
+                (EntityType.EntityFactory<WaterWheelEntity>) WaterWheelEntity::new
+            )
+                .dimensions(EntityRectDimensions.fixed(WaterWheelEntity.width, WaterWheelEntity.height, WaterWheelEntity.length))
+                .build()
+    );
 
     @Override
     public void onInitialize() {
