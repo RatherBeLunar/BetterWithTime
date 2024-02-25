@@ -46,6 +46,11 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         setYaw(facing.asRotation());
     }
 
+    public interface Factory {
+        HorizontalMechPowerSourceEntity create(World world, Vec3d pos, Direction facing);
+    }
+
+
     abstract public boolean tryToSpawn();
     abstract public Predicate<BlockPos> getBlockInterferencePredicate();
     abstract float computeRotation();

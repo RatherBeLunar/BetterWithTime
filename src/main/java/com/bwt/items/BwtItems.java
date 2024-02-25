@@ -1,6 +1,8 @@
 package com.bwt.items;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.entities.WaterWheelEntity;
+import com.bwt.entities.WindmillEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -74,10 +76,12 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item tannedLeatherCapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_cap"), new TannedLeatherCapItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherPantsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_pants"), new TannedLeatherPantsItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherTunicItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_tunic"), new TannedLeatherTunicItem(new FabricItemSettings()));
-    public static final Item waterWheelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "water_wheel"), new WaterWheelItem(
+    public static final Item waterWheelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "water_wheel"), new HorizontalMechPowerSourceItem(
+            WaterWheelEntity::new,
             new FabricItemSettings().maxCount(1)
     ));
-    public static final Item windmillItem = Registry.register(Registries.ITEM, new Identifier("bwt", "windmill"), new WindmillItem(
+    public static final Item windmillItem = Registry.register(Registries.ITEM, new Identifier("bwt", "windmill"), new HorizontalMechPowerSourceItem(
+            WindmillEntity::new,
             new FabricItemSettings().maxCount(1)
     ));
 	public static final Item wolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wolf_chop"), new Item(

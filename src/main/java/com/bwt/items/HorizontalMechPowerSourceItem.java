@@ -2,7 +2,7 @@ package com.bwt.items;
 
 import com.bwt.blocks.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.entities.WaterWheelEntity;
+import com.bwt.entities.HorizontalMechPowerSourceEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
@@ -14,10 +14,12 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
-public class WaterWheelItem extends Item {
+public class HorizontalMechPowerSourceItem extends Item {
+    protected HorizontalMechPowerSourceEntity.Factory entityFactory;
 
-    public WaterWheelItem(Settings settings) {
+    public HorizontalMechPowerSourceItem(HorizontalMechPowerSourceEntity.Factory entityFactory, Settings settings) {
         super(settings);
+        this.entityFactory = entityFactory;
     }
 
     @Override
@@ -45,9 +47,9 @@ public class WaterWheelItem extends Item {
                             : Direction.AxisDirection.NEGATIVE
             );
 
-            WaterWheelEntity waterWheelEntity = new WaterWheelEntity(world, middleOfAxle, placementDirection);
+            HorizontalMechPowerSourceEntity windmillEntity = entityFactory.create(world, middleOfAxle, placementDirection);
 
-            if (!waterWheelEntity.tryToSpawn()) {
+            if (!windmillEntity.tryToSpawn()) {
                 return ActionResult.FAIL;
             }
             world.emitGameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockPos);

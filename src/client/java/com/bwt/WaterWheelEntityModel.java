@@ -1,16 +1,14 @@
 package com.bwt;
 
 import com.bwt.entities.WaterWheelEntity;
-import com.bwt.entities.WindmillEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaterWheelEntityModel extends EntityModel<WindmillEntity> {
+public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<WaterWheelEntity> {
     protected static final int numBlades = 8;
     protected static final float strutDistanceFromCenter = 30.0f;
     private static final int strutLength = (int)( ( WaterWheelEntity.height * 8.0f ) - (strutDistanceFromCenter / 2.0f));
@@ -26,6 +24,7 @@ public class WaterWheelEntityModel extends EntityModel<WindmillEntity> {
     private final List<ModelPart> struts = new ArrayList<>();
 
     public WaterWheelEntityModel(ModelPart modelPart) {
+        super();
         for (int bladeIdx = 0; bladeIdx < numBlades; bladeIdx++) {
             blades.add(modelPart.getChild("blade" + bladeIdx));
             struts.add(modelPart.getChild("strut" + bladeIdx));
@@ -63,11 +62,6 @@ public class WaterWheelEntityModel extends EntityModel<WindmillEntity> {
             );
         }
         return TexturedModelData.of(modelData, 64, 32);
-
-    }
-
-    @Override
-    public void setAngles(WindmillEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
     }
 

@@ -3,10 +3,9 @@ package com.bwt;
 import com.bwt.entities.WindmillEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 
-public class WindmillEntityModel extends EntityModel<WindmillEntity> {
+public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<WindmillEntity> {
 
     private static final float bladeOffsetFromCenter = 15.0f;
     private static final int bladeLength = (int)( ( WindmillEntity.height * 8.0f ) - bladeOffsetFromCenter) - 3;
@@ -26,6 +25,7 @@ public class WindmillEntityModel extends EntityModel<WindmillEntity> {
     private final ModelPart shaft3;
 
     public WindmillEntityModel(ModelPart modelPart) {
+        super();
         this.shaft0 = modelPart.getChild("shaft0");
         this.shaft1 = modelPart.getChild("shaft1");
         this.shaft2 = modelPart.getChild("shaft2");
@@ -57,11 +57,6 @@ public class WindmillEntityModel extends EntityModel<WindmillEntity> {
             );
         }
         return TexturedModelData.of(modelData, 64, 32);
-
-    }
-
-    @Override
-    public void setAngles(WindmillEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
 
     }
 
