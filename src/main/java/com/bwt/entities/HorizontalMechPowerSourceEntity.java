@@ -1,7 +1,6 @@
 package com.bwt.entities;
 
 import com.bwt.blocks.AxleBlock;
-import com.bwt.blocks.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.block.BlockState;
@@ -127,8 +126,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             }
             return false;
         }
-        // This must be the last condition checked,
-        // because it has a side effect of converting the axle to powered
+
         if (placementHasBadAxleState()) {
             return false;
         }
@@ -171,19 +169,8 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         float yaw = getYaw();
 
         // Misaligned
-        if (Direction.from(axleAxis, Direction.AxisDirection.NEGATIVE).asRotation() != yaw
-                && Direction.from(axleAxis, Direction.AxisDirection.POSITIVE).asRotation() != yaw
-        ) {
-            return true;
-        }
-
-        // Not a fail condition, but a state correction to power the axle
-        // Especially important on placement
-        if (!axleBlock.isOf(BwtBlocks.axlePowerSourceBlock)) {
-            world.setBlockState(getBlockPos(), BwtBlocks.axlePowerSourceBlock.getDefaultState().with(AxlePowerSourceBlock.AXIS, axleAxis));
-        }
-
-        return false;
+        return Direction.from(axleAxis, Direction.AxisDirection.NEGATIVE).asRotation() != yaw
+                && Direction.from(axleAxis, Direction.AxisDirection.POSITIVE).asRotation() != yaw;
     }
 
     @Override
