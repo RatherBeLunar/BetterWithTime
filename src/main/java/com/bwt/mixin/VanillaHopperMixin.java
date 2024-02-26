@@ -2,6 +2,7 @@ package com.bwt.mixin;
 
 import com.bwt.gamerules.BwtGameRules;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.Hopper;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.inventory.Inventory;
@@ -25,7 +26,7 @@ public class VanillaHopperMixin {
             cancellable = true
     )
     private static void hookInsert(World world, BlockPos pos, BlockState state, Inventory inventory, CallbackInfoReturnable<Boolean> cir) {
-        if (world.getGameRules().getBoolean(BwtGameRules.VANILLA_HOPPERS_DISABLED)) {
+        if (world.getGameRules().getBoolean(BwtGameRules.VANILLA_HOPPERS_DISABLED) && state.isOf(Blocks.HOPPER)) {
             cir.setReturnValue(null);
         }
     }
