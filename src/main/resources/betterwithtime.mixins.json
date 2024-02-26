@@ -3,9 +3,10 @@
   "package": "com.bwt.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "DetectorRailMixin",
     "ExampleMixin",
-    "WorldEntityCollisionsMixin",
-    "DetectorRailMixin"
+    "VanillaHopperMixin",
+    "WorldEntityCollisionsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

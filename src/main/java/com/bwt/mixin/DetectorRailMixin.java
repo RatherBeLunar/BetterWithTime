@@ -4,7 +4,6 @@ import com.bwt.blocks.BwtBlocks;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.DetectorRailBlock;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +15,7 @@ import java.util.function.Predicate;
 @Mixin(DetectorRailBlock.class)
 public abstract class DetectorRailMixin {
     @ModifyVariable(method = "getCarts(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Ljava/lang/Class;Ljava/util/function/Predicate;)Ljava/util/List;", at = @At(value = "HEAD"), index = 4, argsOnly = true)
-    public <T extends AbstractMinecartEntity> Predicate<Entity> getCarts(Predicate<Entity> entityPredicate, @Local(argsOnly = true) World world, @Local(argsOnly = true) BlockPos pos) {
+    public Predicate<Entity> getCarts(Predicate<Entity> entityPredicate, @Local(argsOnly = true) World world, @Local(argsOnly = true) BlockPos pos) {
         if (world.getBlockState(pos).isOf(BwtBlocks.stoneDetectorRailBlock)) {
             return entityPredicate.and(Entity::hasPassengers);
         }
