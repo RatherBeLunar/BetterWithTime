@@ -4,6 +4,7 @@ import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
+import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -78,7 +79,7 @@ public class BwtBlocks implements ModInitializer {
         .sounds(BlockSoundGroup.STONE)
         .solidBlock(Blocks::never)
     );
-//	public static final Block hopperBlock = new HopperBlock(FabricBlockSettings.create());
+	public static final Block hopperBlock = new MechHopperBlock(FabricBlockSettings.create());
 //	public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(FabricBlockSettings.create());
 //	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.create());
 //	public static final Block lensBlock = new LensBlock(FabricBlockSettings.create());
@@ -170,6 +171,9 @@ public class BwtBlocks implements ModInitializer {
         // Obsidian Detector Rail
         Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_detector_rail"), obsidianDetectorRailBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_detector_rail"), new BlockItem(obsidianDetectorRailBlock, new FabricItemSettings()));
+        // Bwt Hopper
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "hopper"), hopperBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "hopper"), new BlockItem(hopperBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);

@@ -3,6 +3,7 @@ package com.bwt.block_entities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.blocks.cauldron.CauldronBlockEntity;
+import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -26,6 +27,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             new Identifier("bwt", "mill_stone_block_entity"),
             FabricBlockEntityTypeBuilder.create(MillStoneBlockEntity::new, BwtBlocks.millStoneBlock).build()
+    );
+    public static final BlockEntityType<MechHopperBlockEntity> mechHopperBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier("bwt", "mech_hopper_block_entity"),
+            FabricBlockEntityTypeBuilder.create(MechHopperBlockEntity::new, BwtBlocks.hopperBlock).build()
     );
 
     @Override
