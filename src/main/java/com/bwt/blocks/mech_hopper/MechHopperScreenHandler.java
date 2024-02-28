@@ -19,13 +19,13 @@ public class MechHopperScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleInventory(SIZE), new ArrayPropertyDelegate(1));
+        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleInventory(SIZE - 1), new ArrayPropertyDelegate(1));
     }
 
     public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory, SimpleSingleStackInventory filterInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
         super(BetterWithTime.mechHopperScreenHandler, syncId);
         checkSize(filterInventory, 1);
-        checkSize(inventory, SIZE);
+        checkSize(inventory, SIZE - 1);
         this.filterInventory = filterInventory;
         this.inventory = inventory;
         this.propertyDelegate = propertyDelegate;
@@ -40,7 +40,7 @@ public class MechHopperScreenHandler extends ScreenHandler {
         // Hopper inventory
         for (m = 0; m < 2; ++m) {
             for (l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(inventory, filterInventory.size() + l + m * 9, 8 + l * 18, 60 + m * 18));
+                this.addSlot(new Slot(inventory, l + m * 9, 8 + l * 18, 60 + m * 18));
             }
         }
         // Player inventory

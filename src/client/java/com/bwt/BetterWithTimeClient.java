@@ -4,7 +4,6 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreen;
 import com.bwt.blocks.cauldron.CauldronScreen;
-import com.bwt.blocks.mech_hopper.MechHopperBlockEntityRenderer;
 import com.bwt.blocks.mech_hopper.MechHopperScreen;
 import com.bwt.blocks.mill_stone.MillStoneScreen;
 import com.bwt.entities.BwtEntities;
@@ -24,6 +23,7 @@ import net.minecraft.util.Identifier;
 public class BetterWithTimeClient implements ClientModInitializer {
 	public static final EntityModelLayer MODEL_WINDMILL_LAYER = new EntityModelLayer(new Identifier("bwt", "windmill"), "main");
 	public static final EntityModelLayer MODEL_WATER_WHEEL_LAYER = new EntityModelLayer(new Identifier("bwt", "water_wheel"), "main");
+	public static final EntityModelLayer MECH_HOPPER_FILL_LAYER = new EntityModelLayer(new Identifier("bwt", "mech_hopper_fill"), "main");
 
 	@Override
 	public void onInitializeClient() {
@@ -33,6 +33,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.hempCropBlock,

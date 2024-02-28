@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -21,6 +22,9 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.Packet;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
@@ -28,12 +32,13 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
-    protected static final int INVENTORY_SIZE = 19;
+    public static final int INVENTORY_SIZE = 19;
     protected static final int STACK_SIZE_TO_EJECT = 8;
     protected static final int PICKUP_COOLDOWN = 3;
     protected static final int ITEM_DROP_COOLDOWN = 3;
@@ -46,11 +51,12 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
     protected int itemDropCooldown;
     protected int xpPickupCooldown;
     protected int xpDropCooldown;
+    public int slotsOccupied;
     protected boolean outputBlocked;
 
 
     public final MechHopperBlockEntity.FilterInventory filterInventory = new MechHopperBlockEntity.FilterInventory();
-    public final HopperInventory hopperInventory = new HopperInventory(INVENTORY_SIZE);
+    public final HopperInventory hopperInventory = new HopperInventory(INVENTORY_SIZE - 1);
     public final CombinedStorage<ItemVariant, InventoryStorage> inventoryWrapper = new CombinedStorage<>(
             List.of(
                     InventoryStorage.of(filterInventory, null),
@@ -97,6 +103,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         this.itemDropCooldown = nbt.getInt("itemDropCooldown");
         this.xpPickupCooldown = nbt.getInt("xpPickupCooldown");
         this.xpDropCooldown = nbt.getInt("xpDropCooldown");
+        this.slotsOccupied = nbt.getInt("slotsOccupied");
         this.outputBlocked = nbt.getBoolean("outputBlocked");
     }
 
@@ -112,7 +119,17 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         nbt.putInt("itemDropCooldown", this.itemDropCooldown);
         nbt.putInt("xpPickupCooldown", this.xpPickupCooldown);
         nbt.putInt("xpDropCooldown", this.xpDropCooldown);
+        nbt.putInt("slotsOccupied", this.slotsOccupied);
         nbt.putBoolean("outputBlocked", this.outputBlocked);
+    }
+
+    @Override
+    public void markDirty() {
+        slotsOccupied = ((int) hopperInventory.heldStacks.stream().filter(stack -> !stack.isEmpty()).count());
+        if (world != null) {
+            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
+        }
+        super.markDirty();
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
@@ -208,12 +225,12 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         ItemStack invStack = getStack(stackIndex);
 
         int stackCountToDrop = Math.min(MechHopperBlockEntity.STACK_SIZE_TO_EJECT, invStack.getCount());
-        ItemStack ejectStack = invStack.copyWithCount(stackCountToDrop);
 
         BlockPos belowPos = pos.down();
         BlockState blockBelowState = world.getBlockState(belowPos);
 
         if (blockBelowState.isAir() || blockBelowState.isReplaceable()) {
+            ItemStack ejectStack = invStack.copyWithCount(stackCountToDrop);
             ejectStack(world, getPos(), ejectStack);
             removeStack(stackIndex, stackCountToDrop);
         }
@@ -271,6 +288,20 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
                 blockEntity.hopperInventory.markDirty();
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public NbtCompound toInitialChunkDataNbt() {
+        NbtCompound nbtCompound = createNbt();
+        nbtCompound.putInt("slotsOccupied", slotsOccupied);
+        nbtCompound.put("Filter", this.filterInventory.toNbt());
+        return nbtCompound;
     }
 
     @Override
