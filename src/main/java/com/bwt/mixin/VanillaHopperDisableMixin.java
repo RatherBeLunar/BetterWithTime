@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(HopperBlockEntity.class)
-public class VanillaHopperMixin {
+public class VanillaHopperDisableMixin {
     @Inject(
             at = @At(
                     value = "INVOKE_ASSIGN",

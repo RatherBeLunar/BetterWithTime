@@ -5,7 +5,8 @@
   "mixins": [
     "DetectorRailMixin",
     "ExampleMixin",
-    "VanillaHopperMixin",
+    "VanillaHopperDisableMixin",
+    "VanillaHopperInvoker",
     "WorldEntityCollisionsMixin"
   ],
   "injectors": {

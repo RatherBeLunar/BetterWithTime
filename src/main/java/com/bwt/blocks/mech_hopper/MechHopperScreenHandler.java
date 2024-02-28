@@ -19,7 +19,7 @@ public class MechHopperScreenHandler extends ScreenHandler {
     private final PropertyDelegate propertyDelegate;
 
     public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleInventory(SIZE), new ArrayPropertyDelegate(4));
+        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleInventory(SIZE), new ArrayPropertyDelegate(1));
     }
 
     public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory, SimpleSingleStackInventory filterInventory, Inventory inventory, PropertyDelegate propertyDelegate) {

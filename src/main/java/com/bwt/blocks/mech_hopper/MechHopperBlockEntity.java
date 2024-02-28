@@ -2,6 +2,7 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.mixin.VanillaHopperInvoker;
 import com.bwt.utils.SimpleSingleStackInventory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -10,6 +11,7 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,23 +26,35 @@ import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 19;
+    protected static final int STACK_SIZE_TO_EJECT = 8;
+    protected static final int PICKUP_COOLDOWN = 3;
+    protected static final int ITEM_DROP_COOLDOWN = 3;
+
+
     protected int mechPower;
     protected int soulCount;
     protected int xpCount;
+    protected int itemPickupCooldown;
+    protected int itemDropCooldown;
+    protected int xpPickupCooldown;
     protected int xpDropCooldown;
+    protected boolean outputBlocked;
+
 
     public final MechHopperBlockEntity.FilterInventory filterInventory = new MechHopperBlockEntity.FilterInventory();
-    public final MechHopperBlockEntity.Inventory inventory = new MechHopperBlockEntity.Inventory(INVENTORY_SIZE);
+    public final HopperInventory hopperInventory = new HopperInventory(INVENTORY_SIZE);
     public final CombinedStorage<ItemVariant, InventoryStorage> inventoryWrapper = new CombinedStorage<>(
             List.of(
                     InventoryStorage.of(filterInventory, null),
-                    InventoryStorage.of(inventory, null)
+                    InventoryStorage.of(hopperInventory, null)
             )
     );
 
@@ -49,9 +63,6 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         public int get(int index) {
             return switch (index) {
                 case 0 -> MechHopperBlockEntity.this.mechPower;
-                case 1 -> MechHopperBlockEntity.this.soulCount;
-                case 2 -> MechHopperBlockEntity.this.xpCount;
-                case 3 -> MechHopperBlockEntity.this.xpDropCooldown;
                 default -> 0;
             };
         }
@@ -60,16 +71,13 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> MechHopperBlockEntity.this.mechPower = value > 0 ? 1 : 0;
-                case 1 -> MechHopperBlockEntity.this.soulCount = value;
-                case 2 -> MechHopperBlockEntity.this.xpCount = value;
-                case 3 -> MechHopperBlockEntity.this.xpDropCooldown = value;
                 default -> {}
             }
         }
 
         @Override
         public int size() {
-            return 4;
+            return 1;
         }
     };
 
@@ -77,37 +85,173 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         super(BwtBlockEntities.mechHopperBlockEntity, pos, state);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
-        if (!state.isOf(BwtBlocks.hopperBlock) || !state.get(MechHopperBlock.MECH_POWERED)) {
-            return;
-        }
-    }
-
     @Override
     public void readNbt(NbtCompound nbt) {
         super.readNbt(nbt);
         this.filterInventory.readNbt(nbt.getCompound("Filter"));
-        this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE));
+        this.hopperInventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE));
         this.mechPower = nbt.getInt("mechPower");
         this.soulCount = nbt.getInt("soulCount");
         this.xpCount = nbt.getInt("xpCount");
+        this.itemPickupCooldown = nbt.getInt("itemPickupCooldown");
+        this.itemDropCooldown = nbt.getInt("itemDropCooldown");
+        this.xpPickupCooldown = nbt.getInt("xpPickupCooldown");
         this.xpDropCooldown = nbt.getInt("xpDropCooldown");
+        this.outputBlocked = nbt.getBoolean("outputBlocked");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt) {
         super.writeNbt(nbt);
         nbt.put("Filter", this.filterInventory.toNbt());
-        nbt.put("Inventory", this.inventory.toNbtList());
+        nbt.put("Inventory", this.hopperInventory.toNbtList());
         nbt.putInt("mechPower", this.mechPower);
         nbt.putInt("soulCount", this.soulCount);
         nbt.putInt("xpCount", this.xpCount);
+        nbt.putInt("itemPickupCooldown", this.itemPickupCooldown);
+        nbt.putInt("itemDropCooldown", this.itemDropCooldown);
+        nbt.putInt("xpPickupCooldown", this.xpPickupCooldown);
         nbt.putInt("xpDropCooldown", this.xpDropCooldown);
+        nbt.putBoolean("outputBlocked", this.outputBlocked);
+    }
+
+    public static void tick(World world, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
+        if (world.isClient || !state.isOf(BwtBlocks.hopperBlock)) {
+            return;
+        }
+
+        if (blockEntity.mechPower > 0)
+        {
+//            attemptToEjectXP();
+
+            if (!blockEntity.outputBlocked) {
+                // the hopper is powered, eject items
+                blockEntity.itemDropCooldown += 1;
+
+                if (blockEntity.itemDropCooldown >= MechHopperBlockEntity.ITEM_DROP_COOLDOWN) {
+                    blockEntity.attemptToEjectStack(world, pos);
+                    blockEntity.itemDropCooldown = 0;
+                }
+            }
+            else {
+                blockEntity.itemDropCooldown = 0;
+            }
+        }
+        else {
+            blockEntity.itemDropCooldown = 0;
+            blockEntity.xpDropCooldown = 0;
+        }
+
+        if (blockEntity.soulCount > 0) {
+            // souls can only be trapped if there's a soul sand filter on the hopper
+
+//            if ( m_iFilterItemID == Block.slowSand.blockID )
+//            {
+//                int iBlockBelowID = worldObj.getBlockId( xCoord, yCoord - 1, zCoord );
+//                int iBlockBelowMetaData = worldObj.getBlockMetadata( xCoord, yCoord - 1, zCoord );
+//
+//                if (hopperPowered)
+//                {
+//                    if ( iBlockBelowID != FCBetterThanWolves.fcAestheticNonOpaque.blockID ||
+//                            iBlockBelowMetaData != FCBlockAestheticNonOpaque.m_iSubtypeUrn )
+//                    {
+//                        m_iContainedSoulCount = 0;
+//                    }
+//                }
+//
+//                if ( m_iContainedSoulCount >= m_iOverloadSoulCount )
+//                {
+//                    if ( hopperPowered &&
+//                            iBlockBelowID == FCBetterThanWolves.fcAestheticNonOpaque.blockID &&
+//                            iBlockBelowMetaData == FCBlockAestheticNonOpaque.m_iSubtypeUrn )
+//                    {
+//                        // convert the urn below to a soul urn
+//
+//                        worldObj.setBlockWithNotify( xCoord, yCoord - 1, zCoord, 0 );
+//
+//                        ItemStack newItemStack = new ItemStack( FCBetterThanWolves.fcItemSoulUrn.itemID,
+//                                1, 0 );
+//
+//                        FCUtilsItem.EjectStackWithRandomOffset( worldObj,
+//                                xCoord, yCoord - 1, zCoord, newItemStack );
+//
+//                        // the rest of the souls escape (if any remain)
+//
+//                        m_iContainedSoulCount = 0;
+//                    }
+//                    else
+//                    {
+//                        // the hopper has become overloaded with souls.  Destroy it and generate a ghast.
+//
+//                        HopperSoulOverload();
+//                    }
+//                }
+//            }
+//            else
+//            {
+//                m_iContainedSoulCount = 0;
+//            }
+        }
+    }
+
+    public void attemptToEjectStack(World world, BlockPos pos) {
+        List<Integer> occupiedIndices = IntStream.range(0, size())
+                .filter(i -> !getStack(i).isEmpty())
+                .boxed().toList();
+
+        if (occupiedIndices.isEmpty()) {
+            return;
+        }
+
+        int stackIndex = occupiedIndices.get(world.random.nextBetween(0, occupiedIndices.size() - 1));
+
+        ItemStack invStack = getStack(stackIndex);
+
+        int stackCountToDrop = Math.min(MechHopperBlockEntity.STACK_SIZE_TO_EJECT, invStack.getCount());
+        ItemStack ejectStack = invStack.copyWithCount(stackCountToDrop);
+
+        BlockPos belowPos = pos.down();
+        BlockState blockBelowState = world.getBlockState(belowPos);
+
+        if (blockBelowState.isAir() || blockBelowState.isReplaceable()) {
+            ejectStack(world, getPos(), ejectStack);
+            removeStack(stackIndex, stackCountToDrop);
+        }
+
+        Inventory inventoryBelow = HopperBlockEntity.getInventoryAt(world, belowPos);
+        if (inventoryBelow == null) {
+            return;
+        }
+        if (VanillaHopperInvoker.isInventoryFull(inventoryBelow, Direction.UP)) {
+            return;
+        }
+        for (int i = 0; i < size(); ++i) {
+            if (getStack(i).isEmpty()) continue;
+            ItemStack itemStack = getStack(i).copy();
+            ItemStack itemStack2 = HopperBlockEntity.transfer(this, inventoryBelow, removeStack(i, stackCountToDrop), Direction.UP);
+            if (itemStack2.isEmpty()) {
+                inventoryBelow.markDirty();
+                return;
+            }
+            setStack(i, itemStack);
+        }
+    }
+
+    protected void ejectStack(World world, BlockPos pos, ItemStack stack) {
+        float xOffset = world.random.nextFloat() * 0.1F + 0.45F;
+        float yOffset = -0.35F;
+        float zOffset = world.random.nextFloat() * 0.1F + 0.45F;
+
+        ItemEntity itemEntity = new ItemEntity(world, pos.getX() + xOffset, pos.getY() + yOffset, pos.getZ() + zOffset, stack);
+        itemEntity.setVelocity(0.0f, -0.01f, 0.0f);
+
+        itemEntity.setPickupDelay(10);
+        world.spawnEntity(itemEntity);
     }
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new MechHopperScreenHandler(syncId, playerInventory, filterInventory, inventory, propertyDelegate);
+        return new MechHopperScreenHandler(syncId, playerInventory, filterInventory, hopperInventory, propertyDelegate);
     }
 
     // Pick up items from above
@@ -124,7 +268,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
                 );
                 itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
                 transaction.commit();
-                blockEntity.inventory.markDirty();
+                blockEntity.hopperInventory.markDirty();
             }
         }
     }
@@ -136,42 +280,42 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
     @Override
     public int size() {
-        return inventory.size();
+        return hopperInventory.size();
     }
 
     @Override
     public boolean isEmpty() {
-        return inventory.isEmpty();
+        return hopperInventory.isEmpty();
     }
 
     @Override
     public ItemStack getStack(int slot) {
-        return inventory.getStack(slot);
+        return hopperInventory.getStack(slot);
     }
 
     @Override
     public ItemStack removeStack(int slot, int amount) {
-        return inventory.removeStack(slot, amount);
+        return hopperInventory.removeStack(slot, amount);
     }
 
     @Override
     public ItemStack removeStack(int slot) {
-        return inventory.removeStack(slot);
+        return hopperInventory.removeStack(slot);
     }
 
     @Override
     public void setStack(int slot, ItemStack stack) {
-        inventory.setStack(slot, stack);
+        hopperInventory.setStack(slot, stack);
     }
 
     @Override
     public boolean canPlayerUse(PlayerEntity player) {
-        return inventory.canPlayerUse(player);
+        return hopperInventory.canPlayerUse(player);
     }
 
     @Override
     public void clear() {
-        inventory.clear();
+        hopperInventory.clear();
     }
 
     public class FilterInventory extends SimpleSingleStackInventory {
@@ -190,8 +334,8 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         }
     }
 
-    public class Inventory extends SimpleInventory {
-        public Inventory(int size) {
+    public class HopperInventory extends SimpleInventory {
+        public HopperInventory(int size) {
             super(size);
         }
         @Override
