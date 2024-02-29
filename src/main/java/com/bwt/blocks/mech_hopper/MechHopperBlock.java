@@ -2,6 +2,7 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
+import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -9,7 +10,7 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.*;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
@@ -27,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Predicate;
 
 public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBase {
     public static final MapCodec<MechHopperBlock> CODEC = MechHopperBlock.createCodec(MechHopperBlock::new);
@@ -40,8 +43,45 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
             Block.createCuboidShape(5, 0, 5, 11, 4, 11)
     );
 
+    public static final Map<Item, Predicate<ItemStack>> filterMap = Maps.newLinkedHashMap();
+
     public MechHopperBlock(Settings settings) {
         super(settings);
+    }
+
+    public static void addFilter(Item item, Predicate<ItemStack> predicate) {
+        filterMap.put(item, predicate);
+    }
+
+    public static void addDefaultFilters() {
+        addFilter(Items.LADDER, itemStack -> !(itemStack.getItem() instanceof BlockItem));
+        addFilter(Items.IRON_BARS, itemStack -> itemStack.getMaxCount() > 1);
+        for (Item trapdoor : new Item[]{
+                Items.ACACIA_TRAPDOOR,
+                Items.BAMBOO_TRAPDOOR,
+                Items.BIRCH_TRAPDOOR,
+                Items.CHERRY_TRAPDOOR,
+                Items.COPPER_TRAPDOOR,
+                Items.CRIMSON_TRAPDOOR,
+                Items.DARK_OAK_TRAPDOOR,
+                Items.EXPOSED_COPPER_TRAPDOOR,
+                Items.IRON_TRAPDOOR,
+                Items.JUNGLE_TRAPDOOR,
+                Items.MANGROVE_TRAPDOOR,
+                Items.OAK_TRAPDOOR,
+                Items.OXIDIZED_COPPER_TRAPDOOR,
+                Items.SPRUCE_TRAPDOOR,
+                Items.WARPED_TRAPDOOR,
+                Items.WAXED_COPPER_TRAPDOOR,
+                Items.WAXED_EXPOSED_COPPER_TRAPDOOR,
+                Items.WAXED_OXIDIZED_COPPER_TRAPDOOR,
+                Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
+                Items.WEATHERED_COPPER_TRAPDOOR,
+        }) {
+            addFilter(trapdoor, itemStack -> itemStack.getMaxCount() == 64);
+        }
+
+        addFilter(Items.SOUL_SAND, itemStack -> false);
     }
 
     @Override

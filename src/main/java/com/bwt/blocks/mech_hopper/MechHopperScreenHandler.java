@@ -33,7 +33,7 @@ public class MechHopperScreenHandler extends ScreenHandler {
         this.addProperties(propertyDelegate);
 
         // Filter Slot
-        this.addSlot(new Slot(filterInventory, 0, 8 + 4 * 18, 37));
+        this.addSlot(new FilterSlot(filterInventory, 0, 8 + 4 * 18, 37));
 
         int m;
         int l;
@@ -69,7 +69,7 @@ public class MechHopperScreenHandler extends ScreenHandler {
             itemStack = itemStack2.copy();
             if (slot < SIZE
                     ? !this.insertItem(itemStack2, SIZE, 36 + SIZE, true)
-                    : !this.insertItem(itemStack2, 1, SIZE, false)) {
+                    : !(this.slots.get(0).canInsert(itemStack2) && this.insertItem(itemStack2, 0, 1, false)) && !this.insertItem(itemStack2, 1, SIZE, false)) {
                 return ItemStack.EMPTY;
             }
             if (itemStack2.isEmpty()) {
@@ -87,5 +87,16 @@ public class MechHopperScreenHandler extends ScreenHandler {
 
     public boolean isMechPowered() {
         return propertyDelegate.get(0) > 0;
+    }
+
+    protected static class FilterSlot extends Slot {
+        public FilterSlot(Inventory inventory, int index, int x, int y) {
+            super(inventory, index, x, y);
+        }
+
+        @Override
+        public boolean canInsert(ItemStack stack) {
+            return MechHopperBlock.filterMap.containsKey(stack.getItem());
+        }
     }
 }

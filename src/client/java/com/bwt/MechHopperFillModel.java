@@ -10,7 +10,7 @@ public class MechHopperFillModel extends Model {
     protected final ModelPart flat;
 
     public MechHopperFillModel(ModelPart root) {
-        super(RenderLayer::getEntityTranslucent);
+        super(RenderLayer::getEntityTranslucentCull);
         this.root = root;
         this.flat = root.getChild("flat");
     }
@@ -20,7 +20,7 @@ public class MechHopperFillModel extends Model {
         ModelPartData modelPartData = modelData.getRoot();
         modelPartData.addChild("flat", ModelPartBuilder.create()
                 .uv(0, 0)
-                .cuboid(2, 0, 2, 12.0f, 0.1f, 12.0f), ModelTransform.NONE);
+                .cuboid(0, 0, 0, 16f, 0.1f, 16f), ModelTransform.NONE);
         return modelData;
     }
 

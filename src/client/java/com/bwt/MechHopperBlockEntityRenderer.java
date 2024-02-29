@@ -12,11 +12,15 @@ import net.minecraft.client.render.block.BlockRenderManager;
 import net.minecraft.client.render.block.entity.BlockEntityRenderer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
 
 @Environment(value=EnvType.CLIENT)
 public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHopperBlockEntity> {
@@ -24,15 +28,18 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
     private static final Identifier FILL_TEXTURE = new Identifier("bwt", "textures/block/hopper_fill.png");
     protected MechHopperFillModel model;
 
-
-    @Nullable
-    protected RenderLayer getRenderLayer(MechHopperBlockEntity entity) {
-        return this.model.getLayer(FILL_TEXTURE);
-    }
-
     public MechHopperBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
         this.manager = ctx.getRenderManager();
         this.model = new MechHopperFillModel(ctx.getLayerModelPart(BetterWithTimeClient.MECH_HOPPER_FILL_LAYER));
+    }
+
+    protected Identifier getFilterTexture(Item filterItem) {
+        Optional<Identifier> identifier = Registries.ITEM.getEntry(filterItem).getKey().map(RegistryKey::getValue);
+        if (identifier.isEmpty()) {
+            return new Identifier("minecraft", "textures/block/air.png");
+        }
+        return identifier.get().withPrefixedPath("textures/block/").withSuffixedPath(".png");
+
     }
 
     @Override
@@ -44,13 +51,25 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
         BlockPos pos = hopperBlockEntity.getPos();
         BlockState state = world.getBlockState(pos);
 
+        // Render the hopper itself
         matrixStack.push();
         this.renderModel(pos, state, matrixStack, vertexConsumerProvider, world, false, uv);
         matrixStack.pop();
+        // Render the fill texture
         if (hopperBlockEntity.slotsOccupied > 0) {
-            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(getRenderLayer(hopperBlockEntity));
+            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(FILL_TEXTURE));
             matrixStack.push();
-            matrixStack.translate(0, (hopperBlockEntity.slotsOccupied * (14f - 7f) / (MechHopperBlockEntity.INVENTORY_SIZE - 1f) + 7f) / 16f, 0);
+            matrixStack.scale(0.99f, 1, 0.99f);
+            matrixStack.translate(0.01f, (hopperBlockEntity.slotsOccupied * (14f - 7f) / (MechHopperBlockEntity.INVENTORY_SIZE - 1f) + 7f) / 16f, 0.01f);
+            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+            matrixStack.pop();
+        }
+        // Render the filter
+        if (!hopperBlockEntity.filterInventory.isEmpty()) {
+            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(getFilterTexture(hopperBlockEntity.filterInventory.getStack().getItem())));
+            matrixStack.push();
+            matrixStack.scale(0.99f, 1, 0.99f);
+            matrixStack.translate(0.01f, 15f / 16f, 0.01f);
             this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
             matrixStack.pop();
         }

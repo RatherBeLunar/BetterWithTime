@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -132,9 +133,17 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         super.markDirty();
     }
 
+    public Item getFilterItem() {
+        return filterInventory.getStack().getItem();
+    }
+
     public static void tick(World world, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
         if (world.isClient || !state.isOf(BwtBlocks.hopperBlock)) {
             return;
+        }
+
+        if (blockEntity.itemPickupCooldown > 0) {
+            blockEntity.itemPickupCooldown = (blockEntity.itemPickupCooldown + 1) % PICKUP_COOLDOWN;
         }
 
         if (blockEntity.mechPower > 0)
@@ -273,8 +282,15 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
     // Pick up items from above
     public static void onEntityCollided(Entity entity, MechHopperBlockEntity blockEntity) {
+        if (blockEntity.itemPickupCooldown > 0) {
+            return;
+        }
         ItemStack itemStack;
-        if (entity instanceof ItemEntity itemEntity && !(itemStack = itemEntity.getStack()).isEmpty()) {
+        if (
+                entity instanceof ItemEntity itemEntity
+                && !(itemStack = itemEntity.getStack()).isEmpty()
+                && MechHopperBlock.filterMap.getOrDefault(blockEntity.getFilterItem(), s -> false).test(itemStack)
+        ) {
             int count = itemStack.getCount();
             try (Transaction transaction = Transaction.openOuter()) {
                 long inserted = StorageUtil.insertStacking(
@@ -284,6 +300,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
                         transaction
                 );
                 itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
+                blockEntity.itemPickupCooldown++;
                 transaction.commit();
                 blockEntity.hopperInventory.markDirty();
             }
