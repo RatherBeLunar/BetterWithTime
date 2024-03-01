@@ -1,6 +1,7 @@
 package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
@@ -82,6 +83,9 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         }
 
         addFilter(Items.SOUL_SAND, itemStack -> false);
+        addFilter(BwtBlocks.grateBlock.asItem(), itemStack -> false);
+        addFilter(BwtBlocks.slatsBlock.asItem(), itemStack -> false);
+        addFilter(BwtBlocks.wickerBlock.asItem(), itemStack -> false);
     }
 
     @Override

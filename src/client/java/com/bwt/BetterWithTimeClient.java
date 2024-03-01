@@ -38,7 +38,10 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.hempCropBlock,
 				BwtBlocks.stoneDetectorRailBlock,
-				BwtBlocks.obsidianDetectorRailBlock
+				BwtBlocks.obsidianDetectorRailBlock,
+				BwtBlocks.grateBlock,
+				BwtBlocks.slatsBlock,
+				BwtBlocks.wickerBlock
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);

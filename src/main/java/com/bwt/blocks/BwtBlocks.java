@@ -10,10 +10,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.DetectorRailBlock;
-import net.minecraft.block.MapColor;
+import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
@@ -66,7 +63,7 @@ public class BwtBlocks implements ModInitializer {
     public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
         .hardness(2F)
     );
-//	public static final Block grateBlock = new GrateBlock(FabricBlockSettings.create());
+	public static final Block grateBlock = new PaneBlock(FabricBlockSettings.create().hardness(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
 	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create()
         .hardness(0.5f)
         .sounds(BlockSoundGroup.WOOD)
@@ -104,7 +101,7 @@ public class BwtBlocks implements ModInitializer {
     );
 //	public static final Block sawBlock = new SawBlock(FabricBlockSettings.create());
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
-//	public static final Block slatsBlock = new SlatsBlock(FabricBlockSettings.create());
+	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
@@ -113,7 +110,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.create());
 //	public static final Block vaseBlock = new VaseBlock(FabricBlockSettings.create());
 //	public static final Block waterWheelBlock = new WaterWheelBlock(FabricBlockSettings.create());
-//	public static final Block wickerBlock = new WickerBlock(FabricBlockSettings.create());
+	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.GRASS).nonOpaque());
 
 //	public static final Block windmillBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axlePowerSourceBlock.getSettings()));
 //	public static final Block woodenDetectorRailBlock = new WoodenDetectorRailBlock(FabricBlockSettings.create());
@@ -174,6 +171,15 @@ public class BwtBlocks implements ModInitializer {
         // Bwt Hopper
         Registry.register(Registries.BLOCK, new Identifier("bwt", "hopper"), hopperBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "hopper"), new BlockItem(hopperBlock, new FabricItemSettings()));
+        // Grate
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "grate"), grateBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "grate"), new BlockItem(grateBlock, new FabricItemSettings()));
+        // Slats
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "slats"), slatsBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "slats"), new BlockItem(slatsBlock, new FabricItemSettings()));
+        // Wicker
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker"), wickerBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "wicker"), new BlockItem(wickerBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
@@ -195,6 +201,9 @@ public class BwtBlocks implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {
             content.add(companionCubeBlock);
+            content.add(grateBlock);
+            content.add(slatsBlock);
+            content.add(wickerBlock);
         });
     }
 }
