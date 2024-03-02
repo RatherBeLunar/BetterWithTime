@@ -9,6 +9,7 @@ import net.minecraft.data.client.*;
 import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Direction;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator(FabricDataOutput generator) {
@@ -26,6 +27,15 @@ public class ModelGenerator extends FabricModelProvider {
                                 ModelIds.getBlockModelId(BwtBlocks.companionCubeBlock)
                         )
                 ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+        );
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.sawBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(BwtBlocks.sawBlock)
+                        )
+                ).coordinate(createUpDefaultRotationStates())
         );
         blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
@@ -45,7 +55,9 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.hempFiberItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.sawDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.scouredLeatherItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.strapItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
@@ -92,5 +104,15 @@ public class ModelGenerator extends FabricModelProvider {
                         )
         );
         blockStateModelGenerator.registerItemModel(pane);
+    }
+
+    public static BlockStateVariantMap createUpDefaultRotationStates() {
+        return BlockStateVariantMap.create(Properties.FACING)
+                .register(Direction.DOWN, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
+                .register(Direction.UP, BlockStateVariant.create())
+                .register(Direction.NORTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90))
+                .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R90));
     }
 }

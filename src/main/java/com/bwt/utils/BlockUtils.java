@@ -58,7 +58,7 @@ public class BlockUtils {
 
     public static VoxelShape rotateCuboid(Direction fromDirection, Direction toDirection, Box box) {
         // Rotate source to up direction via opposite direction
-        VoxelShape shape = rotateCuboidFromUp(fromDirection.equals(Direction.DOWN) ? fromDirection : fromDirection.getOpposite(), box);
+        VoxelShape shape = rotateCuboidFromUp(fromDirection.getAxis().isVertical() ? fromDirection : fromDirection.getOpposite(), box);
         // Rotate
         return rotateCuboidFromUp(toDirection, shape.getBoundingBox());
     }

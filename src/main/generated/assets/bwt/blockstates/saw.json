@@ -1,0 +1,29 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "bwt:block/saw",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "bwt:block/saw",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bwt:block/saw",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "bwt:block/saw",
+      "x": 270
+    },
+    "facing=up": {
+      "model": "bwt:block/saw"
+    },
+    "facing=west": {
+      "model": "bwt:block/saw",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

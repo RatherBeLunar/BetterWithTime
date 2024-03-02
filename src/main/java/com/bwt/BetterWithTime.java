@@ -7,6 +7,7 @@ import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
+import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
@@ -51,6 +52,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtItems items = new BwtItems();
 	public static final BwtEntities entities = new BwtEntities();
 	public static final BwtRecipes recipes = new BwtRecipes();
+	public static final BwtDamageTypes damageTypes = new BwtDamageTypes();
 	public static final BwtGameRules gameRules = new BwtGameRules();
 
 	public static final BwtTags tags = new BwtTags();
@@ -81,6 +83,7 @@ public class BetterWithTime implements ModInitializer {
 		items.onInitialize();
 		entities.onInitialize();
 		recipes.onInitialize();
+		damageTypes.onInitialize();
 		tags.onInitialize();
 		gameRules.onInitialize();
 		Registry.register(Registries.SOUND_EVENT, MECH_BANG, MECH_BANG_SOUND);

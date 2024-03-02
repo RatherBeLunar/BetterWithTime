@@ -1,7 +1,10 @@
 package com.bwt.blocks;
 
+import com.bwt.BetterWithTime;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
@@ -65,6 +68,27 @@ public interface MechPowerBlockBase {
             }
         }
         return false;
+    }
+
+    default void playBangSound(World world, BlockPos pos, float volume, float pitch) {
+        world.playSound(null, pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, volume, pitch);
+    }
+
+    default void playBangSound(World world, BlockPos pos, float volume) {
+        playBangSound(world, pos, volume, 1);
+    }
+
+    default void playBangSound(World world, BlockPos pos) {
+        playBangSound(world, pos, 0.5f);
+    }
+
+    default void playCreakSound(World world, BlockPos pos, float volume) {
+        world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN,
+                SoundCategory.BLOCKS, volume, world.random.nextFloat() * 0.25F + 0.25F);
+    }
+
+    default void playCreakSound(World world, BlockPos pos) {
+        playCreakSound(world, pos, 0.25f);
     }
 
 }

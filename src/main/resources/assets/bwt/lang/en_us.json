@@ -104,5 +104,6 @@
   "item.bwt.wood_blade": "Wood Blade",
   "block.bwt.wooden_siding": "Wooden Siding",
   "block.bwt.wool_slab": "Wool Slab",
-  "container.bwt.block_dispenser": "Block Dispenser"
+  "container.bwt.block_dispenser": "Block Dispenser",
+  "subtitles.bwt.mech_bang": "Machine operates"
 }

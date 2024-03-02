@@ -99,7 +99,12 @@ public class BwtBlocks implements ModInitializer {
         .hardness(0.5f)
         .sounds(BlockSoundGroup.GRASS)
     );
-//	public static final Block sawBlock = new SawBlock(FabricBlockSettings.create());
+	public static final Block sawBlock = new SawBlock(FabricBlockSettings.create()
+        .hardness(2f)
+        .burnable()
+        .sounds(BlockSoundGroup.WOOD)
+        .nonOpaque()
+    );
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
 	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
@@ -180,6 +185,9 @@ public class BwtBlocks implements ModInitializer {
         // Wicker
         Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker"), wickerBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "wicker"), new BlockItem(wickerBlock, new FabricItemSettings()));
+        // Saw
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "saw"), sawBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "saw"), new BlockItem(sawBlock, new FabricItemSettings()));
         
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
@@ -193,6 +201,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(handCrankBlock);
             content.add(stoneDetectorRailBlock);
             content.add(obsidianDetectorRailBlock);
+            content.add(sawBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
