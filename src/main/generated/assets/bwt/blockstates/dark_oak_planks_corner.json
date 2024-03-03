@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "orientation=0": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "y": 90
+    },
+    "orientation=1": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "y": 180
+    },
+    "orientation=2": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "y": 270
+    },
+    "orientation=3": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true
+    },
+    "orientation=4": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "x": 180
+    },
+    "orientation=5": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "x": 180,
+      "y": 90
+    },
+    "orientation=6": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "x": 180,
+      "y": 180
+    },
+    "orientation=7": {
+      "model": "bwt:block/dark_oak_planks_corner",
+      "uvlock": true,
+      "x": 180,
+      "y": 270
+    }
+  }
+}
