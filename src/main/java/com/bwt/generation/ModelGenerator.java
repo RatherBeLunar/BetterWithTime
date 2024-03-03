@@ -1,6 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.CornerBlock;
 import com.bwt.blocks.MouldingBlock;
 import com.bwt.blocks.SidingBlock;
 import com.bwt.items.BwtItems;
@@ -46,6 +47,9 @@ public class ModelGenerator extends FabricModelProvider {
         }
         for (MouldingBlock mouldingBlock : BwtBlocks.mouldingBlocks) {
             generateMouldingBlock(blockStateModelGenerator, mouldingBlock);
+        }
+        for (CornerBlock cornerBlock : BwtBlocks.cornerBlocks) {
+            generateCornerBlock(blockStateModelGenerator, cornerBlock);
         }
         blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
@@ -118,7 +122,8 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateSidingBlock(BlockStateModelGenerator blockStateModelGenerator, SidingBlock sidingBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(sidingBlock.fullBlock);
-        Models.SLAB.upload(sidingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        Model model = new Model(Optional.of(new Identifier("bwt", "block/siding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        model.upload(sidingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
                         sidingBlock,
@@ -126,25 +131,35 @@ public class ModelGenerator extends FabricModelProvider {
                                 VariantSettings.MODEL,
                                 ModelIds.getBlockModelId(sidingBlock)
                         ).put(VariantSettings.UVLOCK, true)
-                ).coordinate(createUpDefaultRotationStates())
+                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
         );
         blockStateModelGenerator.registerParentedItemModel(sidingBlock, ModelIds.getBlockModelId(sidingBlock));
     }
 
     public static void generateMouldingBlock(BlockStateModelGenerator blockStateModelGenerator, MouldingBlock mouldingBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(mouldingBlock.fullBlock);
-        Model model = new Model(Optional.of(new Identifier("bwt", "block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        model.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        Model horizontalModel = new Model(Optional.of(new Identifier("bwt", "block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model verticalModel = new Model(Optional.of(new Identifier("bwt", "block/moulding_vertical")), Optional.of("_vertical"), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Identifier horizontalId = horizontalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        Identifier verticalId = verticalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(mouldingBlock).coordinate(createMouldingOrientationMap(horizontalId, verticalId)));
+        blockStateModelGenerator.registerParentedItemModel(mouldingBlock, horizontalId);
+    }
+
+    public static void generateCornerBlock(BlockStateModelGenerator blockStateModelGenerator, CornerBlock cornerBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(cornerBlock.fullBlock);
+        Model model = new Model(Optional.of(new Identifier("bwt", "block/corner")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        model.upload(cornerBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
-                        mouldingBlock,
+                        cornerBlock,
                         BlockStateVariant.create().put(
                                 VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(mouldingBlock)
+                                ModelIds.getBlockModelId(cornerBlock)
                         ).put(VariantSettings.UVLOCK, true)
-                ).coordinate(createMouldingOrientationMap())
+                ).coordinate(createCornerOrientationMap())
         );
-        blockStateModelGenerator.registerParentedItemModel(mouldingBlock, ModelIds.getBlockModelId(mouldingBlock));
+        blockStateModelGenerator.registerParentedItemModel(cornerBlock, ModelIds.getBlockModelId(cornerBlock));
     }
 
     public static BlockStateVariantMap createUpDefaultRotationStates() {
@@ -157,22 +172,36 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R90));
     }
 
-    public static BlockStateVariantMap createMouldingOrientationMap() {
+    public static BlockStateVariantMap createMouldingOrientationMap(Identifier horizontalId, Identifier verticalId) {
         return BlockStateVariantMap.create(MouldingBlock.ORIENTATION)
                 // horizontal, bottom - west, north, east, south
+                .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(1, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(2, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true))
+                .register(3, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                // vertical - west, north, east, south
+                .register(4, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(5, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(6, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true))
+                .register(7, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                // horizontal, top - west, north, east, south
+                .register(8, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180))
+                .register(9, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(10, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(11, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
+    }
+
+    public static BlockStateVariantMap createCornerOrientationMap() {
+        return BlockStateVariantMap.create(CornerBlock.ORIENTATION)
+                // bottom - south-west, north-west, north-east, south-east
                 .register(0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90))
                 .register(1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .register(2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270))
                 .register(3, BlockStateVariant.create())
-                // vertical - west, north, east, south
-                .register(4, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
-                .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                // horizontal, top - west, north, east, south
-                .register(8, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                .register(9, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(10, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                .register(11, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180));
+                // top - south-west, north-west, north-east, south-east
+                .register(4, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
+                .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
     }
 }

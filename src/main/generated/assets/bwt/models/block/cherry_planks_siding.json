@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/slab",
+  "parent": "bwt:block/siding",
   "textures": {
     "bottom": "minecraft:block/cherry_planks",
     "side": "minecraft:block/cherry_planks",

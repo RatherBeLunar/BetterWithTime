@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/slab",
+  "parent": "bwt:block/siding",
   "textures": {
     "bottom": "minecraft:block/mangrove_planks",
     "side": "minecraft:block/mangrove_planks",

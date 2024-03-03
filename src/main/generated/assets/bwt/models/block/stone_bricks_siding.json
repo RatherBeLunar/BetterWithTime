@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/slab",
+  "parent": "bwt:block/siding",
   "textures": {
     "bottom": "minecraft:block/stone_bricks",
     "side": "minecraft:block/stone_bricks",

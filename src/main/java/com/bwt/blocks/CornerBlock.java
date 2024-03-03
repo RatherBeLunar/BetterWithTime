@@ -20,36 +20,30 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MouldingBlock extends MiniBlock {
-    public static final IntProperty ORIENTATION = IntProperty.of("orientation", 0, 11);
-
+public class CornerBlock extends MiniBlock {
+    public static final IntProperty ORIENTATION = IntProperty.of("orientation", 0, 7);
 
     private final List<VoxelShape> COLLISION_SHAPES = List.of(
-            // horizontal, bottom - west, north, east, south
-            Block.createCuboidShape(0, 0, 0, 16, 8, 8),
-            Block.createCuboidShape(8, 0, 0, 16, 8, 16),
-            Block.createCuboidShape(0, 0, 8, 16, 8, 16),
-            Block.createCuboidShape(0, 0, 0, 8, 8, 16),
-            // vertical - west, north, east, south
-            Block.createCuboidShape(0, 0, 0, 8, 16, 8),
-            Block.createCuboidShape(8, 0, 0, 16, 16, 8),
-            Block.createCuboidShape(8, 0, 8, 16, 16, 16),
-            Block.createCuboidShape(0, 0, 8, 8, 16, 16),
-            // horizontal, top - west, north, east, south
-            Block.createCuboidShape(0, 8, 0, 16, 16, 8),
-            Block.createCuboidShape(8, 8, 0, 16, 16, 16),
-            Block.createCuboidShape(0, 8, 8, 16, 16, 16),
-            Block.createCuboidShape(0, 8, 0, 8, 16, 16)
+            // bottom - south-west, north-west, north-east, south-east
+            Block.createCuboidShape(0, 0, 0, 8, 8, 8),
+            Block.createCuboidShape(8, 0, 0, 16, 8, 8),
+            Block.createCuboidShape(8, 0, 8, 16, 8, 16),
+            Block.createCuboidShape(0, 0, 8, 8, 8, 16),
+            // top - south-west, north-west, north-east, south-east
+            Block.createCuboidShape(0, 8, 0, 8, 16, 8),
+            Block.createCuboidShape(8, 8, 0, 16, 16, 8),
+            Block.createCuboidShape(8, 8, 8, 16, 16, 16),
+            Block.createCuboidShape(0, 8, 8, 8, 16, 16)
     );
 
-    public static final MapCodec<MouldingBlock> CODEC = MouldingBlock.createCodec(MouldingBlock::new);
+    public static final MapCodec<CornerBlock> CODEC = CornerBlock.createCodec(CornerBlock::new);
 
-    private MouldingBlock(Settings settings) {
+    private CornerBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState().with(ORIENTATION, 0));
     }
 
-    public MouldingBlock(Settings settings, Block fullBlock) {
+    public CornerBlock(Settings settings, Block fullBlock) {
         super(settings, fullBlock);
     }
 
@@ -59,17 +53,17 @@ public class MouldingBlock extends MiniBlock {
         builder.add(ORIENTATION);
     }
 
-    public static MouldingBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new MouldingBlock(FabricBlockSettings.copyOf(slabBlock), fullBlock);
+    public static CornerBlock ofBlock(Block fullBlock, Block slabBlock) {
+        return new CornerBlock(FabricBlockSettings.copyOf(slabBlock), fullBlock);
     }
 
-    public static MouldingBlock ofWoodType(WoodType woodType) {
+    public static CornerBlock ofWoodType(WoodType woodType) {
         Block fullBlock = Registries.BLOCK.get(new Identifier(woodType.name() + "_planks"));
         Block slabBlock = Registries.BLOCK.get(new Identifier(woodType.name() + "_slab"));
-        return MouldingBlock.ofBlock(fullBlock, slabBlock);
+        return CornerBlock.ofBlock(fullBlock, slabBlock);
     }
 
-    public MapCodec<? extends MouldingBlock> getCodec() {
+    public MapCodec<? extends CornerBlock> getCodec() {
         return CODEC;
     }
 
@@ -87,35 +81,17 @@ public class MouldingBlock extends MiniBlock {
         double xDistFromCenter = hitPos.getX() - 0.5;
         double yDistFromCenter = hitPos.getY() - 0.5;
         double zDistFromCenter = hitPos.getZ() - 0.5;
-        double absXDistFromCenter = Math.abs(xDistFromCenter);
-        double absYDistFromCenter = Math.abs(yDistFromCenter);
-        double absZDistFromCenter = Math.abs(zDistFromCenter);
-        double minDist = absXDistFromCenter < absYDistFromCenter
-                ? absXDistFromCenter < absZDistFromCenter
-                    ? xDistFromCenter : zDistFromCenter
-                : absYDistFromCenter < absZDistFromCenter
-                    ? yDistFromCenter : zDistFromCenter;
 
-        int orientation =
-            minDist == xDistFromCenter ?
-                    yDistFromCenter > 0
-                        ? zDistFromCenter > 0 ? 10 : 8
-                        : zDistFromCenter > 0 ? 2 : 0
-            : minDist == yDistFromCenter ?
-                    xDistFromCenter > 0
-                        ? zDistFromCenter > 0 ? 6 : 5
-                        : zDistFromCenter > 0 ? 7 : 4
-            : minDist == zDistFromCenter ?
-                    yDistFromCenter > 0
-                        ? xDistFromCenter > 0 ? 9 : 11
-                        : xDistFromCenter > 0 ? 1 : 3
-            : 0;
+        int orientation = (yDistFromCenter > 0 ? 4 : 0) +
+                xDistFromCenter > 0
+                    ? zDistFromCenter > 0 ? 2 : 1
+                    : zDistFromCenter > 0 ? 3 : 0;
 
         return state.with(ORIENTATION, orientation);
     }
 
     @Override
     public BlockState getNextOrientation(BlockState state) {
-        return state.with(ORIENTATION, (state.get(ORIENTATION) + 1) % 12);
+        return state.with(ORIENTATION, (state.get(ORIENTATION) + 1) % 8);
     }
 }

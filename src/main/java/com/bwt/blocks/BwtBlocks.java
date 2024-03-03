@@ -58,7 +58,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
 	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL));
 //	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
-//	public static final Block cornerBlock = new CornerBlock(FabricBlockSettings.create());
+	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
 //	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
 	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
 	public static final Block detectorLogicBlock = new DetectorLogicBlock(FabricBlockSettings.copyOf(Blocks.AIR));
@@ -108,6 +108,7 @@ public class BwtBlocks implements ModInitializer {
         .nonOpaque()
     );
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
+    public static final ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
@@ -121,7 +122,6 @@ public class BwtBlocks implements ModInitializer {
 
 //	public static final Block windmillBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axlePowerSourceBlock.getSettings()));
 //	public static final Block woodenDetectorRailBlock = new WoodenDetectorRailBlock(FabricBlockSettings.create());
-	public static ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
 
 
@@ -191,7 +191,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, new Identifier("bwt", "saw"), sawBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "saw"), new BlockItem(sawBlock, new FabricItemSettings()));
         // Mini blocks
-        MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks);
+        MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);

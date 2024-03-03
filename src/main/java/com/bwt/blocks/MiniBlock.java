@@ -47,10 +47,11 @@ public abstract class MiniBlock extends Block implements Waterloggable, RotateWi
         builder.add(WATERLOGGED);
     }
     
-    public static void registerMiniBlocks(ArrayList<SidingBlock> sidingBlocks, ArrayList<MouldingBlock> mouldingBlocks) {
+    public static void registerMiniBlocks(ArrayList<SidingBlock> sidingBlocks, ArrayList<MouldingBlock> mouldingBlocks, ArrayList<CornerBlock> cornerBlocks) {
         WoodType.stream().forEach(woodType -> {
             sidingBlocks.add(SidingBlock.ofWoodType(woodType));
             mouldingBlocks.add(MouldingBlock.ofWoodType(woodType));
+            cornerBlocks.add(CornerBlock.ofWoodType(woodType));
         });
         List<Block> blockSlabPairs = List.of(
                 Blocks.STONE, Blocks.STONE_SLAB,
@@ -59,17 +60,22 @@ public abstract class MiniBlock extends Block implements Waterloggable, RotateWi
         for (int i = 0; i < blockSlabPairs.size() - 1; i += 2) {
             sidingBlocks.add(SidingBlock.ofBlock(blockSlabPairs.get(i), blockSlabPairs.get(i + 1)));
             mouldingBlocks.add(MouldingBlock.ofBlock(blockSlabPairs.get(i), blockSlabPairs.get(i + 1)));
+            cornerBlocks.add(CornerBlock.ofBlock(blockSlabPairs.get(i), blockSlabPairs.get(i + 1)));
         }
         for (int i = 0; i < sidingBlocks.size(); i++) {
             SidingBlock sidingBlock = sidingBlocks.get(i);
             MouldingBlock mouldingBlock = mouldingBlocks.get(i);
+            CornerBlock cornerBlock = cornerBlocks.get(i);
             Identifier blockId = Registries.BLOCK.getId(sidingBlock.fullBlock);
             Identifier sidingId = new Identifier("bwt", blockId.getPath() + "_siding");
             Identifier mouldingId = new Identifier("bwt", blockId.getPath() + "_moulding");
+            Identifier cornerId = new Identifier("bwt", blockId.getPath() + "_corner");
             Registry.register(Registries.BLOCK, sidingId, sidingBlock);
             Registry.register(Registries.BLOCK, mouldingId, mouldingBlock);
+            Registry.register(Registries.BLOCK, cornerId, cornerBlock);
             Registry.register(Registries.ITEM, sidingId, new BlockItem(sidingBlock, new FabricItemSettings()));
             Registry.register(Registries.ITEM, mouldingId, new BlockItem(mouldingBlock, new FabricItemSettings()));
+            Registry.register(Registries.ITEM, cornerId, new BlockItem(cornerBlock, new FabricItemSettings()));
         }
     }
 

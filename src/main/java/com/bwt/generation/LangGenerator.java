@@ -1,6 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.CornerBlock;
 import com.bwt.blocks.MouldingBlock;
 import com.bwt.blocks.SidingBlock;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -23,6 +24,9 @@ public class LangGenerator extends FabricLanguageProvider {
         }
         for (MouldingBlock mouldingBlock : BwtBlocks.mouldingBlocks) {
             translationBuilder.add(mouldingBlock, nameKeyToTitleCase(mouldingBlock.fullBlock.getName().getString().replaceFirst("_planks", "") + "_moulding"));;
+        }
+        for (CornerBlock cornerBlock : BwtBlocks.cornerBlocks) {
+            translationBuilder.add(cornerBlock, nameKeyToTitleCase(cornerBlock.fullBlock.getName().getString().replaceFirst("_planks", "") + "_corner"));;
         }
 
         // Load an existing language file.
