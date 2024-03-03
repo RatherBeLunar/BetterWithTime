@@ -25,7 +25,7 @@ import net.minecraft.world.WorldAccess;
 
 import java.util.List;
 
-public class GearBoxBlock extends Block implements MechPowerBlockBase {
+public class GearBoxBlock extends Block implements MechPowerBlockBase, RotateWithEmptyHand {
     public static final DirectionProperty FACING = Properties.FACING;
     public static final BooleanProperty NORTH = ConnectingBlock.NORTH;
     public static final BooleanProperty EAST = ConnectingBlock.EAST;
@@ -64,16 +64,7 @@ public class GearBoxBlock extends Block implements MechPowerBlockBase {
         return MechPowerBlockBase.super.isMechPowered(blockState) && !blockState.get(POWERED);
     }
 
-    public BlockState getNextOrientation(BlockState blockState) {
-        return blockState.with(FACING, switch (blockState.get(FACING)) {
-            case NORTH -> Direction.EAST;
-            case EAST -> Direction.SOUTH;
-            case SOUTH -> Direction.WEST;
-            case WEST -> Direction.UP;
-            case UP -> Direction.DOWN;
-            case DOWN -> Direction.NORTH;
-        });
-    }
+
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -85,12 +76,10 @@ public class GearBoxBlock extends Block implements MechPowerBlockBase {
 
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!player.getMainHandStack().isEmpty()) {
+        BlockState updatedState = onUseRotate(state, world, pos, player);
+        if (updatedState == state) {
             return ActionResult.PASS;
         }
-        world.playSound(null, pos, state.getSoundGroup().getPlaceSound(),
-                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
-        BlockState updatedState = getNextOrientation(state);
         // Prevent exploits by turning power off and wait for scheduled reload of power state
         updatedState = updatedState.with(MECH_POWERED, false);
         world.setBlockState(pos, updatedState);

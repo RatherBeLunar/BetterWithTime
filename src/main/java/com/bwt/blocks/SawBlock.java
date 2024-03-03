@@ -99,7 +99,6 @@ public class SawBlock extends Block implements MechPowerBlockBase {
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
         builder.add(FACING);
-        BetterWithTime.LOGGER.info(BLADE_SHAPES.toString());
     }
 
     @Nullable

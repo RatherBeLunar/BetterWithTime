@@ -14,5 +14,6 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(EntityTypeTagGenerator::new);
 		pack.addProvider(BlockTagGenerator::new);
 		pack.addProvider(ItemTagGenerator::new);
+		pack.addProvider(LangGenerator::new);
 	}
 }

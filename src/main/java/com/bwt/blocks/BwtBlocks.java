@@ -18,6 +18,8 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+
 public class BwtBlocks implements ModInitializer {
 
 	public static final Block anchorBlock = new AnchorBlock(FabricBlockSettings.create()
@@ -86,7 +88,7 @@ public class BwtBlocks implements ModInitializer {
     );
 	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
 //	public static final Block miningChargeBlock = new MiningChargeBlock(FabricBlockSettings.create());
-//	public static final Block mouldingBlock = new MouldingBlock(FabricBlockSettings.create());
+	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
 //	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(FabricBlockSettings.create());
 	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f));
@@ -119,7 +121,7 @@ public class BwtBlocks implements ModInitializer {
 
 //	public static final Block windmillBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axlePowerSourceBlock.getSettings()));
 //	public static final Block woodenDetectorRailBlock = new WoodenDetectorRailBlock(FabricBlockSettings.create());
-//	public static final Block woodenSidingBlock = new WoodenSidingBlock(FabricBlockSettings.create());
+	public static ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
 
 
@@ -188,7 +190,9 @@ public class BwtBlocks implements ModInitializer {
         // Saw
         Registry.register(Registries.BLOCK, new Identifier("bwt", "saw"), sawBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "saw"), new BlockItem(sawBlock, new FabricItemSettings()));
-        
+        // Mini blocks
+        MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks);
+
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
             content.add(gearBoxBlock);

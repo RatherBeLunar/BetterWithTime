@@ -1,6 +1,8 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.MouldingBlock;
+import com.bwt.blocks.SidingBlock;
 import com.bwt.items.BwtItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
@@ -10,6 +12,8 @@ import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
+
+import java.util.Optional;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator(FabricDataOutput generator) {
@@ -37,6 +41,12 @@ public class ModelGenerator extends FabricModelProvider {
                         )
                 ).coordinate(createUpDefaultRotationStates())
         );
+        for (SidingBlock sidingBlock : BwtBlocks.sidingBlocks) {
+            generateSidingBlock(blockStateModelGenerator, sidingBlock);
+        }
+        for (MouldingBlock mouldingBlock : BwtBlocks.mouldingBlocks) {
+            generateMouldingBlock(blockStateModelGenerator, mouldingBlock);
+        }
         blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.grateBlock);
@@ -63,7 +73,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
     }
 
-    protected void generatePaneBlock(BlockStateModelGenerator blockStateModelGenerator, Block pane) {
+    public static void generatePaneBlock(BlockStateModelGenerator blockStateModelGenerator, Block pane) {
         Identifier identifier = ModelIds.getBlockSubModelId(pane, "_post_ends");
         Identifier identifier2 = ModelIds.getBlockSubModelId(pane, "_post");
         Identifier identifier3 = ModelIds.getBlockSubModelId(pane, "_cap");
@@ -106,6 +116,37 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerItemModel(pane);
     }
 
+    public static void generateSidingBlock(BlockStateModelGenerator blockStateModelGenerator, SidingBlock sidingBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(sidingBlock.fullBlock);
+        Models.SLAB.upload(sidingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        sidingBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(sidingBlock)
+                        ).put(VariantSettings.UVLOCK, true)
+                ).coordinate(createUpDefaultRotationStates())
+        );
+        blockStateModelGenerator.registerParentedItemModel(sidingBlock, ModelIds.getBlockModelId(sidingBlock));
+    }
+
+    public static void generateMouldingBlock(BlockStateModelGenerator blockStateModelGenerator, MouldingBlock mouldingBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(mouldingBlock.fullBlock);
+        Model model = new Model(Optional.of(new Identifier("bwt", "block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        model.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        mouldingBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(mouldingBlock)
+                        ).put(VariantSettings.UVLOCK, true)
+                ).coordinate(createMouldingOrientationMap())
+        );
+        blockStateModelGenerator.registerParentedItemModel(mouldingBlock, ModelIds.getBlockModelId(mouldingBlock));
+    }
+
     public static BlockStateVariantMap createUpDefaultRotationStates() {
         return BlockStateVariantMap.create(Properties.FACING)
                 .register(Direction.DOWN, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
@@ -114,5 +155,24 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
                 .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R270))
                 .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R90));
+    }
+
+    public static BlockStateVariantMap createMouldingOrientationMap() {
+        return BlockStateVariantMap.create(MouldingBlock.ORIENTATION)
+                // horizontal, bottom - west, north, east, south
+                .register(0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(3, BlockStateVariant.create())
+                // vertical - west, north, east, south
+                .register(4, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
+                .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                // horizontal, top - west, north, east, south
+                .register(8, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .register(9, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
+                .register(10, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                .register(11, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180));
     }
 }

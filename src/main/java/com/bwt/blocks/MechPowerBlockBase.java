@@ -90,5 +90,4 @@ public interface MechPowerBlockBase {
     default void playCreakSound(World world, BlockPos pos) {
         playCreakSound(world, pos, 0.25f);
     }
-
 }

@@ -1,0 +1,69 @@
+{
+  "variants": {
+    "orientation=0": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "y": 90
+    },
+    "orientation=1": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "y": 180
+    },
+    "orientation=10": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 180,
+      "y": 270
+    },
+    "orientation=11": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 180
+    },
+    "orientation=2": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "y": 270
+    },
+    "orientation=3": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true
+    },
+    "orientation=4": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 270
+    },
+    "orientation=5": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 270,
+      "y": 90
+    },
+    "orientation=6": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 270,
+      "y": 180
+    },
+    "orientation=7": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 270,
+      "y": 270
+    },
+    "orientation=8": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 180,
+      "y": 90
+    },
+    "orientation=9": {
+      "model": "bwt:block/oak_planks_moulding",
+      "uvlock": true,
+      "x": 180,
+      "y": 180
+    }
+  }
+}
