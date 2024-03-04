@@ -27,7 +27,7 @@ public class CauldronRecipe extends AbstractCookingPotRecipe {
 
     public static class JsonBuilder extends AbstractCookingPotRecipe.JsonBuilder<CauldronRecipe> {
         public static JsonBuilder create() {
-            return new JsonBuilder();
+            return ((JsonBuilder) new JsonBuilder().category(RecipeCategory.MISC));
         }
 
         public static JsonBuilder createFood() {

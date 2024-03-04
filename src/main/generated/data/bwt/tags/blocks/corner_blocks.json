@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#bwt:wooden_corner_blocks",
+    "bwt:stone_corner",
+    "bwt:stone_bricks_corner"
+  ]
+}

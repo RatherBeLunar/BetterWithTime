@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#bwt:wooden_siding_blocks",
+    "bwt:stone_siding",
+    "bwt:stone_bricks_siding"
+  ]
+}

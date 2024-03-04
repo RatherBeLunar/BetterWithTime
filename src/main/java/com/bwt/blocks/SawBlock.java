@@ -1,9 +1,8 @@
 package com.bwt.blocks;
 
-import com.bwt.BetterWithTime;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
-import com.bwt.tags.BwtTags;
+import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -242,7 +241,7 @@ public class SawBlock extends Block implements MechPowerBlockBase {
             ));
             return;
         }
-        if (!targetState.isIn(BwtTags.SURVIVES_SAW_BLOCK)) {
+        if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
             breakSaw(world, pos);
         }
     }

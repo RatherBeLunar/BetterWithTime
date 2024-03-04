@@ -6,6 +6,7 @@ import com.bwt.recipes.CauldronRecipe;
 import com.bwt.recipes.MillStoneRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
 import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -28,6 +29,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
         generateMillStoneRecipes(exporter);
         generateFoods(exporter);
+        generateOtherCauldronRecipes(exporter);
         generateCraftingRecipes(exporter);
     }
 
@@ -40,6 +42,56 @@ public class RecipeGenerator extends FabricRecipeProvider {
                 .input('p', ItemTags.PLANKS)
                 .criterion(FabricRecipeProvider.hasItem(Items.STICK), FabricRecipeProvider.conditionsFromItem(Items.STICK))
                 .criterion("has_planks", FabricRecipeProvider.conditionsFromTag(ItemTags.PLANKS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.handCrankBlock)
+                .pattern("  s")
+                .pattern(" s ")
+                .pattern("cgc")
+                .input('s', Items.STICK)
+                .input('c', ItemTags.STONE_CRAFTING_MATERIALS)
+                .input('g', BwtItems.gearItem)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.gearItem), FabricRecipeProvider.conditionsFromItem(BwtItems.gearItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.millStoneBlock)
+                .pattern("sss")
+                .pattern("sss")
+                .pattern("sgs")
+                .input('s', Items.STONE)
+                .input('g', BwtItems.gearItem)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.gearItem), FabricRecipeProvider.conditionsFromItem(BwtItems.gearItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.cauldronBlock)
+                .pattern("ibi")
+                .pattern("iwi")
+                .pattern("iii")
+                .input('i', Items.IRON_INGOT)
+                .input('b', Items.BONE)
+                .input('w', Items.WATER_BUCKET)
+                .criterion(FabricRecipeProvider.hasItem(Items.BONE), FabricRecipeProvider.conditionsFromItem(Items.BONE))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.lightBlockBlock)
+                .pattern(" p ")
+                .pattern("pfp")
+                .pattern(" r ")
+                .input('p', ConventionalItemTags.GLASS_PANES)
+                .input('f', BwtItems.filamentItem)
+                .input('r', Items.REDSTONE)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.filamentItem), FabricRecipeProvider.conditionsFromItem(BwtItems.filamentItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.fabricItem)
+                .pattern("fff")
+                .pattern("fff")
+                .pattern("fff")
+                .input('f', BwtItems.hempFiberItem)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.hempFiberItem), FabricRecipeProvider.conditionsFromItem(BwtItems.hempFiberItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.sailItem)
+                .pattern("fff")
+                .pattern("fff")
+                .pattern("ppp")
+                .input('f', BwtItems.fabricItem)
+                .input('p', ItemTags.PLANKS)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.fabricItem), FabricRecipeProvider.conditionsFromItem(BwtItems.fabricItem))
                 .offerTo(exporter);
     }
 
@@ -62,6 +114,10 @@ public class RecipeGenerator extends FabricRecipeProvider {
         CauldronRecipe.JsonBuilder.createFood().ingredient(Items.RABBIT).result(Items.COOKED_RABBIT).offerTo(exporter);
         addNewGenericFood(BwtItems.wolfChopItem, BwtItems.cookedWolfChopItem, exporter);
         CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.flourItem).result(BwtItems.donutItem).offerTo(exporter);
+    }
+
+    private void generateOtherCauldronRecipes(RecipeExporter exporter) {
+        CauldronRecipe.JsonBuilder.create().ingredient(Items.GLOWSTONE_DUST).ingredient(Items.REDSTONE).ingredient(BwtItems.hempFiberItem).result(BwtItems.filamentItem).offerTo(exporter);
     }
 
     protected void generateMillStoneRecipes(RecipeExporter exporter) {

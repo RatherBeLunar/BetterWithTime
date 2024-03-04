@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "minecraft:stone_crafting_materials"
+    },
+    "g": {
+      "item": "bwt:gear"
+    },
+    "s": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "  s",
+    " s ",
+    "cgc"
+  ],
+  "result": {
+    "item": "bwt:hand_crank"
+  }
+}

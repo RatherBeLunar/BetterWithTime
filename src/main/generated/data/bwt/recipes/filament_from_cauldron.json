@@ -1,0 +1,26 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:glowstone_dust"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:redstone"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:hemp_fiber"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:filament"
+    }
+  ]
+}

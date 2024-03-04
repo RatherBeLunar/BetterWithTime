@@ -6,6 +6,7 @@ import com.bwt.blocks.block_dispenser.behavior.dispense.ItemClumpDispenserBehavi
 import com.bwt.blocks.block_dispenser.behavior.inhale.*;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
@@ -262,7 +263,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     }
 
     protected BlockInhaleBehavior getInhaleBehaviorForItem(BlockState targetState) {
-        if (targetState.isIn(BwtTags.BLOCK_DISPENSER_INHALE_NOOP)) {
+        if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)) {
             return BlockInhaleBehavior.NOOP;
         }
         if (targetState.isOf(Blocks.NETHER_PORTAL)) {

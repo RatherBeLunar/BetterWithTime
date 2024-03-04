@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#bwt:wooden_moulding_blocks",
+    "bwt:stone_moulding",
+    "bwt:stone_bricks_moulding"
+  ]
+}

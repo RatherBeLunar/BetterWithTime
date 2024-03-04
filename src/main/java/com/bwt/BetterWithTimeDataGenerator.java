@@ -9,11 +9,11 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator generator) {
 		FabricDataGenerator.Pack pack = generator.createPack();
 
+		BlockTagGenerator blockTagGenerator = pack.addProvider(BlockTagGenerator::new);
+		pack.addProvider((output, completableFuture) -> new ItemTagGenerator(output, completableFuture, blockTagGenerator));
+		pack.addProvider(EntityTypeTagGenerator::new);
 		pack.addProvider(RecipeGenerator::new);
 		pack.addProvider(ModelGenerator::new);
-		pack.addProvider(EntityTypeTagGenerator::new);
-		pack.addProvider(BlockTagGenerator::new);
-		pack.addProvider(ItemTagGenerator::new);
 		pack.addProvider(LangGenerator::new);
 	}
 }

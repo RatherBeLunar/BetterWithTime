@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "f": {
+      "item": "bwt:filament"
+    },
+    "p": {
+      "tag": "c:glass_panes"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    " p ",
+    "pfp",
+    " r "
+  ],
+  "result": {
+    "item": "bwt:light_block"
+  }
+}

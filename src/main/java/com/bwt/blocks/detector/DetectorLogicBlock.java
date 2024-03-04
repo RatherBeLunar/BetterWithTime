@@ -1,7 +1,7 @@
 package com.bwt.blocks.detector;
 
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.tags.BwtTags;
+import com.bwt.tags.BwtBlockTags;
 import com.google.common.collect.Lists;
 import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
@@ -82,7 +82,7 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     protected boolean anyBlocksIntersecting(BlockState neighborState) {
-        return neighborState.isIn(BwtTags.DETECTABLE_SMALL_CROPS)
+        return neighborState.isIn(BwtBlockTags.DETECTABLE_SMALL_CROPS)
                 && neighborState.getOrEmpty(CropBlock.AGE).orElse(0)
                 >= ((CropBlock) neighborState.getBlock()).getMaxAge();
     }

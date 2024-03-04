@@ -46,7 +46,12 @@ public abstract class MiniBlock extends Block implements Waterloggable, RotateWi
         super.appendProperties(builder);
         builder.add(WATERLOGGED);
     }
-    
+
+    @Override
+    public boolean hasSidedTransparency(BlockState state) {
+        return true;
+    }
+
     public static void registerMiniBlocks(ArrayList<SidingBlock> sidingBlocks, ArrayList<MouldingBlock> mouldingBlocks, ArrayList<CornerBlock> cornerBlocks) {
         WoodType.stream().forEach(woodType -> {
             sidingBlocks.add(SidingBlock.ofWoodType(woodType));
