@@ -75,6 +75,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.cementBucketItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.donutItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.dungItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.fabricItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.filamentItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.flourItem, Models.GENERATED);

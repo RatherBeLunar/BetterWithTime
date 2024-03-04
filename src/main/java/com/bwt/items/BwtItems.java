@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
 public class BwtItems implements ModInitializer {
@@ -32,7 +33,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
                     .alwaysEdible()
                     .build())
     ));
-//	public static final Item dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DungItem(new FabricItemSettings()));
+	public static final Item dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DyeItem(DyeColor.BROWN, new FabricItemSettings()));
 //	public static final Item dynamiteItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dynamite"), new DynamiteItem(new FabricItemSettings()));
 //	public static final Item elementItem = Registry.register(Registries.ITEM, new Identifier("bwt", "element"), new ElementItem(new FabricItemSettings()));
 //	public static final Item enderSpectaclesItem = Registry.register(Registries.ITEM, new Identifier("bwt", "ender_spectacles"), new EnderSpectaclesItem(new FabricItemSettings()));
@@ -113,6 +114,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(content -> {
             content.add(hempFiberItem);
+            content.add(dungItem);
             content.add(ropeItem);
             content.add(gearItem);
             content.add(flourItem);
