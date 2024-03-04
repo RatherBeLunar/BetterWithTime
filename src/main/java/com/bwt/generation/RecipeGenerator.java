@@ -1,16 +1,17 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.CornerBlock;
+import com.bwt.blocks.MouldingBlock;
+import com.bwt.blocks.SidingBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.CauldronRecipe;
 import com.bwt.recipes.MillStoneRecipe;
+import com.bwt.tags.BwtItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.CampfireCookingRecipe;
@@ -18,6 +19,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.ItemTags;
 
 public class RecipeGenerator extends FabricRecipeProvider {
@@ -31,6 +33,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         generateFoods(exporter);
         generateOtherCauldronRecipes(exporter);
         generateCraftingRecipes(exporter);
+        generateHighEfficiencyRecipes(exporter);
     }
 
     public void generateCraftingRecipes(RecipeExporter exporter) {
@@ -93,6 +96,35 @@ public class RecipeGenerator extends FabricRecipeProvider {
                 .input('p', ItemTags.PLANKS)
                 .criterion(FabricRecipeProvider.hasItem(BwtItems.fabricItem), FabricRecipeProvider.conditionsFromItem(BwtItems.fabricItem))
                 .offerTo(exporter);
+        // Mini block recombining recipes
+        for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {
+            SidingBlock sidingBlock = BwtBlocks.sidingBlocks.get(i);
+            MouldingBlock mouldingBlock = BwtBlocks.mouldingBlocks.get(i);
+            CornerBlock cornerBlock = BwtBlocks.cornerBlocks.get(i);
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
+                    .input(sidingBlock, 2)
+                    .criterion(FabricRecipeProvider.hasItem(sidingBlock), FabricRecipeProvider.conditionsFromItem(sidingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
+                    .input(mouldingBlock, 2)
+                    .criterion(FabricRecipeProvider.hasItem(mouldingBlock), FabricRecipeProvider.conditionsFromItem(mouldingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
+                    .input(cornerBlock, 2)
+                    .criterion(FabricRecipeProvider.hasItem(sidingBlock), FabricRecipeProvider.conditionsFromItem(sidingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
+        }
+    }
+
+    private void generateHighEfficiencyRecipes(RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.sailItem)
+                .pattern("fff")
+                .pattern("fff")
+                .pattern("mmm")
+                .input('f', BwtItems.fabricItem)
+                .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
+                .criterion(FabricRecipeProvider.hasItem(BwtItems.fabricItem), FabricRecipeProvider.conditionsFromItem(BwtItems.fabricItem))
+                .offerTo(exporter, "he_sail");
     }
 
     public void addNewGenericFood(Item input, Item output, RecipeExporter exporter) {

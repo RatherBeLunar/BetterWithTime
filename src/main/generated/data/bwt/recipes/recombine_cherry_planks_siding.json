@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:cherry_planks_siding"
+    },
+    {
+      "item": "bwt:cherry_planks_siding"
+    }
+  ],
+  "result": {
+    "item": "minecraft:cherry_planks"
+  }
+}

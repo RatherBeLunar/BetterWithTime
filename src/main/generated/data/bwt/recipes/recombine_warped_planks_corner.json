@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:warped_planks_corner"
+    },
+    {
+      "item": "bwt:warped_planks_corner"
+    }
+  ],
+  "result": {
+    "item": "bwt:warped_planks_moulding"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stone_siding": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:stone_siding"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:recombine_stone_corner"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stone_siding"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:recombine_stone_corner"
+    ]
+  }
+}

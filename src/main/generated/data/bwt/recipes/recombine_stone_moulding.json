@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:stone_moulding"
+    },
+    {
+      "item": "bwt:stone_moulding"
+    }
+  ],
+  "result": {
+    "item": "bwt:stone_siding"
+  }
+}

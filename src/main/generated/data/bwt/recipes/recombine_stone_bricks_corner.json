@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:stone_bricks_corner"
+    },
+    {
+      "item": "bwt:stone_bricks_corner"
+    }
+  ],
+  "result": {
+    "item": "bwt:stone_bricks_moulding"
+  }
+}

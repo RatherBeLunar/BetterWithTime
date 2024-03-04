@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:dark_oak_planks_moulding"
+    },
+    {
+      "item": "bwt:dark_oak_planks_moulding"
+    }
+  ],
+  "result": {
+    "item": "bwt:dark_oak_planks_siding"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:recombine_warped_planks_siding"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_warped_planks_siding": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:warped_planks_siding"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_warped_planks_siding"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:recombine_warped_planks_siding"
+    ]
+  }
+}
