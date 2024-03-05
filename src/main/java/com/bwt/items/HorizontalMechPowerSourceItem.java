@@ -49,7 +49,7 @@ public class HorizontalMechPowerSourceItem extends Item {
 
             HorizontalMechPowerSourceEntity windmillEntity = entityFactory.create(world, middleOfAxle, placementDirection);
 
-            if (!windmillEntity.tryToSpawn()) {
+            if (!windmillEntity.tryToSpawn(context.getPlayer())) {
                 return ActionResult.FAIL;
             }
             world.emitGameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockPos);

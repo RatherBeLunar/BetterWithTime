@@ -5,7 +5,6 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityPose;
@@ -50,7 +49,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
 
-    abstract public boolean tryToSpawn();
+    abstract public boolean tryToSpawn(PlayerEntity player);
     abstract public Predicate<BlockPos> getBlockInterferencePredicate();
     abstract float computeRotation();
     abstract float getSpeedToPowerThreshold();
@@ -113,16 +112,16 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         return PistonBehavior.DESTROY;
     }
 
-    public boolean tryToSpawn(Text blockBlockedErrorMessage, Text entityBlockedErrorMessage) {
+    public boolean tryToSpawn(PlayerEntity player, Text blockBlockedErrorMessage, Text entityBlockedErrorMessage) {
         if (placementBlockedByBlock()) {
-            if(MinecraftClient.getInstance().player != null) {
-                MinecraftClient.getInstance().player.sendMessage(blockBlockedErrorMessage);
+            if(player != null) {
+                player.sendMessage(blockBlockedErrorMessage);
             }
             return false;
         }
         if (placementBlockedByEntity()) {
-            if(MinecraftClient.getInstance().player != null) {
-                MinecraftClient.getInstance().player.sendMessage(entityBlockedErrorMessage);
+            if(player != null) {
+                player.sendMessage(entityBlockedErrorMessage);
             }
             return false;
         }

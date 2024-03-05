@@ -2,6 +2,7 @@ package com.bwt.entities;
 
 import com.bwt.items.BwtItems;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
@@ -26,8 +27,9 @@ public class WaterWheelEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
-    public boolean tryToSpawn() {
+    public boolean tryToSpawn(PlayerEntity player) {
         return super.tryToSpawn(
+                player,
                 Text.of("Not enough room to place Water Wheel"),
                 Text.of("Water Wheel placement is obstructed by something, or by you")
         );
