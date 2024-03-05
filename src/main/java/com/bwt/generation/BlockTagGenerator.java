@@ -1,11 +1,13 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.CornerBlock;
+import com.bwt.blocks.MouldingBlock;
+import com.bwt.blocks.SidingBlock;
 import com.bwt.tags.BwtBlockTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.block.Blocks;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 
@@ -36,14 +38,14 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         FabricTagBuilder sidingBuilder = getOrCreateTagBuilder(BwtBlockTags.SIDING_BLOCKS);
         FabricTagBuilder mouldingBuilder = getOrCreateTagBuilder(BwtBlockTags.MOULDING_BLOCKS);
         FabricTagBuilder cornerBuilder = getOrCreateTagBuilder(BwtBlockTags.CORNER_BLOCKS);
-        BwtBlocks.sidingBlocks.stream().filter(sidingBlock -> Registries.BLOCK.getId(sidingBlock.fullBlock).getPath().contains("planks")).forEach(woodenSidingBuilder::add);
-        BwtBlocks.mouldingBlocks.stream().filter(mouldingBlock -> Registries.BLOCK.getId(mouldingBlock.fullBlock).getPath().contains("planks")).forEach(woodenMouldingBuilder::add);
-        BwtBlocks.cornerBlocks.stream().filter(cornerBlock -> Registries.BLOCK.getId(cornerBlock.fullBlock).getPath().contains("planks")).forEach(woodenCornerBuilder::add);
+        BwtBlocks.sidingBlocks.stream().filter(SidingBlock::isWood).forEach(woodenSidingBuilder::add);
+        BwtBlocks.mouldingBlocks.stream().filter(MouldingBlock::isWood).forEach(woodenMouldingBuilder::add);
+        BwtBlocks.cornerBlocks.stream().filter(CornerBlock::isWood).forEach(woodenCornerBuilder::add);
         sidingBuilder.addTag(BwtBlockTags.WOODEN_SIDING_BLOCKS);
         mouldingBuilder.addTag(BwtBlockTags.WOODEN_MOULDING_BLOCKS);
         cornerBuilder.addTag(BwtBlockTags.WOODEN_CORNER_BLOCKS);
-        BwtBlocks.sidingBlocks.stream().filter(sidingBlock -> !Registries.BLOCK.getId(sidingBlock.fullBlock).getPath().contains("planks")).forEach(sidingBuilder::add);
-        BwtBlocks.mouldingBlocks.stream().filter(mouldingBlock -> !Registries.BLOCK.getId(mouldingBlock.fullBlock).getPath().contains("planks")).forEach(mouldingBuilder::add);
-        BwtBlocks.cornerBlocks.stream().filter(cornerBlock -> !Registries.BLOCK.getId(cornerBlock.fullBlock).getPath().contains("planks")).forEach(cornerBuilder::add);
+        BwtBlocks.sidingBlocks.stream().filter(sidingBlock -> !sidingBlock.isWood()).forEach(sidingBuilder::add);
+        BwtBlocks.mouldingBlocks.stream().filter(mouldingBlock -> !mouldingBlock.isWood()).forEach(mouldingBuilder::add);
+        BwtBlocks.cornerBlocks.stream().filter(cornerBlock -> !cornerBlock.isWood()).forEach(cornerBuilder::add);
     }
 }

@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:oak_planks"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:oak_planks_siding"
+    }
+  ]
+}

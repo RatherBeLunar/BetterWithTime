@@ -9,6 +9,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     protected CauldronRecipeGenerator cauldronRecipeGenerator;
     protected CraftingRecipeGenerator craftingRecipeGenerator;
     protected MillStoneRecipeGenerator millStoneRecipeGenerator;
+    protected SawRecipeGenerator sawRecipeGenerator;
 
     public RecipeGenerator(FabricDataOutput output) {
         super(output);
@@ -16,6 +17,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.cauldronRecipeGenerator = new CauldronRecipeGenerator(output);
         this.craftingRecipeGenerator = new CraftingRecipeGenerator(output);
         this.millStoneRecipeGenerator = new MillStoneRecipeGenerator(output);
+        this.sawRecipeGenerator = new SawRecipeGenerator(output);
     }
 
     @Override
@@ -24,5 +26,6 @@ public class RecipeGenerator extends FabricRecipeProvider {
         cauldronRecipeGenerator.generate(exporter);
         craftingRecipeGenerator.generate(exporter);
         millStoneRecipeGenerator.generate(exporter);
+        sawRecipeGenerator.generate(exporter);
     }
 }

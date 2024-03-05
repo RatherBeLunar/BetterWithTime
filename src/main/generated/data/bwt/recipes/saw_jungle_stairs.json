@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:jungle_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:jungle_planks_siding"
+    },
+    {
+      "item": "bwt:jungle_planks_moulding"
+    }
+  ]
+}

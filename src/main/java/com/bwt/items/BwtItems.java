@@ -6,6 +6,8 @@ import com.bwt.entities.WindmillEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -15,7 +17,7 @@ import net.minecraft.util.Identifier;
 public class BwtItems implements ModInitializer {
     public static final Item cementBucketItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cement_bucket"), new CementBucketItem(new FabricItemSettings()));
 //	public static final Item armorPlateItem = Registry.register(Registries.ITEM, new Identifier("bwt", "armor_plate"), new ArmorPlateItem(new FabricItemSettings()));
-//	public static final Item beltItem = Registry.register(Registries.ITEM, new Identifier("bwt", "belt"), new BeltItem(new FabricItemSettings()));
+	public static final Item beltItem = Registry.register(Registries.ITEM, new Identifier("bwt", "belt"), new Item(new FabricItemSettings()));
 //	public static final Item broadheadItem = Registry.register(Registries.ITEM, new Identifier("bwt", "broadhead"), new BroadheadItem(new FabricItemSettings()));
 //	public static final Item broadheadArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "broadhead_arrow"), new BroadheadArrowItem(new FabricItemSettings()));
 //	public static final Item candleItem = Registry.register(Registries.ITEM, new Identifier("bwt", "candle"), new CandleItem(new FabricItemSettings()));
@@ -40,7 +42,12 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 	public static final Item fabricItem = Registry.register(Registries.ITEM, new Identifier("bwt", "fabric"), new Item(new FabricItemSettings()));
 	public static final Item filamentItem = Registry.register(Registries.ITEM, new Identifier("bwt", "filament"), new Item(new FabricItemSettings()));
 	public static final Item flourItem = Registry.register(Registries.ITEM, new Identifier("bwt", "flour"), new Item(new FabricItemSettings()));
-//	public static final Item foulFoodItem = Registry.register(Registries.ITEM, new Identifier("bwt", "foul_food"), new FoulFoodItem(new FabricItemSettings()));
+	public static final Item foulFoodItem = Registry.register(Registries.ITEM, new Identifier("bwt", "foul_food"), new Item(new FabricItemSettings()
+            .food(new FoodComponent.Builder()
+                    .hunger(1)
+                    .statusEffect(new StatusEffectInstance(StatusEffects.POISON, 20 * 30, 0), 0.8f)
+                    .build())
+    ));
 //	public static final Item fuseItem = Registry.register(Registries.ITEM, new Identifier("bwt", "fuse"), new FuseItem(new FabricItemSettings()));
 	public static final Item gearItem = Registry.register(Registries.ITEM, new Identifier("bwt", "gear"), new Item(new FabricItemSettings()));
 //	public static final Item glueItem = Registry.register(Registries.ITEM, new Identifier("bwt", "glue"), new GlueItem(new FabricItemSettings()));
@@ -72,7 +79,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item soulUrnItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soul_urn"), new SoulUrnItem(new FabricItemSettings()));
 	public static final Item strapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "strap"), new Item(new FabricItemSettings()));
 //	public static final Item tallowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tallow"), new TallowItem(new FabricItemSettings()));
-//	public static final Item tannedLeatherItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather"), new TannedLeatherItem(new FabricItemSettings()));
+	public static final Item tannedLeatherItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather"), new Item(new FabricItemSettings()));
 //	public static final Item tannedLeatherBootsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_boots"), new TannedLeatherBootsItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherCapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_cap"), new TannedLeatherCapItem(new FabricItemSettings()));
 //	public static final Item tannedLeatherPantsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "tanned_leather_pants"), new TannedLeatherPantsItem(new FabricItemSettings()));
@@ -119,6 +126,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
             content.add(gearItem);
             content.add(flourItem);
             content.add(scouredLeatherItem);
+            content.add(tannedLeatherItem);
             content.add(filamentItem);
             content.add(fabricItem);
             content.add(sailItem);

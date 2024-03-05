@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:birch_fence"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:birch_planks_corner"
+    }
+  ]
+}

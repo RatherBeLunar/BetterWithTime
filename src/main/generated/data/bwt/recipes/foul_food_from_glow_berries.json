@@ -1,0 +1,21 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:dung"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:glow_berries"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:foul_food"
+    }
+  ]
+}

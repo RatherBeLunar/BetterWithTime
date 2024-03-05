@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:jungle_wood"
+  },
+  "results": [
+    {
+      "count": 4,
+      "item": "minecraft:jungle_planks"
+    },
+    {
+      "count": 2,
+      "item": "bwt:saw_dust"
+    }
+  ]
+}

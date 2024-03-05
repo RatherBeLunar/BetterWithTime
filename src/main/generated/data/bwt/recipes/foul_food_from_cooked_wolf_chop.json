@@ -1,0 +1,21 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:dung"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:cooked_wolf_chop"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:foul_food"
+    }
+  ]
+}

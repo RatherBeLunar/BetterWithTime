@@ -1,0 +1,12 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:cave_vines_plant"
+  },
+  "results": [
+    {
+      "item": "minecraft:glow_berries"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:acacia_fence"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:acacia_planks_corner"
+    }
+  ]
+}

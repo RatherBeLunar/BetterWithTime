@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dung": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:dung"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_scoured_leather": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:scoured_leather"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:tanned_leather_from_cauldron"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dung",
+      "has_scoured_leather"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:tanned_leather_from_cauldron"
+    ]
+  }
+}

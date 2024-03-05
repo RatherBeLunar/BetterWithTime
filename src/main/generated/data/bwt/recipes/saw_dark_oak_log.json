@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:dark_oak_log"
+  },
+  "results": [
+    {
+      "count": 4,
+      "item": "minecraft:dark_oak_planks"
+    },
+    {
+      "count": 2,
+      "item": "bwt:saw_dust"
+    }
+  ]
+}

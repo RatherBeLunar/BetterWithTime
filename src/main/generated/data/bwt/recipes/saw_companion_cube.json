@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:companion_cube"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:companion_slab"
+    }
+  ]
+}

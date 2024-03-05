@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:dark_oak_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:dark_oak_planks_siding"
+    },
+    {
+      "item": "bwt:dark_oak_planks_moulding"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:birch_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:birch_planks_siding"
+    },
+    {
+      "item": "bwt:birch_planks_moulding"
+    }
+  ]
+}

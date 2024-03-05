@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:crimson_planks"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:crimson_planks_siding"
+    }
+  ]
+}

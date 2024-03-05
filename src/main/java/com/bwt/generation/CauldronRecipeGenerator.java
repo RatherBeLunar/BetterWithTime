@@ -14,6 +14,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SmokingRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
+import net.minecraft.registry.Registries;
 
 public class CauldronRecipeGenerator extends FabricRecipeProvider {
     public CauldronRecipeGenerator(FabricDataOutput output) {
@@ -48,6 +49,11 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateOtherCauldronRecipes(RecipeExporter exporter) {
+        // Foul foods
+        Registries.ITEM.stream().filter(Item::isFood).filter(item -> !item.equals(BwtItems.foulFoodItem)).forEach(item -> {
+            CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.dungItem).ingredient(item).result(BwtItems.foulFoodItem).offerTo(exporter, "foul_food_from_" + Registries.ITEM.getId(item).getPath());
+        });
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.dungItem).ingredient(BwtItems.scouredLeatherItem).result(BwtItems.tannedLeatherItem).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.GLOWSTONE_DUST).ingredient(Items.REDSTONE).ingredient(BwtItems.hempFiberItem).result(BwtItems.filamentItem).offerTo(exporter);
     }
 }

@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:oak_planks_moulding"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:oak_planks_corner"
+    }
+  ]
+}

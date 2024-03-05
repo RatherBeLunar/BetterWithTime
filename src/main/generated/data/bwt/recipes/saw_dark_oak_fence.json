@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:dark_oak_fence"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:dark_oak_planks_corner"
+    }
+  ]
+}

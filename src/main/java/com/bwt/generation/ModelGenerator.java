@@ -23,16 +23,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        TexturedModel.ORIENTABLE.upload(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
-                        BwtBlocks.companionCubeBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(BwtBlocks.companionCubeBlock)
-                        )
-                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
-        );
+        generateCompanionBlocks(blockStateModelGenerator);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
                         BwtBlocks.sawBlock,
@@ -91,6 +82,35 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
+    }
+
+    private void generateCompanionBlocks(BlockStateModelGenerator blockStateModelGenerator) {
+        Identifier companionCubeModelId = TexturedModel.ORIENTABLE.upload(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.companionCubeBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(BwtBlocks.companionCubeBlock)
+                        )
+                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+        );
+        Identifier companionSlabBottom = TexturedModel.makeFactory(
+                block -> new TextureMap()
+                        .put(TextureKey.BOTTOM, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_top"))
+                        .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.companionSlabBlock, "_top"))
+                        .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_side"))
+                , Models.SLAB
+        ).upload(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelCollector);
+        Identifier companionSlabTop = TexturedModel.makeFactory(
+                block -> new TextureMap()
+                        .put(TextureKey.BOTTOM, TextureMap.getSubId(BwtBlocks.companionSlabBlock, "_top"))
+                        .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_top"))
+                        .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_side"))
+                , Models.SLAB_TOP
+        ).upload(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(BwtBlocks.companionSlabBlock, companionSlabBottom, companionSlabTop, companionCubeModelId));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.companionSlabBlock, companionSlabBottom);
     }
 
     public static void generatePaneBlock(BlockStateModelGenerator blockStateModelGenerator, Block pane) {

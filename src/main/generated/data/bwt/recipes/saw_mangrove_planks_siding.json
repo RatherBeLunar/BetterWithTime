@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:mangrove_planks_siding"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:mangrove_planks_moulding"
+    }
+  ]
+}

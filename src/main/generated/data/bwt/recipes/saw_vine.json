@@ -1,0 +1,12 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:vine"
+  },
+  "results": [
+    {
+      "item": "minecraft:vine"
+    }
+  ]
+}

@@ -57,7 +57,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block canvasBlock = new CanvasBlock(FabricBlockSettings.create());
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
 	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL));
-//	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
+	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
 //	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
 	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
@@ -161,6 +161,9 @@ public class BwtBlocks implements ModInitializer {
         // Companion Cube
         Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_cube"), companionCubeBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "companion_cube"), new BlockItem(companionCubeBlock, new FabricItemSettings()));
+        // Companion Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_slab"), companionSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "companion_slab"), new BlockItem(companionSlabBlock, new FabricItemSettings()));
         // Hand Crank
         Registry.register(Registries.BLOCK, new Identifier("bwt", "hand_crank"), handCrankBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "hand_crank"), new BlockItem(handCrankBlock, new FabricItemSettings()));

@@ -52,6 +52,10 @@ public abstract class MiniBlock extends Block implements Waterloggable, RotateWi
         return true;
     }
 
+    public boolean isWood() {
+        return Registries.BLOCK.getId(fullBlock).getPath().contains("planks");
+    }
+
     public static void registerMiniBlocks(ArrayList<SidingBlock> sidingBlocks, ArrayList<MouldingBlock> mouldingBlocks, ArrayList<CornerBlock> cornerBlocks) {
         WoodType.stream().forEach(woodType -> {
             sidingBlocks.add(SidingBlock.ofWoodType(woodType));

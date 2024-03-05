@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:stripped_warped_stem"
+  },
+  "results": [
+    {
+      "count": 4,
+      "item": "minecraft:warped_planks"
+    },
+    {
+      "count": 2,
+      "item": "bwt:saw_dust"
+    }
+  ]
+}

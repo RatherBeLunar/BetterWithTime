@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "bwt:block/companion_slab"
+    },
+    "type=double": {
+      "model": "bwt:block/companion_cube"
+    },
+    "type=top": {
+      "model": "bwt:block/companion_slab_top"
+    }
+  }
+}

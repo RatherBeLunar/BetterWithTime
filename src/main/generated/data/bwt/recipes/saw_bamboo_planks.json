@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:bamboo_planks"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:bamboo_planks_siding"
+    }
+  ]
+}

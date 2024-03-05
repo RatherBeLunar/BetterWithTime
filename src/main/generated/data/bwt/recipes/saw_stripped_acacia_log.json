@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:stripped_acacia_log"
+  },
+  "results": [
+    {
+      "count": 4,
+      "item": "minecraft:acacia_planks"
+    },
+    {
+      "count": 2,
+      "item": "bwt:saw_dust"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:crimson_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:crimson_planks_siding"
+    },
+    {
+      "item": "bwt:crimson_planks_moulding"
+    }
+  ]
+}

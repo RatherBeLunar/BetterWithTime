@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:dark_oak_planks_siding"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:dark_oak_planks_moulding"
+    }
+  ]
+}

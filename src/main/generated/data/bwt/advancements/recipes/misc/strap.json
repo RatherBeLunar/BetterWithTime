@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_tanned_leather": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:tanned_leather"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:strap"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_tanned_leather"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:strap"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dung": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:dung"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_pumpkin_pie": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:pumpkin_pie"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:foul_food_from_pumpkin_pie"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_dung",
+      "has_pumpkin_pie"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:foul_food_from_pumpkin_pie"
+    ]
+  }
+}

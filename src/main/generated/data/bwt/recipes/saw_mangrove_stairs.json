@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:mangrove_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:mangrove_planks_siding"
+    },
+    {
+      "item": "bwt:mangrove_planks_moulding"
+    }
+  ]
+}

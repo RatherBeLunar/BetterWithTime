@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:cherry_planks_siding"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:cherry_planks_moulding"
+    }
+  ]
+}

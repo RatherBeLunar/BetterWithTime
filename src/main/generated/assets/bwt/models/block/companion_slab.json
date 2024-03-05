@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "bwt:block/companion_cube_top",
+    "side": "bwt:block/companion_cube_side",
+    "top": "bwt:block/companion_slab_top"
+  }
+}

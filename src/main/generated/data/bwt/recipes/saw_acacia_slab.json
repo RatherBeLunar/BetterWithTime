@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:acacia_slab"
+  },
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:acacia_planks_moulding"
+    }
+  ]
+}

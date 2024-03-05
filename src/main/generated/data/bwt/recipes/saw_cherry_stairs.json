@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:cherry_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:cherry_planks_siding"
+    },
+    {
+      "item": "bwt:cherry_planks_moulding"
+    }
+  ]
+}

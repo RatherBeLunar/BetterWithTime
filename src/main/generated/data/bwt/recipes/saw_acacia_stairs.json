@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:acacia_stairs"
+  },
+  "results": [
+    {
+      "item": "bwt:acacia_planks_siding"
+    },
+    {
+      "item": "bwt:acacia_planks_moulding"
+    }
+  ]
+}
