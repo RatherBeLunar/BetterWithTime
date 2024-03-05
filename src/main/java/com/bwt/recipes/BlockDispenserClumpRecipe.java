@@ -4,6 +4,16 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancement.Advancement;
+import net.minecraft.advancement.AdvancementCriterion;
+import net.minecraft.advancement.AdvancementRequirements;
+import net.minecraft.advancement.AdvancementRewards;
+import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
+import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
@@ -12,8 +22,13 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registries;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class BlockDispenserClumpRecipe implements Recipe<BlockDispenserBlockEntity> {
     private final Ingredient item;
@@ -163,6 +178,81 @@ public class BlockDispenserClumpRecipe implements Recipe<BlockDispenserBlockEnti
             recipe.item.write(buf);
             buf.writeInt(recipe.itemCount);
             buf.writeItemStack(recipe.block);
+        }
+    }
+
+    public interface RecipeFactory<T extends BlockDispenserClumpRecipe> {
+        T create(Ingredient item, int count, ItemStack block);
+    }
+
+    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
+        protected Ingredient item;
+        protected int count;
+        protected ItemStack block;
+
+        @Nullable
+        protected String group;
+        protected final Map<String, AdvancementCriterion<?>> criteria = new LinkedHashMap<>();
+
+        public static JsonBuilder create() {
+            return new JsonBuilder();
+        }
+
+        RecipeFactory<BlockDispenserClumpRecipe> getRecipeFactory() {
+            return BlockDispenserClumpRecipe::new;
+        }
+
+        public JsonBuilder ingredient(Ingredient ingredient) {
+            this.item = ingredient;
+            return this;
+        }
+
+        public JsonBuilder ingredient(Item item) {
+            return this.ingredient(Ingredient.ofItems(item));
+        }
+
+        public JsonBuilder count(int count) {
+            this.count = count;
+            return this;
+        }
+
+        public JsonBuilder output(ItemConvertible block) {
+            this.block = new ItemStack(block.asItem());
+            return this;
+        }
+
+        @Override
+        public JsonBuilder criterion(String name, AdvancementCriterion<?> criterion) {
+            this.criteria.put(name, criterion);
+            return this;
+        }
+
+        @Override
+        public JsonBuilder group(@Nullable String string) {
+            this.group = string;
+            return this;
+        }
+
+        @Override
+        public Item getOutputItem() {
+            return block.getItem();
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter) {
+            this.offerTo(exporter, RecipeProvider.getItemPath(block.getItem()) + "_clump");
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+            this.criteria.forEach(advancementBuilder::criterion);
+            BlockDispenserClumpRecipe blockDispenserClumpRecipe = this.getRecipeFactory().create(
+                    this.item,
+                    this.count,
+                    this.block
+            );
+            exporter.accept(recipeId, blockDispenserClumpRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/")));
         }
     }
 }
