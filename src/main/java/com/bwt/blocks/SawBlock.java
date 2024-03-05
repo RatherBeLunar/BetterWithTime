@@ -2,11 +2,13 @@ package com.bwt.blocks;
 
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
+import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.SawRecipe;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
+import com.bwt.utils.CustomItemScatterer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -15,7 +17,8 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
@@ -32,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 public class SawBlock extends Block implements MechPowerBlockBase {
@@ -40,7 +44,7 @@ public class SawBlock extends Block implements MechPowerBlockBase {
 
     private static final int m_iPowerChangeTickRate = 10;
 
-    private static final int m_iSawTimeBaseTickRate = 10;
+    private static final int m_iSawTimeBaseTickRate = 15;
     private static final int m_iSawTimeTickRateVariance = 4;
 
     // This base height prevents chickens slipping through grinders, while allowing items to pass
@@ -195,7 +199,7 @@ public class SawBlock extends Block implements MechPowerBlockBase {
         // check if we have something to cut in front of us
         BlockPos targetPos = pos.offset(state.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
-        if (targetState.isSolid()) {
+        if (!targetState.isAir()) {
             world.scheduleBlockTick(pos, this, m_iSawTimeBaseTickRate + world.random.nextInt(m_iSawTimeTickRateVariance));
         }
     }
@@ -230,20 +234,20 @@ public class SawBlock extends Block implements MechPowerBlockBase {
         if (targetState.isAir()) {
             return;
         }
-        // TODO make this recipe based
-        if (targetState.isIn(BlockTags.LOGS)) {
-            world.breakBlock(targetPos, false);
-            playBangSound(world, pos);
-            ItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(
-                    ItemStack.EMPTY,
-                    new ItemStack(Blocks.OAK_PLANKS, 4),
-                    new ItemStack(BwtItems.sawDustItem, 2)
-            ));
+        RecipeManager recipeManager = world.getRecipeManager();
+        Optional<SawRecipe> recipe = recipeManager.listAllOfType(BwtRecipes.SAW_RECIPE_TYPE).stream()
+                .map(RecipeEntry::value)
+                .filter(sawRecipeRecipe -> sawRecipeRecipe.matches(targetState.getBlock()))
+                .findFirst();
+        if (recipe.isEmpty()) {
+            if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
+                breakSaw(world, pos);
+            }
             return;
         }
-        if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
-            breakSaw(world, pos);
-        }
+        world.breakBlock(targetPos, false);
+        playBangSound(world, pos);
+        CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, recipe.get().getResults().toArray(new ItemStack[0])));
     }
 
     public void breakSaw(World world, BlockPos pos) {

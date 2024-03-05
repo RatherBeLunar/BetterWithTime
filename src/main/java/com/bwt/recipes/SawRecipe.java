@@ -86,7 +86,7 @@ public class SawRecipe implements Recipe<Inventory> {
 
     @Override
     public RecipeType<?> getType() {
-        return BwtRecipes.MILL_STONE_RECIPE_TYPE;
+        return BwtRecipes.SAW_RECIPE_TYPE;
     }
 
     public CraftingRecipeCategory getCategory() {
