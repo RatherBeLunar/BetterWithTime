@@ -1,5 +1,6 @@
-package com.bwt.blocks.mech_hopper;
+package com.bwt.screens;
 
+import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -8,14 +9,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/hopper.png");
+public class BlockDispenserScreen extends HandledScreen<BlockDispenserScreenHandler> {
+    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/block_dispenser.png");
+    static final int selectionIconWidth = 20;
+    static final int selectionIconHeight = 20;
 
-    static final int gearIconHeight = 12;
-
-    public MechHopperScreen(MechHopperScreenHandler handler, PlayerInventory inventory, Text title) {
+    public BlockDispenserScreen(BlockDispenserScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        backgroundHeight = 193;
+        backgroundHeight = 166 + 18;
         playerInventoryTitleY = backgroundHeight - 94;
     }
 
@@ -28,19 +29,23 @@ public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
         int y = (height - backgroundHeight) / 2;
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
-        // draw the cooking indicator
+        // draw the selection rectangle
+        int selectedSlot = this.handler.getSelectedSlot();
+        if (selectedSlot < 0) {
+            return;
+        }
 
-        if (this.handler.isMechPowered()) {
-            context.drawTexture(
-                TEXTURE,
-                x + 80,
-                y + 18,
+        int xOffset = ( selectedSlot % 4 ) * 18;
+        int yOffset = ( selectedSlot / 4 ) * 18;
+
+        context.drawTexture(TEXTURE,
+                x + 51 + xOffset,
+                y + 15 + yOffset,
                 176,
                 0,
-                14,
-                gearIconHeight
-            );
-        }
+                selectionIconWidth,
+                selectionIconHeight
+        );
     }
 
     @Override
@@ -56,3 +61,5 @@ public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
         titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
     }
 }
+
+

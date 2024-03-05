@@ -1,4 +1,4 @@
-package com.bwt;
+package com.bwt.models;
 
 import com.bwt.entities.WindmillEntity;
 import net.minecraft.client.model.*;

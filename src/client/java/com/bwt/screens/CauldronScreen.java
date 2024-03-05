@@ -1,5 +1,6 @@
-package com.bwt.blocks.cauldron;
+package com.bwt.screens;
 
+import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;

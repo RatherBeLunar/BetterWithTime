@@ -1,4 +1,4 @@
-package com.bwt;
+package com.bwt.models;
 
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
 import net.minecraft.client.render.OverlayTexture;

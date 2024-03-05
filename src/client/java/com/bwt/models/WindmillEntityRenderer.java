@@ -1,5 +1,6 @@
-package com.bwt;
+package com.bwt.models;
 
+import com.bwt.BetterWithTimeClient;
 import com.bwt.entities.WindmillEntity;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.util.Identifier;

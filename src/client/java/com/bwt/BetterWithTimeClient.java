@@ -2,11 +2,12 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.block_dispenser.BlockDispenserScreen;
-import com.bwt.blocks.cauldron.CauldronScreen;
-import com.bwt.blocks.mech_hopper.MechHopperScreen;
-import com.bwt.blocks.mill_stone.MillStoneScreen;
+import com.bwt.screens.BlockDispenserScreen;
+import com.bwt.screens.CauldronScreen;
+import com.bwt.screens.MechHopperScreen;
+import com.bwt.screens.MillStoneScreen;
 import com.bwt.entities.BwtEntities;
+import com.bwt.models.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

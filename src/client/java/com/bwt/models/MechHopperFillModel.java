@@ -1,4 +1,4 @@
-package com.bwt;
+package com.bwt.models;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.RenderLayer;

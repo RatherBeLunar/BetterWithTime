@@ -1,8 +1,9 @@
 /*
  * Decompiled with CFR 0.2.1 (FabricMC 53fa44c9).
  */
-package com.bwt;
+package com.bwt.models;
 
+import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
