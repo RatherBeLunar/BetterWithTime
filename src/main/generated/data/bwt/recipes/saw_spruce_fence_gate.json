@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:spruce_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:spruce_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

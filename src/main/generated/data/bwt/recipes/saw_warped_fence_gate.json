@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:warped_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:warped_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

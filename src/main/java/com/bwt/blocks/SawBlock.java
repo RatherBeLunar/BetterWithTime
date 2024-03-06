@@ -11,6 +11,7 @@ import com.bwt.utils.CustomItemScatterer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -244,7 +245,14 @@ public class SawBlock extends Block implements MechPowerBlockBase {
                 .findFirst();
         // Cutting
         if (recipe.isEmpty()) {
-            // Check if we need to break the saw
+            if (targetState.isIn(BwtBlockTags.SAW_BREAKS_NO_DROPS)) {
+                world.breakBlock(targetPos, false);
+                return;
+            }
+            if (targetState.isIn(BwtBlockTags.SAW_BREAKS_DROPS_LOOT)) {
+                world.breakBlock(targetPos, true);
+                return;
+            }
             if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
                 breakSaw(world, pos);
             }
@@ -269,6 +277,11 @@ public class SawBlock extends Block implements MechPowerBlockBase {
             world.breakBlock(targetPos, false);
         }
         playBangSound(world, pos);
+
+        if (targetState.contains(Properties.SLAB_TYPE) && targetState.get(Properties.SLAB_TYPE).equals(SlabType.DOUBLE)) {
+            results.forEach(stack -> stack.setCount(stack.getCount() * 2));
+        }
+
         CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
 

@@ -9,6 +9,8 @@ public class BwtBlockTags {
     public static final TagKey<Block> BLOCK_DISPENSER_INHALE_NOOP = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "block_dispenser_inhale_noop"));
     public static final TagKey<Block> DETECTABLE_SMALL_CROPS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "detectable_small_crops"));
     public static final TagKey<Block> SURVIVES_SAW_BLOCK = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "survives_saw_block"));
+    public static final TagKey<Block> SAW_BREAKS_NO_DROPS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "saw_breaks_no_drops"));
+    public static final TagKey<Block> SAW_BREAKS_DROPS_LOOT = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "saw_breaks_drops_loot"));
     public static final TagKey<Block> SIDING_BLOCKS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "siding_blocks"));
     public static final TagKey<Block> WOODEN_SIDING_BLOCKS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "wooden_siding_blocks"));
     public static final TagKey<Block> MOULDING_BLOCKS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "moulding_blocks"));

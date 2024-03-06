@@ -2,11 +2,11 @@
   "type": "bwt:saw",
   "category": "misc",
   "ingredient": {
-    "block": "bwt:companion_slab"
+    "block": "minecraft:ladder"
   },
   "results": [
     {
-      "item": "bwt:companion_slab"
+      "item": "minecraft:stick"
     }
   ]
 }

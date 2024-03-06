@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:saw_cave_vines"
+        "recipe": "minecraft:saw_chorus_flower"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:saw_cave_vines"
+      "minecraft:saw_chorus_flower"
     ]
   }
 }

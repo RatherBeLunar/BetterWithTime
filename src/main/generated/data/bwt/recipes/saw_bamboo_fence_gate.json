@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:bamboo_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:bamboo_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

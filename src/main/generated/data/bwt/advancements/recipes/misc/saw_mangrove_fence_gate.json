@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:saw_cave_vines_plant"
+        "recipe": "minecraft:saw_mangrove_fence_gate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:saw_cave_vines_plant"
+      "minecraft:saw_mangrove_fence_gate"
     ]
   }
 }

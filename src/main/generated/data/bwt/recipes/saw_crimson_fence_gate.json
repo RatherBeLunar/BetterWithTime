@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:crimson_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:crimson_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

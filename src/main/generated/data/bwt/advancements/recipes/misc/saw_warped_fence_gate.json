@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:saw_companion_slab"
+        "recipe": "minecraft:saw_warped_fence_gate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:saw_companion_slab"
+      "minecraft:saw_warped_fence_gate"
     ]
   }
 }

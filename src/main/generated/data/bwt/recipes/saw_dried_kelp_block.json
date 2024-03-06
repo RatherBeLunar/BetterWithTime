@@ -2,11 +2,12 @@
   "type": "bwt:saw",
   "category": "misc",
   "ingredient": {
-    "block": "minecraft:cave_vines_plant"
+    "block": "minecraft:dried_kelp_block"
   },
   "results": [
     {
-      "item": "minecraft:glow_berries"
+      "count": 6,
+      "item": "minecraft:dried_kelp"
     }
   ]
 }

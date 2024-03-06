@@ -1,0 +1,12 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:chorus_flower"
+  },
+  "results": [
+    {
+      "item": "minecraft:chorus_flower"
+    }
+  ]
+}

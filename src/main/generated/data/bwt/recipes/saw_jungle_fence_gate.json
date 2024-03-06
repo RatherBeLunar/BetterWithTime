@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:jungle_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:jungle_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

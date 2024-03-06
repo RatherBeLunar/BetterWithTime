@@ -1,0 +1,15 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:mangrove_fence_gate"
+  },
+  "results": [
+    {
+      "item": "bwt:mangrove_planks_corner"
+    },
+    {
+      "item": "minecraft:stick"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 
@@ -27,10 +28,11 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
     protected void generateSawRecipes(RecipeExporter exporter) {
         generateWoodFamilyRecipes(exporter);
         SawRecipe.JsonBuilder.create(BwtBlocks.companionCubeBlock).result(BwtBlocks.companionSlabBlock.asItem(), 2).offerTo(exporter);
-        SawRecipe.JsonBuilder.dropsSelf(BwtBlocks.companionSlabBlock, exporter);
         SawRecipe.JsonBuilder.dropsSelf(Blocks.VINE, exporter);
-        SawRecipe.JsonBuilder.dropsSelf(Blocks.CAVE_VINES, exporter);
-        SawRecipe.JsonBuilder.create(Blocks.CAVE_VINES_PLANT).result(Blocks.CAVE_VINES.asItem()).offerTo(exporter);
+        SawRecipe.JsonBuilder.dropsSelf(Blocks.CHORUS_FLOWER, exporter);
+        SawRecipe.JsonBuilder.create(Blocks.LADDER).result(Items.STICK, 1).offerTo(exporter);
+        SawRecipe.JsonBuilder.create(Blocks.DRIED_KELP_BLOCK).result(Items.DRIED_KELP, 6).offerTo(exporter);
+        SawRecipe.JsonBuilder.create(Blocks.HAY_BLOCK).result(Items.WHEAT, 6).offerTo(exporter);
     }
 
     private void generateWoodFamilyRecipes(RecipeExporter exporter) {
@@ -47,9 +49,6 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             Identifier woodId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_wood"));
             Identifier hyphaeId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_hyphae"));
             Identifier stemId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stem"));
-            Identifier fenceId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
-            Identifier stairsId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stairs"));
-            Identifier slabId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_slab"));
 
             // Logs/Stems/Hyphae -> planks
             for (Identifier logIshId : new Identifier[]{logId, woodId, hyphaeId, stemId}) {
@@ -68,7 +67,12 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             SawRecipe.JsonBuilder.create(mouldingBlock).result(cornerBlock.asItem(), 2).offerTo(exporter);
             SawRecipe.JsonBuilder.create(cornerBlock).result(BwtItems.gearItem, 2).offerTo(exporter);
             // Recycling recipes
+            Identifier fenceId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
+            Identifier fenceGateId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence_gate"));
+            Identifier stairsId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stairs"));
+            Identifier slabId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_slab"));
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceId)).result(cornerBlock.asItem(), 2).offerTo(exporter);
+            SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceGateId)).result(cornerBlock.asItem()).result(Items.STICK).offerTo(exporter);
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(stairsId)).result(sidingBlock.asItem()).result(mouldingBlock.asItem()).offerTo(exporter);
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(slabId)).result(mouldingBlock.asItem(), 2).offerTo(exporter);
         }
