@@ -106,6 +106,15 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('g', BwtItems.gearItem)
                 .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
                 .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hopperBlock)
+                .pattern("s s")
+                .pattern("gpg")
+                .pattern(" c ")
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('g', BwtItems.gearItem)
+                .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
+                .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
+                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem));
 
         // Mini block recombining recipes
         for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {

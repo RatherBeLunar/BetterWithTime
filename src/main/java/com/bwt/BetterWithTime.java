@@ -12,7 +12,6 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.tags.BwtTags;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
@@ -55,7 +54,6 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtDamageTypes damageTypes = new BwtDamageTypes();
 	public static final BwtGameRules gameRules = new BwtGameRules();
 
-	public static final BwtTags tags = new BwtTags();
 	public static final Identifier MECH_BANG = new Identifier("bwt:mech_bang");
 	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -84,7 +82,6 @@ public class BetterWithTime implements ModInitializer {
 		entities.onInitialize();
 		recipes.onInitialize();
 		damageTypes.onInitialize();
-		tags.onInitialize();
 		gameRules.onInitialize();
 		Registry.register(Registries.SOUND_EVENT, MECH_BANG, MECH_BANG_SOUND);
 

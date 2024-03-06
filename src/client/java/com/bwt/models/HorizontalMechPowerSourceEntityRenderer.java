@@ -34,7 +34,7 @@ public abstract class HorizontalMechPowerSourceEntityRenderer<T extends Horizont
         matrices.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(entity.getYaw()));
         matrices.push();
         matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(MathHelper.lerpAngleDegrees(tickDelta, entity.getPrevRotation(), entity.getRotation())));
-        this.model.render(matrices, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+        this.model.render(entity, matrices, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
         matrices.pop();
         matrices.pop();
     }

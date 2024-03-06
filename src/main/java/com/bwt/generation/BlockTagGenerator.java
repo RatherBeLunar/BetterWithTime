@@ -145,6 +145,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.grateBlock)
                 .add(BwtBlocks.slatsBlock)
                 .add(BwtBlocks.wickerBlock)
+                .add(BwtBlocks.hempCropBlock)
                 .add(BwtBlocks.companionSlabBlock);
     }
 }

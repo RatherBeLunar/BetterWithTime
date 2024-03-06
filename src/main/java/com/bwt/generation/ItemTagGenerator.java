@@ -2,7 +2,6 @@ package com.bwt.generation;
 
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
-import com.bwt.tags.BwtTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.item.Items;
@@ -24,7 +23,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         copy(BwtBlockTags.SIDING_BLOCKS, BwtItemTags.SIDING_BLOCKS);
         copy(BwtBlockTags.MOULDING_BLOCKS, BwtItemTags.MOULDING_BLOCKS);
         copy(BwtBlockTags.CORNER_BLOCKS, BwtItemTags.CORNER_BLOCKS);
-        getOrCreateTagBuilder(BwtTags.PASSES_LADDER_FILTER)
+        getOrCreateTagBuilder(BwtItemTags.PASSES_LADDER_FILTER)
                 .forceAddTag(ItemTags.FLOWERS)
                 .forceAddTag(ItemTags.SAPLINGS)
                 .forceAddTag(ItemTags.TOOLS)

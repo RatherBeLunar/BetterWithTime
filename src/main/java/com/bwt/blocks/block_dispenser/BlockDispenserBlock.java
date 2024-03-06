@@ -7,7 +7,7 @@ import com.bwt.blocks.block_dispenser.behavior.inhale.*;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtBlockTags;
-import com.bwt.tags.BwtTags;
+import com.bwt.tags.BwtEntityTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.block.*;
@@ -247,7 +247,7 @@ public class BlockDispenserBlock extends DispenserBlock {
                 TypeFilter.instanceOf(Entity.class),
                 new Box(targetPos),
                 EntityPredicates.EXCEPT_SPECTATOR.and(entity ->
-                        entity.getType().isIn(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)
+                        entity.getType().isIn(BwtEntityTags.BLOCK_DISPENSER_INHALE_ENTITIES)
                         && ENTITY_INHALE_BEHAVIORS.getOrDefault(entity.getType(), EntityInhaleBehavior.NOOP).canInhale(entity)
                 ),
                 entities

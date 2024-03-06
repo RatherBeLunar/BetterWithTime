@@ -1,6 +1,6 @@
 package com.bwt.generation;
 
-import com.bwt.tags.BwtTags;
+import com.bwt.tags.BwtEntityTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.entity.EntityType;
@@ -15,7 +15,7 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup arg) {
-        getOrCreateTagBuilder(BwtTags.BLOCK_DISPENSER_INHALE_ENTITIES)
+        getOrCreateTagBuilder(BwtEntityTags.BLOCK_DISPENSER_INHALE_ENTITIES)
                 .add(EntityType.WOLF)
                 .add(EntityType.CHICKEN)
                 .add(EntityType.SHEEP)

@@ -4,6 +4,11 @@ import com.bwt.entities.WindmillEntity;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.DyeColor;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<WindmillEntity> {
 
@@ -15,60 +20,46 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
     private static final int shaftLength = (int)( ( WindmillEntity.height * 8.0f ) - shaftOffsetFromCenter) - 2;
     private static final int shaftWidth = 4;
 
-    private final ModelPart sail0;
-    private final ModelPart sail1;
-    private final ModelPart sail2;
-    private final ModelPart sail3;
-    private final ModelPart shaft0;
-    private final ModelPart shaft1;
-    private final ModelPart shaft2;
-    private final ModelPart shaft3;
+    private final List<ModelPart> sails;
+    private final List<ModelPart> shafts;
+
 
     public WindmillEntityModel(ModelPart modelPart) {
         super();
-        this.shaft0 = modelPart.getChild("shaft0");
-        this.shaft1 = modelPart.getChild("shaft1");
-        this.shaft2 = modelPart.getChild("shaft2");
-        this.shaft3 = modelPart.getChild("shaft3");
-        this.sail0 = modelPart.getChild("sail0");
-        this.sail1 = modelPart.getChild("sail1");
-        this.sail2 = modelPart.getChild("sail2");
-        this.sail3 = modelPart.getChild("sail3");
+        shafts = IntStream.range(0, WindmillEntity.NUM_SAILS).mapToObj(i -> modelPart.getChild("shaft" + i)).collect(Collectors.toList());
+        sails = IntStream.range(0, WindmillEntity.NUM_SAILS).mapToObj(i -> modelPart.getChild("sail" + i)).collect(Collectors.toList());
     }
 
     public static TexturedModelData getTexturedModelData() {
         ModelData modelData = new ModelData();
         ModelPartData modelPartData = modelData.getRoot();
         float localPi = 3.141593F;
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
             modelPartData.addChild("shaft" + i,
                 ModelPartBuilder.create()
                     .uv(0, 0)
                     .cuboid(shaftOffsetFromCenter, -(float) shaftWidth / 2.0f, -(float) shaftWidth / 2.0f,
                             shaftLength, shaftWidth, shaftWidth),
-                ModelTransform.rotation(0F, 0F, localPi * (float)( i - 4 ) / 2.0F));
+                ModelTransform.rotation(0F, 0F, 2 * localPi * (float)i / (float)WindmillEntity.NUM_SAILS));
         }
-        for (int i = 4; i < 8; i++ ) {
-            modelPartData.addChild("sail" + (i - 4),
+        for (int i = WindmillEntity.NUM_SAILS; i < WindmillEntity.NUM_SAILS * 2; i++ ) {
+            modelPartData.addChild("sail" + (i - WindmillEntity.NUM_SAILS),
                 ModelPartBuilder.create()
                     .uv(0, 15)
                     .cuboid(bladeOffsetFromCenter, 1.75f/*-(float)iBladeWidth / 2.0f*/, 1.0F, bladeLength, bladeWidth, 1 ),
-                ModelTransform.rotation(-localPi / 12.0F, 0F, localPi * (float)i / 2.0F)
-            );
+                ModelTransform.rotation(-localPi / 12.0F, 0F, 2 * localPi * (float)(i - 4) / (float)WindmillEntity.NUM_SAILS));
         }
         return TexturedModelData.of(modelData, 64, 32);
-
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        shaft0.render(matrices, vertices, light, overlay);
-        shaft1.render(matrices, vertices, light, overlay);
-        shaft2.render(matrices, vertices, light, overlay);
-        shaft3.render(matrices, vertices, light, overlay);
-        sail0.render(matrices, vertices, light, overlay);
-        sail1.render(matrices, vertices, light, overlay);
-        sail2.render(matrices, vertices, light, overlay);
-        sail3.render(matrices, vertices, light, overlay);
+    public void render(WindmillEntity entity, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+        shafts.forEach(shaft -> shaft.render(matrices, vertices, light, overlay));
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
+            ModelPart sail = sails.get(i);
+            DyeColor sailColor = entity.getSailColor(i);
+            float[] sailRgb = sailColor.getColorComponents();
+            sail.render(matrices, vertices, light, overlay, sailRgb[0], sailRgb[1], sailRgb[2], alpha);
+        }
     }
 }

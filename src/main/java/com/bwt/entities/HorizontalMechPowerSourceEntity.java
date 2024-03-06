@@ -252,9 +252,11 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
+        nbt.putFloat("rotationSpeed", dataTracker.get(rotationSpeed));
     }
 
     @Override
     protected void readCustomDataFromNbt(NbtCompound nbt) {
+        this.dataTracker.set(rotationSpeed, nbt.getFloat("rotationSpeed"));
     }
 }
