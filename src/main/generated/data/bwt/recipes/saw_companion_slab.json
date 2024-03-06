@@ -1,0 +1,12 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "ingredient": {
+    "block": "bwt:companion_slab"
+  },
+  "results": [
+    {
+      "item": "bwt:companion_slab"
+    }
+  ]
+}

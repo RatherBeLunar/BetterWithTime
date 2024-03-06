@@ -32,6 +32,9 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.WHEAT)
                 .add(Blocks.CARROTS)
                 .add(Blocks.POTATOES);
+        getOrCreateTagBuilder(BwtBlockTags.SURVIVES_SAW_BLOCK)
+                .add(BwtBlocks.companionSlabBlock);
+
         FabricTagBuilder woodenSidingBuilder = getOrCreateTagBuilder(BwtBlockTags.WOODEN_SIDING_BLOCKS);
         FabricTagBuilder woodenMouldingBuilder = getOrCreateTagBuilder(BwtBlockTags.WOODEN_MOULDING_BLOCKS);
         FabricTagBuilder woodenCornerBuilder = getOrCreateTagBuilder(BwtBlockTags.WOODEN_CORNER_BLOCKS);

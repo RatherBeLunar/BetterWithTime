@@ -27,6 +27,7 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
     protected void generateSawRecipes(RecipeExporter exporter) {
         generateWoodFamilyRecipes(exporter);
         SawRecipe.JsonBuilder.create(BwtBlocks.companionCubeBlock).result(BwtBlocks.companionSlabBlock.asItem(), 2).offerTo(exporter);
+        SawRecipe.JsonBuilder.dropsSelf(BwtBlocks.companionSlabBlock, exporter);
         SawRecipe.JsonBuilder.dropsSelf(Blocks.VINE, exporter);
         SawRecipe.JsonBuilder.dropsSelf(Blocks.CAVE_VINES, exporter);
         SawRecipe.JsonBuilder.create(Blocks.CAVE_VINES_PLANT).result(Blocks.CAVE_VINES.asItem()).offerTo(exporter);

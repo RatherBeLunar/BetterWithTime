@@ -2,6 +2,7 @@ package com.bwt.blocks;
 
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
+import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.SawRecipe;
 import com.bwt.tags.BwtBlockTags;
@@ -20,6 +21,8 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -239,15 +242,34 @@ public class SawBlock extends Block implements MechPowerBlockBase {
                 .map(RecipeEntry::value)
                 .filter(sawRecipeRecipe -> sawRecipeRecipe.matches(targetState.getBlock()))
                 .findFirst();
+        // Cutting
         if (recipe.isEmpty()) {
+            // Check if we need to break the saw
             if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
                 breakSaw(world, pos);
             }
             return;
         }
-        world.breakBlock(targetPos, false);
+
+        List<ItemStack> results = recipe.get().getResults();
+        BlockIngredient blockIngredient = recipe.get().getIngredient();
+
+        // The companion slab is the only partial block that doesn't just get cut regardless of collision
+        if (blockIngredient.test(BwtBlocks.companionSlabBlock) && state.get(FACING).getAxis().isHorizontal()) {
+            return;
+        }
+
+        if (blockIngredient.test(BwtBlocks.companionCubeBlock)) {
+            world.playSound(null, pos, SoundEvents.ENTITY_WOLF_DEATH, SoundCategory.BLOCKS, 1, 1);
+            if (state.get(FACING).getAxis().isHorizontal()) {
+                results.get(0).setCount(1);
+                world.setBlockState(targetPos, BwtBlocks.companionSlabBlock.getDefaultState());
+            }
+        } else {
+            world.breakBlock(targetPos, false);
+        }
         playBangSound(world, pos);
-        CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, recipe.get().getResults().toArray(new ItemStack[0])));
+        CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
 
     public void breakSaw(World world, BlockPos pos) {
