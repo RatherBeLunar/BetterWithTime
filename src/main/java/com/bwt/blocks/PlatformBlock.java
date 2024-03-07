@@ -1,8 +1,8 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.TransparentBlock;
 
-public class PlatformBlock extends Block {
+public class PlatformBlock extends TransparentBlock {
     public PlatformBlock(Settings settings) {
         super(settings);
     }

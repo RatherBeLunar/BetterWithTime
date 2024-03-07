@@ -89,7 +89,8 @@ public class RopeBlock extends Block {
 
     public boolean stateValid(BlockState upState) {
         return upState.isOf(BwtBlocks.ropeBlock)
-                || (upState.isOf(BwtBlocks.anchorBlock) && !upState.get(AnchorBlock.FACING).equals(Direction.UP));
+                || (upState.isOf(BwtBlocks.anchorBlock) && !upState.get(AnchorBlock.FACING).equals(Direction.UP)
+                || upState.isOf(BwtBlocks.pulleyBlock));
     }
 
     public static BlockPos getLowestRope(World world, BlockPos attachmentPos) {

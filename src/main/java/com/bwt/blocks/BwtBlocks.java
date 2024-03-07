@@ -97,7 +97,7 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL).strength(50.0f, 1200.0f));
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
-	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
+	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
 	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(2).pistonBehavior(PistonBehavior.IGNORE));
 	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create()
         .hardness(0.5f)
@@ -195,6 +195,12 @@ public class BwtBlocks implements ModInitializer {
         // Saw
         Registry.register(Registries.BLOCK, new Identifier("bwt", "saw"), sawBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "saw"), new BlockItem(sawBlock, new FabricItemSettings()));
+        // Pulley
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "pulley"), pulleyBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "pulley"), new BlockItem(pulleyBlock, new FabricItemSettings()));
+        // Platform
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "platform"), platformBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "platform"), new BlockItem(platformBlock, new FabricItemSettings()));
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
@@ -211,6 +217,8 @@ public class BwtBlocks implements ModInitializer {
             content.add(stoneDetectorRailBlock);
             content.add(obsidianDetectorRailBlock);
             content.add(sawBlock);
+            content.add(pulleyBlock);
+            content.add(platformBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
@@ -222,6 +230,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(grateBlock);
             content.add(slatsBlock);
             content.add(wickerBlock);
+            content.add(platformBlock);
         });
     }
 }

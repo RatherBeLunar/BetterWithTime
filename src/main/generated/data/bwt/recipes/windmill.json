@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "s": {
+      "item": "bwt:sail"
+    }
+  },
+  "pattern": [
+    " s ",
+    "s s",
+    " s "
+  ],
+  "result": {
+    "item": "bwt:windmill"
+  }
+}

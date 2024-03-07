@@ -2,10 +2,7 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.screens.BlockDispenserScreen;
-import com.bwt.screens.CauldronScreen;
-import com.bwt.screens.MechHopperScreen;
-import com.bwt.screens.MillStoneScreen;
+import com.bwt.screens.*;
 import com.bwt.entities.BwtEntities;
 import com.bwt.models.*;
 import net.fabricmc.api.ClientModInitializer;
@@ -42,11 +39,13 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.obsidianDetectorRailBlock,
 				BwtBlocks.grateBlock,
 				BwtBlocks.slatsBlock,
-				BwtBlocks.wickerBlock
+				BwtBlocks.wickerBlock,
+				BwtBlocks.platformBlock
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
 		HandledScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
+		HandledScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
 		HandledScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);
 	}
 }

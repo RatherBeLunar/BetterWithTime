@@ -22,7 +22,7 @@ public class PulleyScreenHandler extends ScreenHandler {
     }
 
     public PulleyScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
-        super(BetterWithTime.millStoneScreenHandler, syncId);
+        super(BetterWithTime.pulleyScreenHandler, syncId);
         checkSize(inventory, SIZE);
         this.inventory = inventory;
         this.propertyDelegate = propertyDelegate;
@@ -30,18 +30,20 @@ public class PulleyScreenHandler extends ScreenHandler {
         this.addProperties(propertyDelegate);
 
         // Pulley inventory
-        for (int m = 0; m < SIZE; ++m) {
-            this.addSlot(new Slot(inventory, m, 8 + 9 + ((m % 2) + 3) * 18, 43 + (m / 2)));
+        for (int m = 0; m < 2; ++m) {
+            for (int l = 0; l < 2; ++l) {
+                this.addSlot(new Slot(inventory, m * 2 + l, 8 + 9 + (l + 3) * 18, 43 + m * 18));
+            }
         }
         // Player inventory
         for (int m = 0; m < 3; ++m) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 76 + m * 18));
+                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, 93 + m * 18));
             }
         }
         // Player hotbar
         for (int m = 0; m < 9; ++m) {
-            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 134));
+            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 151));
         }
     }
 

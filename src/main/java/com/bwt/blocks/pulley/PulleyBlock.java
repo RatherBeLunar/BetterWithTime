@@ -44,6 +44,7 @@ public class PulleyBlock extends BlockWithEntity implements MechPowerBlockBase {
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
+        builder.add(POWERED);
     }
 
     @Override

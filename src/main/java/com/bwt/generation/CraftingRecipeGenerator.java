@@ -89,7 +89,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.fabricItem), conditionsFromItem(BwtItems.fabricItem))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.windmillItem)
-                .pattern(" s")
+                .pattern(" s ")
                 .pattern("s s")
                 .pattern(" s ")
                 .input('s', BwtItems.sailItem)

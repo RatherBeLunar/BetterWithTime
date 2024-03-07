@@ -47,6 +47,28 @@ public class ModelGenerator extends FabricModelProvider {
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.grateBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.slatsBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.wickerBlock);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.pulleyBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                Models.CUBE_BOTTOM_TOP.upload(
+                                        BwtBlocks.pulleyBlock,
+                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.pulleyBlock).getTextures().put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.pulleyBlock, "_side")),
+                                        blockStateModelGenerator.modelCollector
+                                )
+                        )
+                )
+        );
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.platformBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                ModelIds.getBlockModelId(BwtBlocks.platformBlock)
+                        )
+                )
+        );
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.blockDispenserBlock, ModelIds.getBlockModelId(BwtBlocks.blockDispenserBlock));
@@ -59,6 +81,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.lightBlockBlock, ModelIds.getBlockModelId(BwtBlocks.lightBlockBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.millStoneBlock, ModelIds.getBlockModelId(BwtBlocks.millStoneBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.obsidianPressuePlateBlock, ModelIds.getBlockModelId(BwtBlocks.obsidianPressuePlateBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
     }
 
     @Override

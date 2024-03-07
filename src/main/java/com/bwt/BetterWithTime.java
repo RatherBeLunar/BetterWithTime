@@ -7,6 +7,7 @@ import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
+import com.bwt.blocks.pulley.PulleyScreenHandler;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
@@ -59,6 +60,7 @@ public class BetterWithTime implements ModInitializer {
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	private static final Identifier WOLF_LOOT_TABLE_ID = EntityType.WOLF.getLootTableId();
@@ -67,6 +69,7 @@ public class BetterWithTime implements ModInitializer {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
 		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
 		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "mill_stone"), millStoneScreenHandler);
+		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "pulley"), pulleyScreenHandler);
 		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "hopper"), mechHopperScreenHandler);
 	}
 
