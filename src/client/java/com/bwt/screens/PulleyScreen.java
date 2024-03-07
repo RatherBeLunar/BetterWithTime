@@ -1,6 +1,6 @@
 package com.bwt.screens;
 
-import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
+import com.bwt.blocks.pulley.PulleyScreenHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -9,14 +9,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/hopper.png");
+public class PulleyScreen extends HandledScreen<PulleyScreenHandler> {
+    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/pulley.png");
 
     static final int gearIconHeight = 12;
 
-    public MechHopperScreen(MechHopperScreenHandler handler, PlayerInventory inventory, Text title) {
+    public PulleyScreen(PulleyScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
-        backgroundHeight = 193;
+        backgroundHeight = 175;
         playerInventoryTitleY = backgroundHeight - 94;
     }
 
@@ -33,13 +33,13 @@ public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
 
         if (this.handler.isMechPowered()) {
             context.drawTexture(
-                TEXTURE,
-                x + 80,
-                y + 18,
-                176,
-                0,
-                14,
-                gearIconHeight
+                    TEXTURE,
+                    x + 80,
+                    y + 18,
+                    176,
+                    0,
+                    14,
+                    gearIconHeight
             );
         }
     }

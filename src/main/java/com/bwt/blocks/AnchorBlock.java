@@ -1,5 +1,7 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.pulley.PulleyBlockEntity;
+import com.bwt.entities.MovingAnchorEntity;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.BlockUtils;
 import net.minecraft.block.Block;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 
 public class AnchorBlock extends Block {
     public static final DirectionProperty FACING = Properties.FACING;
-    protected static final Box baseBox = new Box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
+    public static final Box baseBox = new Box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
     protected static final VoxelShape NUB_SHAPE = Block.createCuboidShape(6, 6, 6, 10, 10, 10);
     protected static final List<VoxelShape> SHAPES = Arrays.stream(Direction.values())
             .map(direction -> VoxelShapes.union(BlockUtils.rotateCuboidFromUp(direction, baseBox), NUB_SHAPE))
@@ -40,6 +42,53 @@ public class AnchorBlock extends Block {
     public AnchorBlock(Settings settings) {
         super(settings);
     }
+
+    public static boolean notifyAnchorOfAttachedPulleyStateChange(World world, BlockPos pos, BlockState state, PulleyBlockEntity pulleyBlockEntity) {
+        int movementDirection = 0;
+
+        if (pulleyBlockEntity.isRaising(pulleyBlockEntity.getCachedState())) {
+            if (world.getBlockState(pos.up()).isOf(BwtBlocks.ropeBlock)) {
+                movementDirection = 1;
+            }
+        }
+        else if (pulleyBlockEntity.isLowering(pulleyBlockEntity.getCachedState())) {
+            BlockState downState = world.getBlockState(pos.down());
+            if (downState.isReplaceable() || downState.isOf(BwtBlocks.platformBlock)) {
+                movementDirection = -1;
+            }
+        }
+
+        if (movementDirection != 0) {
+            convertAnchorToEntity(world, pos, pulleyBlockEntity, movementDirection);
+            return true;
+        }
+
+        return false;
+    }
+
+    protected static void convertAnchorToEntity(World world, BlockPos pos, PulleyBlockEntity pulleyBlockEntity, int movementDirection) {
+        BlockPos pulleyPos = pulleyBlockEntity.getPos();
+
+        MovingAnchorEntity anchorEntity = new MovingAnchorEntity(world, pulleyPos, pos, movementDirection);
+        world.removeBlock(pos, false);
+        world.spawnEntity(anchorEntity);
+
+//        ConvertConnectedPlatformsToEntities( world, i, j, k, entityAnchor );
+
+    }
+
+//    private void ConvertConnectedPlatformsToEntities( World world, int i, int j, int k, FCEntityMovingAnchor associatedAnchorEntity )
+//    {
+//        int iTargetJ = j - 1;
+//
+//        int iTargetBlockID = world.getBlockId( i, iTargetJ, k );
+//
+//        if ( iTargetBlockID == FCBetterThanWolves.fcPlatform.blockID )
+//        {
+//            ( (FCBlockPlatform)FCBetterThanWolves.fcPlatform ).CovertToEntitiesFromThisPlatform(
+//                    world, i, iTargetJ, k, associatedAnchorEntity );
+//        }
+//    }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {

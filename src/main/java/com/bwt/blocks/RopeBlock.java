@@ -14,6 +14,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
@@ -89,5 +90,13 @@ public class RopeBlock extends Block {
     public boolean stateValid(BlockState upState) {
         return upState.isOf(BwtBlocks.ropeBlock)
                 || (upState.isOf(BwtBlocks.anchorBlock) && !upState.get(AnchorBlock.FACING).equals(Direction.UP));
+    }
+
+    public static BlockPos getLowestRope(World world, BlockPos attachmentPos) {
+        BlockPos.Mutable mutablePos = attachmentPos.mutableCopy();
+        while (world.getBlockState(mutablePos.down()).isOf(BwtBlocks.ropeBlock)) {
+            mutablePos.move(Direction.DOWN);
+        }
+        return mutablePos.toImmutable();
     }
 }

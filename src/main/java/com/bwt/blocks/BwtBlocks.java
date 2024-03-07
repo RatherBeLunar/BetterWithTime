@@ -6,11 +6,13 @@ import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
+import com.bwt.blocks.pulley.PulleyBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
+import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.registry.Registries;
@@ -95,8 +97,8 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL).strength(50.0f, 1200.0f));
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
-//	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
-//	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.create());
+	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.create());
+	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(2).pistonBehavior(PistonBehavior.IGNORE));
 	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create()
         .hardness(0.5f)
         .sounds(BlockSoundGroup.GRASS)
