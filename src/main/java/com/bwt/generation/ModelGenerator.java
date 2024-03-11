@@ -86,28 +86,48 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
+        itemModelGenerator.register(BwtItems.armorPlateItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.beltItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.breedingHarnessItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.broadheadItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.broadheadArrowItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.coalDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.cementBucketItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.donutItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.dungItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.dynamiteItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.fabricItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.filamentItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.flourItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.foulFoodItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.gearItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.groundNetherrackItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.glueItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.haftItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hempItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hempFiberItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.hellfireDustItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.mouldItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.netherSludgeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.potashItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.sawDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.sailItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.scouredLeatherItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.screwItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.soapItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.soulDustItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.soulUrnItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.strapItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.tallowItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.tannedLeatherItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.woodBladeItem, Items.PORKCHOP, Models.GENERATED);
     }
 
     private void generateCompanionBlocks(BlockStateModelGenerator blockStateModelGenerator) {

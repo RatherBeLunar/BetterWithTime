@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "#bwt:passes_wicker_filter",
+    "#minecraft:trim_templates",
+    "bwt:fabric",
+    "minecraft:gravel",
+    "bwt:hemp",
+    "bwt:hemp_fiber",
+    "minecraft:leather",
+    "bwt:scoured_leather",
+    "bwt:tanned_leather",
+    "minecraft:map",
+    "minecraft:paper",
+    "minecraft:repeater",
+    "minecraft:comparator",
+    "bwt:strap",
+    "minecraft:string",
+    "minecraft:prismarine_shard",
+    "minecraft:dried_kelp"
+  ]
+}

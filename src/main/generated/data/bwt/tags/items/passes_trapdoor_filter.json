@@ -1,0 +1,27 @@
+{
+  "replace": false,
+  "values": [
+    "#bwt:passes_grate_filter",
+    "#minecraft:arrows",
+    "bwt:broadhead_arrow",
+    "bwt:rotted_arrow",
+    "bwt:belt",
+    "minecraft:blaze_rod",
+    "minecraft:bone",
+    "minecraft:carrot_on_a_stick",
+    "minecraft:fishing_rod",
+    "bwt:haft",
+    "bwt:rope",
+    "bwt:strap",
+    "minecraft:sugar_cane",
+    "minecraft:wheat",
+    "minecraft:warped_fungus_on_a_stick",
+    "minecraft:dried_kelp",
+    "minecraft:creeper_banner_pattern",
+    "minecraft:flower_banner_pattern",
+    "minecraft:piglin_banner_pattern",
+    "minecraft:globe_banner_pattern",
+    "minecraft:mojang_banner_pattern",
+    "minecraft:skull_banner_pattern"
+  ]
+}

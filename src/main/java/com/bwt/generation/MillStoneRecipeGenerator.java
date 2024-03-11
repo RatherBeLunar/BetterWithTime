@@ -19,6 +19,8 @@ public class MillStoneRecipeGenerator extends FabricRecipeProvider {
     }
 
     protected void generateMillStoneRecipes(RecipeExporter exporter) {
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.COAL).result(BwtItems.coalDustItem).offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.NETHERRACK).result(BwtItems.groundNetherrackItem).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(BwtItems.hempItem).result(BwtItems.hempFiberItem, 4).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.LEATHER).result(BwtItems.scouredLeatherItem).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.WHEAT).result(BwtItems.flourItem).offerTo(exporter);
