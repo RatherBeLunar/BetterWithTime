@@ -2,6 +2,7 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.items.BwtItems;
 import com.bwt.mixin.VanillaHopperInvoker;
 import com.bwt.utils.SimpleSingleStackInventory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
@@ -21,6 +22,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -29,9 +31,13 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -281,30 +287,78 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
     }
 
     // Pick up items from above
-    public static void onEntityCollided(Entity entity, MechHopperBlockEntity blockEntity) {
+    public static void onEntityCollided(World world, Entity entity, MechHopperBlockEntity blockEntity) {
         if (blockEntity.itemPickupCooldown > 0) {
             return;
         }
-        ItemStack itemStack;
-        if (
-                entity instanceof ItemEntity itemEntity
-                && !(itemStack = itemEntity.getStack()).isEmpty()
-                && MechHopperBlock.filterMap.getOrDefault(blockEntity.getFilterItem(), s -> false).test(itemStack)
-        ) {
-            int count = itemStack.getCount();
+        if (entity instanceof ItemEntity itemEntity) {
+            pickupItemEntity(world, itemEntity, blockEntity);
+        }
+    }
+
+    protected static void pickupItemEntity(World world, ItemEntity itemEntity, MechHopperBlockEntity blockEntity) {
+        ItemStack itemStack = itemEntity.getStack();
+        if (itemStack.isEmpty()) {
+            return;
+        }
+        Item filterItem = blockEntity.getFilterItem();
+        int count = itemStack.getCount();
+
+        if (filterItem == BwtBlocks.wickerBlock.asItem() && itemStack.isOf(Items.GRAVEL)) {
+            ItemStack sandStack = new ItemStack(Items.SAND, count);
             try (Transaction transaction = Transaction.openOuter()) {
                 long inserted = StorageUtil.insertStacking(
                         blockEntity.inventoryWrapper.parts.get(1).getSlots(),
-                        ItemVariant.of(itemStack),
+                        ItemVariant.of(sandStack),
                         count,
                         transaction
                 );
-                itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
+                itemEntity.setStack(itemStack.copyWithCount((int) (count - inserted)));
                 blockEntity.itemPickupCooldown++;
                 transaction.commit();
                 blockEntity.hopperInventory.markDirty();
+                blockEntity.spawnNewItemOnTop(world, itemEntity.getPos(), new ItemStack(Items.FLINT, (int) inserted));
             }
+            return;
         }
+        if (filterItem == Items.SOUL_SAND && (itemStack.isOf(BwtItems.groundNetherrackItem) || itemStack.isOf(BwtItems.soulDustItem))) {
+            Item outputItem = itemStack.isOf(BwtItems.groundNetherrackItem) ? BwtItems.hellfireDustItem : BwtItems.sawDustItem;
+            Vec3d itemEntityPos = itemEntity.getPos();
+            itemEntity.kill();
+
+            int newSoulcount = blockEntity.soulCount + count;
+            if (newSoulcount > 8 && blockEntity.mechPower <= 0) {
+                // TODO Explode, spawn ghast
+                return;
+            }
+            blockEntity.soulCount = Math.min(newSoulcount, 8);
+            blockEntity.spawnNewItemOnTop(world, itemEntityPos, new ItemStack(outputItem, count));
+            blockEntity.markDirty();
+            // Play ghast noise
+            // TODO get pitch from FC code
+            world.playSound(null, blockEntity.pos, SoundEvents.ENTITY_GHAST_AMBIENT, SoundCategory.BLOCKS, 1f, 1.5f);
+            return;
+        }
+
+        if (!MechHopperBlock.filterMap.getOrDefault(filterItem, s -> true).test(itemStack)) {
+            return;
+        }
+        try (Transaction transaction = Transaction.openOuter()) {
+            long inserted = StorageUtil.insertStacking(
+                    blockEntity.inventoryWrapper.parts.get(1).getSlots(),
+                    ItemVariant.of(itemStack),
+                    count,
+                    transaction
+            );
+            itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
+            blockEntity.itemPickupCooldown++;
+            transaction.commit();
+            blockEntity.hopperInventory.markDirty();
+        }
+    }
+
+    protected void spawnNewItemOnTop(World world, Vec3d inputPos, ItemStack newItem) {
+        ItemScatterer.spawn(world, inputPos.getX(), inputPos.getY(), inputPos.getZ(), newItem);
     }
 
     @Nullable

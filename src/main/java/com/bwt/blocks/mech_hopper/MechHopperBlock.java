@@ -3,6 +3,7 @@ package com.bwt.blocks.mech_hopper;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -55,8 +56,8 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
     }
 
     public static void addDefaultFilters() {
-        addFilter(Items.LADDER, itemStack -> !(itemStack.getItem() instanceof BlockItem));
-        addFilter(Items.IRON_BARS, itemStack -> itemStack.getMaxCount() > 1);
+        addFilter(Items.LADDER, itemStack -> itemStack.isIn(BwtItemTags.PASSES_LADDER_FILTER));
+        addFilter(Items.IRON_BARS, itemStack -> itemStack.isIn(BwtItemTags.PASSES_IRON_BARS_FILTER));
         for (Item trapdoor : new Item[]{
                 Items.ACACIA_TRAPDOOR,
                 Items.BAMBOO_TRAPDOOR,
@@ -79,13 +80,13 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
                 Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
                 Items.WEATHERED_COPPER_TRAPDOOR,
         }) {
-            addFilter(trapdoor, itemStack -> itemStack.getMaxCount() == 64);
+            addFilter(trapdoor, itemStack -> itemStack.isIn(BwtItemTags.PASSES_TRAPDOOR_FILTER));
         }
 
         addFilter(Items.SOUL_SAND, itemStack -> false);
-        addFilter(BwtBlocks.grateBlock.asItem(), itemStack -> false);
-        addFilter(BwtBlocks.slatsBlock.asItem(), itemStack -> false);
-        addFilter(BwtBlocks.wickerBlock.asItem(), itemStack -> false);
+        addFilter(BwtBlocks.grateBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_GRATE_FILTER));
+        addFilter(BwtBlocks.slatsBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_SLATS_FILTER));
+        addFilter(BwtBlocks.wickerBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_WICKER_FILTER));
     }
 
     @Override
@@ -176,7 +177,7 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         }
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            MechHopperBlockEntity.onEntityCollided(entity, hopperBlockEntity);
+            MechHopperBlockEntity.onEntityCollided(world, entity, hopperBlockEntity);
         }
     }
 
