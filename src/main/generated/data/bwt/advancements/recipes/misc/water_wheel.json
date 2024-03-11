@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:water_wheel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wood_blade": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:wood_blade"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wood_blade"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:water_wheel"
+    ]
+  }
+}

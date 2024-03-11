@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hellfire_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:hellfire_dust"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:concentrated_hellfire_from_cauldron"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hellfire_dust"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:concentrated_hellfire_from_cauldron"
+    ]
+  }
+}

@@ -25,6 +25,8 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
         generateFoods(exporter);
         generateOtherCauldronRecipes(exporter);
+
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).result(BwtItems.concentratedHellfireItem).offerTo(exporter);
     }
 
     public void addNewGenericFood(Item input, Item output, RecipeExporter exporter) {

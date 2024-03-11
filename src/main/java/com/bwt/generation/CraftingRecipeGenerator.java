@@ -104,7 +104,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("s s")
                 .pattern(" s ")
                 .input('s', BwtItems.strapItem)
-                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem));
+                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.sawBlock)
                 .pattern("iii")
                 .pattern("gbg")
@@ -112,7 +113,9 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('i', Items.IRON_INGOT)
                 .input('g', BwtItems.gearItem)
                 .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
-                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem));
+                .input('b', BwtItems.beltItem)
+                .criterion(hasItem(BwtItems.beltItem), conditionsFromItem(BwtItems.beltItem))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hopperBlock)
                 .pattern("s s")
                 .pattern("gpg")
@@ -121,27 +124,51 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('g', BwtItems.gearItem)
                 .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
                 .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
-                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem));
+                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.grateBlock)
                 .pattern("ss")
                 .pattern("ss")
                 .input('s', Items.STICK)
-                .criterion(hasItem(Items.STICK), conditionsFromItem(Items.STICK));
+                .criterion(hasItem(Items.STICK), conditionsFromItem(Items.STICK))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.wickerBlock)
                 .pattern("ss")
                 .pattern("ss")
                 .input('s', Items.SUGAR_CANE)
-                .criterion(hasItem(Items.SUGAR_CANE), conditionsFromItem(Items.SUGAR_CANE));
-        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.wickerBlock)
-                .pattern("ss")
-                .pattern("ss")
-                .input('s', Items.SUGAR_CANE)
-                .criterion(hasItem(Items.SUGAR_CANE), conditionsFromItem(Items.SUGAR_CANE));
+                .criterion(hasItem(Items.SUGAR_CANE), conditionsFromItem(Items.SUGAR_CANE))
+                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.slatsBlock)
                 .pattern("mm")
                 .pattern("mm")
                 .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
-                .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS));
+                .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.woodBladeItem)
+                .pattern("s  ")
+                .pattern("sgs")
+                .pattern("s  ")
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('g', BwtItems.glueItem)
+                .criterion(hasItem(BwtItems.glueItem), conditionsFromItem(BwtItems.glueItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.waterWheelItem)
+                .pattern("bbb")
+                .pattern("b b")
+                .pattern("bbb")
+                .input('b', BwtItems.woodBladeItem)
+                .criterion(hasItem(BwtItems.woodBladeItem), conditionsFromItem(BwtItems.woodBladeItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hibachiBlock)
+                .pattern("hhh")
+                .pattern("sfs")
+                .pattern("srs")
+                .input('h', BwtItems.concentratedHellfireItem)
+                .input('s', Items.STONE)
+                .input('f', BwtItems.filamentItem)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtItems.filamentItem), conditionsFromItem(BwtItems.filamentItem))
+                .offerTo(exporter);
 
         // Mini block recombining recipes
         for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {

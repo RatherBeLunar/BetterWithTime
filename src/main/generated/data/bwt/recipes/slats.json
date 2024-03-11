@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "m": {
+      "tag": "bwt:wooden_moulding_blocks"
+    }
+  },
+  "pattern": [
+    "mm",
+    "mm"
+  ],
+  "result": {
+    "item": "bwt:slats"
+  }
+}

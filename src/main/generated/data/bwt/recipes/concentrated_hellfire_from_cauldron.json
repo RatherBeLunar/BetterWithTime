@@ -1,0 +1,17 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "bwt:hellfire_dust"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:concentrated_hellfire"
+    }
+  ]
+}

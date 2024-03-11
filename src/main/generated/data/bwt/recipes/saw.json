@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "bwt:belt"
+    },
+    "g": {
+      "item": "bwt:gear"
+    },
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "s": {
+      "tag": "bwt:wooden_siding_blocks"
+    }
+  },
+  "pattern": [
+    "iii",
+    "gbg",
+    "sgs"
+  ],
+  "result": {
+    "item": "bwt:saw"
+  }
+}

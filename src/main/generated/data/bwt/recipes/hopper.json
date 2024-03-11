@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "c": {
+      "tag": "bwt:wooden_corner_blocks"
+    },
+    "g": {
+      "item": "bwt:gear"
+    },
+    "p": {
+      "tag": "minecraft:wooden_pressure_plates"
+    },
+    "s": {
+      "tag": "bwt:wooden_siding_blocks"
+    }
+  },
+  "pattern": [
+    "s s",
+    "gpg",
+    " c "
+  ],
+  "result": {
+    "item": "bwt:hopper"
+  }
+}

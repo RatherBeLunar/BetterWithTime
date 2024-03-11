@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "bwt:wood_blade"
+    }
+  },
+  "pattern": [
+    "bbb",
+    "b b",
+    "bbb"
+  ],
+  "result": {
+    "item": "bwt:water_wheel"
+  }
+}
