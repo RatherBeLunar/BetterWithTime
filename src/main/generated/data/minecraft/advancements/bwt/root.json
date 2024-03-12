@@ -1,0 +1,30 @@
+{
+  "criteria": {
+    "got_hemp_seeds": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:hemp_seeds"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Made with love, and souls",
+    "icon": {
+      "item": "bwt:companion_cube"
+    },
+    "title": "Better With Time"
+  },
+  "requirements": [
+    [
+      "got_hemp_seeds"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -15,5 +15,6 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(RecipeGenerator::new);
 		pack.addProvider(ModelGenerator::new);
 		pack.addProvider(LangGenerator::new);
+		pack.addProvider(AdvancementsGenerator::new);
 	}
 }

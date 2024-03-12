@@ -1,0 +1,26 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "f": {
+      "item": "bwt:filament"
+    },
+    "h": {
+      "item": "bwt:concentrated_hellfire"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "s": {
+      "item": "minecraft:stone"
+    }
+  },
+  "pattern": [
+    "hhh",
+    "sfs",
+    "srs"
+  ],
+  "result": {
+    "item": "bwt:hibachi"
+  }
+}
