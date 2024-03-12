@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/got_hemp_seeds",
+  "criteria": {
+    "got_hemp_fiber": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:hemp_fiber"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Grind your first hemp by hand in a mill stone",
+    "icon": {
+      "item": "bwt:hemp_fiber"
+    },
+    "title": "Manual Labor"
+  },
+  "requirements": [
+    [
+      "got_hemp_fiber"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

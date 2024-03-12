@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/root",
+  "criteria": {
+    "got_hemp_seeds": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:hemp_seeds"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Till grass to find hemp seeds",
+    "icon": {
+      "item": "bwt:hemp_seeds"
+    },
+    "title": "The Beginning"
+  },
+  "requirements": [
+    [
+      "got_hemp_seeds"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

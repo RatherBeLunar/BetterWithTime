@@ -1,0 +1,33 @@
+{
+  "parent": "minecraft:bwt/got_hemp_fiber",
+  "criteria": {
+    "placed_windmill": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "bwt:windmill"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:summoned_entity"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Make space for your first windmill and place it on an axle",
+    "icon": {
+      "item": "bwt:windmill"
+    },
+    "title": "Mechanical Age"
+  },
+  "requirements": [
+    [
+      "placed_windmill"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

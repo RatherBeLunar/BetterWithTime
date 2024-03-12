@@ -29,6 +29,7 @@ public class BwtBlocks implements ModInitializer {
         .sounds(BlockSoundGroup.STONE)
         .nonOpaque()
         .solid()
+        .requiresTool()
     );
 //	public static final Block anvilBlock = new AnvilBlock(FabricBlockSettings.create());
 	public static final Block axleBlock = new AxleBlock(FabricBlockSettings.create()
@@ -55,6 +56,7 @@ public class BwtBlocks implements ModInitializer {
         .resistance(10f)
         .sounds(BlockSoundGroup.METAL)
         .mapColor(MapColor.BLACK)
+        .requiresTool()
     );
 //	public static final Block canvasBlock = new CanvasBlock(FabricBlockSettings.create());
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
@@ -73,14 +75,24 @@ public class BwtBlocks implements ModInitializer {
         .sounds(BlockSoundGroup.WOOD)
         .solid()
         .nonOpaque()
+        .allowsSpawning(Blocks::never)
+        .suffocates(Blocks::never)
+        .blockVision(Blocks::never)
+        .requiresTool()
     );
 	public static final Block hempCropBlock = new HempCropBlock(FabricBlockSettings.copyOf(Blocks.SUGAR_CANE));
 	public static final Block hibachiBlock = new HibachiBlock(FabricBlockSettings.create()
         .hardness(3.5f)
         .sounds(BlockSoundGroup.STONE)
         .solidBlock(Blocks::never)
+        .requiresTool()
     );
-	public static final Block hopperBlock = new MechHopperBlock(FabricBlockSettings.create());
+	public static final Block hopperBlock = new MechHopperBlock(FabricBlockSettings.create()
+            .hardness(2f)
+            .sounds(BlockSoundGroup.WOOD)
+            .solid()
+            .nonOpaque()
+    );
 //	public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(FabricBlockSettings.create());
 //	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.create());
 //	public static final Block lensBlock = new LensBlock(FabricBlockSettings.create());
@@ -93,12 +105,21 @@ public class BwtBlocks implements ModInitializer {
 	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
 //	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(FabricBlockSettings.create());
-	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f));
-	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL).strength(50.0f, 1200.0f));
+	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f)
+    );
+	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL)
+            .strength(50.0f, 1200.0f)
+    );
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
 //	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
-	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).nonOpaque().allowsSpawning(Blocks::never).solidBlock(Blocks::never).suffocates(Blocks::never).blockVision(Blocks::never));
-	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(2).pistonBehavior(PistonBehavior.IGNORE));
+	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
+        .nonOpaque()
+        .allowsSpawning(Blocks::never)
+        .solidBlock(Blocks::never)
+        .suffocates(Blocks::never)
+        .blockVision(Blocks::never)
+    );
+	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(2f).pistonBehavior(PistonBehavior.IGNORE));
 	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create()
         .hardness(0.5f)
         .sounds(BlockSoundGroup.GRASS)
@@ -121,9 +142,6 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block vaseBlock = new VaseBlock(FabricBlockSettings.create());
 //	public static final Block waterWheelBlock = new WaterWheelBlock(FabricBlockSettings.create());
 	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.GRASS).nonOpaque());
-
-//	public static final Block windmillBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axlePowerSourceBlock.getSettings()));
-//	public static final Block woodenDetectorRailBlock = new WoodenDetectorRailBlock(FabricBlockSettings.create());
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
 
 

@@ -3,8 +3,10 @@ package com.bwt.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.SwordItem;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -61,6 +63,14 @@ public class RopeBlock extends Block {
                     .with(ANCHORED_BELOW, downState.isOf(BwtBlocks.anchorBlock) && downState.get(AnchorBlock.FACING) != Direction.DOWN);
         }
         return null;
+    }
+
+    @Override
+    public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
+        if (player.getMainHandStack().getItem() instanceof SwordItem) {
+            return 1.0f;
+        }
+        return super.calcBlockBreakingDelta(state, player, world, pos);
     }
 
     @Override

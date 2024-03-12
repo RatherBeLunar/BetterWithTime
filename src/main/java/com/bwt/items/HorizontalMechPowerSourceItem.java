@@ -3,9 +3,11 @@ package com.bwt.items;
 import com.bwt.blocks.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemUsageContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.math.BlockPos;
@@ -47,10 +49,13 @@ public class HorizontalMechPowerSourceItem extends Item {
                             : Direction.AxisDirection.NEGATIVE
             );
 
-            HorizontalMechPowerSourceEntity windmillEntity = entityFactory.create(world, middleOfAxle, placementDirection);
+            HorizontalMechPowerSourceEntity mechPowerSourceEntity = entityFactory.create(world, middleOfAxle, placementDirection);
 
-            if (!windmillEntity.tryToSpawn(context.getPlayer())) {
+            if (!mechPowerSourceEntity.tryToSpawn(context.getPlayer())) {
                 return ActionResult.FAIL;
+            }
+            if (context.getPlayer() instanceof ServerPlayerEntity serverPlayerEntity) {
+                Criteria.SUMMONED_ENTITY.trigger(serverPlayerEntity, mechPowerSourceEntity);
             }
             world.emitGameEvent(context.getPlayer(), GameEvent.ENTITY_PLACE, blockPos);
         }

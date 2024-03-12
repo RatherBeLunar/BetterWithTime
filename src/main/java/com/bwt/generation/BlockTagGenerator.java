@@ -32,9 +32,47 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.WHEAT)
                 .add(Blocks.CARROTS)
                 .add(Blocks.POTATOES);
+        getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD).add(BwtBlocks.hibachiBlock);
+        getOrCreateTagBuilder(BlockTags.INFINIBURN_NETHER).add(BwtBlocks.hibachiBlock);
+        getOrCreateTagBuilder(BlockTags.INFINIBURN_END).add(BwtBlocks.hibachiBlock);
 
+        addTools();
         addMiniBlockTags();
         addSawTags();
+    }
+
+    private void addTools() {
+        BwtBlocks.sidingBlocks.forEach(sidingBlock -> getOrCreateTagBuilder(sidingBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(sidingBlock));
+        BwtBlocks.mouldingBlocks.forEach(mouldingBlock -> getOrCreateTagBuilder(mouldingBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(mouldingBlock));
+        BwtBlocks.cornerBlocks.forEach(cornerBlock -> getOrCreateTagBuilder(cornerBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(cornerBlock));
+
+        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
+                .add(BwtBlocks.anchorBlock)
+                .add(BwtBlocks.blockDispenserBlock)
+                .add(BwtBlocks.cauldronBlock)
+                .add(BwtBlocks.detectorBlock)
+                .add(BwtBlocks.handCrankBlock)
+                .add(BwtBlocks.hibachiBlock)
+                .add(BwtBlocks.lightBlockBlock)
+                .add(BwtBlocks.millStoneBlock)
+                .add(BwtBlocks.obsidianDetectorRailBlock)
+                .add(BwtBlocks.obsidianPressuePlateBlock)
+                .add(BwtBlocks.stoneDetectorRailBlock);
+
+        getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
+                .add(BwtBlocks.axleBlock)
+                .add(BwtBlocks.axlePowerSourceBlock)
+                .add(BwtBlocks.gearBoxBlock)
+                .add(BwtBlocks.grateBlock)
+                .add(BwtBlocks.hopperBlock)
+                .add(BwtBlocks.platformBlock)
+                .add(BwtBlocks.pulleyBlock)
+                .add(BwtBlocks.ropeBlock)
+                .add(BwtBlocks.sawBlock)
+                .add(BwtBlocks.slatsBlock)
+                .add(BwtBlocks.wickerBlock);
+
+        getOrCreateTagBuilder(BlockTags.SWORD_EFFICIENT).add(BwtBlocks.ropeBlock, BwtBlocks.hempCropBlock);
     }
 
     protected void addMiniBlockTags() {

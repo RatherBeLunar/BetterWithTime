@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:stone_siding",
+    "bwt:stone_bricks_siding",
+    "bwt:stone_moulding",
+    "bwt:stone_bricks_moulding",
+    "bwt:stone_corner",
+    "bwt:stone_bricks_corner",
+    "bwt:anchor",
+    "bwt:block_dispenser",
+    "bwt:cauldron",
+    "bwt:detector_block",
+    "bwt:hand_crank",
+    "bwt:hibachi",
+    "bwt:light_block",
+    "bwt:mill_stone",
+    "bwt:obsidian_detector_rail",
+    "bwt:obsidian_pressure_plate",
+    "bwt:stone_detector_rail"
+  ]
+}

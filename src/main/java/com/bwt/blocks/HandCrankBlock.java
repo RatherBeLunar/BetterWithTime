@@ -88,7 +88,7 @@ public class HandCrankBlock extends Block {
         int clickTimer = state.get(CLICK_TIMER);
 
         if (clickTimer == 0) {
-            if (player.getHungerManager().getFoodLevel() > 18) {
+            if (player.getHungerManager().getFoodLevel() > 8) {
                 player.addExhaustion( 2.0F ); // every two pulls results in a half pip of hunger
 
                 if (!world.isClient) {
