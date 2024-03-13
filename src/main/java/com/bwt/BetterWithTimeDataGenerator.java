@@ -28,15 +28,5 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(LangGenerator::new);
 		pack.addProvider(LootTableGenerator::new);
 		pack.addProvider(AdvancementsGenerator::new);
-
-
-//		DataGenerator vanillaGenerator = new DataGenerator(generator.getModContainer().getRootPaths().get(0), SharedConstants.getGameVersion(), true);
-//		DataGenerator.Pack vanillaPack = vanillaGenerator.createVanillaPack(true);
-//		vanillaPack.addProvider(VanillaRecipeGenerator::new);
-//		try {
-//			vanillaGenerator.run();
-//		} catch (IOException e) {
-//			throw new RuntimeException(e);
-//		}
 	}
 }

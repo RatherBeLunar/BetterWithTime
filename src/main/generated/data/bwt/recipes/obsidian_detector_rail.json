@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    },
+    "p": {
+      "item": "bwt:obsidian_pressure_plate"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "i i",
+    "ipi",
+    "iri"
+  ],
+  "result": {
+    "count": 6,
+    "item": "bwt:obsidian_detector_rail"
+  }
+}

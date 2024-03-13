@@ -172,6 +172,29 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('r', Items.REDSTONE)
                 .criterion(hasItem(BwtItems.filamentItem), conditionsFromItem(BwtItems.filamentItem))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.stoneDetectorRailBlock, 6)
+                .pattern("i i")
+                .pattern("ipi")
+                .pattern("iri")
+                .input('i', Items.IRON_INGOT)
+                .input('p', Items.STONE_PRESSURE_PLATE)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(Items.STONE_PRESSURE_PLATE), conditionsFromItem(Items.STONE_PRESSURE_PLATE))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianDetectorRailBlock, 6)
+                .pattern("i i")
+                .pattern("ipi")
+                .pattern("iri")
+                .input('i', Items.IRON_INGOT)
+                .input('p', BwtBlocks.obsidianPressuePlateBlock)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtBlocks.obsidianPressuePlateBlock), conditionsFromItem(BwtBlocks.obsidianPressuePlateBlock))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressuePlateBlock)
+                .pattern("oo")
+                .input('o', Items.OBSIDIAN)
+                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+                .offerTo(exporter);
 
         // Mini block recombining recipes
         for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {
