@@ -91,7 +91,9 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.breedingHarnessItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.broadheadItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.broadheadArrowItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.canvasItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.coalDustItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.concentratedHellfireItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.cementBucketItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.donutItem, Models.GENERATED);
@@ -109,11 +111,15 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.hempFiberItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hellfireDustItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.kibbleItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.mouldItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.nethercoalItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.netherSludgeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.potashItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.redstoneEyeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.rottedArrowItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.sawDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.sailItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.scouredLeatherItem, Models.GENERATED);
