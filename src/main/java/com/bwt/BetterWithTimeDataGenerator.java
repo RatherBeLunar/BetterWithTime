@@ -5,15 +5,11 @@ import com.bwt.generation.BlockTagGenerator;
 import com.bwt.generation.EntityTypeTagGenerator;
 import com.bwt.generation.ItemTagGenerator;
 import com.bwt.generation.LangGenerator;
-import com.bwt.generation.LootTableGenerator;
+import com.bwt.generation.BlockLootTableGenerator;
 import com.bwt.generation.ModelGenerator;
 import com.bwt.generation.RecipeGenerator;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
-//import net.minecraft.SharedConstants;
-//import net.minecraft.data.DataGenerator;
-//
-//import java.io.IOException;
 
 public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 	@Override
@@ -26,7 +22,7 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(RecipeGenerator::new);
 		pack.addProvider(ModelGenerator::new);
 		pack.addProvider(LangGenerator::new);
-		pack.addProvider(LootTableGenerator::new);
+		pack.addProvider(BlockLootTableGenerator::new);
 		pack.addProvider(AdvancementsGenerator::new);
 	}
 }
