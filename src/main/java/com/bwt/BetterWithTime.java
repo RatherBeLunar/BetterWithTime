@@ -21,6 +21,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.HoeItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.condition.EntityPropertiesLootCondition;
@@ -111,7 +112,12 @@ public class BetterWithTime implements ModInitializer {
 			context -> {
 				BlockState result = Blocks.FARMLAND.getDefaultState();
 				HoeItem.createTillAction(result).accept(context);
-				if (context.getWorld().getRandom().nextInt(25) == 0) {
+				Item tool = context.getStack().getItem();
+				int randBound = 25;
+				if (tool instanceof HoeItem hoeItem) {
+					randBound -= hoeItem.getMaterial().getMiningLevel() * 2;
+				}
+				if (context.getWorld().getRandom().nextInt(randBound) == 0) {
 					Block.dropStack(context.getWorld(), context.getBlockPos(), context.getSide(), new ItemStack(BwtItems.hempSeedsItem));
 				}
 			}
