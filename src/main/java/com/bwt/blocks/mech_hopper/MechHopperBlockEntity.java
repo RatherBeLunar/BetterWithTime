@@ -132,9 +132,14 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
     @Override
     public void markDirty() {
+        int oldSlotsOccupied = slotsOccupied;
         slotsOccupied = ((int) hopperInventory.heldStacks.stream().filter(stack -> !stack.isEmpty()).count());
+        int size = hopperInventory.size();
         if (world != null) {
-            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_LISTENERS);
+            world.updateListeners(pos, getCachedState(), getCachedState(), Block.NOTIFY_ALL);
+            if ((oldSlotsOccupied == size && slotsOccupied != size) || (slotsOccupied == size && oldSlotsOccupied != size)) {
+                world.updateNeighbors(pos, getCachedState().getBlock());
+            }
         }
         super.markDirty();
     }

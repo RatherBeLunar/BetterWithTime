@@ -152,6 +152,21 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         schedulePowerUpdate(state, world, pos);
     }
 
+    @Override
+    public boolean emitsRedstonePower(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity
+                && hopperBlockEntity.slotsOccupied == hopperBlockEntity.size()) {
+            return 15;
+        }
+        return 0;
+    }
+
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
         return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
     }
