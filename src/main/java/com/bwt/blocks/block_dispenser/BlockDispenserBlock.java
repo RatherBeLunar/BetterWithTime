@@ -274,4 +274,9 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
         return BLOCK_INHALE_BEHAVIORS.get(targetState.getBlock());
     }
+
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
 }

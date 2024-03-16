@@ -11,6 +11,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.registry.Registries;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -117,5 +118,18 @@ public class MouldingBlock extends MiniBlock {
     @Override
     public BlockState getNextOrientation(BlockState state) {
         return state.with(ORIENTATION, (state.get(ORIENTATION) + 1) % 12);
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        int orientation = state.get(ORIENTATION);
+        int category = orientation / 4;
+        int newOrientation = (orientation + 1) % 4 + (4 * category);
+        return state.with(ORIENTATION, newOrientation);
+    }
+
+    public static boolean isVertical(BlockState state) {
+        int orientation = state.get(ORIENTATION);
+        return orientation >= 4 && orientation <= 7;
     }
 }

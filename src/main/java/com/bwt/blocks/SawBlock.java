@@ -27,6 +27,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.BlockRotation;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -317,5 +318,14 @@ public class SawBlock extends Block implements MechPowerBlockBase {
         if (isMechPowered(state)) {
             emitSawParticles(world, state, pos);
         }
+    }
+
+    @Override
+    public BlockState rotate(BlockState state, BlockRotation rotation) {
+        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    public static boolean isHorizontal(BlockState state) {
+        return state.get(FACING).getAxis().isHorizontal();
     }
 }

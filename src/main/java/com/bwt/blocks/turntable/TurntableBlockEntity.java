@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.utils.BlockPosAndState;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -61,20 +62,27 @@ public class TurntableBlockEntity extends BlockEntity {
         if (blockEntity.rotationTickCounter >= ticksToRotate[tickSetting]) {
             world.playSound(null, pos, SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.BLOCKS, 0.05f, 1f);
             blockEntity.rotationTickCounter = 0;
-            rotateTurnTable(world, pos, state, blockEntity);
+            rotateTurnTable(world, pos, state);
         }
     }
 
-    protected static void rotateTurnTable(World world, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
+    protected static void rotateTurnTable(World world, BlockPos pos, BlockState state) {
         BlockRotation rotation = state.get(TurntableBlock.POWERED) ? BlockRotation.CLOCKWISE_90 : BlockRotation.COUNTERCLOCKWISE_90;
-        for (int j = 1; j < blocksAboveToRotate + 1; j++) {
+        for (int j = 1; j <= blocksAboveToRotate; j++) {
             BlockPos blockAbovePos = pos.up(j);
             BlockState blockAboveState = world.getBlockState(blockAbovePos);
-            BlockState rotatedState = blockAboveState.getBlock().rotate(blockAboveState, rotation);
-            if (rotatedState != blockAboveState) {
-                world.setBlockState(blockAbovePos, rotatedState);
+            BlockState rotatedState = blockAboveState;
+            if (CanRotateHelper.canRotate(world, blockAbovePos, blockAboveState)) {
+                rotatedState = blockAboveState.getBlock().rotate(blockAboveState, rotation);
             }
-            rotateAttachedBlocks(world, blockAbovePos, blockAboveState, rotation);
+            rotateAttachedBlocks(world, blockAbovePos, rotatedState, rotation);
+            if (rotatedState != blockAboveState) {
+                world.setBlockState(blockAbovePos, rotatedState, Block.NOTIFY_LISTENERS);
+            }
+            // The < check here is just a minor optimization, so we don't need to check propagation unnecessarily
+            if (j < blocksAboveToRotate && !VerticalBlockAttachmentHelper.canPropagateRotationUpwards(world, blockAbovePos, blockAboveState)) {
+                break;
+            }
         }
     }
 
@@ -125,6 +133,5 @@ public class TurntableBlockEntity extends BlockEntity {
             FluidState fluidState = world.getFluidState(attachedPosition);
             world.setBlockState(attachedPosition, fluidState.getBlockState());
         });
-
     }
 }

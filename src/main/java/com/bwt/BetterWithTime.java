@@ -8,7 +8,9 @@ import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
 import com.bwt.blocks.pulley.PulleyScreenHandler;
+import com.bwt.blocks.turntable.CanRotateHelper;
 import com.bwt.blocks.turntable.HorizontalBlockAttachmentHelper;
+import com.bwt.blocks.turntable.VerticalBlockAttachmentHelper;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
@@ -130,6 +132,8 @@ public class BetterWithTime implements ModInitializer {
 		// Hopper filters
 		MechHopperBlock.addDefaultFilters();
 		// Turntable attached block handlers
+		CanRotateHelper.registerDefaults();
 		HorizontalBlockAttachmentHelper.registerDefaults();
+		VerticalBlockAttachmentHelper.registerDefaults();
 	}
 }

@@ -55,7 +55,7 @@ public interface HorizontalBlockAttachmentHelper {
         register(WallTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallRedstoneTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallSignBlock.class, horizontalFacingBlockPredicate);
-        register(WallHangingSignBlock.class, horizontalFacingBlockPredicate);
+        register(WallHangingSignBlock.class, wallHangingSignPredicate);
         register(WallMountedBlock.class, wallMountedBlockPredicate);
     }
 }
