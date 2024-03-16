@@ -4,8 +4,10 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.utils.BlockPosAndState;
+import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ObserverBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.fluid.FluidState;
@@ -78,6 +80,13 @@ public class TurntableBlockEntity extends BlockEntity {
             rotateAttachedBlocks(world, blockAbovePos, rotatedState, rotation);
             if (rotatedState != blockAboveState) {
                 world.setBlockState(blockAbovePos, rotatedState, Block.NOTIFY_LISTENERS);
+                rotatedState.getBlock().neighborUpdate(rotatedState, world, blockAbovePos, state.getBlock(), pos, true);
+                if (rotatedState.getBlock() instanceof AbstractRedstoneGateBlock) {
+                    world.updateNeighbors(blockAbovePos, rotatedState.getBlock());
+                }
+                if (rotatedState.getBlock() instanceof ObserverBlock) {
+                    world.scheduleBlockTick(blockAbovePos, rotatedState.getBlock(), 2);
+                }
             }
             // The < check here is just a minor optimization, so we don't need to check propagation unnecessarily
             if (j < blocksAboveToRotate && !VerticalBlockAttachmentHelper.canPropagateRotationUpwards(world, blockAbovePos, blockAboveState)) {
