@@ -1,0 +1,41 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "bwt:block/turntable"
+      }
+    },
+    {
+      "apply": {
+        "model": "bwt:block/turntable_nub_0"
+      },
+      "when": {
+        "tick_setting": "0"
+      }
+    },
+    {
+      "apply": {
+        "model": "bwt:block/turntable_nub_1"
+      },
+      "when": {
+        "tick_setting": "1"
+      }
+    },
+    {
+      "apply": {
+        "model": "bwt:block/turntable_nub_2"
+      },
+      "when": {
+        "tick_setting": "2"
+      }
+    },
+    {
+      "apply": {
+        "model": "bwt:block/turntable_nub_3"
+      },
+      "when": {
+        "tick_setting": "3"
+      }
+    }
+  ]
+}

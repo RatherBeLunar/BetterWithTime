@@ -6,6 +6,7 @@ import com.bwt.blocks.cauldron.CauldronBlockEntity;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.bwt.blocks.pulley.PulleyBlockEntity;
+import com.bwt.blocks.turntable.TurntableBlockEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.block.entity.BlockEntityType;
@@ -38,6 +39,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             new Identifier("bwt", "mech_hopper_block_entity"),
             FabricBlockEntityTypeBuilder.create(MechHopperBlockEntity::new, BwtBlocks.hopperBlock).build()
+    );
+    public static final BlockEntityType<TurntableBlockEntity> turntableBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier("bwt", "turntable_block_entity"),
+            FabricBlockEntityTypeBuilder.create(TurntableBlockEntity::new, BwtBlocks.turntableBlock).build()
     );
 
     @Override

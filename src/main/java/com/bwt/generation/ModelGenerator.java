@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.CornerBlock;
 import com.bwt.blocks.MouldingBlock;
 import com.bwt.blocks.SidingBlock;
+import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
@@ -61,6 +62,20 @@ public class ModelGenerator extends FabricModelProvider {
                 )
         );
         blockStateModelGenerator.blockStateCollector.accept(
+                MultipartBlockStateSupplier.create(BwtBlocks.turntableBlock)
+                        .with(BlockStateVariant.create().put(
+                                VariantSettings.MODEL, Models.CUBE_BOTTOM_TOP.upload(
+                                        BwtBlocks.turntableBlock,
+                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.turntableBlock).getTextures(),
+                                        blockStateModelGenerator.modelCollector
+                                )
+                        ))
+                        .with(When.create().set(TurntableBlock.TICK_SETTING, 0), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_0")))
+                        .with(When.create().set(TurntableBlock.TICK_SETTING, 1), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_1")))
+                        .with(When.create().set(TurntableBlock.TICK_SETTING, 2), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_2")))
+                        .with(When.create().set(TurntableBlock.TICK_SETTING, 3), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_3")))
+        );
+        blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
                         BwtBlocks.platformBlock,
                         BlockStateVariant.create().put(
@@ -82,6 +97,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.millStoneBlock, ModelIds.getBlockModelId(BwtBlocks.millStoneBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.obsidianPressuePlateBlock, ModelIds.getBlockModelId(BwtBlocks.obsidianPressuePlateBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockModelId(BwtBlocks.turntableBlock));
     }
 
     @Override

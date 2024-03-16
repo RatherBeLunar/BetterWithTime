@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "bwt:block/turntable_bottom",
+    "side": "bwt:block/turntable_side",
+    "top": "bwt:block/turntable_top"
+  }
+}

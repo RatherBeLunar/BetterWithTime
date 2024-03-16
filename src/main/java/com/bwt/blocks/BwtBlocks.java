@@ -7,6 +7,7 @@ import com.bwt.blocks.detector.DetectorLogicBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
+import com.bwt.blocks.turntable.TurntableBlock;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -136,7 +137,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
-//	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
+	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
 //	public static final Block unfiredPotteryBlock = new UnfiredPotteryBlock(FabricBlockSettings.create());
 //	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.create());
 //	public static final Block vaseBlock = new VaseBlock(FabricBlockSettings.create());
@@ -219,6 +220,9 @@ public class BwtBlocks implements ModInitializer {
         // Platform
         Registry.register(Registries.BLOCK, new Identifier("bwt", "platform"), platformBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "platform"), new BlockItem(platformBlock, new FabricItemSettings()));
+        // Turntable
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "turntable"), turntableBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "turntable"), new BlockItem(turntableBlock, new FabricItemSettings()));
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
@@ -237,6 +241,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(sawBlock);
             content.add(pulleyBlock);
             content.add(platformBlock);
+            content.add(turntableBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {

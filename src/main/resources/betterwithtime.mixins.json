@@ -5,6 +5,7 @@
   "mixins": [
     "DetectorRailMixin",
     "ExampleMixin",
+    "MovableBlockEntityMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "WolfEntityMixin",
