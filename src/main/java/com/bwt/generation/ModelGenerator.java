@@ -1,9 +1,6 @@
 package com.bwt.generation;
 
-import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.CornerBlock;
-import com.bwt.blocks.MouldingBlock;
-import com.bwt.blocks.SidingBlock;
+import com.bwt.blocks.*;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -15,6 +12,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ModelGenerator extends FabricModelProvider {
@@ -84,6 +82,25 @@ public class ModelGenerator extends FabricModelProvider {
                         )
                 )
         );
+        List<Identifier> list = blockStateModelGenerator.getFireFloorModels(BwtBlocks.stokedFireBlock);
+        List<Identifier> list2 = blockStateModelGenerator.getFireSideModels(BwtBlocks.stokedFireBlock);
+        blockStateModelGenerator.blockStateCollector.accept(MultipartBlockStateSupplier.create(BwtBlocks.stokedFireBlock)
+                .with(BlockStateModelGenerator.buildBlockStateVariants(list, blockStateVariant -> blockStateVariant))
+                .with(BlockStateModelGenerator.buildBlockStateVariants(list2, blockStateVariant -> blockStateVariant))
+                .with(BlockStateModelGenerator.buildBlockStateVariants(list2, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R90)))
+                .with(BlockStateModelGenerator.buildBlockStateVariants(list2, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R180)))
+                .with(BlockStateModelGenerator.buildBlockStateVariants(list2, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R270))));
+        Identifier bellowsId = TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
+        Identifier bellowsCompressedId = bellowsId.withSuffixedPath("_compressed");
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.bellowsBlock)
+                .coordinate(BlockStateVariantMap.create(BellowsBlock.MECH_POWERED)
+                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsCompressedId))
+                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsId))
+                )
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+        );
+
+
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.blockDispenserBlock, ModelIds.getBlockModelId(BwtBlocks.blockDispenserBlock));
@@ -98,6 +115,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.obsidianPressuePlateBlock, ModelIds.getBlockModelId(BwtBlocks.obsidianPressuePlateBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockModelId(BwtBlocks.turntableBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.bellowsBlock, ModelIds.getBlockModelId(BwtBlocks.bellowsBlock));
     }
 
     @Override

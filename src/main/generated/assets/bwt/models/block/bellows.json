@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "bottom": "bwt:block/bellows_bottom",
+    "front": "bwt:block/bellows_front",
+    "side": "bwt:block/bellows_side",
+    "top": "bwt:block/bellows_top"
+  }
+}

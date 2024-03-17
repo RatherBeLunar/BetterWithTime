@@ -35,6 +35,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_NETHER).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_END).add(BwtBlocks.hibachiBlock);
+        getOrCreateTagBuilder(BlockTags.FIRE).add(BwtBlocks.stokedFireBlock);
 
         addTools();
         addMiniBlockTags();

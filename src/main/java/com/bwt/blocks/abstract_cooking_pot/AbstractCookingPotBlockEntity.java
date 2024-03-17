@@ -3,12 +3,12 @@ package com.bwt.blocks.abstract_cooking_pot;
 import com.bwt.recipes.AbstractCookingPotRecipe;
 import com.bwt.recipes.AbstractCookingPotRecipeType;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.utils.FireData;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
@@ -25,7 +25,6 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
@@ -35,10 +34,9 @@ import java.util.List;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 27;
-    protected static final int primaryFireFactor = 5;
-    protected static final int secondaryFireFactor = 1; // This was changed to 3 later
+
     // "Time" is used loosely here, since the rate of change is affected by the amount of fire surrounding the pot
-    public static final int timeToCompleteCook = 150 * ( primaryFireFactor + ( secondaryFireFactor * 8 ) );
+    public static final int timeToCompleteCook = 150 * ( FireData.primaryFireFactor + ( FireData.secondaryFireFactor * 8 ) );
     protected int cookProgressTime;
 
 
@@ -102,7 +100,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     public static void tick(World world, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
         FireData fireData = FireData.fromWorld(world, pos);
-        if (fireData.fireFactor <= 0) {
+        if (fireData.fireFactor() <= 0) {
             if (blockEntity.cookProgressTime != 0) {
                 blockEntity.cookProgressTime = 0;
                 blockEntity.markDirty();
@@ -120,7 +118,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
             return;
         }
 
-        blockEntity.cookProgressTime = blockEntity.cookProgressTime + fireData.fireFactor;
+        blockEntity.cookProgressTime = blockEntity.cookProgressTime + fireData.fireFactor();
         if (blockEntity.cookProgressTime >= timeToCompleteCook) {
             blockEntity.cookProgressTime = 0;
             blockEntity.markDirty();
@@ -143,34 +141,6 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
             if (cookSucceeded) {
                 break;
             }
-        }
-    }
-
-    // TODO: move fire logic into shared helper class
-    public enum FireType {UNSTOKED, STOKED}
-
-    public record FireData(int fireFactor, FireType fireType) {
-        public static FireData fromWorld(World world, BlockPos pos) {
-            int fireCount = 0;
-            FireType fireType = FireType.UNSTOKED;
-            BlockPos below = pos.down();
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
-                    BlockState state = world.getBlockState(below.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z));
-                    if (x == 0 && z == 0 && !state.isOf(Blocks.FIRE) /* && !state.isOf(BwtBlocks.STOKED_FIRE) */) {
-                        return new FireData(0, FireType.UNSTOKED);
-                    }
-                    if (state.isOf(Blocks.FIRE)) {
-                        fireCount += 1;
-                    }
-//                    if (state.isOf(BwtBlocks.STOKED_FIRE)) {
-//                        fireFactor += 1;
-//                        fireType = FireType.STOKED;
-//                    }
-                }
-            }
-            int fireFactor = primaryFireFactor + (fireCount - 1) * secondaryFireFactor;
-            return new FireData(fireFactor, fireType);
         }
     }
 

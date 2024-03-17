@@ -42,7 +42,7 @@ public class BwtBlocks implements ModInitializer {
     );
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axleBlock.getSettings()));
 //	public static final Block barrelBlock = new BarrelBlock(FabricBlockSettings.create());
-//	public static final Block bellowsBlock = new BellowsBlock(FabricBlockSettings.create());
+	public static final Block bellowsBlock = new BellowsBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS));
 	public static final BlockDispenserBlock blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
         .hardness(3.5f)
     );
@@ -135,6 +135,7 @@ public class BwtBlocks implements ModInitializer {
     public static final ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
+    public static final Block stokedFireBlock = new StokedFireBlock(FabricBlockSettings.copyOf(Blocks.SOUL_FIRE));
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
 	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
@@ -223,6 +224,11 @@ public class BwtBlocks implements ModInitializer {
         // Turntable
         Registry.register(Registries.BLOCK, new Identifier("bwt", "turntable"), turntableBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "turntable"), new BlockItem(turntableBlock, new FabricItemSettings()));
+        // Stoked Fire
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "stoked_fire"), stokedFireBlock);
+        // Bellows
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "bellows"), bellowsBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "bellows"), new BlockItem(bellowsBlock, new FabricItemSettings()));
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
@@ -242,6 +248,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(pulleyBlock);
             content.add(platformBlock);
             content.add(turntableBlock);
+            content.add(bellowsBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
