@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:hellfire_dust",
+    "bwt:concentrated_hellfire",
+    "minecraft:gunpowder",
+    "minecraft:tnt"
+  ]
+}

@@ -18,4 +18,5 @@ public class BwtItemTags {
     public static final TagKey<Item> PASSES_TRAPDOOR_FILTER = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "passes_trapdoor_filter"));
     public static final TagKey<Item> PASSES_IRON_BARS_FILTER = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "passes_iron_bars_filter"));
     public static final TagKey<Item> PASSES_LADDER_FILTER = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "passes_ladder_filter"));
+    public static final TagKey<Item> STOKED_EXPLOSIVES = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "stoked_explosives"));
 }

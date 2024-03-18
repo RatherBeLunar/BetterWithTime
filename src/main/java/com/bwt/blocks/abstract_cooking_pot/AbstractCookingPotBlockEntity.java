@@ -3,6 +3,7 @@ package com.bwt.blocks.abstract_cooking_pot;
 import com.bwt.recipes.AbstractCookingPotRecipe;
 import com.bwt.recipes.AbstractCookingPotRecipeType;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.FireData;
 import com.bwt.utils.FireType;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
@@ -104,12 +105,25 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     public static void tick(World world, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
         FireData fireData = FireData.fromWorld(world, pos);
+
         if (fireData.fireFactor() <= 0) {
             if (blockEntity.cookProgressTime != 0) {
                 blockEntity.cookProgressTime = 0;
                 blockEntity.markDirty();
             }
             return;
+        }
+
+        if (fireData.fireType().equals(FireType.STOKED)) {
+            int stokedExplosivesCount = blockEntity.inventory.getHeldStacks().stream()
+                    .filter(itemStack -> itemStack.isIn(BwtItemTags.STOKED_EXPLOSIVES))
+                    .map(ItemStack::getCount)
+                    .reduce(Integer::sum)
+                    .orElse(0);
+            if (stokedExplosivesCount > 0) {
+                explode(world, pos, stokedExplosivesCount);
+                return;
+            }
         }
 
         RecipeManager recipeManager = world.getRecipeManager();
@@ -147,6 +161,12 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                 break;
             }
         }
+    }
+
+    private static void explode(World world, BlockPos pos, int stokedExplosivesCount) {
+        world.breakBlock(pos, true);
+        float explosionStrength = Math.min(Math.max(stokedExplosivesCount / 6.4f, 2f), 10f);
+        world.createExplosion(null, pos.getX(), pos.getY(), pos.getZ(), explosionStrength, true, World.ExplosionSourceType.BLOCK);
     }
 
     @Override
