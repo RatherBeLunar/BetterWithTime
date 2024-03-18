@@ -22,6 +22,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CookingRecipeCategory;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.dynamic.Codecs;
@@ -222,6 +223,16 @@ public abstract class AbstractCookingPotRecipe implements Recipe<AbstractCooking
         public JsonBuilder<T> ingredient(Item item) {
             return this.ingredient(item, 1);
         }
+
+        public JsonBuilder<T> ingredient(TagKey<Item> itemTag, int count) {
+            this.criterion("has_" + itemTag.id().getPath(), RecipeProvider.conditionsFromTag(itemTag));
+            return this.ingredient(IngredientWithCount.fromTag(itemTag, count));
+        }
+
+        public JsonBuilder<T> ingredient(TagKey<Item> itemTag) {
+            return this.ingredient(itemTag, 1);
+        }
+
 
         public JsonBuilder<T> results(ItemStack... itemStacks) {
             this.results.addAll(Arrays.asList(itemStacks));

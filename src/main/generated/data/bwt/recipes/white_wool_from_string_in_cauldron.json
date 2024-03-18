@@ -1,0 +1,17 @@
+{
+  "type": "bwt:cauldron",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "count": 4,
+      "ingredient": {
+        "item": "minecraft:string"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:white_wool"
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:potash_from_cauldron_rendering_corners"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wooden_corner_blocks": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "bwt:wooden_corner_blocks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wooden_corner_blocks"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:potash_from_cauldron_rendering_corners"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:leather_leggings"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 7,
+      "item": "bwt:glue"
+    }
+  ]
+}

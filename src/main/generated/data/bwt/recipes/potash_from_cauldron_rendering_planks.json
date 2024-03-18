@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 6,
+      "ingredient": {
+        "tag": "minecraft:planks"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:potash"
+    }
+  ]
+}

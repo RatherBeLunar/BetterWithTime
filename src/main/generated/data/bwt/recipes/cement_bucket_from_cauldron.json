@@ -1,0 +1,31 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:sand"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:gravel"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:soul_urn"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:bucket"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:cement_bucket"
+    }
+  ]
+}

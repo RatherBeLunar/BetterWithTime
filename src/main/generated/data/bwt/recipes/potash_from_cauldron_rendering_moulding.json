@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 24,
+      "ingredient": {
+        "tag": "bwt:wooden_moulding_blocks"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:potash"
+    }
+  ]
+}

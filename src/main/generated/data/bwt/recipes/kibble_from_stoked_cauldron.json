@@ -1,0 +1,28 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 4,
+      "ingredient": {
+        "item": "minecraft:rotten_flesh"
+      }
+    },
+    {
+      "count": 4,
+      "ingredient": {
+        "item": "minecraft:bone_meal"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:sugar"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:kibble"
+    }
+  ]
+}

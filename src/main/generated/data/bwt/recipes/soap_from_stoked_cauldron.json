@@ -1,0 +1,21 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:potash"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:tallow"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:soap"
+    }
+  ]
+}

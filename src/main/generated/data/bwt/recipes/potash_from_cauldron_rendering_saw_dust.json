@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 16,
+      "ingredient": {
+        "item": "bwt:saw_dust"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:potash"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:hellfire_dust"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:coal_dust"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "item": "bwt:nethercoal"
+    }
+  ]
+}

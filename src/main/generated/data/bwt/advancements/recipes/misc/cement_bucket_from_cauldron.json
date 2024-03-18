@@ -1,0 +1,73 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_bucket": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:bucket"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_gravel": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:gravel"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_sand": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:sand"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_soul_urn": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:soul_urn"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:cement_bucket_from_cauldron"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_sand",
+      "has_gravel",
+      "has_soul_urn",
+      "has_bucket"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:cement_bucket_from_cauldron"
+    ]
+  }
+}

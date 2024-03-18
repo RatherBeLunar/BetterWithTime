@@ -11,7 +11,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class CauldronBlockEntity extends AbstractCookingPotBlockEntity {
     public CauldronBlockEntity(BlockPos pos, BlockState state) {
-        super(BwtBlockEntities.cauldronBlockEntity, BwtRecipes.CAULDRON_RECIPE_TYPE, pos, state);
+        super(BwtBlockEntities.cauldronBlockEntity, BwtRecipes.CAULDRON_RECIPE_TYPE, BwtRecipes.STOKED_CAULDRON_RECIPE_TYPE, pos, state);
     }
 
     @Override

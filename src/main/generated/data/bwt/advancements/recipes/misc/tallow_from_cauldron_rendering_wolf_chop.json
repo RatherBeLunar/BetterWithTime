@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:tallow_from_cauldron_rendering_wolf_chop"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wolf_chop": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:wolf_chop"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_wolf_chop"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:tallow_from_cauldron_rendering_wolf_chop"
+    ]
+  }
+}

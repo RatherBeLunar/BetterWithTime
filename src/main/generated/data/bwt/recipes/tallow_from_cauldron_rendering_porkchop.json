@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:porkchop"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:tallow"
+    }
+  ]
+}

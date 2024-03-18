@@ -1,0 +1,16 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cactus"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:green_dye"
+    }
+  ]
+}

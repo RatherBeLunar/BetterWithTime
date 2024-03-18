@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:leather_helmet"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 5,
+      "item": "bwt:glue"
+    }
+  ]
+}

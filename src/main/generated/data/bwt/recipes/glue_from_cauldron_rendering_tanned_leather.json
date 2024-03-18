@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "bwt:tanned_leather"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:glue"
+    }
+  ]
+}

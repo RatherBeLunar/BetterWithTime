@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_hellfire_dust": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:hellfire_dust"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_potash": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:potash"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:nether_sludge_from_cauldron"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_hellfire_dust",
+      "has_potash"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:nether_sludge_from_cauldron"
+    ]
+  }
+}

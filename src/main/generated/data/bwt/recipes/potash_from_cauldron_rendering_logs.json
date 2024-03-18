@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "tag": "minecraft:logs"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:potash"
+    }
+  ]
+}

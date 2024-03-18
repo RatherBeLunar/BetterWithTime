@@ -4,6 +4,7 @@ import com.bwt.recipes.AbstractCookingPotRecipe;
 import com.bwt.recipes.AbstractCookingPotRecipeType;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.utils.FireData;
+import com.bwt.utils.FireType;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -44,7 +45,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
 
-    public AbstractCookingPotRecipeType recipeType;
+    public AbstractCookingPotRecipeType unstokedRecipeType;
+    public AbstractCookingPotRecipeType stokedRecipeType;
 
     protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
         @Override
@@ -71,12 +73,14 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     public AbstractCookingPotBlockEntity(
             BlockEntityType<? extends AbstractCookingPotBlockEntity> blockEntityType,
-            AbstractCookingPotRecipeType recipeType,
+            AbstractCookingPotRecipeType unstokedRecipeType,
+            AbstractCookingPotRecipeType stokedRecipeType,
             BlockPos pos,
             BlockState state
     ) {
         super(blockEntityType, pos, state);
-        this.recipeType = recipeType;
+        this.unstokedRecipeType = unstokedRecipeType;
+        this.stokedRecipeType = stokedRecipeType;
     }
 
     @Override
@@ -109,7 +113,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
 
         RecipeManager recipeManager = world.getRecipeManager();
-        List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(blockEntity.recipeType, blockEntity.inventory, world);
+        AbstractCookingPotRecipeType recipeTypeToGet = fireData.fireType().equals(FireType.STOKED) ? blockEntity.stokedRecipeType : blockEntity.unstokedRecipeType;
+        List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(recipeTypeToGet, blockEntity.inventory, world);
         if (matches.isEmpty()) {
             if (blockEntity.cookProgressTime != 0) {
                 blockEntity.cookProgressTime = 0;

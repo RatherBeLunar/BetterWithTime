@@ -1,0 +1,24 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "minecraft:arrow"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "item": "minecraft:flint"
+    },
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:feather"
+    }
+  ]
+}

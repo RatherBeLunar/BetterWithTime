@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 2,
+      "ingredient": {
+        "item": "bwt:belt"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:glue"
+    }
+  ]
+}

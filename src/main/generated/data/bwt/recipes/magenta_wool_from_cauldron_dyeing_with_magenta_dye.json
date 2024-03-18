@@ -1,0 +1,21 @@
+{
+  "type": "bwt:cauldron",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:white_wool"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:magenta_dye"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:magenta_wool"
+    }
+  ]
+}

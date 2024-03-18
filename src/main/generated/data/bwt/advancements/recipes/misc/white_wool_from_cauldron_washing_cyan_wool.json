@@ -1,0 +1,47 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cyan_wool": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:cyan_wool"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_potash": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:potash"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:white_wool_from_cauldron_washing_cyan_wool"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cyan_wool",
+      "has_potash"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:white_wool_from_cauldron_washing_cyan_wool"
+    ]
+  }
+}

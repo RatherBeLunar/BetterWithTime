@@ -19,7 +19,7 @@ public record FireData(int fireFactor, FireType fireType) {
         for (int x = -1; x <= 1; x++) {
             for (int z = -1; z <= 1; z++) {
                 BlockState state = world.getBlockState(below.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z));
-                if (x == 0 && z == 0 && !state.isOf(Blocks.FIRE) /* && !state.isOf(BwtBlocks.STOKED_FIRE) */) {
+                if (x == 0 && z == 0 && !state.isOf(Blocks.FIRE) && !state.isOf(BwtBlocks.stokedFireBlock)) {
                     return new FireData(0, FireType.UNSTOKED);
                 }
                 if (state.isOf(Blocks.FIRE)) {

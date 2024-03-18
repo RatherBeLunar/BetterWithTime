@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cooked_mutton"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:tallow"
+    }
+  ]
+}

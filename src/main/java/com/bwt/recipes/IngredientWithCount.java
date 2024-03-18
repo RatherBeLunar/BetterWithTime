@@ -5,9 +5,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
@@ -19,6 +21,14 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
 
     public static IngredientWithCount fromStack(ItemStack stack) {
         return new IngredientWithCount(Ingredient.ofStacks(stack), stack.getCount());
+    }
+
+    public static IngredientWithCount fromTag(TagKey<Item> itemTag, int count) {
+        return new IngredientWithCount(Ingredient.fromTag(itemTag), count);
+    }
+
+    public static IngredientWithCount fromTag(TagKey<Item> itemTag) {
+        return new IngredientWithCount(Ingredient.fromTag(itemTag), 1);
     }
 
     @Override

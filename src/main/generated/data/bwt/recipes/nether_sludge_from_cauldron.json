@@ -1,0 +1,23 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "bwt:hellfire_dust"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:potash"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 8,
+      "item": "bwt:nether_sludge"
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "type": "bwt:cauldron",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "count": 5,
+      "ingredient": {
+        "item": "minecraft:gunpowder"
+      }
+    },
+    {
+      "count": 4,
+      "ingredient": {
+        "item": "minecraft:sand"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:tnt"
+    }
+  ]
+}
