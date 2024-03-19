@@ -1,0 +1,13 @@
+{
+  "type": "bwt:kiln",
+  "category": "misc",
+  "cookingTime": 1,
+  "drops": [
+    {
+      "item": "minecraft:gold_ingot"
+    }
+  ],
+  "ingredient": {
+    "blockTag": "#minecraft:gold_ores"
+  }
+}

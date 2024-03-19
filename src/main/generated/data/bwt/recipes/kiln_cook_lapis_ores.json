@@ -1,0 +1,13 @@
+{
+  "type": "bwt:kiln",
+  "category": "misc",
+  "cookingTime": 1,
+  "drops": [
+    {
+      "item": "minecraft:lapis_lazuli"
+    }
+  ],
+  "ingredient": {
+    "blockTag": "#minecraft:lapis_ores"
+  }
+}

@@ -56,10 +56,10 @@ public class StokedFireBlock extends AbstractFireBlock {
         if (!state.canPlaceAt(world, pos)) {
             world.removeBlock(pos, false);
         }
-//        BlockState blockAboveState = world.getBlockState(pos.up());
-//        if (blockAboveState.isOf(Blocks.BRICKS)) {
-//            world.setBlockState(pos.up(), BwtBlocks.kilnBlock);
-//        }
+        BlockState blockAboveState = world.getBlockState(pos.up());
+        if (blockAboveState.isOf(Blocks.BRICKS)) {
+            world.setBlockState(pos.up(), BwtBlocks.kilnBlock.getDefaultState());
+        }
 
         int oldAge = state.get(AGE);
 

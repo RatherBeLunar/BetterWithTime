@@ -28,6 +28,11 @@ public class LangGenerator extends FabricLanguageProvider {
         for (CornerBlock cornerBlock : BwtBlocks.cornerBlocks) {
             translationBuilder.add(cornerBlock, nameKeyToTitleCase(cornerBlock.fullBlock.getName().getString().replaceFirst("_planks", "") + "_corner"));;
         }
+        translationBuilder.add(BwtBlocks.unfiredCrucibleBlock, "Unfired Crucible");
+        translationBuilder.add(BwtBlocks.unfiredPlanterBlock, "Unfired Planter");
+        translationBuilder.add(BwtBlocks.unfiredVaseBlock, "Unfired Vase");
+        translationBuilder.add(BwtBlocks.unfiredUrnBlock, "Unfired Urn");
+        translationBuilder.add(BwtBlocks.unfiredMouldBlock, "Unfired Mould");
 
         // Load an existing language file.
         try {

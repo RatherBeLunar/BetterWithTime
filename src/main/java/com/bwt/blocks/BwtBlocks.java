@@ -95,7 +95,7 @@ public class BwtBlocks implements ModInitializer {
             .nonOpaque()
     );
 //	public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(FabricBlockSettings.create());
-//	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.create());
+	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.copyOf(Blocks.BRICKS));
 //	public static final Block lensBlock = new LensBlock(FabricBlockSettings.create());
 	public static final Block lightBlockBlock = new LightBlock(FabricBlockSettings.copyOf(Blocks.GLASS)
         .strength(0.4f)
@@ -244,6 +244,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_urn"), new BlockItem(unfiredUrnBlock, new FabricItemSettings()));
         Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_mould"), unfiredMouldBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_mould"), new BlockItem(unfiredMouldBlock, new FabricItemSettings()));
+        // Kiln
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "kiln"), kilnBlock);
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
