@@ -1,0 +1,7 @@
+{
+  "parent": "bwt:block/unfired_crucible",
+  "textures": {
+    "particle": "minecraft:block/gravel",
+    "texture": "minecraft:block/gravel"
+  }
+}

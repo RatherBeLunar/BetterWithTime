@@ -1,0 +1,13 @@
+{
+  "type": "bwt:turntable",
+  "category": "misc",
+  "drops": [
+    {
+      "item": "minecraft:clay_ball"
+    }
+  ],
+  "ingredient": {
+    "block": "bwt:unfired_vase"
+  },
+  "output": "bwt:unfired_urn"
+}

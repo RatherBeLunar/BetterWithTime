@@ -139,7 +139,11 @@ public class BwtBlocks implements ModInitializer {
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
 	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
-//	public static final Block unfiredPotteryBlock = new UnfiredPotteryBlock(FabricBlockSettings.create());
+	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
+	public static final UnfiredPotteryBlock unfiredPlanterBlock = new UnfiredPlanterBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
+	public static final UnfiredPotteryBlock unfiredVaseBlock = new UnfiredVaseBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
+	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
+	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
 //	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.create());
 //	public static final Block vaseBlock = new VaseBlock(FabricBlockSettings.create());
 //	public static final Block waterWheelBlock = new WaterWheelBlock(FabricBlockSettings.create());
@@ -229,6 +233,17 @@ public class BwtBlocks implements ModInitializer {
         // Bellows
         Registry.register(Registries.BLOCK, new Identifier("bwt", "bellows"), bellowsBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "bellows"), new BlockItem(bellowsBlock, new FabricItemSettings()));
+        // Unfired Pottery
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_crucible"), unfiredCrucibleBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_crucible"), new BlockItem(unfiredCrucibleBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_planter"), unfiredPlanterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_planter"), new BlockItem(unfiredPlanterBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_vase"), unfiredVaseBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_vase"), new BlockItem(unfiredVaseBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_urn"), unfiredUrnBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_urn"), new BlockItem(unfiredUrnBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_mould"), unfiredMouldBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_mould"), new BlockItem(unfiredMouldBlock, new FabricItemSettings()));
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
 
@@ -253,6 +268,11 @@ public class BwtBlocks implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(cauldronBlock);
+            content.add(unfiredCrucibleBlock);
+            content.add(unfiredPlanterBlock);
+            content.add(unfiredVaseBlock);
+            content.add(unfiredUrnBlock);
+            content.add(unfiredMouldBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {

@@ -18,6 +18,8 @@ public class BwtRecipes implements ModInitializer {
     public static final MillStoneRecipe.Serializer MILL_STONE_RECIPE_SERIALIZER = new MillStoneRecipe.Serializer(MillStoneRecipe::new);
     public static final SawRecipeType SAW_RECIPE_TYPE = new SawRecipeType();
     public static final SawRecipe.Serializer SAW_RECIPE_SERIALIZER = new SawRecipe.Serializer(SawRecipe::new);
+    public static final TurntableRecipeType TURNTABLE_RECIPE_TYPE = new TurntableRecipeType();
+    public static final TurntableRecipe.Serializer TURNTABLE_RECIPE_SERIALIZER = new TurntableRecipe.Serializer(TurntableRecipe::new);
     @Override
     public void onInitialize() {
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_TYPE);
@@ -30,5 +32,7 @@ public class BwtRecipes implements ModInitializer {
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "mill_stone"), MILL_STONE_RECIPE_SERIALIZER);
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "saw"), SAW_RECIPE_TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "saw"), SAW_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_SERIALIZER);
     }
 }

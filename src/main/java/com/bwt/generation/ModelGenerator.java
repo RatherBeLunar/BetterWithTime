@@ -100,6 +100,15 @@ public class ModelGenerator extends FabricModelProvider {
                 .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
         );
 
+        for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredMouldBlock}) {
+            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(unfiredPotteryBlock)
+                    .coordinate(BlockStateVariantMap.create(UnfiredPotteryBlock.COOKING)
+                            .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(unfiredPotteryBlock)))
+                            .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(unfiredPotteryBlock).withSuffixedPath("_cooking")))
+                    )
+            );
+        }
+
 
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
@@ -116,6 +125,10 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockModelId(BwtBlocks.turntableBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.bellowsBlock, ModelIds.getBlockModelId(BwtBlocks.bellowsBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredCrucibleBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredCrucibleBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredPlanterBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
     }
 
     @Override

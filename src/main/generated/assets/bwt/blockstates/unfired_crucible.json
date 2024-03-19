@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "cooking=false": {
+      "model": "bwt:block/unfired_crucible"
+    },
+    "cooking=true": {
+      "model": "bwt:block/unfired_crucible_cooking"
+    }
+  }
+}

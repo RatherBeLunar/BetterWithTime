@@ -1,0 +1,9 @@
+{
+  "type": "bwt:turntable",
+  "category": "misc",
+  "drops": [],
+  "ingredient": {
+    "block": "bwt:unfired_urn"
+  },
+  "output": "bwt:unfired_mould"
+}

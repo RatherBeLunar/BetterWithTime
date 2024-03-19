@@ -1,0 +1,9 @@
+{
+  "type": "bwt:turntable",
+  "category": "misc",
+  "drops": [],
+  "ingredient": {
+    "block": "bwt:unfired_crucible"
+  },
+  "output": "bwt:unfired_planter"
+}

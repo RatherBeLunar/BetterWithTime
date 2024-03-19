@@ -11,6 +11,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     protected VanillaRecipeGenerator vanillaRecipeGenerator;
     protected MillStoneRecipeGenerator millStoneRecipeGenerator;
     protected SawRecipeGenerator sawRecipeGenerator;
+    protected TurntableRecipeGenerator turntableRecipeGenerator;
 
     public RecipeGenerator(FabricDataOutput output) {
         super(output);
@@ -20,6 +21,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.vanillaRecipeGenerator = new VanillaRecipeGenerator(output);
         this.millStoneRecipeGenerator = new MillStoneRecipeGenerator(output);
         this.sawRecipeGenerator = new SawRecipeGenerator(output);
+        this.turntableRecipeGenerator = new TurntableRecipeGenerator(output);
     }
 
     @Override
@@ -30,5 +32,6 @@ public class RecipeGenerator extends FabricRecipeProvider {
         vanillaRecipeGenerator.generate(exporter);
         millStoneRecipeGenerator.generate(exporter);
         sawRecipeGenerator.generate(exporter);
+        turntableRecipeGenerator.generate(exporter);
     }
 }

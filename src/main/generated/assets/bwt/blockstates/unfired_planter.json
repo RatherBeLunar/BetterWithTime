@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "cooking=false": {
+      "model": "bwt:block/unfired_planter"
+    },
+    "cooking=true": {
+      "model": "bwt:block/unfired_planter_cooking"
+    }
+  }
+}
