@@ -12,10 +12,13 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -38,6 +41,7 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +51,7 @@ import java.util.stream.IntStream;
 public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     public static final int INVENTORY_SIZE = 19;
     protected static final int STACK_SIZE_TO_EJECT = 8;
+    protected static final int SOUL_STORAGE_LIMIT = 8;
     protected static final int PICKUP_COOLDOWN = 3;
     protected static final int ITEM_DROP_COOLDOWN = 3;
 
@@ -181,53 +186,43 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
         if (blockEntity.soulCount > 0) {
             // souls can only be trapped if there's a soul sand filter on the hopper
+            if (blockEntity.getFilterItem().equals(Items.SOUL_SAND)) {
+                BlockState blockBelowState = world.getBlockState(blockEntity.getPos().down());
+                if (blockEntity.mechPower > 0) {
+                    if (!blockBelowState.isOf(BwtBlocks.urnBlock)) {
+                        blockEntity.soulCount = 0;
+                    }
+                }
 
-//            if ( m_iFilterItemID == Block.slowSand.blockID )
-//            {
-//                int iBlockBelowID = worldObj.getBlockId( xCoord, yCoord - 1, zCoord );
-//                int iBlockBelowMetaData = worldObj.getBlockMetadata( xCoord, yCoord - 1, zCoord );
-//
-//                if (hopperPowered)
-//                {
-//                    if ( iBlockBelowID != FCBetterThanWolves.fcAestheticNonOpaque.blockID ||
-//                            iBlockBelowMetaData != FCBlockAestheticNonOpaque.m_iSubtypeUrn )
-//                    {
-//                        m_iContainedSoulCount = 0;
-//                    }
-//                }
-//
-//                if ( m_iContainedSoulCount >= m_iOverloadSoulCount )
-//                {
-//                    if ( hopperPowered &&
-//                            iBlockBelowID == FCBetterThanWolves.fcAestheticNonOpaque.blockID &&
-//                            iBlockBelowMetaData == FCBlockAestheticNonOpaque.m_iSubtypeUrn )
-//                    {
-//                        // convert the urn below to a soul urn
-//
-//                        worldObj.setBlockWithNotify( xCoord, yCoord - 1, zCoord, 0 );
-//
-//                        ItemStack newItemStack = new ItemStack( FCBetterThanWolves.fcItemSoulUrn.itemID,
-//                                1, 0 );
-//
-//                        FCUtilsItem.EjectStackWithRandomOffset( worldObj,
-//                                xCoord, yCoord - 1, zCoord, newItemStack );
-//
-//                        // the rest of the souls escape (if any remain)
-//
-//                        m_iContainedSoulCount = 0;
-//                    }
-//                    else
-//                    {
-//                        // the hopper has become overloaded with souls.  Destroy it and generate a ghast.
-//
-//                        HopperSoulOverload();
-//                    }
-//                }
-//            }
-//            else
-//            {
-//                m_iContainedSoulCount = 0;
-//            }
+                if (blockEntity.soulCount >= SOUL_STORAGE_LIMIT) {
+                    if (blockEntity.mechPower > 0 && blockBelowState.isOf(BwtBlocks.urnBlock)) {
+                        // convert the urn below to a soul urn
+                        world.setBlockState(blockEntity.getPos().down(), Blocks.AIR.getDefaultState());
+                        ItemScatterer.spawn(world, blockEntity.getPos().getX(), blockEntity.getPos().getY() - 1, blockEntity.getPos().getZ(), new ItemStack(BwtItems.soulUrnItem));
+
+                        // the rest of the souls escape (if any remain)
+                        blockEntity.soulCount = 0;
+                    }
+                    else {
+                        // the hopper has become overloaded with souls.  Destroy it and generate a ghast.
+                        soulOverloadExplode(world, blockEntity);
+                    }
+                }
+            }
+            else {
+                blockEntity.soulCount = 0;
+            }
+        }
+    }
+
+    protected static void soulOverloadExplode(World world, MechHopperBlockEntity blockEntity) {
+        world.breakBlock(blockEntity.getPos(), false);
+        ItemScatterer.spawn(world, blockEntity.getPos(), blockEntity.hopperInventory);
+        world.playSound(null, blockEntity.getPos(), SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS);
+        if (!world.getDifficulty().equals(Difficulty.PEACEFUL)) {
+            GhastEntity ghastEntity = new GhastEntity(EntityType.GHAST, world);
+            ghastEntity.setPosition(blockEntity.getPos().toCenterPos());
+            world.spawnEntity(ghastEntity);
         }
     }
 
@@ -332,15 +327,14 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
             itemEntity.kill();
 
             int newSoulcount = blockEntity.soulCount + count;
-            if (newSoulcount > 8 && blockEntity.mechPower <= 0) {
-                // TODO Explode, spawn ghast
+            if (newSoulcount > SOUL_STORAGE_LIMIT && blockEntity.mechPower <= 0) {
+                soulOverloadExplode(world, blockEntity);
                 return;
             }
-            blockEntity.soulCount = Math.min(newSoulcount, 8);
+            blockEntity.soulCount = Math.min(newSoulcount, SOUL_STORAGE_LIMIT);
             blockEntity.spawnNewItemOnTop(world, itemEntityPos, new ItemStack(outputItem, count));
             blockEntity.markDirty();
             // Play ghast noise
-            // TODO get pitch from FC code
             world.playSound(null, blockEntity.pos, SoundEvents.ENTITY_GHAST_AMBIENT, SoundCategory.BLOCKS, 1f, 1.5f);
             return;
         }
