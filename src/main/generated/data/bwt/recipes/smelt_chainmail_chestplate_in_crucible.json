@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:chainmail_chestplate"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 8,
+      "item": "minecraft:iron_ingot"
+    }
+  ]
+}

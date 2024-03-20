@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:cobblestone"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:stone"
+    }
+  ]
+}

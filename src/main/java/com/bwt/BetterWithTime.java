@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
+import com.bwt.blocks.crucible.CrucibleScreenHandler;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
@@ -63,6 +64,7 @@ public class BetterWithTime implements ModInitializer {
 	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<CrucibleScreenHandler> crucibleScreenHandler = new ScreenHandlerType<>(CrucibleScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -72,6 +74,7 @@ public class BetterWithTime implements ModInitializer {
 	static {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
 		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
+		crucibleScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "crucible"), crucibleScreenHandler);
 		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "mill_stone"), millStoneScreenHandler);
 		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "pulley"), pulleyScreenHandler);
 		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "hopper"), mechHopperScreenHandler);

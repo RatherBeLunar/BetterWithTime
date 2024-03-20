@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:iron_pickaxe"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "item": "minecraft:iron_ingot"
+    }
+  ]
+}

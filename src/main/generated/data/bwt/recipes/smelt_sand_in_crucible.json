@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:sand"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:glass"
+    }
+  ]
+}

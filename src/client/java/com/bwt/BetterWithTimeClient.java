@@ -46,6 +46,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
+		HandledScreens.register(BetterWithTime.crucibleScreenHandler, CrucibleScreen::new);
 		HandledScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
 		HandledScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
 		HandledScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);

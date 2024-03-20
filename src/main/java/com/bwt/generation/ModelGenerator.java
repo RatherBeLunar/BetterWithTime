@@ -116,6 +116,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.blockDispenserBlock, ModelIds.getBlockModelId(BwtBlocks.blockDispenserBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.cauldronBlock, ModelIds.getBlockModelId(BwtBlocks.cauldronBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.crucibleBlock, ModelIds.getBlockModelId(BwtBlocks.crucibleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.detectorBlock, ModelIds.getBlockModelId(BwtBlocks.detectorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.gearBoxBlock, ModelIds.getBlockModelId(BwtBlocks.gearBoxBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.handCrankBlock, ModelIds.getBlockModelId(BwtBlocks.handCrankBlock));
@@ -175,6 +176,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.screwItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.soapItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.soulDustItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.soulforgedSteelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.soulUrnItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.strapItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.tallowItem, Models.GENERATED);

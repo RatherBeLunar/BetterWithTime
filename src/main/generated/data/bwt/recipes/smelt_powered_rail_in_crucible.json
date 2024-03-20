@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:powered_rail"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:gold_ingot"
+    }
+  ]
+}

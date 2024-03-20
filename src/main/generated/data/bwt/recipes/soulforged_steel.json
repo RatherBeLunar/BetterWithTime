@@ -1,0 +1,26 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:iron_ingot"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:coal_dust"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:soul_urn"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "bwt:soulforged_steel"
+    }
+  ]
+}

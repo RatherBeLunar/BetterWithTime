@@ -1,0 +1,22 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "blocks",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:gold_nugget"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:concentrated_hellfire"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 7,
+      "item": "minecraft:redstone"
+    }
+  ]
+}

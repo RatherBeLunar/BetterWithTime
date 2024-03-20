@@ -1,0 +1,13 @@
+{
+  "type": "bwt:kiln",
+  "category": "misc",
+  "cookingTime": 1,
+  "drops": [
+    {
+      "item": "bwt:crucible"
+    }
+  ],
+  "ingredient": {
+    "block": "bwt:unfired_crucible"
+  }
+}

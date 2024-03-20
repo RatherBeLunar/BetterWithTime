@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_golden_axe": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:golden_axe"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:smelt_golden_axe_in_crucible"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_golden_axe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:smelt_golden_axe_in_crucible"
+    ]
+  }
+}

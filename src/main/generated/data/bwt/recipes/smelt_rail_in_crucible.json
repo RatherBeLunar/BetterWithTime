@@ -1,0 +1,18 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "minecraft:rail"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "item": "minecraft:iron_ingot"
+    }
+  ]
+}

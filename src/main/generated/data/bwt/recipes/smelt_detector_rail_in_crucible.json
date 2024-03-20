@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:detector_rail"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:iron_ingot"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "misc",
+  "ingredients": [
+    {
+      "count": 9,
+      "ingredient": {
+        "item": "minecraft:gold_nugget"
+      }
+    }
+  ],
+  "results": [
+    {
+      "item": "minecraft:gold_ingot"
+    }
+  ]
+}

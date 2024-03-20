@@ -90,8 +90,8 @@ public class KilnBlock extends Block {
             world.setBlockState(pos, state.with(COOK_TIME, newCookCounter));
             // The 10 here is the max block breaking progress
             world.setBlockBreakingInfo(0, pos.up(), ((int) MathHelper.clampedLerp(-1, 9, ((float) newCookCounter) / 15f)));
-            if (cookingBlockState.contains(UnfiredPotteryBlock.COOKING) && cookingBlockState.get(UnfiredPotteryBlock.COOKING).equals(true)) {
-                world.setBlockState(cookingBlockPos, cookingBlockState.with(UnfiredPotteryBlock.COOKING, false));
+            if (cookingBlockState.contains(UnfiredPotteryBlock.COOKING) && cookingBlockState.get(UnfiredPotteryBlock.COOKING).equals(false)) {
+                world.setBlockState(cookingBlockPos, cookingBlockState.with(UnfiredPotteryBlock.COOKING, true));
             }
         }
     }

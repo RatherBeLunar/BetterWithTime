@@ -1,5 +1,6 @@
 package com.bwt.generation;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.KilnRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -26,5 +27,6 @@ public class KilnRecipeGenerator extends FabricRecipeProvider {
         // Charcoal
         KilnRecipe.JsonBuilder.create(BlockTags.LOGS).drops(Items.CHARCOAL).offerTo(exporter);
         // Pottery
+        KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredCrucibleBlock).drops(BwtBlocks.crucibleBlock.asItem()).offerTo(exporter);
     }
 }

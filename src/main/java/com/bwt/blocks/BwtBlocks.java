@@ -2,6 +2,7 @@ package com.bwt.blocks;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.cauldron.CauldronBlock;
+import com.bwt.blocks.crucible.CrucibleBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
@@ -64,7 +65,7 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL));
 	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
-//	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
+	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
 	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
 	public static final Block detectorLogicBlock = new DetectorLogicBlock(FabricBlockSettings.copyOf(Blocks.AIR));
     public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
@@ -248,6 +249,9 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, new Identifier("bwt", "kiln"), kilnBlock);
         // Mini blocks
         MiniBlock.registerMiniBlocks(sidingBlocks, mouldingBlocks, cornerBlocks);
+        // Crucible
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "crucible"), crucibleBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "crucible"), new BlockItem(crucibleBlock, new FabricItemSettings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
@@ -270,6 +274,7 @@ public class BwtBlocks implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(cauldronBlock);
+            content.add(crucibleBlock);
             content.add(unfiredCrucibleBlock);
             content.add(unfiredPlanterBlock);
             content.add(unfiredVaseBlock);

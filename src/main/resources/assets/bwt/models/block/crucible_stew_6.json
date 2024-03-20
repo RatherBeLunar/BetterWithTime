@@ -1,0 +1,15 @@
+{
+  "textures": {
+    "stew": "bwt:block/crucible_fill"
+  },
+  "elements": [
+    {
+      "name": "stew",
+      "from": [2, 2, 2],
+      "to": [14, 12, 14],
+      "faces": {
+        "up": {"uv": [2, 2, 14, 14], "texture": "#stew"}
+      }
+    }
+  ]
+}

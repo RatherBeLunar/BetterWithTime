@@ -7,6 +7,7 @@ import net.minecraft.data.server.recipe.RecipeExporter;
 public class RecipeGenerator extends FabricRecipeProvider {
     protected BlockDispenserClumpRecipeGenerator blockDispenserClumpRecipeGenerator;
     protected CauldronRecipeGenerator cauldronRecipeGenerator;
+    protected CrucibleRecipeGenerator crucibleRecipeGenerator;
     protected CraftingRecipeGenerator craftingRecipeGenerator;
     protected VanillaRecipeGenerator vanillaRecipeGenerator;
     protected MillStoneRecipeGenerator millStoneRecipeGenerator;
@@ -18,6 +19,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         super(output);
         this.blockDispenserClumpRecipeGenerator = new BlockDispenserClumpRecipeGenerator(output);
         this.cauldronRecipeGenerator = new CauldronRecipeGenerator(output);
+        this.crucibleRecipeGenerator = new CrucibleRecipeGenerator(output);
         this.craftingRecipeGenerator = new CraftingRecipeGenerator(output);
         this.vanillaRecipeGenerator = new VanillaRecipeGenerator(output);
         this.millStoneRecipeGenerator = new MillStoneRecipeGenerator(output);
@@ -30,6 +32,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
         blockDispenserClumpRecipeGenerator.generate(exporter);
         cauldronRecipeGenerator.generate(exporter);
+        crucibleRecipeGenerator.generate(exporter);
         craftingRecipeGenerator.generate(exporter);
         vanillaRecipeGenerator.generate(exporter);
         millStoneRecipeGenerator.generate(exporter);

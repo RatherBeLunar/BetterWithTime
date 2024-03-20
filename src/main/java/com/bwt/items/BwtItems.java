@@ -77,7 +77,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 	public static final Item scouredLeatherItem = Registry.register(Registries.ITEM, new Identifier("bwt", "scoured_leather"), new Item(new FabricItemSettings()));
 	public static final Item screwItem = Registry.register(Registries.ITEM, new Identifier("bwt", "screw"), new Item(new FabricItemSettings()));
     public static final Item soapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soap"), new Item(new FabricItemSettings()));
-    //	public static final Item soulforgedSteelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soulforged_steel"), new SoulforgedSteelItem(new FabricItemSettings()));
+    public static final Item soulforgedSteelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soulforged_steel"), new Item(new FabricItemSettings()));
     public static final Item soulDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soul_dust"), new Item(new FabricItemSettings()));
 	public static final Item soulUrnItem = Registry.register(Registries.ITEM, new Identifier("bwt", "soul_urn"), new Item(new FabricItemSettings()));
 	public static final Item strapItem = Registry.register(Registries.ITEM, new Identifier("bwt", "strap"), new Item(new FabricItemSettings()));
@@ -153,6 +153,7 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
             content.add(netherSludgeItem);
             content.add(paddingItem);
             content.add(screwItem);
+            content.add(soulforgedSteelItem);
             content.add(soulUrnItem);
             content.add(tallowItem);
             content.add(woodBladeItem);
