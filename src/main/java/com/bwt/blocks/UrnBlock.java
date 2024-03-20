@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class UrnBlock extends Block {
     public static final BooleanProperty CONNECTED_UP = BooleanProperty.of("connected_up");
     public static VoxelShape outlineShape = Block.createCuboidShape(5, 0, 5, 11, 10, 11);
+    public static VoxelShape connectedUpOutlineShape = Block.createCuboidShape(5, 6, 5, 11, 16, 11);
 
     public UrnBlock(Settings settings) {
         super(settings);
@@ -47,11 +48,11 @@ public class UrnBlock extends Block {
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return outlineShape;
+        return state.get(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
     }
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return outlineShape;
+        return state.get(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
     }
 }
