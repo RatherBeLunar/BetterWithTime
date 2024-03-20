@@ -42,6 +42,9 @@ public class ModelGenerator extends FabricModelProvider {
         for (CornerBlock cornerBlock : BwtBlocks.cornerBlocks) {
             generateCornerBlock(blockStateModelGenerator, cornerBlock);
         }
+        for (VaseBlock vaseBlock : BwtBlocks.vaseBlocks.values()) {
+            generateVaseBlock(blockStateModelGenerator, vaseBlock);
+        }
         blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.grateBlock);
@@ -110,6 +113,12 @@ public class ModelGenerator extends FabricModelProvider {
             );
         }
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.kilnBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(Blocks.BRICKS))));
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.urnBlock)
+                .coordinate(BlockStateVariantMap.create(UrnBlock.CONNECTED_UP)
+                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock)))
+                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock).withSuffixedPath("_connected_up")))
+                )
+        );
 
 
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
@@ -132,6 +141,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredPlanterBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
+        blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
     }
 
     @Override
@@ -299,6 +309,11 @@ public class ModelGenerator extends FabricModelProvider {
                 ).coordinate(createCornerOrientationMap())
         );
         blockStateModelGenerator.registerParentedItemModel(cornerBlock, ModelIds.getBlockModelId(cornerBlock));
+    }
+
+    public void generateVaseBlock(BlockStateModelGenerator blockStateModelGenerator, VaseBlock vaseBlock) {
+        Identifier modelId = new Model(Optional.of(new Identifier("bwt", "block/vase")), Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE).upload(ModelIds.getBlockModelId(vaseBlock), TextureMap.texture(vaseBlock).put(TextureKey.PARTICLE, TextureMap.getId(vaseBlock)), blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(vaseBlock, BlockStateVariant.create().put(VariantSettings.MODEL, modelId)));
     }
 
     public static BlockStateVariantMap createUpDefaultRotationStates() {

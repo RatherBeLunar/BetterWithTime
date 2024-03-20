@@ -33,6 +33,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.unfiredVaseBlock, "Unfired Vase");
         translationBuilder.add(BwtBlocks.unfiredUrnBlock, "Unfired Urn");
         translationBuilder.add(BwtBlocks.unfiredMouldBlock, "Unfired Mould");
+        BwtBlocks.vaseBlocks.forEach((key, value) -> translationBuilder.add(value, nameKeyToTitleCase(key.getName() + "_vase")));
 
         // Load an existing language file.
         try {

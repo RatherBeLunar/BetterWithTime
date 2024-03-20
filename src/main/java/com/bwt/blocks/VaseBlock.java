@@ -1,0 +1,44 @@
+package com.bwt.blocks;
+
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.block.*;
+import net.minecraft.item.BlockItem;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockView;
+
+import java.util.Arrays;
+import java.util.HashMap;
+
+public class VaseBlock extends Block {
+    public static VoxelShape outlineShape = Block.createCuboidShape(3, 0, 3, 13, 16, 13);
+
+    public VaseBlock(DyeColor color, AbstractBlock.Settings settings) {
+        super(settings);
+    }
+
+    public static void registerColors(HashMap<DyeColor, VaseBlock> vaseBlocks) {
+        Arrays.stream(DyeColor.values()).forEach(dyeColor -> {
+            VaseBlock vaseBlock = new VaseBlock(dyeColor, FabricBlockSettings.create().nonOpaque().solidBlock(Blocks::never).sounds(BlockSoundGroup.GLASS));
+            vaseBlocks.put(dyeColor, vaseBlock);
+            Registry.register(Registries.BLOCK, new Identifier("bwt", "vase_" + dyeColor.getName()), vaseBlock);
+            Registry.register(Registries.ITEM, new Identifier("bwt", "vase_" + dyeColor.getName()), new BlockItem(vaseBlock, new FabricItemSettings()));
+        });
+    }
+
+    @Override
+    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return outlineShape;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return outlineShape;
+    }
+}

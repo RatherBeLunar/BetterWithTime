@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "connected_up=false": {
+      "model": "bwt:block/urn"
+    },
+    "connected_up=true": {
+      "model": "bwt:block/urn_connected_up"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "parent": "bwt:block/vase",
+  "textures": {
+    "particle": "bwt:block/vase_light_blue",
+    "texture": "bwt:block/vase_light_blue"
+  }
+}
