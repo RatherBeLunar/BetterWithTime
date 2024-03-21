@@ -11,6 +11,8 @@ import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 
+import java.util.Comparator;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
@@ -135,7 +137,10 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
 
     private void addVases() {
         FabricTagBuilder vasesBuilder = getOrCreateTagBuilder(BwtBlockTags.VASES);
-        BwtBlocks.vaseBlocks.values().forEach(vasesBuilder::add);
+        BwtBlocks.vaseBlocks.entrySet().stream()
+                .sorted(Comparator.comparingInt(entry -> entry.getKey().getId()))
+                .map(Map.Entry::getValue)
+                .forEach(vasesBuilder::add);
     }
 
     protected void addSawTags() {

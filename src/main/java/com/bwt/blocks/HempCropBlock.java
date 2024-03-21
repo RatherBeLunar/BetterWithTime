@@ -1,10 +1,7 @@
 package com.bwt.blocks;
 
 import com.bwt.items.BwtItems;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CropBlock;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -68,12 +65,16 @@ public class HempCropBlock extends CropBlock {
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return world.getBlockState(pos.down()).isOf(this) || super.canPlaceAt(state, world, pos);
+    protected boolean canPlantOnTop(BlockState floor, BlockView world, BlockPos pos) {
+        // This does not account for planting on itself, so we can't place seeds on top directly
+        return super.canPlantOnTop(floor, world, pos);
     }
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canPlaceAt(world, pos) && !world.getBlockState(pos.down()).isOf(this)) {
+            return Blocks.AIR.getDefaultState();
+        }
         return state.with(CONNECTED_UP, neighborPos.equals(pos.up()) && neighborState.isOf(this));
     }
 

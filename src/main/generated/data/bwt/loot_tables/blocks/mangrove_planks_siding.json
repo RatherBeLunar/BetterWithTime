@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:bricks"
+          "name": "bwt:mangrove_planks_siding"
         }
       ],
       "rolls": 1.0

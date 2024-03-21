@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:bricks"
+          "name": "bwt:dark_oak_planks_siding"
         }
       ],
       "rolls": 1.0

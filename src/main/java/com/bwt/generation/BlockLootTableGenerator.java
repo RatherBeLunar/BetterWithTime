@@ -7,7 +7,8 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.block.Blocks;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.Items;
+import net.minecraft.loot.LootPool;
+import net.minecraft.loot.LootTable;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
@@ -21,22 +22,6 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
-        addDrop(Blocks.SHORT_GRASS, BlockLootTableGenerator.dropsWithShears(
-                Blocks.SHORT_GRASS,
-                this.applyExplosionDecay(
-                        Blocks.SHORT_GRASS,
-                        ItemEntry.builder(Items.WHEAT_SEEDS).conditionally(RandomChanceLootCondition.builder(0.125f))
-                ).apply(ApplyBonusLootFunction.uniformBonusCount(Enchantments.FORTUNE, 2))
-                        .alternatively(ItemEntry.builder(BwtItems.hempSeedsItem).conditionally(RandomChanceLootCondition.builder(0.125f)).apply(ApplyBonusLootFunction.uniformBonusCount(Enchantments.FORTUNE, 2)))
-        ));
-        addDrop(Blocks.TALL_GRASS, BlockLootTableGenerator.dropsWithShears(
-                Blocks.TALL_GRASS,
-                this.applyExplosionDecay(
-                        Blocks.TALL_GRASS,
-                        ItemEntry.builder(Items.WHEAT_SEEDS).conditionally(RandomChanceLootCondition.builder(0.125f))
-                ).apply(ApplyBonusLootFunction.uniformBonusCount(Enchantments.FORTUNE, 2))
-                        .alternatively(ItemEntry.builder(BwtItems.hempSeedsItem).conditionally(RandomChanceLootCondition.builder(0.125f)).apply(ApplyBonusLootFunction.uniformBonusCount(Enchantments.FORTUNE, 2)))
-        ));
         addDrop(BwtBlocks.anchorBlock);
 //        addDrop(BwtBlocks.anvilBlock);
         addDrop(BwtBlocks.axleBlock);
@@ -57,19 +42,11 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.gearBoxBlock);
         addDrop(BwtBlocks.grateBlock);
         addDrop(BwtBlocks.handCrankBlock);
-        addDrop(
-                BwtBlocks.hempCropBlock,
-                cropDrops(
-                        BwtBlocks.hempCropBlock, BwtItems.hempItem, BwtItems.hempSeedsItem,
-                        BlockStatePropertyLootCondition.builder(BwtBlocks.hempCropBlock).properties(
-                                StatePredicate.Builder.create().exactMatch(HempCropBlock.AGE, HempCropBlock.MAX_AGE)
-                        )
-                )
-        );
+        addHempDrop();
         addDrop(BwtBlocks.hibachiBlock);
         addDrop(BwtBlocks.hopperBlock);
 //        addDrop(BwtBlocks.infernalEnchanterBlock);
-        addDrop(BwtBlocks.kilnBlock);
+        addDrop(BwtBlocks.kilnBlock, Blocks.BRICKS);
 //        addDrop(BwtBlocks.lensBlock);
         addDrop(BwtBlocks.lightBlockBlock);
         addDrop(BwtBlocks.millStoneBlock);
@@ -103,6 +80,32 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
 //        addDrop(BwtBlocks.waterWheelBlock);
         addDrop(BwtBlocks.wickerBlock);
 //        addDrop(BwtBlocks.woolSlabBlock);
+        BwtBlocks.vaseBlocks.values().forEach(this::addDropWithSilkTouch);
+        BwtBlocks.sidingBlocks.forEach(this::addDrop);
+        BwtBlocks.mouldingBlocks.forEach(this::addDrop);
+        BwtBlocks.cornerBlocks.forEach(this::addDrop);
+    }
+
+    private void addHempDrop() {
+        addDrop(
+                BwtBlocks.hempCropBlock,
+                applyExplosionDecay(
+                        BwtBlocks.hempCropBlock,
+                        LootTable.builder()
+                                .pool(LootPool.builder()
+                                        // If fully grown, drop hemp item
+                                        .conditionally(BlockStatePropertyLootCondition.builder(BwtBlocks.hempCropBlock)
+                                                .properties(StatePredicate.Builder.create().exactMatch(HempCropBlock.AGE, HempCropBlock.MAX_AGE))
+                                        ).with(ItemEntry.builder(BwtItems.hempItem))
+                                ).pool(LootPool.builder()
+                                        // Regardless of growth, drop some seeds
+                                        .with(ItemEntry.builder(BwtItems.hempSeedsItem)
+                                                .conditionally(RandomChanceLootCondition.builder(0.5f))
+                                                .apply(ApplyBonusLootFunction.binomialWithBonusCount(Enchantments.FORTUNE, 0.5f, 0))
+                                        )
+                                )
+                )
+        );
     }
 
 }

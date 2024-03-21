@@ -11,14 +11,14 @@
     "i": {
       "item": "minecraft:iron_ingot"
     },
-    "p": {
-      "tag": "minecraft:planks"
+    "s": {
+      "tag": "bwt:wooden_siding_blocks"
     }
   },
   "pattern": [
     "iii",
     "gbg",
-    "pgp"
+    "sgs"
   ],
   "result": {
     "item": "bwt:saw"

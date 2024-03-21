@@ -15,6 +15,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
 import net.minecraft.util.math.BlockPos;
@@ -113,6 +114,10 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     public boolean tryToSpawn(PlayerEntity player, Text blockBlockedErrorMessage, Text entityBlockedErrorMessage) {
+        if (player instanceof ServerPlayerEntity) {
+            player = null;
+        }
+
         if (placementBlockedByBlock()) {
             if(player != null) {
                 player.sendMessage(blockBlockedErrorMessage);

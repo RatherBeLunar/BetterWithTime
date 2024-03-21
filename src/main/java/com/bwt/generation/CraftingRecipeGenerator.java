@@ -168,7 +168,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateTier2Recipes(RecipeExporter exporter) {
-        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.strapItem)
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.strapItem, 8)
                 .input(BwtItems.tannedLeatherItem)
                 .criterion(hasItem(BwtItems.tannedLeatherItem), conditionsFromItem(BwtItems.tannedLeatherItem))
                 .offerTo(exporter);
@@ -182,10 +182,10 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.sawBlock)
                 .pattern("iii")
                 .pattern("gbg")
-                .pattern("sgs")
+                .pattern("pgp")
                 .input('i', Items.IRON_INGOT)
                 .input('g', BwtItems.gearItem)
-                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('p', ItemTags.PLANKS)
                 .input('b', BwtItems.beltItem)
                 .criterion(hasItem(BwtItems.beltItem), conditionsFromItem(BwtItems.beltItem))
                 .offerTo(exporter);
@@ -366,6 +366,16 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
                 .criterion(hasItem(BwtItems.fabricItem), conditionsFromItem(BwtItems.fabricItem))
                 .offerTo(exporter, "he_sail");
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.sawBlock)
+                .pattern("iii")
+                .pattern("gbg")
+                .pattern("sgs")
+                .input('i', Items.IRON_INGOT)
+                .input('g', BwtItems.gearItem)
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('b', BwtItems.beltItem)
+                .criterion(hasItem(BwtItems.beltItem), conditionsFromItem(BwtItems.beltItem))
+                .offerTo(exporter, "he_saw");
     }
 
 

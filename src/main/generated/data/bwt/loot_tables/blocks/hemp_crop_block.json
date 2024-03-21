@@ -8,34 +8,6 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [
-        {
-          "type": "minecraft:alternatives",
-          "children": [
-            {
-              "type": "minecraft:item",
-              "conditions": [
-                {
-                  "block": "bwt:hemp_crop_block",
-                  "condition": "minecraft:block_state_property",
-                  "properties": {
-                    "age": "7"
-                  }
-                }
-              ],
-              "name": "bwt:hemp"
-            },
-            {
-              "type": "minecraft:item",
-              "name": "bwt:hemp_seeds"
-            }
-          ]
-        }
-      ],
-      "rolls": 1.0
-    },
-    {
-      "bonus_rolls": 0.0,
       "conditions": [
         {
           "block": "bwt:hemp_crop_block",
@@ -48,14 +20,30 @@
       "entries": [
         {
           "type": "minecraft:item",
+          "name": "bwt:hemp"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.5,
+              "condition": "minecraft:random_chance"
+            }
+          ],
           "functions": [
             {
               "enchantment": "minecraft:fortune",
               "formula": "minecraft:binomial_with_bonus_count",
               "function": "minecraft:apply_bonus",
               "parameters": {
-                "extra": 3,
-                "probability": 0.5714286
+                "extra": 0,
+                "probability": 0.5
               }
             }
           ],

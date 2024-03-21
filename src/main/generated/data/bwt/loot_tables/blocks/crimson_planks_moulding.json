@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:bricks"
+          "name": "bwt:crimson_planks_moulding"
         }
       ],
       "rolls": 1.0

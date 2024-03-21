@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "minecraft:bricks"
+          "name": "bwt:warped_planks_corner"
         }
       ],
       "rolls": 1.0
