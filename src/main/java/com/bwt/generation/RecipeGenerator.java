@@ -2,7 +2,10 @@ package com.bwt.generation;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.data.DataWriter;
 import net.minecraft.data.server.recipe.RecipeExporter;
+
+import java.util.concurrent.CompletableFuture;
 
 public class RecipeGenerator extends FabricRecipeProvider {
     protected BlockDispenserClumpRecipeGenerator blockDispenserClumpRecipeGenerator;
@@ -37,10 +40,14 @@ public class RecipeGenerator extends FabricRecipeProvider {
         crucibleRecipeGenerator.generate(exporter);
         craftingRecipeGenerator.generate(exporter);
         vanillaRecipeGenerator.generate(exporter);
-        disabledVanilaRecipeGenerator.generate(exporter);
         millStoneRecipeGenerator.generate(exporter);
         sawRecipeGenerator.generate(exporter);
         turntableRecipeGenerator.generate(exporter);
         kilnRecipeGenerator.generate(exporter);
+    }
+
+    @Override
+    public CompletableFuture<?> run(DataWriter writer) {
+        return CompletableFuture.allOf(super.run(writer), disabledVanilaRecipeGenerator.run(writer));
     }
 }
