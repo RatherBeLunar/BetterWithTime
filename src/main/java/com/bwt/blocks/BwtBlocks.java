@@ -115,7 +115,10 @@ public class BwtBlocks implements ModInitializer {
             .strength(50.0f, 1200.0f)
     );
 //	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
-//	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.create());
+	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
+	public static final Block soilPlanterBlock = new SoilPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
+	public static final Block soulSandPlanterBlock = new SoulSandPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
+	public static final Block grassPlanterBlock = new GrassPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
 	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
         .nonOpaque()
         .allowsSpawning(Blocks::never)
@@ -147,7 +150,7 @@ public class BwtBlocks implements ModInitializer {
 	public static final UnfiredPotteryBlock unfiredVaseBlock = new UnfiredVaseBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
 	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
 	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.create().nonOpaque().solidBlock(Blocks::never));
+	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque().solidBlock(Blocks::never));
 	public static final HashMap<DyeColor, VaseBlock> vaseBlocks = new HashMap<>();
 //	public static final Block waterWheelBlock = new WaterWheelBlock(FabricBlockSettings.create());
 	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.GRASS).nonOpaque());
@@ -254,11 +257,24 @@ public class BwtBlocks implements ModInitializer {
         // Crucible
         Registry.register(Registries.BLOCK, new Identifier("bwt", "crucible"), crucibleBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "crucible"), new BlockItem(crucibleBlock, new FabricItemSettings()));
+        // Planters
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "planter"), planterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "planter"), new BlockItem(planterBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "soil_planter"), soilPlanterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "soil_planter"), new BlockItem(soilPlanterBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "soul_sand_planter"), soulSandPlanterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "soul_sand_planter"), new BlockItem(soulSandPlanterBlock, new FabricItemSettings()));
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "grass_planter"), grassPlanterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "grass_planter"), new BlockItem(grassPlanterBlock, new FabricItemSettings()));
         // Vases
         VaseBlock.registerColors(vaseBlocks);
         // Urn
         Registry.register(Registries.BLOCK, new Identifier("bwt", "urn"), urnBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "urn"), new BlockItem(urnBlock, new FabricItemSettings()));
+
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
+            content.addAll(vaseBlocks.values().stream().map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
+        });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
@@ -282,6 +298,12 @@ public class BwtBlocks implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
             content.add(cauldronBlock);
             content.add(crucibleBlock);
+            content.add(planterBlock);
+            content.add(soilPlanterBlock);
+            content.add(soulSandPlanterBlock);
+            content.add(grassPlanterBlock);
+            content.add(vaseBlocks.get(DyeColor.WHITE));
+            content.add(urnBlock);
             content.add(unfiredCrucibleBlock);
             content.add(unfiredPlanterBlock);
             content.add(unfiredVaseBlock);
@@ -295,10 +317,6 @@ public class BwtBlocks implements ModInitializer {
             content.add(slatsBlock);
             content.add(wickerBlock);
             content.add(platformBlock);
-        });
-
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
-            content.addAll(vaseBlocks.values().stream().map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
         });
     }
 }

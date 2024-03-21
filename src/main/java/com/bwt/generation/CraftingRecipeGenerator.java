@@ -9,12 +9,9 @@ import com.bwt.tags.BwtItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.VanillaRecipeProvider;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
@@ -194,6 +191,31 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("oo")
                 .input('o', Items.OBSIDIAN)
                 .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, BwtBlocks.soilPlanterBlock)
+                .pattern("d")
+                .pattern("b")
+                .pattern("p")
+                .input('d', Items.DIRT)
+                .input('b', Items.BONE_MEAL)
+                .input('p', BwtBlocks.planterBlock)
+                .criterion(hasItem(BwtBlocks.planterBlock), conditionsFromItem(BwtBlocks.planterBlock))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, BwtBlocks.soulSandPlanterBlock)
+                .pattern("s")
+                .pattern("p")
+                .input('s', Items.SOUL_SAND)
+                .input('p', BwtBlocks.planterBlock)
+                .criterion(hasItem(BwtBlocks.planterBlock), conditionsFromItem(BwtBlocks.planterBlock))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, BwtBlocks.grassPlanterBlock)
+                .pattern("g")
+                .pattern("b")
+                .pattern("p")
+                .input('g', Items.GRASS_BLOCK)
+                .input('b', Items.BONE_MEAL)
+                .input('p', BwtBlocks.planterBlock)
+                .criterion(hasItem(BwtBlocks.planterBlock), conditionsFromItem(BwtBlocks.planterBlock))
                 .offerTo(exporter);
 
         // Mini block recombining recipes

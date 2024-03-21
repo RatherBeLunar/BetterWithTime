@@ -9,7 +9,13 @@
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "WolfEntityMixin",
-    "WorldEntityCollisionsMixin"
+    "WorldEntityCollisionsMixin",
+    "planter_functionality.CropPlantOnMixin",
+    "planter_functionality.NetherWartPlantOnMixin",
+    "planter_functionality.PitcherPlantPlantOnMixin",
+    "planter_functionality.PlantPlantOnMixin",
+    "planter_functionality.StemBlockPlantOnMixin",
+    "planter_functionality.SugarCanePlantOnMixin"
   ],
   "injectors": {
     "defaultRequire": 1

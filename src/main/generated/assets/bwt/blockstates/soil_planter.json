@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "bwt:block/soil_planter"
+    }
+  }
+}

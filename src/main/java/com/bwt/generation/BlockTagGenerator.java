@@ -24,6 +24,13 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.CLIMBABLE).add(BwtBlocks.ropeBlock);
         getOrCreateTagBuilder(BlockTags.RAILS).add(BwtBlocks.stoneDetectorRailBlock, BwtBlocks.obsidianDetectorRailBlock);
 
+        // Make planters behave like their corresponding blocks
+        getOrCreateTagBuilder(BlockTags.DIRT).add(BwtBlocks.soilPlanterBlock, BwtBlocks.grassPlanterBlock);
+        getOrCreateTagBuilder(BlockTags.SOUL_FIRE_BASE_BLOCKS).add(BwtBlocks.soulSandPlanterBlock);
+        getOrCreateTagBuilder(BlockTags.SOUL_SPEED_BLOCKS).add(BwtBlocks.soulSandPlanterBlock);
+        getOrCreateTagBuilder(BwtBlockTags.CROPS_CAN_PLANT_ON).add(Blocks.FARMLAND, BwtBlocks.soilPlanterBlock);
+        getOrCreateTagBuilder(BwtBlockTags.SOUL_SAND_PLANTS_CAN_PLANT_ON).add(Blocks.SOUL_SAND, BwtBlocks.soulSandPlanterBlock);
+
         getOrCreateTagBuilder(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)
                 .forceAddTag(BlockTags.WITHER_IMMUNE)
                 .forceAddTag(BlockTags.FIRE)

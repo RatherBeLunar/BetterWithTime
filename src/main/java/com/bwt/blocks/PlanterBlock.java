@@ -8,13 +8,13 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
-public class UnfiredPlanterBlock extends UnfiredPotteryBlock {
+public class PlanterBlock extends Block {
     public static VoxelShape outlineShape = VoxelShapes.union(
             Block.createCuboidShape(2, 0, 2, 14, 11, 14),
             Block.createCuboidShape(0, 11, 0, 16, 16, 16)
     ).simplify();
 
-    public UnfiredPlanterBlock(Settings settings) {
+    public PlanterBlock(Settings settings) {
         super(settings);
     }
 

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:bone_meal"
+    },
+    "d": {
+      "item": "minecraft:dirt"
+    },
+    "p": {
+      "item": "bwt:planter"
+    }
+  },
+  "pattern": [
+    "d",
+    "b",
+    "p"
+  ],
+  "result": {
+    "item": "bwt:soil_planter"
+  }
+}

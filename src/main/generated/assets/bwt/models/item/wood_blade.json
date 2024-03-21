@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "minecraft:item/porkchop"
+    "layer0": "bwt:item/wood_blade"
   }
 }

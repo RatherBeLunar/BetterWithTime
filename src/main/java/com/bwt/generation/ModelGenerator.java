@@ -119,6 +119,10 @@ public class ModelGenerator extends FabricModelProvider {
                         .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock).withSuffixedPath("_connected_up")))
                 )
         );
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.planterBlock, ModelIds.getBlockModelId(BwtBlocks.planterBlock)));
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soilPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.soilPlanterBlock)));
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soulSandPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.soulSandPlanterBlock)));
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.grassPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.grassPlanterBlock)));
 
 
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
@@ -194,7 +198,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.woodBladeItem, Items.PORKCHOP, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.woodBladeItem, Models.GENERATED);
     }
 
     private void generateCompanionBlocks(BlockStateModelGenerator blockStateModelGenerator) {

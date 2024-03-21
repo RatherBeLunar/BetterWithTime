@@ -29,6 +29,7 @@ public class KilnRecipeGenerator extends FabricRecipeProvider {
         KilnRecipe.JsonBuilder.create(BlockTags.LOGS).drops(Items.CHARCOAL).offerTo(exporter);
         // Pottery
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredCrucibleBlock).drops(BwtBlocks.crucibleBlock.asItem()).offerTo(exporter);
+        KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredPlanterBlock).drops(BwtBlocks.planterBlock.asItem()).offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredVaseBlock).drops(BwtBlocks.vaseBlocks.get(DyeColor.WHITE).asItem()).offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredUrnBlock).drops(BwtBlocks.urnBlock.asItem()).offerTo(exporter);
     }

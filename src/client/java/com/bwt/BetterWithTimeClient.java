@@ -2,20 +2,24 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.screens.*;
 import com.bwt.entities.BwtEntities;
 import com.bwt.models.*;
+import com.bwt.screens.*;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import net.minecraft.client.color.world.GrassColors;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.biome.Biome;
 
 @Environment(EnvType.CLIENT)
 public class BetterWithTimeClient implements ClientModInitializer {
@@ -50,5 +54,17 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		HandledScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
 		HandledScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
 		HandledScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);
+
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+			if (view == null || pos == null) {
+				return GrassColors.getDefaultColor();
+			}
+			RegistryEntry<Biome> biomeEntry = view.getBiomeFabric(pos);
+			if (biomeEntry == null) {
+				return GrassColors.getDefaultColor();
+			}
+			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
+		}, BwtBlocks.grassPlanterBlock);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassPlanterBlock);
 	}
 }

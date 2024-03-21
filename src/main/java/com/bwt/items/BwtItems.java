@@ -125,9 +125,9 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.WHEAT_SEEDS, hempSeedsItem);
-            content.addAfter(Items.WHEAT, hempItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(content -> {
+            content.addAfter(Items.WHEAT, hempItem);
             content.add(hempFiberItem);
             content.add(dungItem);
             content.add(ropeItem);
