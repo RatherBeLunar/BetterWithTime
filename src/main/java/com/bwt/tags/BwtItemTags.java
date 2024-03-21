@@ -11,6 +11,7 @@ public class BwtItemTags {
     public static final TagKey<Item> MOULDING_BLOCKS = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "moulding_blocks"));
     public static final TagKey<Item> WOODEN_MOULDING_BLOCKS = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "wooden_moulding_blocks"));
     public static final TagKey<Item> CORNER_BLOCKS = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "siding_blocks"));
+    public static final TagKey<Item> VASES = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "vases"));
     public static final TagKey<Item> WOODEN_CORNER_BLOCKS = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "wooden_corner_blocks"));
     public static final TagKey<Item> PASSES_WICKER_FILTER = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "passes_wicker_filter"));
     public static final TagKey<Item> PASSES_GRATE_FILTER = TagKey.of(RegistryKeys.ITEM, new Identifier("bwt", "passes_grate_filter"));

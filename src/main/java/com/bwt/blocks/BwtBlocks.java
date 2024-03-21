@@ -152,7 +152,6 @@ public class BwtBlocks implements ModInitializer {
 	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
 	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque().solidBlock(Blocks::never));
 	public static final HashMap<DyeColor, VaseBlock> vaseBlocks = new HashMap<>();
-//	public static final Block waterWheelBlock = new WaterWheelBlock(FabricBlockSettings.create());
 	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.GRASS).nonOpaque());
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
 

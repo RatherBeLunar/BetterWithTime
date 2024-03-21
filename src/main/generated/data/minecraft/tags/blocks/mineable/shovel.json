@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:unfired_crucible",
+    "bwt:unfired_planter",
+    "bwt:unfired_vase",
+    "bwt:unfired_urn",
+    "bwt:unfired_mould"
+  ]
+}

@@ -21,10 +21,10 @@
     "age=6": {
       "model": "bwt:block/hemp_crop6"
     },
-    "age=7": {
+    "age=7,connected_up=true": {
       "model": "bwt:block/hemp_crop7"
     },
-    "age=8": {
+    "age=7,connected_up=false": {
       "model": "bwt:block/hemp_crop8"
     }
   }

@@ -1,0 +1,21 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:vase_pink",
+    "bwt:vase_red",
+    "bwt:vase_purple",
+    "bwt:vase_white",
+    "bwt:vase_brown",
+    "bwt:vase_black",
+    "bwt:vase_gray",
+    "bwt:vase_light_gray",
+    "bwt:vase_lime",
+    "bwt:vase_blue",
+    "bwt:vase_orange",
+    "bwt:vase_green",
+    "bwt:vase_light_blue",
+    "bwt:vase_cyan",
+    "bwt:vase_magenta",
+    "bwt:vase_yellow"
+  ]
+}

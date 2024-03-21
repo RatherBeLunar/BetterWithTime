@@ -43,9 +43,11 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.INFINIBURN_NETHER).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_END).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.FIRE).add(BwtBlocks.stokedFireBlock);
+        getOrCreateTagBuilder(BlockTags.WOOL).add(BwtBlocks.companionCubeBlock, BwtBlocks.companionSlabBlock);
 
         addTools();
         addMiniBlockTags();
+        addVases();
         addSawTags();
     }
 
@@ -56,20 +58,43 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(BwtBlocks.anchorBlock)
+//                .add(BwtBlocks.anvilBlock)
                 .add(BwtBlocks.blockDispenserBlock)
+//                .add(BwtBlocks.buddyBlockBlock)
                 .add(BwtBlocks.cauldronBlock)
+//                .add(BwtBlocks.columnBlock)
+                .add(BwtBlocks.crucibleBlock)
                 .add(BwtBlocks.detectorBlock)
                 .add(BwtBlocks.handCrankBlock)
                 .add(BwtBlocks.hibachiBlock)
+//                .add(BwtBlocks.infernalEnchanterBlock)
+                .add(BwtBlocks.kilnBlock)
+//                .add(BwtBlocks.lensBlock)
                 .add(BwtBlocks.lightBlockBlock)
                 .add(BwtBlocks.millStoneBlock)
                 .add(BwtBlocks.obsidianDetectorRailBlock)
                 .add(BwtBlocks.obsidianPressuePlateBlock)
-                .add(BwtBlocks.stoneDetectorRailBlock);
+//                .add(BwtBlocks.pedestalBlock)
+                .add(BwtBlocks.planterBlock)
+                .add(BwtBlocks.soilPlanterBlock)
+                .add(BwtBlocks.soulSandPlanterBlock)
+                .add(BwtBlocks.grassPlanterBlock)
+                .add(BwtBlocks.stoneDetectorRailBlock)
+                .add(BwtBlocks.turntableBlock)
+                .add(BwtBlocks.urnBlock);
+
+        getOrCreateTagBuilder(BlockTags.SHOVEL_MINEABLE)
+                .add(BwtBlocks.unfiredCrucibleBlock)
+                .add(BwtBlocks.unfiredPlanterBlock)
+                .add(BwtBlocks.unfiredVaseBlock)
+                .add(BwtBlocks.unfiredUrnBlock)
+                .add(BwtBlocks.unfiredMouldBlock);
 
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(BwtBlocks.axleBlock)
                 .add(BwtBlocks.axlePowerSourceBlock)
+                .add(BwtBlocks.bellowsBlock)
+//                .add(BwtBlocks.bloodWoodBlock)
                 .add(BwtBlocks.gearBoxBlock)
                 .add(BwtBlocks.grateBlock)
                 .add(BwtBlocks.hopperBlock)
@@ -78,7 +103,14 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.ropeBlock)
                 .add(BwtBlocks.sawBlock)
                 .add(BwtBlocks.slatsBlock)
+//                .add(BwtBlocks.screwPumpBlock)
+//                .add(BwtBlocks.tableBlock)
                 .add(BwtBlocks.wickerBlock);
+
+        // Where do these go?
+//        .add(BwtBlocks.miningChargeBlock)
+//        .add(BwtBlocks.netherGrothBlock)
+//        .add(BwtBlocks.stakeBlock)
 
         getOrCreateTagBuilder(BlockTags.SWORD_EFFICIENT).add(BwtBlocks.ropeBlock, BwtBlocks.hempCropBlock);
     }
@@ -99,6 +131,11 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         BwtBlocks.sidingBlocks.stream().filter(sidingBlock -> !sidingBlock.isWood()).forEach(sidingBuilder::add);
         BwtBlocks.mouldingBlocks.stream().filter(mouldingBlock -> !mouldingBlock.isWood()).forEach(mouldingBuilder::add);
         BwtBlocks.cornerBlocks.stream().filter(cornerBlock -> !cornerBlock.isWood()).forEach(cornerBuilder::add);
+    }
+
+    private void addVases() {
+        FabricTagBuilder vasesBuilder = getOrCreateTagBuilder(BwtBlockTags.VASES);
+        BwtBlocks.vaseBlocks.values().forEach(vasesBuilder::add);
     }
 
     protected void addSawTags() {

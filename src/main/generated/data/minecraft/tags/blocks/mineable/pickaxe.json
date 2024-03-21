@@ -10,13 +10,21 @@
     "bwt:anchor",
     "bwt:block_dispenser",
     "bwt:cauldron",
+    "bwt:crucible",
     "bwt:detector_block",
     "bwt:hand_crank",
     "bwt:hibachi",
+    "bwt:kiln",
     "bwt:light_block",
     "bwt:mill_stone",
     "bwt:obsidian_detector_rail",
     "bwt:obsidian_pressure_plate",
-    "bwt:stone_detector_rail"
+    "bwt:planter",
+    "bwt:soil_planter",
+    "bwt:soul_sand_planter",
+    "bwt:grass_planter",
+    "bwt:stone_detector_rail",
+    "bwt:turntable",
+    "bwt:urn"
   ]
 }
