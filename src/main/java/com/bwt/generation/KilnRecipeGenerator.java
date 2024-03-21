@@ -1,6 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.items.BwtItems;
 import com.bwt.recipes.KilnRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -32,5 +33,6 @@ public class KilnRecipeGenerator extends FabricRecipeProvider {
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredPlanterBlock).drops(BwtBlocks.planterBlock.asItem()).offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredVaseBlock).drops(BwtBlocks.vaseBlocks.get(DyeColor.WHITE).asItem()).offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredUrnBlock).drops(BwtBlocks.urnBlock.asItem()).offerTo(exporter);
+        KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredMouldBlock).drops(BwtItems.mouldItem).offerTo(exporter);
     }
 }

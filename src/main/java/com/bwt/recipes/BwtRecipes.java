@@ -26,6 +26,8 @@ public class BwtRecipes implements ModInitializer {
     public static final TurntableRecipe.Serializer TURNTABLE_RECIPE_SERIALIZER = new TurntableRecipe.Serializer(TurntableRecipe::new);
     public static final RecipeType<KilnRecipe> KILN_RECIPE_TYPE = new RecipeType<>() {};
     public static final KilnRecipe.Serializer KILN_RECIPE_SERIALIZER = new KilnRecipe.Serializer(KilnRecipe::new);
+    public static final RecipeType<DisabledRecipe> DISABLED_RECIPE_TYPE = new RecipeType<>() {};
+    public static final DisabledRecipe.Serializer DISABLED_RECIPE_SERIALIZER = new DisabledRecipe.Serializer(DisabledRecipe::new);
     @Override
     public void onInitialize() {
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_TYPE);
@@ -46,5 +48,7 @@ public class BwtRecipes implements ModInitializer {
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_SERIALIZER);
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "kiln"), KILN_RECIPE_TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "kiln"), KILN_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "disabled"), DISABLED_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "disabled"), DISABLED_RECIPE_SERIALIZER);
     }
 }

@@ -10,6 +10,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     protected CrucibleRecipeGenerator crucibleRecipeGenerator;
     protected CraftingRecipeGenerator craftingRecipeGenerator;
     protected VanillaRecipeGenerator vanillaRecipeGenerator;
+    protected DisabledVanilaRecipeGenerator disabledVanilaRecipeGenerator;
     protected MillStoneRecipeGenerator millStoneRecipeGenerator;
     protected SawRecipeGenerator sawRecipeGenerator;
     protected TurntableRecipeGenerator turntableRecipeGenerator;
@@ -22,6 +23,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.crucibleRecipeGenerator = new CrucibleRecipeGenerator(output);
         this.craftingRecipeGenerator = new CraftingRecipeGenerator(output);
         this.vanillaRecipeGenerator = new VanillaRecipeGenerator(output);
+        this.disabledVanilaRecipeGenerator = new DisabledVanilaRecipeGenerator(output);
         this.millStoneRecipeGenerator = new MillStoneRecipeGenerator(output);
         this.sawRecipeGenerator = new SawRecipeGenerator(output);
         this.turntableRecipeGenerator = new TurntableRecipeGenerator(output);
@@ -35,6 +37,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         crucibleRecipeGenerator.generate(exporter);
         craftingRecipeGenerator.generate(exporter);
         vanillaRecipeGenerator.generate(exporter);
+        disabledVanilaRecipeGenerator.generate(exporter);
         millStoneRecipeGenerator.generate(exporter);
         sawRecipeGenerator.generate(exporter);
         turntableRecipeGenerator.generate(exporter);
