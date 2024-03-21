@@ -26,10 +26,10 @@ public class BwtItems implements ModInitializer {
 	public static final Item coalDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "coal_dust"), new Item(new FabricItemSettings()));
 //	public static final Item compositeBowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "composite_bow"), new CompositeBowItem(new FabricItemSettings()));
 	public static final Item concentratedHellfireItem = Registry.register(Registries.ITEM, new Identifier("bwt", "concentrated_hellfire"), new Item(new FabricItemSettings()));
-public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolf_chop"), new Item(
-        new FabricItemSettings()
-                .food(FoodComponents.COOKED_PORKCHOP))
-);
+    public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolf_chop"), new Item(
+            new FabricItemSettings()
+                    .food(FoodComponents.COOKED_PORKCHOP))
+    );
 	public static final Item donutItem = Registry.register(Registries.ITEM, new Identifier("bwt", "donut"), new Item(new FabricItemSettings()
             .food(new FoodComponent.Builder()
                     .hunger(1)
@@ -63,7 +63,6 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
 //	public static final Item netherBrickItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nether_brick"), new NetherBrickItem(new FabricItemSettings()));
 	public static final Item netherSludgeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nether_sludge"), new Item(new FabricItemSettings()));
 	public static final Item nethercoalItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nethercoal"), new Item(new FabricItemSettings()));
-//	public static final Item netherSludgeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nether_sludge"), new NetherSludgeItem(new FabricItemSettings()));
 //	public static final Item nitreItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nitre"), new NitreItem(new FabricItemSettings()));
 	public static final Item paddingItem = Registry.register(Registries.ITEM, new Identifier("bwt", "padding"), new Item(new FabricItemSettings()));
 //	public static final Item plateArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_armor"), new PlateArmorItem(new FabricItemSettings()));
@@ -100,9 +99,6 @@ public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM,
                     .food(FoodComponents.PORKCHOP))
     );
 	public static final Item woodBladeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wood_blade"), new Item(new FabricItemSettings()));
-
-
-
 
     @Override
     public void onInitialize() {

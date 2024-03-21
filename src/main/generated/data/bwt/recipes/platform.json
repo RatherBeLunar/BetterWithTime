@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "p": {
+      "tag": "minecraft:planks"
+    },
+    "w": {
+      "item": "bwt:wicker"
+    }
+  },
+  "pattern": [
+    "pwp",
+    " p ",
+    "pwp"
+  ],
+  "result": {
+    "item": "bwt:platform"
+  }
+}

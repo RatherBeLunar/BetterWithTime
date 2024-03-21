@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "f": {
+      "item": "bwt:hemp_fiber"
+    }
+  },
+  "pattern": [
+    "ff",
+    "ff",
+    "ff"
+  ],
+  "result": {
+    "item": "bwt:rope"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "g": {
+      "item": "bwt:glue"
+    },
+    "m": {
+      "tag": "bwt:wooden_moulding_blocks"
+    },
+    "s": {
+      "item": "bwt:strap"
+    }
+  },
+  "pattern": [
+    "s",
+    "g",
+    "m"
+  ],
+  "result": {
+    "item": "bwt:haft"
+  }
+}

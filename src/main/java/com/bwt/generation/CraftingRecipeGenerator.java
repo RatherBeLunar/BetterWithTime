@@ -29,6 +29,41 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     public void generateCraftingRecipes(RecipeExporter exporter) {
+        generateTier1Recipes(exporter);
+        generateTier2Recipes(exporter);
+        generateTier3Recipes(exporter);
+        generateTier4Recipes(exporter);
+        generateTier5Recipes(exporter);
+        generateTier6Recipes(exporter);
+        generateTier7Recipes(exporter);
+
+
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.stoneDetectorRailBlock, 6)
+                .pattern("i i")
+                .pattern("ipi")
+                .pattern("iri")
+                .input('i', Items.IRON_INGOT)
+                .input('p', Items.STONE_PRESSURE_PLATE)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(Items.STONE_PRESSURE_PLATE), conditionsFromItem(Items.STONE_PRESSURE_PLATE))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianDetectorRailBlock, 6)
+                .pattern("i i")
+                .pattern("ipi")
+                .pattern("iri")
+                .input('i', Items.IRON_INGOT)
+                .input('p', BwtBlocks.obsidianPressuePlateBlock)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtBlocks.obsidianPressuePlateBlock), conditionsFromItem(BwtBlocks.obsidianPressuePlateBlock))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressuePlateBlock)
+                .pattern("oo")
+                .input('o', Items.OBSIDIAN)
+                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
+                .offerTo(exporter);
+    }
+
+    private void generateTier1Recipes(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.gearItem, 2)
                 .pattern(" s ")
                 .pattern("sps")
@@ -95,6 +130,44 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('s', BwtItems.sailItem)
                 .criterion(hasItem(BwtItems.sailItem), conditionsFromItem(BwtItems.sailItem))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.gearBoxBlock)
+                .pattern("pgp")
+                .pattern("grg")
+                .pattern("pgp")
+                .input('p', ItemTags.PLANKS)
+                .input('g', BwtItems.gearItem)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtItems.gearItem), conditionsFromItem(BwtItems.gearItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtItems.ropeItem)
+                .pattern("fff")
+                .pattern("fff")
+                .input('f', BwtItems.hempFiberItem)
+                .criterion(hasItem(BwtItems.hempFiberItem), conditionsFromItem(BwtItems.hempFiberItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtItems.ropeItem)
+                .pattern("ff")
+                .pattern("ff")
+                .pattern("ff")
+                .input('f', BwtItems.hempFiberItem)
+                .criterion(hasItem(BwtItems.hempFiberItem), conditionsFromItem(BwtItems.hempFiberItem))
+                .offerTo(exporter, "rope_vertical");
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.axleBlock)
+                .pattern("prp")
+                .input('p', ItemTags.PLANKS)
+                .input('r', BwtItems.ropeItem)
+                .criterion(hasItem(BwtItems.ropeItem), conditionsFromItem(BwtItems.ropeItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.anchorBlock)
+                .pattern(" i ")
+                .pattern("sss")
+                .input('i', Items.IRON_INGOT)
+                .input('s', Items.STONE)
+                .criterion(hasItem(Items.STONE), conditionsFromItem(Items.STONE))
+                .offerTo(exporter);
+    }
+
+    private void generateTier2Recipes(RecipeExporter exporter) {
         ShapelessRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.strapItem)
                 .input(BwtItems.tannedLeatherItem)
                 .criterion(hasItem(BwtItems.tannedLeatherItem), conditionsFromItem(BwtItems.tannedLeatherItem))
@@ -116,16 +189,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('b', BwtItems.beltItem)
                 .criterion(hasItem(BwtItems.beltItem), conditionsFromItem(BwtItems.beltItem))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hopperBlock)
-                .pattern("s s")
-                .pattern("gpg")
-                .pattern(" c ")
-                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
-                .input('g', BwtItems.gearItem)
-                .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
-                .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
-                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem))
-                .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.grateBlock)
                 .pattern("ss")
                 .pattern("ss")
@@ -144,6 +207,81 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
                 .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.pulleyBlock)
+                .pattern("pip")
+                .pattern("grg")
+                .pattern("pip")
+                .input('p', ItemTags.PLANKS)
+                .input('i', Items.IRON_INGOT)
+                .input('g', BwtItems.gearItem)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtItems.gearItem), conditionsFromItem(BwtItems.gearItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.platformBlock)
+                .pattern("pwp")
+                .pattern(" p ")
+                .pattern("pwp")
+                .input('p', ItemTags.PLANKS)
+                .input('w', BwtBlocks.wickerBlock)
+                .criterion(hasItem(BwtBlocks.wickerBlock), conditionsFromItem(BwtBlocks.wickerBlock))
+                .offerTo(exporter);
+    }
+
+    private void generateTier3Recipes(RecipeExporter exporter) {
+        // Mini block recombining recipes
+        for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {
+            SidingBlock sidingBlock = BwtBlocks.sidingBlocks.get(i);
+            MouldingBlock mouldingBlock = BwtBlocks.mouldingBlocks.get(i);
+            CornerBlock cornerBlock = BwtBlocks.cornerBlocks.get(i);
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
+                    .input(sidingBlock, 2)
+                    .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
+                    .input(mouldingBlock, 2)
+                    .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
+            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
+                    .input(cornerBlock, 2)
+                    .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
+                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
+        }
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hopperBlock)
+                .pattern("s s")
+                .pattern("gpg")
+                .pattern(" c ")
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('g', BwtItems.gearItem)
+                .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
+                .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
+                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem))
+                .offerTo(exporter);
+    }
+
+    private void generateTier4Recipes(RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hibachiBlock)
+                .pattern("hhh")
+                .pattern("sfs")
+                .pattern("srs")
+                .input('h', BwtItems.concentratedHellfireItem)
+                .input('s', Items.STONE)
+                .input('f', BwtItems.filamentItem)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtItems.filamentItem), conditionsFromItem(BwtItems.filamentItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.bellowsBlock)
+                .pattern("sss")
+                .pattern("lll")
+                .pattern("gbg")
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('l', BwtItems.tannedLeatherItem)
+                .input('g', BwtItems.gearItem)
+                .input('b', BwtItems.beltItem)
+                .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
+                .offerTo(exporter);
+    }
+
+    private void generateTier5Recipes(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.woodBladeItem)
                 .pattern("s  ")
                 .pattern("sgs")
@@ -159,39 +297,19 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('b', BwtItems.woodBladeItem)
                 .criterion(hasItem(BwtItems.woodBladeItem), conditionsFromItem(BwtItems.woodBladeItem))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hibachiBlock)
-                .pattern("hhh")
-                .pattern("sfs")
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.turntableBlock)
+                .pattern("www")
                 .pattern("srs")
-                .input('h', BwtItems.concentratedHellfireItem)
+                .pattern("sgs")
+                .input('w', BwtItemTags.WOODEN_SIDING_BLOCKS)
                 .input('s', Items.STONE)
-                .input('f', BwtItems.filamentItem)
                 .input('r', Items.REDSTONE)
-                .criterion(hasItem(BwtItems.filamentItem), conditionsFromItem(BwtItems.filamentItem))
+                .input('g', BwtItems.gearItem)
+                .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.stoneDetectorRailBlock, 6)
-                .pattern("i i")
-                .pattern("ipi")
-                .pattern("iri")
-                .input('i', Items.IRON_INGOT)
-                .input('p', Items.STONE_PRESSURE_PLATE)
-                .input('r', Items.REDSTONE)
-                .criterion(hasItem(Items.STONE_PRESSURE_PLATE), conditionsFromItem(Items.STONE_PRESSURE_PLATE))
-                .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianDetectorRailBlock, 6)
-                .pattern("i i")
-                .pattern("ipi")
-                .pattern("iri")
-                .input('i', Items.IRON_INGOT)
-                .input('p', BwtBlocks.obsidianPressuePlateBlock)
-                .input('r', Items.REDSTONE)
-                .criterion(hasItem(BwtBlocks.obsidianPressuePlateBlock), conditionsFromItem(BwtBlocks.obsidianPressuePlateBlock))
-                .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressuePlateBlock)
-                .pattern("oo")
-                .input('o', Items.OBSIDIAN)
-                .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
-                .offerTo(exporter);
+    }
+
+    private void generateTier6Recipes(RecipeExporter exporter) {
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, BwtBlocks.soilPlanterBlock)
                 .pattern("d")
                 .pattern("b")
@@ -217,25 +335,26 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('p', BwtBlocks.planterBlock)
                 .criterion(hasItem(BwtBlocks.planterBlock), conditionsFromItem(BwtBlocks.planterBlock))
                 .offerTo(exporter);
+    }
 
-        // Mini block recombining recipes
-        for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {
-            SidingBlock sidingBlock = BwtBlocks.sidingBlocks.get(i);
-            MouldingBlock mouldingBlock = BwtBlocks.mouldingBlocks.get(i);
-            CornerBlock cornerBlock = BwtBlocks.cornerBlocks.get(i);
-            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
-                    .input(sidingBlock, 2)
-                    .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
-                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
-            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
-                    .input(mouldingBlock, 2)
-                    .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
-                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
-            ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
-                    .input(cornerBlock, 2)
-                    .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
-                    .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
-        }
+    private void generateTier7Recipes(RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.haftItem)
+                .pattern("s")
+                .pattern("g")
+                .pattern("m")
+                .input('s', BwtItems.strapItem)
+                .input('g', BwtItems.glueItem)
+                .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
+                .criterion(hasItem(BwtItems.glueItem), conditionsFromItem(BwtItems.glueItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.paddingItem)
+                .pattern(" F ")
+                .pattern("fff")
+                .pattern(" F ")
+                .input('F', BwtItems.fabricItem)
+                .input('f', Items.FEATHER)
+                .criterion(hasItem(BwtItems.fabricItem), conditionsFromItem(BwtItems.fabricItem))
+                .offerTo(exporter);
     }
 
     private void generateHighEfficiencyRecipes(RecipeExporter exporter) {

@@ -7,6 +7,7 @@ import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.resource.conditions.v1.ConditionJsonProvider;
+import net.fabricmc.fabric.impl.datagen.FabricDataGenHelper;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.data.DataProvider;
@@ -57,7 +58,7 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
                 }
 
                 JsonObject recipeJson = Util.getResult(Recipe.CODEC.encodeStart(JsonOps.INSTANCE, recipe), IllegalStateException::new).getAsJsonObject();
-                ConditionJsonProvider[] conditions = new ConditionJsonProvider[]{};
+                ConditionJsonProvider[] conditions = FabricDataGenHelper.consumeConditions(recipe);
                 ConditionJsonProvider.write(recipeJson, conditions);
 
                 list.add(DataProvider.writeToPath(writer, recipeJson, recipesPathResolver.resolveJson(identifier)));

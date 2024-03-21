@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": {
+      "item": "bwt:fabric"
+    },
+    "f": {
+      "item": "minecraft:feather"
+    }
+  },
+  "pattern": [
+    " F ",
+    "fff",
+    " F "
+  ],
+  "result": {
+    "item": "bwt:padding"
+  }
+}
