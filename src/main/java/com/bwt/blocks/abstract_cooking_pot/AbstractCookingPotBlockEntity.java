@@ -6,6 +6,7 @@ import com.bwt.recipes.IngredientWithCount;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.FireData;
 import com.bwt.utils.FireType;
+import com.bwt.utils.OrderedRecipeMatcher;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -30,8 +31,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
@@ -146,21 +145,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
             return;
         }
 
-        // Get biggest
-        Iterator<RecipeEntry<AbstractCookingPotRecipe>> matchIterator = matches.stream().sorted(
-                Comparator.comparing(
-                    (RecipeEntry<AbstractCookingPotRecipe> match)
-                            -> match.value().getIngredients().size()
-                ).reversed()
-        ).iterator();
-
-        while (matchIterator.hasNext()) {
-            AbstractCookingPotRecipe match = matchIterator.next().value();
-            boolean cookSucceeded = blockEntity.cookRecipe(match);
-            if (cookSucceeded) {
-                break;
-            }
-        }
+        // Cook the first recipe we can
+        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getHeldStacks(), blockEntity::cookRecipe);
     }
 
     private static void explode(World world, BlockPos pos, int stokedExplosivesCount) {

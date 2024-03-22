@@ -5,6 +5,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.recipes.MillStoneRecipe;
+import com.bwt.utils.OrderedRecipeMatcher;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -29,8 +30,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
@@ -91,20 +90,8 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
             return;
         }
 
-        // Get biggest
-        Iterator<RecipeEntry<MillStoneRecipe>> matchIterator = matches.stream().sorted(
-                Comparator.comparing((RecipeEntry<MillStoneRecipe> match) -> match.value().getIngredients().size())
-                        .thenComparing((RecipeEntry<MillStoneRecipe> match) -> match.value().getResults().size())
-                .reversed()
-        ).iterator();
-
-        while (matchIterator.hasNext()) {
-            MillStoneRecipe match = matchIterator.next().value();
-            boolean cookSucceeded = blockEntity.completeRecipe(match, world, pos);
-            if (cookSucceeded) {
-                break;
-            }
-        }
+        // Get the first recipe and grind it
+        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getHeldStacks(), match -> blockEntity.completeRecipe(match, world, pos));
     }
 
     public boolean completeRecipe(MillStoneRecipe recipe, World world, BlockPos pos) {
