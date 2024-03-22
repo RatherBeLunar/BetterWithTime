@@ -376,6 +376,11 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('b', BwtItems.beltItem)
                 .criterion(hasItem(BwtItems.beltItem), conditionsFromItem(BwtItems.beltItem))
                 .offerTo(exporter, "he_saw");
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, Items.STICK)
+                .pattern("m")
+                .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
+                .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS))
+                .offerTo(exporter, "he_stick");
     }
 
 
