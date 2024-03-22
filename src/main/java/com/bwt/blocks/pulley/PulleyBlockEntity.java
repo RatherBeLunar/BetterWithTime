@@ -244,9 +244,9 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
         if (!belowRopeState.isOf(BwtBlocks.anchorBlock) || !belowRopeState.get(AnchorBlock.FACING).equals(Direction.UP)) {
             return;
         }
-        if (AnchorBlock.notifyAnchorOfAttachedPulleyStateChange(world, bottomRope.down(), belowRopeState, this)) {
-            hasAssociatedAnchorEntity = true;
-        }
+//        if (AnchorBlock.notifyAnchorOfAttachedPulleyStateChange(world, bottomRope.down(), belowRopeState, this)) {
+//            hasAssociatedAnchorEntity = true;
+//        }
     }
 
     public void attemptToRetractRope(World world) {
@@ -278,9 +278,9 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
         // check for an upwards facing anchor below that we have just attached to
         belowRopePos = belowRopePos.down();
         belowRopeState = world.getBlockState(belowRopePos);
-        if (belowRopeState.isOf(BwtBlocks.anchorBlock) && belowRopeState.get(AnchorBlock.FACING).equals(Direction.UP)) {
-            AnchorBlock.notifyAnchorOfAttachedPulleyStateChange(world, belowRopePos, belowRopeState, this);
-        }
+//        if (belowRopeState.isOf(BwtBlocks.anchorBlock) && belowRopeState.get(AnchorBlock.FACING).equals(Direction.UP)) {
+//            AnchorBlock.notifyAnchorOfAttachedPulleyStateChange(world, belowRopePos, belowRopeState, this);
+//        }
 
     }
 
