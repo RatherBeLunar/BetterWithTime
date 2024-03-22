@@ -11,7 +11,6 @@ import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
@@ -50,7 +49,10 @@ public abstract class WolfEntityMixin {
     public void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         WolfEntity wolfThis = ((WolfEntity) ((Object) this));
         ItemStack itemStack = player.getStackInHand(hand);
-        if (!wolfThis.isBaby() && wolfThis.isTamed() && wolfThis.isBreedingItem(itemStack)) {
+        if (!wolfThis.isBaby() && wolfThis.isTamed() && wolfThis.isBreedingItem(itemStack) && !isFed()) {
+            if (wolfThis.getWorld().isClient) {
+                cir.setReturnValue(ActionResult.CONSUME);
+            }
             if (!player.getAbilities().creativeMode) {
                 itemStack.decrement(1);
             }
@@ -65,24 +67,26 @@ public abstract class WolfEntityMixin {
     public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.isOf(Items.ROTTEN_FLESH) || stack.isOf(BwtItems.wolfChopItem) || stack.isOf(BwtItems.cookedWolfChopItem)) {
             cir.setReturnValue(false);
-            return;
         }
-        Item item = stack.getItem();
-        cir.setReturnValue(item.isFood() && Optional.ofNullable(item.getFoodComponent()).orElse(new FoodComponent.Builder().build()).isMeat());
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
         WolfEntity wolfThis = ((WolfEntity) ((Object) this));
+        World world = wolfThis.getWorld();
+        Random random = world.getRandom();
+        if (world.isClient) {
+            return;
+        }
         if (wolfThis.isBaby() || !isFed()) {
             return;
         }
         // A wolf produces dung on average every 20 minutes if in the light
         // This check represents once every 10 minutes, to be further filtered by the darkness check
-        if (wolfThis.getRandom().nextInt(24000) >= 2) {
+        if (random.nextInt(24000) >= 2) {
             return;
         }
-        if (!this.isInTheDark() && !wolfThis.getRandom().nextBoolean()) {
+        if (!this.isInTheDark() && !random.nextBoolean()) {
             return;
         }
         if (attemptProduceDung()) {
@@ -119,8 +123,8 @@ public abstract class WolfEntityMixin {
         );
         itemEntity.setPickupDelay(10);
         world.spawnEntity(itemEntity);
-        world.playSoundFromEntity(wolfThis, BetterWithTime.MECH_BANG_SOUND, wolfThis.getSoundCategory(), 0.2f, 1.25f);
-        world.playSoundFromEntity(wolfThis, SoundEvents.ENTITY_WOLF_GROWL, wolfThis.getSoundCategory(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        world.playSound(wolfThis, wolfThis.getBlockPos(), BetterWithTime.MECH_BANG_SOUND, wolfThis.getSoundCategory(), 0.2f, 1.25f);
+        world.playSound(wolfThis, wolfThis.getBlockPos(), SoundEvents.ENTITY_WOLF_GROWL, wolfThis.getSoundCategory(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         
         for (int counter = 0; counter < 5; counter++) {
             double smokeX = wolfThis.getX() + (dungVectorX * 0.5f) + (random.nextDouble() * 0.25F);
