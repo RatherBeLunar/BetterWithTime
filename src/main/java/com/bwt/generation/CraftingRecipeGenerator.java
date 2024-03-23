@@ -254,7 +254,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('g', BwtItems.gearItem)
                 .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
                 .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
-                .criterion(hasItem(BwtItems.strapItem), conditionsFromItem(BwtItems.strapItem))
+                .criterion("has_wooden_corner", conditionsFromTag(BwtItemTags.WOODEN_CORNER_BLOCKS))
                 .offerTo(exporter);
     }
 

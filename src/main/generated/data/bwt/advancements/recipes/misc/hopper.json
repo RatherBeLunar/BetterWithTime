@@ -1,29 +1,27 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_strap": {
-      "conditions": {
-        "items": [
-          {
-            "items": [
-              "bwt:strap"
-            ]
-          }
-        ]
-      },
-      "trigger": "minecraft:inventory_changed"
-    },
     "has_the_recipe": {
       "conditions": {
         "recipe": "bwt:hopper"
       },
       "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_wooden_corner": {
+      "conditions": {
+        "items": [
+          {
+            "tag": "bwt:wooden_corner_blocks"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "requirements": [
     [
       "has_the_recipe",
-      "has_strap"
+      "has_wooden_corner"
     ]
   ],
   "rewards": {
