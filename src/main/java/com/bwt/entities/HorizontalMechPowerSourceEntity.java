@@ -5,16 +5,14 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
+import net.minecraft.entity.*;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.TypeFilter;
@@ -90,7 +88,6 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     public void setRotationSpeed(float speed) {
         getDataTracker().set(rotationSpeed, speed);
-        setCustomName(Text.of(Float.valueOf(speed).toString()));
     }
 
     @Override
@@ -156,7 +153,11 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     public boolean placementBlockedByEntity() {
         ArrayList<Entity> anyEntities = new ArrayList<>();
-        getWorld().collectEntitiesByType(TypeFilter.instanceOf(Entity.class), getBoundingBox(), entity -> entity != this, anyEntities, 1);
+        getWorld().collectEntitiesByType(
+                TypeFilter.instanceOf(Entity.class),
+                getBoundingBox(),
+                entity -> entity != this && EntityPredicates.EXCEPT_SPECTATOR.test(entity) && !(entity instanceof ItemEntity),
+                anyEntities, 1);
         return !anyEntities.isEmpty();
     }
 
