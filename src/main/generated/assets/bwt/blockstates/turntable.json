@@ -1,41 +1,16 @@
 {
-  "multipart": [
-    {
-      "apply": {
-        "model": "bwt:block/turntable"
-      }
+  "variants": {
+    "tick_setting=0": {
+      "model": "bwt:block/turntable_0"
     },
-    {
-      "apply": {
-        "model": "bwt:block/turntable_nub_0"
-      },
-      "when": {
-        "tick_setting": "0"
-      }
+    "tick_setting=1": {
+      "model": "bwt:block/turntable_1"
     },
-    {
-      "apply": {
-        "model": "bwt:block/turntable_nub_1"
-      },
-      "when": {
-        "tick_setting": "1"
-      }
+    "tick_setting=2": {
+      "model": "bwt:block/turntable_2"
     },
-    {
-      "apply": {
-        "model": "bwt:block/turntable_nub_2"
-      },
-      "when": {
-        "tick_setting": "2"
-      }
-    },
-    {
-      "apply": {
-        "model": "bwt:block/turntable_nub_3"
-      },
-      "when": {
-        "tick_setting": "3"
-      }
+    "tick_setting=3": {
+      "model": "bwt:block/turntable_3"
     }
-  ]
+  }
 }

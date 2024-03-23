@@ -63,19 +63,13 @@ public class ModelGenerator extends FabricModelProvider {
                         )
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(
-                MultipartBlockStateSupplier.create(BwtBlocks.turntableBlock)
-                        .with(BlockStateVariant.create().put(
-                                VariantSettings.MODEL, Models.CUBE_BOTTOM_TOP.upload(
-                                        BwtBlocks.turntableBlock,
-                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.turntableBlock).getTextures(),
-                                        blockStateModelGenerator.modelCollector
-                                )
-                        ))
-                        .with(When.create().set(TurntableBlock.TICK_SETTING, 0), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_0")))
-                        .with(When.create().set(TurntableBlock.TICK_SETTING, 1), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_1")))
-                        .with(When.create().set(TurntableBlock.TICK_SETTING, 2), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_2")))
-                        .with(When.create().set(TurntableBlock.TICK_SETTING, 3), BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/turntable_nub_3")))
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.turntableBlock)
+                .coordinate(BlockStateVariantMap.create(TurntableBlock.TICK_SETTING)
+                        .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_0")))
+                        .register(1, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_1")))
+                        .register(2, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_2")))
+                        .register(3, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_3")))
+                )
         );
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
@@ -139,7 +133,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.millStoneBlock, ModelIds.getBlockModelId(BwtBlocks.millStoneBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.obsidianPressuePlateBlock, ModelIds.getBlockModelId(BwtBlocks.obsidianPressuePlateBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockModelId(BwtBlocks.turntableBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_0"));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.bellowsBlock, ModelIds.getBlockModelId(BwtBlocks.bellowsBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredCrucibleBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredCrucibleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredPlanterBlock));
