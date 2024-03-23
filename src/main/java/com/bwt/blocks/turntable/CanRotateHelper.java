@@ -1,6 +1,8 @@
 package com.bwt.blocks.turntable;
 
 import net.minecraft.block.*;
+import net.minecraft.block.enums.Attachment;
+import net.minecraft.block.enums.BlockFace;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -35,5 +37,15 @@ public interface CanRotateHelper {
         register(PistonBlock.class, (world, pos, state) -> !state.get(PistonBlock.EXTENDED));
         register(PistonHeadBlock.class, CanRotatePredicate.FALSE);
         register(PistonExtensionBlock.class, CanRotatePredicate.FALSE);
+        register(WallTorchBlock.class, CanRotatePredicate.FALSE);
+        register(WallRedstoneTorchBlock.class, CanRotatePredicate.FALSE);
+        register(WallSignBlock.class, CanRotatePredicate.FALSE);
+        register(DeadCoralWallFanBlock.class, CanRotatePredicate.FALSE);
+        register(WallBannerBlock.class, CanRotatePredicate.FALSE);
+        register(VineBlock.class, CanRotatePredicate.FALSE);
+        register(AmethystClusterBlock.class, CanRotatePredicate.FALSE);
+        register(WallHangingSignBlock.class, CanRotatePredicate.FALSE);
+        register(WallMountedBlock.class, (world, pos, state) -> state.get(WallMountedBlock.FACE).equals(BlockFace.FLOOR));
+        register(BellBlock.class, (world, pos, state) -> state.get(BellBlock.ATTACHMENT).equals(Attachment.FLOOR));
     }
 }

@@ -6,10 +6,8 @@ import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.TurntableRecipe;
 import com.bwt.utils.BlockPosAndState;
-import net.minecraft.block.AbstractRedstoneGateBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ObserverBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.nbt.NbtCompound;
@@ -78,6 +76,7 @@ public class TurntableBlockEntity extends BlockEntity {
         for (int j = 1; j <= blocksAboveToRotate; j++) {
             BlockPos blockAbovePos = pos.up(j);
             BlockState blockAboveState = world.getBlockState(blockAbovePos);
+            BlockEntity blockAboveEntity = world.getBlockEntity(blockAbovePos);
             BlockState rotatedState = blockAboveState;
 
             if (blockAboveState.isAir()) {
@@ -90,14 +89,7 @@ public class TurntableBlockEntity extends BlockEntity {
             }
             rotateAttachedBlocks(world, blockAbovePos, rotatedState, rotation);
             if (rotatedState != blockAboveState) {
-                world.setBlockState(blockAbovePos, rotatedState, Block.NOTIFY_LISTENERS);
-                rotatedState.getBlock().neighborUpdate(rotatedState, world, blockAbovePos, state.getBlock(), pos, true);
-                if (rotatedState.getBlock() instanceof AbstractRedstoneGateBlock) {
-                    world.updateNeighbors(blockAbovePos, rotatedState.getBlock());
-                }
-                if (rotatedState.getBlock() instanceof ObserverBlock) {
-                    world.scheduleBlockTick(blockAbovePos, rotatedState.getBlock(), 2);
-                }
+                RotationProcessHelper.processRotation(world, blockAbovePos, blockAboveState, rotatedState, blockAboveEntity, state);
             }
 
             // Crafting

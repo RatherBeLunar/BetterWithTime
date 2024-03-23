@@ -33,6 +33,11 @@ public interface HorizontalBlockAttachmentHelper {
     }
 
     static void registerDefaults() {
+        IsAttachedPredicate facingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
+            Vec3i directionVector = thisPos.subtract(attachedToPos);
+            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+            return direction == thisState.get(FacingBlock.FACING);
+        };
         IsAttachedPredicate horizontalFacingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
             Vec3i directionVector = thisPos.subtract(attachedToPos);
             Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
@@ -44,17 +49,26 @@ public interface HorizontalBlockAttachmentHelper {
             return Objects.requireNonNull(direction).rotateYClockwise().getAxis() == thisState.get(HorizontalFacingBlock.FACING).getAxis();
         };
         IsAttachedPredicate wallMountedBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            if (!thisState.get(ButtonBlock.FACE).equals(BlockFace.WALL)) {
+            if (!thisState.get(WallMountedBlock.FACE).equals(BlockFace.WALL)) {
                 return false;
             }
             Vec3i directionVector = thisPos.subtract(attachedToPos);
             Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return direction == thisState.get(ButtonBlock.FACING);
+            return direction == thisState.get(WallMountedBlock.FACING);
+        };
+        IsAttachedPredicate connectingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
+            Vec3i directionVector = thisPos.subtract(attachedToPos);
+            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+            return thisState.get(ConnectingBlock.FACING_PROPERTIES.get(direction));
         };
 
         register(WallTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallRedstoneTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallSignBlock.class, horizontalFacingBlockPredicate);
+        register(DeadCoralWallFanBlock.class, horizontalFacingBlockPredicate);
+        register(WallBannerBlock.class, horizontalFacingBlockPredicate);
+        register(VineBlock.class, connectingBlockPredicate);
+        register(AmethystClusterBlock.class, facingBlockPredicate);
         register(WallHangingSignBlock.class, wallHangingSignPredicate);
         register(WallMountedBlock.class, wallMountedBlockPredicate);
     }
