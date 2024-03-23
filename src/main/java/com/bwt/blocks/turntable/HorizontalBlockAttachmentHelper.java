@@ -67,6 +67,7 @@ public interface HorizontalBlockAttachmentHelper {
         register(WallSignBlock.class, horizontalFacingBlockPredicate);
         register(DeadCoralWallFanBlock.class, horizontalFacingBlockPredicate);
         register(WallBannerBlock.class, horizontalFacingBlockPredicate);
+        register(TripwireHookBlock.class, horizontalFacingBlockPredicate);
         register(VineBlock.class, connectingBlockPredicate);
         register(AmethystClusterBlock.class, facingBlockPredicate);
         register(WallHangingSignBlock.class, wallHangingSignPredicate);

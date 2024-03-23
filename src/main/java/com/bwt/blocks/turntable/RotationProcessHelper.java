@@ -5,9 +5,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.RailBlock;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -45,11 +43,9 @@ public interface RotationProcessHelper {
         rotatedState = Block.postProcessState(rotatedState, world, pos);
         if (rotatedState.isAir()) {
             Block.dropStacks(originalState, world, pos, rotatingBlockEntity, null, ItemStack.EMPTY);
+            return;
         }
-        ItemStack placementStack = originalState.getBlock().getPickStack(world, pos, originalState);
         if (rotatingBlockEntity != null) {
-            NbtCompound nbtCompound = rotatingBlockEntity.createNbt();
-            BlockItem.setBlockEntityNbt(placementStack, rotatingBlockEntity.getType(), nbtCompound);
             world.removeBlockEntity(pos);
         }
         world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
