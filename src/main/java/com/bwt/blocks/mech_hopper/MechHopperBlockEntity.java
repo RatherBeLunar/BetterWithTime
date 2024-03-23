@@ -227,7 +227,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
     }
 
     public void attemptToEjectStack(World world, BlockPos pos) {
-        List<Integer> occupiedIndices = IntStream.range(0, size())
+        List<Integer> occupiedIndices = IntStream.range(0, hopperInventory.size())
                 .filter(i -> !getStack(i).isEmpty())
                 .boxed().toList();
 
@@ -257,7 +257,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         if (VanillaHopperInvoker.isInventoryFull(inventoryBelow, Direction.UP)) {
             return;
         }
-        for (int i = 0; i < size(); ++i) {
+        for (int i = 0; i < hopperInventory.size(); ++i) {
             if (getStack(i).isEmpty()) continue;
             ItemStack itemStack = getStack(i).copy();
             ItemStack itemStack2 = HopperBlockEntity.transfer(this, inventoryBelow, removeStack(i, stackCountToDrop), Direction.UP);
@@ -381,7 +381,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
     @Override
     public int size() {
-        return hopperInventory.size();
+        return INVENTORY_SIZE;
     }
 
     @Override
@@ -391,7 +391,13 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
 
     @Override
     public ItemStack getStack(int slot) {
-        return hopperInventory.getStack(slot);
+        if (slot < INVENTORY_SIZE - 1) {
+            return hopperInventory.getStack(slot);
+        }
+        if (slot == INVENTORY_SIZE - 1) {
+            return filterInventory.getStack();
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override
