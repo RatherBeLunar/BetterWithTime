@@ -3,6 +3,7 @@ package com.bwt.entities;
 import com.bwt.items.BwtItems;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FlowableFluid;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.FluidTags;
@@ -47,21 +48,25 @@ public class WaterWheelEntity extends HorizontalMechPowerSourceEntity {
 
     @Override
     public float computeRotation() {
-        return Math.min(1, Math.max(getClockwiseRotationForce(), -1));
+//        return Math.min(1, Math.max(getClockwiseRotationForce(), -1));
+        return getCounterClockwiseRotationVelocity();
     }
 
-    protected float getClockwiseRotationForce() {
+    protected float getCounterClockwiseRotationVelocity() {
         World world = getWorld();
-        return BlockPos.stream(getBoundingBox())
+        Vec3i facingVector = getHorizontalFacing().getVector();
+        float velocity = BlockPos.stream(getBoundingBox())
             .map(blockPos -> {
                FluidState fluidState = world.getFluidState(blockPos);
                if (!fluidState.isIn(FluidTags.WATER)) {
                    return 0f;
                }
                Vec3d fluidVelocity = fluidState.getVelocity(world, blockPos);
-               Vec3i facingVector = getHorizontalFacing().rotateYClockwise().getVector();
+               if (fluidState.contains(FlowableFluid.FALLING) && fluidState.get(FlowableFluid.FALLING)) {
+                   fluidVelocity = new Vec3d(fluidVelocity.getX(), -1, fluidVelocity.getZ());
+               }
                Vec2f fluidVelocity2d = new Vec2f(
-                       (float) (fluidVelocity.getX() * facingVector.getX() + fluidVelocity.getZ() * facingVector.getZ()),
+                       (float) (fluidVelocity.getX() * Math.abs(facingVector.getZ()) + fluidVelocity.getZ() * Math.abs(facingVector.getX())),
                        (float) fluidVelocity.getY()
                );
                Vec3d centerToPointVector = blockPos.toCenterPos().subtract(getPos());
@@ -75,6 +80,10 @@ public class WaterWheelEntity extends HorizontalMechPowerSourceEntity {
             })
             .reduce(Float::sum)
             .orElse(0f);
+        // Correct for facing directions
+        velocity *= (facingVector.getX() - facingVector.getZ());
+        // Clamp
+        return MathHelper.clamp(velocity, -1, 1);
     }
 
 
