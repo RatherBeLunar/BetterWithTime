@@ -47,5 +47,6 @@ public interface CanRotateHelper {
         register(WallHangingSignBlock.class, CanRotatePredicate.FALSE);
         register(WallMountedBlock.class, (world, pos, state) -> state.get(WallMountedBlock.FACE).equals(BlockFace.FLOOR));
         register(BellBlock.class, (world, pos, state) -> state.get(BellBlock.ATTACHMENT).equals(Attachment.FLOOR));
+        register(BedBlock.class, CanRotatePredicate.FALSE);
     }
 }

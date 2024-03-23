@@ -38,9 +38,7 @@ public interface RotationProcessHelper {
     }
 
     static void registerDefaults() {
-        register(RailBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity, turntableState) -> {
-            world.setBlockState(pos, rotatedState);
-        });
+        register(RailBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity, turntableState) -> world.setBlockState(pos, rotatedState));
     }
 
     static void defaultRotationProcessor(World world, BlockPos pos, BlockState originalState, BlockState rotatedState, BlockEntity rotatingBlockEntity, BlockState turntableState) {
