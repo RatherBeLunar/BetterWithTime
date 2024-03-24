@@ -1,10 +1,7 @@
 package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import net.minecraft.block.CropBlock;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.NetherPortalBlock;
-import net.minecraft.block.TallPlantBlock;
+import net.minecraft.block.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPointer;
@@ -32,6 +29,7 @@ public interface BlockInhaleBehavior {
 
     static void registerBehaviors() {
         BlockDispenserBlock.registerBlockInhaleBehavior(CropBlock.class, new CropInhaleBehavior());
+        BlockDispenserBlock.registerBlockInhaleBehavior(AmethystClusterBlock.class, new AmethystInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(NetherPortalBlock.class, new VoidInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(DoorBlock.class, new DoubleTallBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(TallPlantBlock.class, new DoubleTallBlockInhaleBehavior());
