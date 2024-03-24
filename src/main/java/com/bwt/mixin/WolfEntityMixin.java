@@ -65,6 +65,10 @@ public abstract class WolfEntityMixin {
 
     @Inject(method = "isBreedingItem", at = @At("HEAD"), cancellable = true)
     public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+        if (stack.isOf(BwtItems.kibbleItem)) {
+            cir.setReturnValue(true);
+            return;
+        }
         if (stack.isOf(Items.ROTTEN_FLESH) || stack.isOf(BwtItems.wolfChopItem) || stack.isOf(BwtItems.cookedWolfChopItem)) {
             cir.setReturnValue(false);
         }
