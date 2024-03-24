@@ -19,13 +19,20 @@ import java.util.HashMap;
 public class VaseBlock extends Block {
     public static VoxelShape outlineShape = Block.createCuboidShape(3, 0, 3, 13, 16, 13);
 
+    protected DyeColor dyeColor;
     public VaseBlock(DyeColor color, AbstractBlock.Settings settings) {
         super(settings);
+        this.dyeColor = color;
     }
 
     public static void registerColors(HashMap<DyeColor, VaseBlock> vaseBlocks) {
         Arrays.stream(DyeColor.values()).forEach(dyeColor -> {
-            VaseBlock vaseBlock = new VaseBlock(dyeColor, FabricBlockSettings.create().nonOpaque().solidBlock(Blocks::never).sounds(BlockSoundGroup.GLASS));
+            VaseBlock vaseBlock = new VaseBlock(dyeColor, FabricBlockSettings.create()
+                    .nonOpaque()
+                    .solidBlock(Blocks::never)
+                    .sounds(BlockSoundGroup.GLASS)
+                    .hardness(0f)
+            );
             vaseBlocks.put(dyeColor, vaseBlock);
             Registry.register(Registries.BLOCK, new Identifier("bwt", "vase_" + dyeColor.getName()), vaseBlock);
             Registry.register(Registries.ITEM, new Identifier("bwt", "vase_" + dyeColor.getName()), new BlockItem(vaseBlock, new FabricItemSettings()));

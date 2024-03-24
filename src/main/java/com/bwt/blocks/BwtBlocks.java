@@ -29,67 +29,79 @@ import java.util.HashMap;
 public class BwtBlocks implements ModInitializer {
 
 	public static final Block anchorBlock = new AnchorBlock(FabricBlockSettings.create()
-        .hardness(2f)
-        .sounds(BlockSoundGroup.STONE)
-        .nonOpaque()
-        .solid()
-        .requiresTool()
+            .hardness(2f)
+            .sounds(BlockSoundGroup.STONE)
+            .nonOpaque()
+            .solid()
+            .requiresTool()
     );
 //	public static final Block anvilBlock = new AnvilBlock(FabricBlockSettings.create());
 	public static final Block axleBlock = new AxleBlock(FabricBlockSettings.create()
-        .hardness(2F)
-        .sounds(BlockSoundGroup.WOOD)
-        .burnable()
-        .solid()
-        .nonOpaque()
+            .hardness(2F)
+            .sounds(BlockSoundGroup.WOOD)
+            .burnable()
+            .solid()
+            .nonOpaque()
     );
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(FabricBlockSettings.copyOf(axleBlock.getSettings()));
 //	public static final Block barrelBlock = new BarrelBlock(FabricBlockSettings.create());
 	public static final Block bellowsBlock = new BellowsBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS));
 	public static final BlockDispenserBlock blockDispenserBlock = new BlockDispenserBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
-        .hardness(3.5f)
+            .hardness(3.5f)
     );
 //	public static final Block bloodWoodBlock = new BloodWoodBlock(FabricBlockSettings.create());
 //	Blood Wood Sapling
 //	public static final Block buddyBlockBlock = new BuddyBlockBlock(FabricBlockSettings.create());
 	public static final Block cauldronBlock = new CauldronBlock(FabricBlockSettings.create()
-        .solidBlock(Blocks::never)
-        .notSolid()
-        .nonOpaque()
-        .hardness(3.5f)
-        .resistance(10f)
-        .sounds(BlockSoundGroup.METAL)
-        .mapColor(MapColor.BLACK)
-        .requiresTool()
+            .solidBlock(Blocks::never)
+            .notSolid()
+            .nonOpaque()
+            .hardness(3.5f)
+            .resistance(10f)
+            .sounds(BlockSoundGroup.METAL)
+            .mapColor(MapColor.BLACK)
+            .requiresTool()
     );
 //	public static final Block canvasBlock = new CanvasBlock(FabricBlockSettings.create());
 //	public static final Block columnBlock = new ColumnBlock(FabricBlockSettings.create());
-	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL));
-	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.create());
+	public static final Block companionCubeBlock = new CompanionCubeBlock(FabricBlockSettings.copyOf(Blocks.WHITE_WOOL)
+            .hardness(0.4f)
+    );
+	public static final Block companionSlabBlock = new CompanionSlabBlock(FabricBlockSettings.copyOf(companionCubeBlock));
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
-	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create());
-	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
+	public static final Block crucibleBlock = new CrucibleBlock(FabricBlockSettings.create()
+            .sounds(BlockSoundGroup.GLASS)
+            .hardness(0.6f)
+            .resistance(3f)
+    );
+	public static final Block detectorBlock = new DetectorBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
+            .hardness(3.5f)
+    );
 	public static final Block detectorLogicBlock = new DetectorLogicBlock(FabricBlockSettings.copyOf(Blocks.AIR));
     public static final Block gearBoxBlock = new GearBoxBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
-        .hardness(2F)
+            .hardness(2F)
     );
-	public static final Block grateBlock = new PaneBlock(FabricBlockSettings.create().hardness(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
+	public static final Block grateBlock = new PaneBlock(FabricBlockSettings.create()
+            .hardness(0.5f)
+            .sounds(BlockSoundGroup.WOOD)
+            .nonOpaque()
+    );
 	public static final Block handCrankBlock = new HandCrankBlock(FabricBlockSettings.create()
-        .hardness(0.5f)
-        .sounds(BlockSoundGroup.WOOD)
-        .solid()
-        .nonOpaque()
-        .allowsSpawning(Blocks::never)
-        .suffocates(Blocks::never)
-        .blockVision(Blocks::never)
-        .requiresTool()
+            .hardness(0.5f)
+            .sounds(BlockSoundGroup.WOOD)
+            .solid()
+            .nonOpaque()
+            .allowsSpawning(Blocks::never)
+            .suffocates(Blocks::never)
+            .blockVision(Blocks::never)
+            .requiresTool()
     );
 	public static final Block hempCropBlock = new HempCropBlock(FabricBlockSettings.copyOf(Blocks.SUGAR_CANE));
 	public static final Block hibachiBlock = new HibachiBlock(FabricBlockSettings.create()
-        .hardness(3.5f)
-        .sounds(BlockSoundGroup.STONE)
-        .solidBlock(Blocks::never)
-        .requiresTool()
+            .hardness(3.5f)
+            .sounds(BlockSoundGroup.STONE)
+            .solidBlock(Blocks::never)
+            .requiresTool()
     );
 	public static final Block hopperBlock = new MechHopperBlock(FabricBlockSettings.create()
             .hardness(2f)
@@ -101,58 +113,108 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block kilnBlock = new KilnBlock(FabricBlockSettings.copyOf(Blocks.BRICKS));
 //	public static final Block lensBlock = new LensBlock(FabricBlockSettings.create());
 	public static final Block lightBlockBlock = new LightBlock(FabricBlockSettings.copyOf(Blocks.GLASS)
-        .strength(0.4f)
-        .luminance(Blocks.createLightLevelFromLitBlockState(15))
+            .strength(0.4f)
+            .luminance(Blocks.createLightLevelFromLitBlockState(15))
     );
-	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER).hardness(3.5f));
+	public static final Block millStoneBlock = new MillStoneBlock(FabricBlockSettings.copyOf(Blocks.DISPENSER)
+            .hardness(3.5f)
+    );
 //	public static final Block miningChargeBlock = new MiningChargeBlock(FabricBlockSettings.create());
 	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
 //	public static final Block netherGrothBlock = new NetherGrothBlock(FabricBlockSettings.create());
 //	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(FabricBlockSettings.create());
-	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE).strength(50.0f, 1200.0f)
-    );
-	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL)
+	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(FabricBlockSettings.copyOf(Blocks.STONE_PRESSURE_PLATE)
             .strength(50.0f, 1200.0f)
     );
-//	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
-	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
-	public static final Block soilPlanterBlock = new SoilPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
-	public static final Block soulSandPlanterBlock = new SoulSandPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
-	public static final Block grassPlanterBlock = new GrassPlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque());
-	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
-        .nonOpaque()
-        .allowsSpawning(Blocks::never)
-        .solidBlock(Blocks::never)
-        .suffocates(Blocks::never)
-        .blockVision(Blocks::never)
+	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL)
+            .strength(25.0f, 1200.0f)
     );
-	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS).hardness(2f).pistonBehavior(PistonBehavior.IGNORE));
+//	public static final Block pedestalBlock = new PedestalBlock(FabricBlockSettings.create());
+	public static final Block planterBlock = new PlanterBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA)
+            .nonOpaque()
+            .hardness(0.6f)
+    );
+	public static final Block soilPlanterBlock = new SoilPlanterBlock(FabricBlockSettings.copyOf(planterBlock));
+	public static final Block soulSandPlanterBlock = new SoulSandPlanterBlock(FabricBlockSettings.copyOf(planterBlock));
+	public static final Block grassPlanterBlock = new GrassPlanterBlock(FabricBlockSettings.copyOf(planterBlock));
+	public static final Block platformBlock = new PlatformBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
+            .nonOpaque()
+            .allowsSpawning(Blocks::never)
+            .solidBlock(Blocks::never)
+            .suffocates(Blocks::never)
+            .blockVision(Blocks::never)
+            .hardness(2f)
+            .burnable()
+    );
+	public static final Block pulleyBlock = new PulleyBlock(FabricBlockSettings.copyOf(Blocks.OAK_PLANKS)
+            .hardness(2f)
+            .pistonBehavior(PistonBehavior.IGNORE)
+    );
 	public static final Block ropeBlock = new RopeBlock(FabricBlockSettings.create()
-        .hardness(0.5f)
-        .sounds(BlockSoundGroup.GRASS)
+            .hardness(0.5f)
+            .sounds(BlockSoundGroup.GRASS)
     );
 	public static final Block sawBlock = new SawBlock(FabricBlockSettings.create()
-        .hardness(2f)
-        .burnable()
-        .sounds(BlockSoundGroup.WOOD)
-        .nonOpaque()
+            .hardness(2f)
+            .burnable()
+            .sounds(BlockSoundGroup.WOOD)
+            .nonOpaque()
     );
 //	public static final Block screwPumpBlock = new ScrewPumpBlock(FabricBlockSettings.create());
     public static final ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
-	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.WOOD).nonOpaque());
+	public static final Block slatsBlock = new PaneBlock(FabricBlockSettings.create()
+            .strength(0.5f)
+            .sounds(BlockSoundGroup.WOOD)
+            .burnable()
+            .nonOpaque()
+    );
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
     public static final Block stokedFireBlock = new StokedFireBlock(FabricBlockSettings.copyOf(Blocks.SOUL_FIRE));
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
-	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create());
-	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final UnfiredPotteryBlock unfiredPlanterBlock = new UnfiredPlanterBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final UnfiredPotteryBlock unfiredVaseBlock = new UnfiredVaseBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(FabricBlockSettings.copyOf(Blocks.CLAY).nonOpaque().notSolid().solidBlock(Blocks::never));
-	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA).nonOpaque().solidBlock(Blocks::never));
+	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create()
+            .strength(2f)
+            .sounds(BlockSoundGroup.STONE)
+            .mapColor(Blocks.PISTON_HEAD.getDefaultMapColor())
+    );
+	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(FabricBlockSettings.copyOf(Blocks.CLAY)
+            .nonOpaque()
+            .notSolid()
+            .solidBlock(Blocks::never)
+    );
+	public static final UnfiredPotteryBlock unfiredPlanterBlock = new UnfiredPlanterBlock(FabricBlockSettings.copyOf(Blocks.CLAY)
+            .nonOpaque()
+            .notSolid()
+            .solidBlock(Blocks::never)
+    );
+	public static final UnfiredPotteryBlock unfiredVaseBlock = new UnfiredVaseBlock(FabricBlockSettings.copyOf(Blocks.CLAY)
+            .nonOpaque()
+            .notSolid()
+            .solidBlock(Blocks::never)
+    );
+	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(FabricBlockSettings.copyOf(Blocks.CLAY)
+            .nonOpaque()
+            .notSolid()
+            .solidBlock(Blocks::never)
+    );
+	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(FabricBlockSettings.copyOf(Blocks.CLAY)
+            .nonOpaque()
+            .notSolid()
+            .solidBlock(Blocks::never)
+    );
+	public static final Block urnBlock = new UrnBlock(FabricBlockSettings.copyOf(Blocks.TERRACOTTA)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
+            .allowsSpawning(Blocks::never)
+            .hardness(2f)
+    );
 	public static final HashMap<DyeColor, VaseBlock> vaseBlocks = new HashMap<>();
-	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create().strength(0.5f).sounds(BlockSoundGroup.GRASS).nonOpaque());
+	public static final Block wickerBlock = new PaneBlock(FabricBlockSettings.create()
+            .strength(0.5f)
+            .sounds(BlockSoundGroup.GRASS)
+            .burnable()
+            .nonOpaque()
+    );
 //	public static final Block woolSlabBlock = new WoolSlabBlock(FabricBlockSettings.create());
 
 

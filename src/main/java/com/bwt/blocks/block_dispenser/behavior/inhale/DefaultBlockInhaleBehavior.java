@@ -24,13 +24,14 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
         BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
         BlockState state = world.getBlockState(facingPos);
         ItemStack bestCandidate = ItemStack.EMPTY;
+        Vec3d centerPos = blockPointer.pos().toCenterPos();
         for (Item tool : new Item[]{Items.NETHERITE_PICKAXE, Items.SHEARS}) {
             ItemStack itemStack = new ItemStack(tool);
             itemStack.addEnchantment(Enchantments.SILK_TOUCH, 1);
             LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(blockPointer.world())
-                    .add(LootContextParameters.ORIGIN, Vec3d.ofCenter(blockPointer.pos()))
+                    .add(LootContextParameters.ORIGIN, centerPos)
                     .add(LootContextParameters.TOOL, itemStack)
-                    .add(LootContextParameters.THIS_ENTITY, new ItemEntity(world, 0, 0, 0, itemStack));
+                    .add(LootContextParameters.THIS_ENTITY, new ItemEntity(world, centerPos.getX(), centerPos.getY(), centerPos.getZ(), itemStack));
             List<ItemStack> drops = state.getBlock().getDroppedStacks(state, builder);
             Optional<ItemStack> drop = drops.stream().filter(dropStack -> dropStack.isOf(state.getBlock().asItem())).findFirst();
             if (drop.isPresent()) {
