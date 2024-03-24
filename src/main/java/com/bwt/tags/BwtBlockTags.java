@@ -7,6 +7,7 @@ import net.minecraft.util.Identifier;
 
 public class BwtBlockTags {
     public static final TagKey<Block> BLOCK_DISPENSER_INHALE_NOOP = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "block_dispenser_inhale_noop"));
+    public static final TagKey<Block> BLOCK_DISPENSER_INHALE_VOID = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "block_dispenser_inhale_void"));
     public static final TagKey<Block> DETECTABLE_SMALL_CROPS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "detectable_small_crops"));
     public static final TagKey<Block> SURVIVES_SAW_BLOCK = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "survives_saw_block"));
     public static final TagKey<Block> SAW_BREAKS_NO_DROPS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "saw_breaks_no_drops"));

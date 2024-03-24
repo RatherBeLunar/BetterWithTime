@@ -14,8 +14,6 @@ import net.minecraft.util.math.BlockPointer;
 import java.util.List;
 
 public class CropInhaleBehavior implements BlockInhaleBehavior {
-    private boolean noop = false;
-
     @Override
     public ItemStack getInhaledItems(BlockPointer blockPointer) {
         BlockState state = blockPointer.world().getBlockState(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
@@ -30,7 +28,6 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
             maxAge -= 1;
         }
         if (age < maxAge) {
-            noop = true;
             return ItemStack.EMPTY;
         }
 
@@ -54,8 +51,15 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
 
     @Override
     public void inhale(BlockPointer blockPointer) {
-        if (!noop) {
-            breakBlockNoItems(blockPointer.world(), blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
+        BlockState state = blockPointer.world().getBlockState(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
+        if (!(state.getBlock() instanceof CropBlock cropBlock)) {
+            return;
         }
+        int age = cropBlock.getAge(state);
+        int maxAge = cropBlock.getMaxAge();
+        if (age < maxAge) {
+            return;
+        }
+        breakBlockNoItems(blockPointer.world(), blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
     }
 }

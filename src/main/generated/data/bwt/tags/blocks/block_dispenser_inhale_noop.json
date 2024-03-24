@@ -1,6 +1,10 @@
 {
   "replace": false,
   "values": [
+    "minecraft:structure_void",
+    "minecraft:structure_block",
+    "minecraft:piston_head",
+    "minecraft:moving_piston",
     "#minecraft:wither_immune",
     "#minecraft:fire",
     "#minecraft:portals"

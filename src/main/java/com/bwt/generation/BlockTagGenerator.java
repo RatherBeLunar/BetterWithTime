@@ -33,10 +33,16 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BwtBlockTags.CROPS_CAN_PLANT_ON).add(Blocks.FARMLAND, BwtBlocks.soilPlanterBlock);
         getOrCreateTagBuilder(BwtBlockTags.SOUL_SAND_PLANTS_CAN_PLANT_ON).add(Blocks.SOUL_SAND, BwtBlocks.soulSandPlanterBlock);
 
+        getOrCreateTagBuilder(BwtBlockTags.BLOCK_DISPENSER_INHALE_VOID)
+                .add(Blocks.NETHER_PORTAL);
         getOrCreateTagBuilder(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)
+                .add(Blocks.STRUCTURE_VOID)
+                .add(Blocks.STRUCTURE_BLOCK)
+                .add(Blocks.PISTON_HEAD)
+                .add(Blocks.MOVING_PISTON)
+                .add(Blocks.END_PORTAL)
                 .forceAddTag(BlockTags.WITHER_IMMUNE)
-                .forceAddTag(BlockTags.FIRE)
-                .forceAddTag(BlockTags.PORTALS);
+                .forceAddTag(BlockTags.FIRE);
         getOrCreateTagBuilder(BwtBlockTags.DETECTABLE_SMALL_CROPS)
                 .add(Blocks.WHEAT)
                 .add(Blocks.CARROTS)

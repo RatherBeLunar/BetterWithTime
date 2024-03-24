@@ -132,7 +132,7 @@ public class BetterWithTime implements ModInitializer {
 
 		// Block Dispenser Behaviors
 		BwtBlocks.blockDispenserBlock.registerItemDispenseBehaviors();
-		BwtBlocks.blockDispenserBlock.registerEntityInhaleBehaviors();
+		BwtBlocks.blockDispenserBlock.registerBehaviors();
 		// Hopper filters
 		MechHopperBlock.addDefaultFilters();
 		// Turntable attached block handlers

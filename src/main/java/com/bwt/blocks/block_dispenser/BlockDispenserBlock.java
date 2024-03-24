@@ -3,15 +3,19 @@ package com.bwt.blocks.block_dispenser;
 import com.bwt.blocks.block_dispenser.behavior.dispense.BlockDispenserBehavior;
 import com.bwt.blocks.block_dispenser.behavior.dispense.DefaultItemDispenserBehavior;
 import com.bwt.blocks.block_dispenser.behavior.dispense.ItemClumpDispenserBehavior;
-import com.bwt.blocks.block_dispenser.behavior.inhale.*;
+import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
+import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtEntityTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.*;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DispenserBlock;
 import net.minecraft.block.dispenser.DispenserBehavior;
+import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -38,10 +42,10 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BlockDispenserBlock extends DispenserBlock {
-    private static final Map<Item, DispenserBehavior> BLOCK_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new BlockDispenserBehavior()));
+    private static final Map<Class<? extends Block>, DispenserBehavior> BLOCK_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(BlockDispenserBehavior.DEFAULT));
     private static final Map<Item, DispenserBehavior> ITEM_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultItemDispenserBehavior()));
-    private static final Map<Block, BlockInhaleBehavior> BLOCK_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultBlockInhaleBehavior()));
-    private static final Map<EntityType<? extends Entity>, EntityInhaleBehavior> ENTITY_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(null));
+    private static final Map<Class<? extends Block>, BlockInhaleBehavior> BLOCK_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(BlockInhaleBehavior.DEFAULT));
+    private static final Map<EntityType<? extends Entity>, EntityInhaleBehavior> ENTITY_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(EntityInhaleBehavior.NOOP));
 
     public BlockDispenserBlock(Settings settings) {
         super(settings);
@@ -88,8 +92,18 @@ public class BlockDispenserBlock extends DispenserBlock {
         ENTITY_INHALE_BEHAVIORS.put(entityType, behavior);
     }
 
-    public void registerEntityInhaleBehaviors() {
+    public static void registerBlockInhaleBehavior(Class<? extends Block> blockClass, BlockInhaleBehavior behavior) {
+        BLOCK_INHALE_BEHAVIORS.put(blockClass, behavior);
+    }
+
+    public static void registerBlockDispenseBehavior(Class<? extends Block> blockClass, ItemDispenserBehavior behavior) {
+        BLOCK_BEHAVIORS.put(blockClass, behavior);
+    }
+
+    public void registerBehaviors() {
         EntityInhaleBehavior.registerBehaviors();
+        BlockInhaleBehavior.registerBehaviors();
+        BlockDispenserBehavior.registerBehaviors();
     }
 
     @Override
@@ -111,6 +125,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         if (isReceivingPower(world, pos)) {
+            world.setBlockState(pos, state.cycle(TRIGGERED), Block.NOTIFY_LISTENERS);
             world.scheduleBlockTick(pos, this, 4);
         }
     }
@@ -214,11 +229,15 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     protected DispenserBehavior getDispenseBehaviorForItem(World world, BlockState targetState, BlockDispenserBlockEntity entity, ItemStack stack) {
         // Block Behavior. Block items will not clump
-        if (stack.getItem() instanceof BlockItem) {
+        if (stack.getItem() instanceof BlockItem blockItem) {
             if (!targetState.isIn(BlockTags.REPLACEABLE)) {
                 return BlockDispenserBehavior.NOOP;
             }
-            return BLOCK_BEHAVIORS.get(stack.getItem());
+            return BLOCK_BEHAVIORS.entrySet().stream()
+                    .filter(entry -> entry.getKey().isInstance(blockItem.getBlock()))
+                    .findAny()
+                    .map(Map.Entry::getValue)
+                    .orElse(BlockDispenserBehavior.DEFAULT);
         }
 
         Optional<BlockDispenserClumpRecipe> match = world.getRecipeManager().getFirstMatch(
@@ -266,13 +285,11 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)) {
             return BlockInhaleBehavior.NOOP;
         }
-        if (targetState.isOf(Blocks.NETHER_PORTAL)) {
-            return new VoidInhaleBehavior();
-        }
-        if (targetState.getBlock() instanceof CropBlock) {
-            return new CropInhaleBehavior();
-        }
-        return BLOCK_INHALE_BEHAVIORS.get(targetState.getBlock());
+        return BLOCK_INHALE_BEHAVIORS.entrySet().stream()
+                .filter(entry -> entry.getKey().isInstance(targetState.getBlock()))
+                .findAny()
+                .map(Map.Entry::getValue)
+                .orElse(BlockInhaleBehavior.DEFAULT);
     }
 
     @Override
