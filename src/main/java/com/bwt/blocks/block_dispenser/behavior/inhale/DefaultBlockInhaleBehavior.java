@@ -3,6 +3,7 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -29,7 +30,7 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
             LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(blockPointer.world())
                     .add(LootContextParameters.ORIGIN, Vec3d.ofCenter(blockPointer.pos()))
                     .add(LootContextParameters.TOOL, itemStack)
-                    .addOptional(LootContextParameters.BLOCK_ENTITY, world.getBlockEntity(facingPos));
+                    .add(LootContextParameters.THIS_ENTITY, new ItemEntity(world, 0, 0, 0, itemStack));
             List<ItemStack> drops = state.getBlock().getDroppedStacks(state, builder);
             Optional<ItemStack> drop = drops.stream().filter(dropStack -> dropStack.isOf(state.getBlock().asItem())).findFirst();
             if (drop.isPresent()) {
