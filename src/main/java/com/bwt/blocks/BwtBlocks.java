@@ -351,9 +351,12 @@ public class BwtBlocks implements ModInitializer {
             content.add(obsidianDetectorRailBlock);
             content.add(sawBlock);
             content.add(pulleyBlock);
+            content.add(anchorBlock);
             content.add(platformBlock);
             content.add(turntableBlock);
             content.add(bellowsBlock);
+            content.add(cauldronBlock);
+            content.add(crucibleBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
