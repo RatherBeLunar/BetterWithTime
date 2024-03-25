@@ -11,7 +11,6 @@ import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 
 public class BwtItems implements ModInitializer {
@@ -37,7 +36,7 @@ public class BwtItems implements ModInitializer {
                     .alwaysEdible()
                     .build())
     ));
-	public static final Item dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DyeItem(DyeColor.BROWN, new FabricItemSettings()));
+	public static final DyeItem dungItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dung"), new DungItem(new FabricItemSettings()));
 	public static final Item dynamiteItem = Registry.register(Registries.ITEM, new Identifier("bwt", "dynamite"), new Item(new FabricItemSettings()));
 //	public static final Item enderSpectaclesItem = Registry.register(Registries.ITEM, new Identifier("bwt", "ender_spectacles"), new EnderSpectaclesItem(new FabricItemSettings()));
 	public static final Item fabricItem = Registry.register(Registries.ITEM, new Identifier("bwt", "fabric"), new Item(new FabricItemSettings()));

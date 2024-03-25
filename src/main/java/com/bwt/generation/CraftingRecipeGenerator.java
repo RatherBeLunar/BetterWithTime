@@ -1,21 +1,25 @@
 package com.bwt.generation;
 
-import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.CornerBlock;
-import com.bwt.blocks.MouldingBlock;
-import com.bwt.blocks.SidingBlock;
+import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtItemTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
+import net.minecraft.data.server.recipe.*;
+import net.minecraft.item.DyeItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.ItemTags;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public class CraftingRecipeGenerator extends FabricRecipeProvider {
     public CraftingRecipeGenerator(FabricDataOutput generator) {
@@ -37,6 +41,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         generateTier6Recipes(exporter);
         generateTier7Recipes(exporter);
 
+        generateVaseDyeingRecipes(exporter);
+        generateDungDyeingRecipes(exporter);
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.stoneDetectorRailBlock, 6)
                 .pattern("i i")
@@ -61,6 +67,64 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('o', Items.OBSIDIAN)
                 .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
                 .offerTo(exporter);
+    }
+
+    private void generateDungDyeingRecipes(RecipeExporter exporter) {
+        DyeItem dung = BwtItems.dungItem;
+
+        // This is a little unnecessary to declare separately, but it helps keep track of what we're doing
+        VaseBlock brownVase = BwtBlocks.vaseBlocks.get(BwtItems.dungItem.getColor());
+        Block brownBed = Blocks.BROWN_BED;
+        Block brownWool = Blocks.BROWN_WOOL;
+        Block brownCarpet = Blocks.BROWN_CARPET;
+        Block brownTerracotta = Blocks.BROWN_TERRACOTTA;
+        Block brownConcretePowder = Blocks.BROWN_CONCRETE_POWDER;
+        Block brownStainedGlass = Blocks.BROWN_STAINED_GLASS;
+        Block brownStainedGlassPane = Blocks.BROWN_STAINED_GLASS_PANE;
+        Block brownCandle = Blocks.BROWN_CANDLE;
+
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, brownVase)
+                .input(dung)
+                .input(Ingredient.ofStacks(
+                        BwtBlocks.vaseBlocks.values().stream().filter(dyeable -> !dyeable.equals(brownVase)).map(ItemStack::new)
+                ))
+                .group("vases")
+                .criterion("has_needed_dye", RecipeProvider.conditionsFromItem(dung))
+                .offerTo(exporter, "dye_" + RecipeProvider.getItemPath(brownVase) + "_from_dung");
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, brownCandle)
+                .input(Blocks.CANDLE)
+                .input(dung)
+                .group("dyed_candle")
+                .criterion(RecipeProvider.hasItem(dung), RecipeProvider.conditionsFromItem(dung))
+                .offerTo(exporter, CraftingRecipeJsonBuilder.getItemId(Blocks.BROWN_CANDLE) + "_from_dung");
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownBed)
+                .input(dung)
+                .input(Ingredient.ofStacks(Stream.of(Items.BLACK_BED, Items.BLUE_BED, Items.CYAN_BED, Items.GRAY_BED, Items.GREEN_BED, Items.LIGHT_BLUE_BED, Items.LIGHT_GRAY_BED, Items.LIME_BED, Items.MAGENTA_BED, Items.ORANGE_BED, Items.PINK_BED, Items.PURPLE_BED, Items.RED_BED, Items.YELLOW_BED, Items.WHITE_BED).map(ItemStack::new)))
+                .group("bed")
+                .criterion(RecipeProvider.hasItem(dung), RecipeProvider.conditionsFromItem(dung))
+                .offerTo(exporter, "dye_" + RecipeProvider.getItemPath(brownBed) + "_from_dung");
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownWool)
+                .input(dung)
+                .input(Ingredient.ofStacks(Stream.of(Items.BLACK_WOOL, Items.BLUE_WOOL, Items.CYAN_WOOL, Items.GRAY_WOOL, Items.GREEN_WOOL, Items.LIGHT_BLUE_WOOL, Items.LIGHT_GRAY_WOOL, Items.LIME_WOOL, Items.MAGENTA_WOOL, Items.ORANGE_WOOL, Items.PINK_WOOL, Items.PURPLE_WOOL, Items.RED_WOOL, Items.YELLOW_WOOL, Items.WHITE_WOOL).map(ItemStack::new)))
+                .group("wool")
+                .criterion(RecipeProvider.hasItem(dung), RecipeProvider.conditionsFromItem(dung))
+                .offerTo(exporter, "dye_" + RecipeProvider.getItemPath(brownWool) + "_from_dung");
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownCarpet)
+                .input(dung)
+                .input(Ingredient.ofStacks(Stream.of(Items.BLACK_CARPET, Items.BLUE_CARPET, Items.CYAN_CARPET, Items.GRAY_CARPET, Items.GREEN_CARPET, Items.LIGHT_BLUE_CARPET, Items.LIGHT_GRAY_CARPET, Items.LIME_CARPET, Items.MAGENTA_CARPET, Items.ORANGE_CARPET, Items.PINK_CARPET, Items.PURPLE_CARPET, Items.RED_CARPET, Items.YELLOW_CARPET, Items.WHITE_CARPET).map(ItemStack::new)))
+                .group("carpet")
+                .criterion(RecipeProvider.hasItem(dung), RecipeProvider.conditionsFromItem(dung))
+                .offerTo(exporter, "dye_" + RecipeProvider.getItemPath(brownCarpet) + "_from_dung");
+        offerTerracottaDyeingRecipe(exporter, brownTerracotta, dung);
+        offerConcretePowderDyeingRecipe(exporter, brownConcretePowder, dung);
+        offerStainedGlassDyeingRecipe(exporter, brownStainedGlass, dung);
+        offerStainedGlassPaneDyeingRecipe(exporter, brownStainedGlassPane, dung);
+    }
+
+    private void generateVaseDyeingRecipes(RecipeExporter exporter) {
+        List<Item> dyes = List.copyOf(BwtBlocks.vaseBlocks.keySet().stream().map(DyeItem::byColor).toList());
+        List<Item> vases = BwtBlocks.vaseBlocks.values().stream().map(VaseBlock::asItem).toList();
+        offerDyeableRecipes(exporter, dyes, vases, "vases");
     }
 
     private void generateTier1Recipes(RecipeExporter exporter) {
