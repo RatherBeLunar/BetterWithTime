@@ -7,6 +7,7 @@ import com.bwt.blocks.SidingBlock;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.sound.SoundEvent;
@@ -41,7 +42,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.unfiredVaseBlock, "Unfired Vase");
         translationBuilder.add(BwtBlocks.unfiredUrnBlock, "Unfired Urn");
         translationBuilder.add(BwtBlocks.unfiredMouldBlock, "Unfired Mould");
-        BwtBlocks.vaseBlocks.forEach((key, value) -> translationBuilder.add(value, nameKeyToTitleCase(key.getName() + "_vase")));
+        BwtBlocks.vaseBlocks.entrySet().stream().sorted(DyeUtils.COMPARE_DYE_COLOR_ENTRY).forEach(entry -> translationBuilder.add(entry.getValue(), nameKeyToTitleCase(entry.getKey().getName() + "_vase")));
         translationBuilder.add(BwtBlocks.soilPlanterBlock, "Soil Planter");
         translationBuilder.add(BwtBlocks.soulSandPlanterBlock, "Soul Sand Planter");
         translationBuilder.add(BwtBlocks.grassPlanterBlock, "Grass Planter");

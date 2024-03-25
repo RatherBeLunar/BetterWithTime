@@ -9,6 +9,7 @@ import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
+import com.bwt.utils.DyeUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -334,7 +335,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("bwt", "urn"), new BlockItem(urnBlock, new FabricItemSettings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
-            content.addAll(vaseBlocks.values().stream().map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
+            content.addAll(DyeUtils.streamColorItemsSorted(vaseBlocks).map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
@@ -366,7 +367,6 @@ public class BwtBlocks implements ModInitializer {
             content.add(soilPlanterBlock);
             content.add(soulSandPlanterBlock);
             content.add(grassPlanterBlock);
-            content.add(vaseBlocks.get(DyeColor.WHITE));
             content.add(urnBlock);
             content.add(unfiredCrucibleBlock);
             content.add(unfiredPlanterBlock);

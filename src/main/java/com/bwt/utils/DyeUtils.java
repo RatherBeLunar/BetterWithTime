@@ -6,9 +6,31 @@ import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Util;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 public interface DyeUtils {
+    List<DyeColor> DYE_COLORS_ORDERED = List.of(
+        DyeColor.WHITE,
+        DyeColor.LIGHT_GRAY,
+        DyeColor.GRAY,
+        DyeColor.BLACK,
+        DyeColor.BROWN,
+        DyeColor.RED,
+        DyeColor.ORANGE,
+        DyeColor.YELLOW,
+        DyeColor.LIME,
+        DyeColor.GREEN,
+        DyeColor.CYAN,
+        DyeColor.LIGHT_BLUE,
+        DyeColor.BLUE,
+        DyeColor.PURPLE,
+        DyeColor.MAGENTA,
+        DyeColor.PINK
+    );
+
     Map<DyeColor, ItemConvertible> WOOL_COLORS = Util.make(Maps.newEnumMap(DyeColor.class), map -> {
         map.put(DyeColor.WHITE, Blocks.WHITE_WOOL);
         map.put(DyeColor.ORANGE, Blocks.ORANGE_WOOL);
@@ -27,4 +49,15 @@ public interface DyeUtils {
         map.put(DyeColor.RED, Blocks.RED_WOOL);
         map.put(DyeColor.BLACK, Blocks.BLACK_WOOL);
     });
+
+    Comparator<DyeColor> COMPARE_DYE_COLOR = Comparator.comparingInt(DYE_COLORS_ORDERED::indexOf);
+    Comparator<Map.Entry<DyeColor, ?>> COMPARE_DYE_COLOR_ENTRY = Comparator.comparingInt(entry -> DYE_COLORS_ORDERED.indexOf(entry.getKey()));
+
+    static <T> Stream<T> streamColorItemsSorted(Map<DyeColor, T> coloredItems) {
+        return coloredItems.entrySet().stream().sorted(COMPARE_DYE_COLOR_ENTRY).map(Map.Entry::getValue);
+    }
+
+    static <T> List<T> getColorItemsSorted(Map<DyeColor, T> coloredItems) {
+        return streamColorItemsSorted(coloredItems).toList();
+    }
 }

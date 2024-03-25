@@ -8,34 +8,13 @@
     },
     [
       {
-        "item": "bwt:vase_blue"
-      },
-      {
-        "item": "bwt:vase_cyan"
-      },
-      {
         "item": "bwt:vase_white"
-      },
-      {
-        "item": "bwt:vase_purple"
-      },
-      {
-        "item": "bwt:vase_light_blue"
       },
       {
         "item": "bwt:vase_light_gray"
       },
       {
-        "item": "bwt:vase_orange"
-      },
-      {
-        "item": "bwt:vase_pink"
-      },
-      {
-        "item": "bwt:vase_magenta"
-      },
-      {
-        "item": "bwt:vase_green"
+        "item": "bwt:vase_gray"
       },
       {
         "item": "bwt:vase_black"
@@ -44,13 +23,34 @@
         "item": "bwt:vase_brown"
       },
       {
+        "item": "bwt:vase_red"
+      },
+      {
+        "item": "bwt:vase_orange"
+      },
+      {
         "item": "bwt:vase_yellow"
       },
       {
-        "item": "bwt:vase_gray"
+        "item": "bwt:vase_green"
       },
       {
-        "item": "bwt:vase_red"
+        "item": "bwt:vase_cyan"
+      },
+      {
+        "item": "bwt:vase_light_blue"
+      },
+      {
+        "item": "bwt:vase_blue"
+      },
+      {
+        "item": "bwt:vase_purple"
+      },
+      {
+        "item": "bwt:vase_magenta"
+      },
+      {
+        "item": "bwt:vase_pink"
       }
     ]
   ],

@@ -2,20 +2,20 @@
   "replace": false,
   "values": [
     "bwt:vase_white",
+    "bwt:vase_light_gray",
+    "bwt:vase_gray",
+    "bwt:vase_black",
+    "bwt:vase_brown",
+    "bwt:vase_red",
     "bwt:vase_orange",
-    "bwt:vase_magenta",
-    "bwt:vase_light_blue",
     "bwt:vase_yellow",
     "bwt:vase_lime",
-    "bwt:vase_pink",
-    "bwt:vase_gray",
-    "bwt:vase_light_gray",
-    "bwt:vase_cyan",
-    "bwt:vase_purple",
-    "bwt:vase_blue",
-    "bwt:vase_brown",
     "bwt:vase_green",
-    "bwt:vase_red",
-    "bwt:vase_black"
+    "bwt:vase_cyan",
+    "bwt:vase_light_blue",
+    "bwt:vase_blue",
+    "bwt:vase_purple",
+    "bwt:vase_magenta",
+    "bwt:vase_pink"
   ]
 }

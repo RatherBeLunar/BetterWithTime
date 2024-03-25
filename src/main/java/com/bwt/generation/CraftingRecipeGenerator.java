@@ -3,6 +3,7 @@ package com.bwt.generation;
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtItemTags;
+import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
@@ -86,7 +87,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         ShapelessRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, brownVase)
                 .input(dung)
                 .input(Ingredient.ofStacks(
-                        BwtBlocks.vaseBlocks.values().stream().filter(dyeable -> !dyeable.equals(brownVase)).map(ItemStack::new)
+                        DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).filter(dyeable -> !dyeable.equals(brownVase)).map(ItemStack::new)
                 ))
                 .group("vases")
                 .criterion("has_needed_dye", RecipeProvider.conditionsFromItem(dung))
@@ -122,8 +123,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateVaseDyeingRecipes(RecipeExporter exporter) {
-        List<Item> dyes = List.copyOf(BwtBlocks.vaseBlocks.keySet().stream().map(DyeItem::byColor).toList());
-        List<Item> vases = BwtBlocks.vaseBlocks.values().stream().map(VaseBlock::asItem).toList();
+        List<Item> dyes = List.copyOf(DyeUtils.DYE_COLORS_ORDERED.stream().map(DyeItem::byColor).toList());
+        List<Item> vases = DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).map(VaseBlock::asItem).toList();
         offerDyeableRecipes(exporter, dyes, vases, "vases");
     }
 

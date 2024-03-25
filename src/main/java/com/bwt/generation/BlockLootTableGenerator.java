@@ -3,6 +3,7 @@ package com.bwt.generation;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.HempCropBlock;
 import com.bwt.items.BwtItems;
+import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
 import net.minecraft.block.Blocks;
@@ -80,7 +81,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
 //        addDrop(BwtBlocks.waterWheelBlock);
         addDrop(BwtBlocks.wickerBlock);
 //        addDrop(BwtBlocks.woolSlabBlock);
-        BwtBlocks.vaseBlocks.values().forEach(this::addDropWithSilkTouch);
+        DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).forEach(this::addDropWithSilkTouch);
         BwtBlocks.sidingBlocks.forEach(this::addDrop);
         BwtBlocks.mouldingBlocks.forEach(this::addDrop);
         BwtBlocks.cornerBlocks.forEach(this::addDrop);
