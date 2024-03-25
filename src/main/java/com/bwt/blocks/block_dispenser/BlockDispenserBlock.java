@@ -42,6 +42,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public class BlockDispenserBlock extends DispenserBlock {
+    public static final int tickRate = 4;
+
     private static final Map<Class<? extends Block>, DispenserBehavior> BLOCK_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(BlockDispenserBehavior.DEFAULT));
     private static final Map<Item, DispenserBehavior> ITEM_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(new DefaultItemDispenserBehavior()));
     private static final Map<Class<? extends Block>, BlockInhaleBehavior> BLOCK_INHALE_BEHAVIORS = Util.make(new Object2ObjectOpenHashMap<>(), map -> map.defaultReturnValue(BlockInhaleBehavior.DEFAULT));
@@ -125,8 +127,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
         if (isReceivingPower(world, pos)) {
-            world.setBlockState(pos, state.cycle(TRIGGERED), Block.NOTIFY_LISTENERS);
-            world.scheduleBlockTick(pos, this, 4);
+            world.scheduleBlockTick(pos, this, tickRate);
         }
     }
 
@@ -142,8 +143,7 @@ public class BlockDispenserBlock extends DispenserBlock {
             return;
         }
         if (state.get(TRIGGERED) != isReceivingPower(world, pos)) {
-            world.setBlockState(pos, state.cycle(TRIGGERED), Block.NOTIFY_LISTENERS);
-            world.scheduleBlockTick(pos, this, 4);
+            world.scheduleBlockTick(pos, this, tickRate);
         }
     }
 
@@ -167,11 +167,13 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        boolean powered = state.get(TRIGGERED);
+        boolean powered = isReceivingPower(world, pos);
         if (powered) {
+            world.setBlockState(pos, state.with(TRIGGERED, true));
             dispenseBlockOrItem(world, state, pos);
         }
         else {
+            world.setBlockState(pos, state.with(TRIGGERED, false));
             consumeBlockOrEntity(world, state, pos);
         }
     }
