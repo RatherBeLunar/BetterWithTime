@@ -1,8 +1,106 @@
 {
-  "mech_bang": {
-    "subtitle": "subtitles.bwt.mech_bang",
+  "block.mech.bang": {
+    "subtitle": "bwt.subtitles.block.mech.bang",
     "sounds": [
       "bwt:mechanical/bang"
+    ]
+  },
+  "block.mech.explode": {
+    "subtitle": "bwt.subtitles.block.mech.explode",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  },
+  "block.mech.creak": {
+    "subtitle": "bwt.subtitles.block.mech.creak",
+    "sounds": [
+      "block/chest/open"
+    ]
+  },
+  "block.anchor.retract": {
+    "subtitle": "bwt.subtitles.block.anchor.retract",
+    "sounds": [
+      "random/pop"
+    ]
+  },
+  "block.bellows.compress": {
+    "subtitle": "bwt.subtitles.block.bellows.compress",
+    "sounds": [
+      "block/chest/close3"
+    ]
+  },
+  "block.detector.click": {
+    "subtitle": "bwt.subtitles.block.detector.click",
+    "sounds": [
+      "random/click"
+    ]
+  },
+  "block.gear_box.activate": {
+    "subtitle": "bwt.subtitles.block.gear_box.activate",
+    "sounds": [
+      "block/chest/open"
+    ]
+  },
+  "block.hand_crank.click": {
+    "subtitle": "bwt.subtitles.block.hand_crank.click",
+    "sounds": [
+      "random/click"
+    ]
+  },
+  "block.hibachi.ignite": {
+    "subtitle": "bwt.subtitles.block.hibachi.ignite",
+    "sounds": [
+      "mob/ghast/fireball4"
+    ]
+  },
+  "block.companion_cube.death": {
+    "subtitle": "bwt.subtitles.block.companion_cube.death",
+    "sounds": [
+      "mob/wolf/death"
+    ]
+  },
+  "block.generic.soul_conversion": {
+    "subtitle": "bwt.subtitles.block.generic.soul_conversion",
+    "sounds": [
+      "mob/ghast/moan1",
+      "mob/ghast/moan2",
+      "mob/ghast/moan3",
+      "mob/ghast/moan4",
+      "mob/ghast/moan5",
+      "mob/ghast/moan6",
+      "mob/ghast/moan7"
+    ]
+  },
+  "block.mill_stone.grind": {
+    "subtitle": "bwt.subtitles.block.mill_stone.grind",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  },
+  "block.turntable.setting_click": {
+    "subtitle": "bwt.subtitles.block.turntable.setting_click",
+    "sounds": [
+      "random/click"
+    ]
+  },
+  "block.turntable.turning_click": {
+    "subtitle": "bwt.subtitles.block.turntable.turning_click",
+    "sounds": [
+      "random/click"
+    ]
+  },
+  "entity.wolf.dung.production": {
+    "subtitle": "bwt.subtitles.entity.wolf.dung.production",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  },
+  "entity.wolf.dung.effort": {
+    "subtitle": "bwt.subtitles.entity.wolf.dung.effort",
+    "sounds": [
+      "mob/wolf/growl1",
+      "mob/wolf/growl2",
+      "mob/wolf/growl3"
     ]
   }
 }

@@ -1,8 +1,8 @@
 package com.bwt.blocks.pulley;
 
-import com.bwt.BetterWithTime;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -150,7 +150,7 @@ public class PulleyBlock extends BlockWithEntity implements MechPowerBlockBase {
     }
 
     private void playMechSound(World world, BlockPos pos) {
-        world.playSoundAtBlockCenter(pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
+        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MECH_BANG, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
     }
 
     private void emitParticles(World world, BlockPos pos, Random random) {

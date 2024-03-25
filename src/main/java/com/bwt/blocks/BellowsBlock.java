@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -9,7 +10,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.math.BlockPos;
@@ -91,7 +91,7 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
             return;
         }
         world.setBlockState(pos, state.with(MECH_POWERED, isReceivingMechPower));
-        world.playSound(null, pos, SoundEvents.BLOCK_CHEST_CLOSE, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
+        world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
         if (isReceivingMechPower) {
             stokeFire(world, pos, state);
         }

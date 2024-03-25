@@ -1,7 +1,7 @@
 package com.bwt.mixin;
 
-import com.bwt.BetterWithTime;
 import com.bwt.items.BwtItems;
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.data.DataTracker;
@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -127,8 +126,8 @@ public abstract class WolfEntityMixin {
         );
         itemEntity.setPickupDelay(10);
         world.spawnEntity(itemEntity);
-        world.playSound(wolfThis, wolfThis.getBlockPos(), BetterWithTime.MECH_BANG_SOUND, wolfThis.getSoundCategory(), 0.2f, 1.25f);
-        world.playSound(wolfThis, wolfThis.getBlockPos(), SoundEvents.ENTITY_WOLF_GROWL, wolfThis.getSoundCategory(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        world.playSound(wolfThis, wolfThis.getBlockPos(), BwtSoundEvents.WOLF_DUNG_PRODUCTION, wolfThis.getSoundCategory(), 0.2f, 1.25f);
+        world.playSound(wolfThis, wolfThis.getBlockPos(), BwtSoundEvents.WOLF_DUNG_EFFORT, wolfThis.getSoundCategory(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         
         for (int counter = 0; counter < 5; counter++) {
             double smokeX = wolfThis.getX() + (dungVectorX * 0.5f) + (random.nextDouble() * 0.25F);

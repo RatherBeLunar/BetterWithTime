@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.mixin.VanillaHopperInvoker;
+import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.SimpleSingleStackInventory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -335,7 +336,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
             blockEntity.spawnNewItemOnTop(world, itemEntityPos, new ItemStack(outputItem, count));
             blockEntity.markDirty();
             // Play ghast noise
-            world.playSound(null, blockEntity.pos, SoundEvents.ENTITY_GHAST_AMBIENT, SoundCategory.BLOCKS, 1f, 1.5f);
+            world.playSound(null, blockEntity.pos, BwtSoundEvents.SOUL_CONVERSION, SoundCategory.BLOCKS, 1f, 1.5f);
             return;
         }
 

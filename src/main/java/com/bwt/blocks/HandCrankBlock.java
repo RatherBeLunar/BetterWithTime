@@ -1,7 +1,7 @@
 package com.bwt.blocks;
 
-import com.bwt.BetterWithTime;
 import com.bwt.items.BwtItems;
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.*;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -10,7 +10,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.IntProperty;
@@ -161,14 +160,14 @@ public class HandCrankBlock extends Block {
     }
 
     public void playClick(World world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.BLOCK_LEVER_CLICK, SoundCategory.BLOCKS, 1.0f,  2.0f);
+        world.playSound(null, pos, BwtSoundEvents.HAND_CRANK_CLICK, SoundCategory.BLOCKS, 1.0f,  2.0f);
     }
 
     public void breakWithDrop(World world, BlockPos pos) {
         BlockState airState = Blocks.AIR.getDefaultState();
         world.setBlockState(pos, airState);
         Vec3d centerPos = pos.toCenterPos();
-        world.playSoundAtBlockCenter(pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1, false);
+        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MECH_EXPLODE, SoundCategory.BLOCKS, 0.5f, 1, false);
         for (Item item : new Item[]{Items.STICK, Items.STONE, BwtItems.gearItem}) {
             ItemEntity itemEntity = new ItemEntity(world, centerPos.x, centerPos.y, centerPos.z, item.getDefaultStack());
             itemEntity.setVelocity(world.random.nextDouble() * -0.01 + 0.02, 0.2, world.random.nextDouble() * -0.01 + 0.02);

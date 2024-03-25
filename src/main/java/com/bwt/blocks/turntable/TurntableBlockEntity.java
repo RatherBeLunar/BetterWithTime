@@ -5,6 +5,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.TurntableRecipe;
+import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockPosAndState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -14,7 +15,6 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
@@ -65,7 +65,7 @@ public class TurntableBlockEntity extends BlockEntity {
 
         blockEntity.rotationTickCounter++;
         if (blockEntity.rotationTickCounter >= ticksToRotate[tickSetting]) {
-            world.playSound(null, pos, SoundEvents.BLOCK_DISPENSER_FAIL, SoundCategory.BLOCKS, 0.05f, 1f);
+            world.playSound(null, pos, BwtSoundEvents.TURNTABLE_TURNING_CLICK, SoundCategory.BLOCKS, 0.05f, 1f);
             blockEntity.rotationTickCounter = 0;
             rotateTurnTable(world, pos, state, blockEntity);
         }

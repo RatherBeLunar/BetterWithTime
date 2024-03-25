@@ -18,6 +18,7 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.sounds.BwtSoundEvents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v2.LootTableEvents;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
@@ -42,7 +43,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,9 +60,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtRecipes recipes = new BwtRecipes();
 	public static final BwtDamageTypes damageTypes = new BwtDamageTypes();
 	public static final BwtGameRules gameRules = new BwtGameRules();
-
-	public static final Identifier MECH_BANG = new Identifier("bwt:mech_bang");
-	public static SoundEvent MECH_BANG_SOUND = SoundEvent.of(MECH_BANG);
+	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CrucibleScreenHandler> crucibleScreenHandler = new ScreenHandlerType<>(CrucibleScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -94,7 +92,7 @@ public class BetterWithTime implements ModInitializer {
 		recipes.onInitialize();
 		damageTypes.onInitialize();
 		gameRules.onInitialize();
-		Registry.register(Registries.SOUND_EVENT, MECH_BANG, MECH_BANG_SOUND);
+		soundEvents.onInitialize();
 
 		LootTableEvents.MODIFY.register((resourceManager, lootManager, id, tableBuilder, source) -> {
 			if (source.isBuiltin() && id.equals(WOLF_LOOT_TABLE_ID)) {

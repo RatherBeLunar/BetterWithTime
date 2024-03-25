@@ -1,6 +1,7 @@
 package com.bwt.blocks.detector;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -10,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
@@ -67,7 +67,7 @@ public class DetectorBlock extends Block {
                 world.playSound(
                         null,
                         pos,
-                        SoundEvents.BLOCK_DISPENSER_FAIL,
+                        BwtSoundEvents.DETECTOR_CLICK,
                         SoundCategory.BLOCKS,
                         1.0f,
                         1.2f
@@ -98,7 +98,7 @@ public class DetectorBlock extends Block {
                 world.playSound(
                         null,
                         pos,
-                        SoundEvents.BLOCK_DISPENSER_FAIL,
+                        BwtSoundEvents.DETECTOR_CLICK,
                         SoundCategory.BLOCKS,
                         1.0f,
                         1.2f
@@ -112,7 +112,7 @@ public class DetectorBlock extends Block {
                     world.playSound(
                             null,
                             pos,
-                            SoundEvents.BLOCK_DISPENSER_FAIL,
+                            BwtSoundEvents.DETECTOR_CLICK,
                             SoundCategory.BLOCKS,
                             1.0f,
                             1.2f

@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ConnectingBlock;
@@ -8,7 +9,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.DirectionProperty;
@@ -190,7 +190,7 @@ public class GearBoxBlock extends Block implements MechPowerBlockBase, RotateWit
     }
 
     private void playMechSound(World world, BlockPos pos) {
-        world.playSound(null, pos, SoundEvents.BLOCK_CHEST_OPEN,
+        world.playSound(null, pos, BwtSoundEvents.GEAR_BOX_ACTIVATE,
                 SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
 //        world.addSyncedBlockEvent(pos, this, 0, 0);
 //        world.emitGameEvent(entity, GameEvent.NOTE_BLOCK_PLAY, pos);

@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -54,7 +55,7 @@ public class HibachiBlock extends Block {
         }
         if (lit) {
             if (world.getBlockState(pos.up()).isAir()) {
-                world.playSound(null, pos, SoundEvents.ENTITY_GHAST_SHOOT,
+                world.playSound(null, pos, BwtSoundEvents.HIBACHI_IGNITE,
                         SoundCategory.BLOCKS, 1F, world.random.nextFloat() * 0.4F + 1F);
                 world.setBlockState(pos.up(), Blocks.FIRE.getDefaultState());
             }

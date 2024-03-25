@@ -5,8 +5,8 @@
     "minecraft:structure_block",
     "minecraft:piston_head",
     "minecraft:moving_piston",
+    "minecraft:end_portal",
     "#minecraft:wither_immune",
-    "#minecraft:fire",
-    "#minecraft:portals"
+    "#minecraft:fire"
   ]
 }

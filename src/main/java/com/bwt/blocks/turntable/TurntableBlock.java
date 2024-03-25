@@ -2,6 +2,7 @@ package com.bwt.blocks.turntable;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -15,7 +16,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
@@ -74,7 +74,7 @@ public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBas
             return ActionResult.PASS;
         }
         world.setBlockState(pos, state.with(TICK_SETTING, (state.get(TICK_SETTING) + 1) % 4));
-        world.playSound(null, pos, SoundEvents.BLOCK_DISPENSER_DISPENSE,
+        world.playSound(null, pos, BwtSoundEvents.TURNTABLE_SETTING_CLICK,
                 SoundCategory.BLOCKS, 0.25f, 1);
         return ActionResult.SUCCESS;
     }

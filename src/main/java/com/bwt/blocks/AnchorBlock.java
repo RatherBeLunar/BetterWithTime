@@ -3,6 +3,7 @@ package com.bwt.blocks;
 import com.bwt.blocks.pulley.PulleyBlockEntity;
 import com.bwt.entities.MovingAnchorEntity;
 import com.bwt.items.BwtItems;
+import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -11,7 +12,6 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -122,7 +122,7 @@ public class AnchorBlock extends Block {
         }
         player.getInventory().offerOrDrop(BwtItems.ropeItem.getDefaultStack());
         world.setBlockState(mutablePos, Blocks.AIR.getDefaultState());
-        world.playSound(null, pos, SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, 0.2f, (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 1.4f + 2.0f);
+        world.playSound(null, pos, BwtSoundEvents.ANCHOR_RETRACT, SoundCategory.PLAYERS, 0.2f, (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 1.4f + 2.0f);
 
         return ActionResult.SUCCESS;
     }

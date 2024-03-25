@@ -4,8 +4,12 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.CornerBlock;
 import com.bwt.blocks.MouldingBlock;
 import com.bwt.blocks.SidingBlock;
+import com.bwt.gamerules.BwtGameRules;
+import com.bwt.items.BwtItems;
+import com.bwt.sounds.BwtSoundEvents;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.sound.SoundEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
@@ -19,6 +23,10 @@ public class LangGenerator extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(TranslationBuilder translationBuilder) {
+        addSubtitles(translationBuilder);
+
+        translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
+
         for (SidingBlock sidingBlock : BwtBlocks.sidingBlocks) {
             translationBuilder.add(sidingBlock, nameKeyToTitleCase(sidingBlock.fullBlock.getName().getString().replaceFirst("_planks", "") + "_siding"));
         }
@@ -37,6 +45,10 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.soilPlanterBlock, "Soil Planter");
         translationBuilder.add(BwtBlocks.soulSandPlanterBlock, "Soul Sand Planter");
         translationBuilder.add(BwtBlocks.grassPlanterBlock, "Grass Planter");
+        translationBuilder.add(BwtBlocks.stoneDetectorRailBlock, "Stone Detector Rail");
+        translationBuilder.add(BwtBlocks.obsidianDetectorRailBlock, "Obsidian Detector Rail");
+        translationBuilder.add(BwtItems.screwItem, "Screw");
+        translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");
 
         // Load an existing language file.
         try {
@@ -45,6 +57,29 @@ public class LangGenerator extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    protected void addSubtitles(TranslationBuilder translationBuilder) {
+        addSubtitle(BwtSoundEvents.MECH_BANG, "Mechanical device operates", translationBuilder);
+        addSubtitle(BwtSoundEvents.MECH_EXPLODE, "Mechanical device explodes", translationBuilder);
+        addSubtitle(BwtSoundEvents.MECH_CREAK, "Mechanical device creaks", translationBuilder);
+        addSubtitle(BwtSoundEvents.ANCHOR_RETRACT, "Anchor retracts rope", translationBuilder);
+        addSubtitle(BwtSoundEvents.BELLOWS_COMPRESS, "Bellows compresses", translationBuilder);
+        addSubtitle(BwtSoundEvents.COMPANION_CUBE_DEATH, "Companion cube dies. You monster.", translationBuilder);
+        addSubtitle(BwtSoundEvents.GEAR_BOX_ACTIVATE, "Gear box activates", translationBuilder);
+        addSubtitle(BwtSoundEvents.HAND_CRANK_CLICK, "Hand crank activates", translationBuilder);
+        addSubtitle(BwtSoundEvents.HIBACHI_IGNITE, "Hibachi ignites", translationBuilder);
+        addSubtitle(BwtSoundEvents.DETECTOR_CLICK, "Detector block toggles", translationBuilder);
+        addSubtitle(BwtSoundEvents.SOUL_CONVERSION, "Souls transmogrify", translationBuilder);
+        addSubtitle(BwtSoundEvents.MILL_STONE_GRIND, "Mill stone grinds", translationBuilder);
+        addSubtitle(BwtSoundEvents.TURNTABLE_SETTING_CLICK, "Turntable setting changes", translationBuilder);
+        addSubtitle(BwtSoundEvents.TURNTABLE_TURNING_CLICK, "Turntable rotates", translationBuilder);
+        addSubtitle(BwtSoundEvents.WOLF_DUNG_PRODUCTION, "Wolf produces dung", translationBuilder);
+        addSubtitle(BwtSoundEvents.WOLF_DUNG_EFFORT, "Wolf growls", translationBuilder);
+    }
+
+    protected void addSubtitle(SoundEvent soundEvent, String value, TranslationBuilder translationBuilder) {
+        translationBuilder.add(soundEvent.getId().withPrefixedPath("subtitles."), value);
     }
 
     public static String nameKeyToTitleCase(String snakeString) {

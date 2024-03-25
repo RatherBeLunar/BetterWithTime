@@ -1,8 +1,8 @@
 package com.bwt.blocks.mill_stone;
 
-import com.bwt.BetterWithTime;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -138,7 +138,7 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
     }
 
     private void playMechSound(World world, BlockPos pos) {
-        world.playSoundAtBlockCenter(pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
+        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
     }
 
     private void emitGearBoxParticles(World world, BlockPos pos, Random random) {

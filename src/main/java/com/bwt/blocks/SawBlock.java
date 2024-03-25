@@ -5,6 +5,7 @@ import com.bwt.items.BwtItems;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.SawRecipe;
+import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
 import com.bwt.utils.CustomItemScatterer;
@@ -23,7 +24,6 @@ import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
@@ -269,7 +269,7 @@ public class SawBlock extends Block implements MechPowerBlockBase {
         }
 
         if (blockIngredient.test(BwtBlocks.companionCubeBlock)) {
-            world.playSound(null, pos, SoundEvents.ENTITY_WOLF_DEATH, SoundCategory.BLOCKS, 1, 1);
+            world.playSound(null, pos, BwtSoundEvents.COMPANION_CUBE_DEATH, SoundCategory.BLOCKS, 1, 1);
             if (state.get(FACING).getAxis().isHorizontal()) {
                 results.get(0).setCount(1);
                 world.setBlockState(targetPos, BwtBlocks.companionSlabBlock.getDefaultState());

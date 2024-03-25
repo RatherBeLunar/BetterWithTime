@@ -1,8 +1,11 @@
 package com.bwt.blocks;
 
-import com.bwt.BetterWithTime;
 import com.bwt.items.BwtItems;
-import net.minecraft.block.*;
+import com.bwt.sounds.BwtSoundEvents;
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.PillarBlock;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
@@ -92,7 +95,7 @@ public class AxleBlock extends PillarBlock {
 
     public void breakAxle(World world, BlockPos pos) {
         world.removeBlock(pos, false);
-        world.playSound(null, pos, BetterWithTime.MECH_BANG_SOUND, SoundCategory.BLOCKS, 0.5f, 1);
+        world.playSound(null, pos, BwtSoundEvents.MECH_EXPLODE, SoundCategory.BLOCKS, 0.5f, 1);
         dropStack(world, pos, Items.STICK.getDefaultStack());
         dropStack(world, pos, BwtItems.hempFiberItem.getDefaultStack());
     }
