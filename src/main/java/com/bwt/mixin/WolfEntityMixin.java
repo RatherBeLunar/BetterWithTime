@@ -51,11 +51,12 @@ public abstract class WolfEntityMixin {
         if (!wolfThis.isBaby() && wolfThis.isTamed() && wolfThis.isBreedingItem(itemStack) && !isFed()) {
             if (wolfThis.getWorld().isClient) {
                 cir.setReturnValue(ActionResult.CONSUME);
+                return;
             }
             if (!player.getAbilities().creativeMode) {
                 itemStack.decrement(1);
             }
-            int hunger = Optional.ofNullable(itemStack.getFoodComponent()).orElse(new FoodComponent.Builder().build()).getHunger();
+            int hunger = itemStack.isOf(BwtItems.kibbleItem) ? 2 : Optional.ofNullable(itemStack.getFoodComponent()).orElse(new FoodComponent.Builder().build()).getHunger();
             wolfThis.heal(hunger);
             this.feed(hunger);
             cir.setReturnValue(ActionResult.SUCCESS);
