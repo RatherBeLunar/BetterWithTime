@@ -80,7 +80,7 @@ public class TurntableRecipe implements Recipe<Inventory> {
     }
 
     public DefaultedList<ItemStack> getDrops() {
-        return drops;
+        return DefaultedList.copyOf(ItemStack.EMPTY, drops.stream().map(ItemStack::copy).toList().toArray(new ItemStack[0]));
     }
 
     @Override

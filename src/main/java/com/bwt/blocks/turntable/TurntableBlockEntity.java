@@ -10,7 +10,6 @@ import com.bwt.utils.BlockPosAndState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.fluid.FluidState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
@@ -73,100 +72,161 @@ public class TurntableBlockEntity extends BlockEntity {
 
     protected static void rotateTurnTable(World world, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
         BlockRotation rotation = state.get(TurntableBlock.POWERED) ? BlockRotation.CLOCKWISE_90 : BlockRotation.COUNTERCLOCKWISE_90;
+        List<BlockPosAndState> blocksToRotate = getBlocksToRotate(world, pos);
+        List<BlockPosAndState> attachedBlocksBeingRotated = getAttachedBlocksBeingRotated(world, blocksToRotate);
+        List<BlockPosAndState> attachedBlockDestinations = getAttachedBlockDestinations(world, pos, attachedBlocksBeingRotated, rotation);
+        pickUpAttachedBlocks(world, attachedBlocksBeingRotated, attachedBlockDestinations);
+        rotateCentralColumnBlocks(world, blocksToRotate, blockEntity, rotation);
+        placeRotatedAttachedBlocks(world, attachedBlocksBeingRotated, attachedBlockDestinations, rotation);
+    }
+
+    protected static List<BlockPosAndState> getBlocksToRotate(World world, BlockPos turntablePos) {
+        RecipeManager recipeManager = world.getRecipeManager();
+        List<RecipeEntry<TurntableRecipe>> recipeEntries = recipeManager.listAllOfType(BwtRecipes.TURNTABLE_RECIPE_TYPE);
+
+        List<BlockPosAndState> blocksToRotate = new ArrayList<>();
         for (int j = 1; j <= blocksAboveToRotate; j++) {
-            BlockPos blockAbovePos = pos.up(j);
+            BlockPos blockAbovePos = turntablePos.up(j);
             BlockState blockAboveState = world.getBlockState(blockAbovePos);
-            BlockEntity blockAboveEntity = world.getBlockEntity(blockAbovePos);
-            BlockState rotatedState = blockAboveState;
-
             if (blockAboveState.isAir()) {
-                blockEntity.craftingTurnCounter = 0;
-                return;
+                break;
+            }
+            if (!CanRotateHelper.canRotate(world, blockAbovePos, blockAboveState)) {
+                break;
             }
 
-            if (CanRotateHelper.canRotate(world, blockAbovePos, blockAboveState)) {
-                rotatedState = blockAboveState.getBlock().rotate(blockAboveState, rotation);
-            }
-            rotateAttachedBlocks(world, blockAbovePos, rotatedState, rotation);
-            if (rotatedState != blockAboveState) {
-                RotationProcessHelper.processRotation(world, blockAbovePos, blockAboveState, rotatedState, blockAboveEntity, state);
-            }
+            BlockEntity blockAboveEntity = world.getBlockEntity(blockAbovePos);
+            blocksToRotate.add(new BlockPosAndState(blockAbovePos, blockAboveState, blockAboveEntity));
 
             // Crafting
-            RecipeManager recipeManager = world.getRecipeManager();
-            Optional<TurntableRecipe> recipe = recipeManager.listAllOfType(BwtRecipes.TURNTABLE_RECIPE_TYPE).stream()
+            boolean recipeExistsForBlock = recipeEntries.stream()
                     .map(RecipeEntry::value)
-                    .filter(turntableRecipe -> turntableRecipe.matches(blockAboveState.getBlock()))
-                    .findFirst();
-            if (recipe.isPresent()) {
-                blockEntity.craftingTurnCounter += 1;
-                world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, blockAbovePos, Block.getRawIdFromState(blockAboveState));
-                if (blockEntity.craftingTurnCounter >= turnsToCraft) {
-                    blockEntity.craftingTurnCounter = 0;
-                    world.setBlockState(blockAbovePos, recipe.get().getOutput().getDefaultState());
-                    ItemScatterer.spawn(world, blockAbovePos, recipe.get().getDrops());
-                }
+                    .anyMatch(turntableRecipe -> turntableRecipe.matches(blockAboveState.getBlock()));
+            if (recipeExistsForBlock) {
                 // Don't propagate rotation upward for craftables
                 break;
             }
-            else {
-                blockEntity.craftingTurnCounter = 0;
-            }
-
-
             // The < check here is just a minor optimization, so we don't need to check propagation unnecessarily
-            if (j < blocksAboveToRotate && !VerticalBlockAttachmentHelper.canPropagateRotationUpwards(world, blockAbovePos, blockAboveState)) {
+            if (!VerticalBlockAttachmentHelper.canPropagateRotationUpwards(world, blockAbovePos, blockAboveState)) {
                 break;
+            }
+        }
+        return blocksToRotate;
+    }
+
+    protected static List<BlockPosAndState> getAttachedBlocksBeingRotated(World world, List<BlockPosAndState> blocksToRotate) {
+        ArrayList<BlockPosAndState> attachedBlocks = new ArrayList<>();
+        for (BlockPosAndState centralColumnPosAndState : blocksToRotate) {
+            BlockPos centralColumnPos = centralColumnPosAndState.pos();
+            BlockState centralColumnState = centralColumnPosAndState.state();
+
+            attachedBlocks.addAll(Arrays.stream(Direction.values())
+                    .filter(direction -> direction.getAxis().isHorizontal())
+                    .map(centralColumnPos::offset)
+                    .map(attachedPos -> BlockPosAndState.of(world, attachedPos))
+                    .filter(attachedPosAndState -> HorizontalBlockAttachmentHelper.isAttached(centralColumnPos, centralColumnState, attachedPosAndState.pos(), attachedPosAndState.state()))
+                    .toList());
+        }
+        return attachedBlocks;
+    }
+
+    protected static List<BlockPosAndState> getAttachedBlockDestinations(World world, BlockPos turntablePos, List<BlockPosAndState> attachedBlocksBeingRotated, BlockRotation rotation) {
+        return attachedBlocksBeingRotated.stream().map(attachedPosAndState -> {
+            BlockPos attachedPos = attachedPosAndState.pos();
+            BlockPos centralColumnPos = new BlockPos(turntablePos.getX(), attachedPos.getY(), turntablePos.getZ());
+
+            Vec3i directionVector = attachedPos.subtract(centralColumnPos);
+            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+            BlockPos attachedDestinationPos = centralColumnPos.offset(rotation.equals(BlockRotation.CLOCKWISE_90) ? Objects.requireNonNull(direction).rotateYClockwise() : Objects.requireNonNull(direction).rotateYCounterclockwise());
+            return BlockPosAndState.of(world, attachedDestinationPos);
+        }).toList();
+    }
+
+    protected static void pickUpAttachedBlocks(World world, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations) {
+        HashSet<BlockPos> attachedPositions = attachedBlocksBeingRotated.stream().map(BlockPosAndState::pos).collect(Collectors.toCollection(HashSet::new));
+
+        for (int idx = 0; idx < attachedBlocksBeingRotated.size(); idx++) {
+            BlockPosAndState attachedPosAndState = attachedBlocksBeingRotated.get(idx);
+            BlockPosAndState destination = destinations.get(idx);
+
+            BlockPos attachedPos = attachedPosAndState.pos();
+            BlockEntity attachedBlockEntity = attachedPosAndState.blockEntity();
+
+            if (attachedPositions.contains(destination.pos()) || destination.state().isReplaceable()) {
+                // Pick up block cleanly
+                if (attachedBlockEntity != null) {
+                    world.removeBlockEntity(attachedPos);
+                }
+                world.removeBlock(attachedPos, false);
+            }
+            else {
+                // Break block with drops
+                world.breakBlock(attachedPos, true);
             }
         }
     }
 
-    protected static void rotateAttachedBlocks(World world, BlockPos blockAbovePos, BlockState blockAboveState, BlockRotation rotation) {
-        List<BlockPosAndState> attachedBlocks = Arrays.stream(Direction.values())
-                .filter(direction -> direction.getAxis().isHorizontal())
-                .map(blockAbovePos::offset)
-                .map(attachedPos -> BlockPosAndState.of(world, attachedPos))
-                .filter(attachedPosAndState -> HorizontalBlockAttachmentHelper.isAttached(blockAbovePos, blockAboveState, attachedPosAndState.pos(), attachedPosAndState.state()))
-                .toList();
-        HashSet<BlockPos> attachedPositions = attachedBlocks.stream().map(BlockPosAndState::pos).collect(Collectors.toCollection(HashSet::new));
-        HashSet<BlockPosAndState> destinationStates = new HashSet<>();
-        HashSet<BlockPos> destinationPositions = new HashSet<>();
+    protected static void rotateCentralColumnBlocks(World world, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, BlockRotation rotation) {
+        RecipeManager recipeManager = world.getRecipeManager();
+        List<RecipeEntry<TurntableRecipe>> recipeEntries = recipeManager.listAllOfType(BwtRecipes.TURNTABLE_RECIPE_TYPE);
+        boolean recipeFound = false;
 
-        for (BlockPosAndState attachedPosAndState : attachedBlocks) {
+        for (BlockPosAndState blockToRotate : blocksToRotate) {
+            BlockPos blockToRotatePos = blockToRotate.pos();
+            BlockState blockToRotateState = blockToRotate.state();
+            BlockEntity blockToRotateEntity = blockToRotate.blockEntity();
+
+            BlockState rotatedState = blockToRotateState.getBlock().rotate(blockToRotateState, rotation);
+            RotationProcessHelper.processRotation(world, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
+
+            // Crafting
+            Optional<TurntableRecipe> recipe = recipeEntries.stream()
+                    .map(RecipeEntry::value)
+                    .filter(turntableRecipe -> turntableRecipe.matches(blockToRotateState.getBlock()))
+                    .findFirst();
+            if (recipe.isPresent()) {
+                recipeFound = true;
+                blockEntity.craftingTurnCounter += 1;
+                world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, blockToRotatePos, Block.getRawIdFromState(blockToRotateState));
+                if (blockEntity.craftingTurnCounter >= TurntableBlockEntity.turnsToCraft) {
+                    blockEntity.craftingTurnCounter = 0;
+                    world.setBlockState(blockToRotatePos, recipe.get().getOutput().getDefaultState());
+                    ItemScatterer.spawn(world, blockToRotatePos, recipe.get().getDrops());
+                }
+            }
+        }
+
+        if (!recipeFound) {
+            blockEntity.craftingTurnCounter = 0;
+        }
+    }
+
+    protected static void placeRotatedAttachedBlocks(World world, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations, BlockRotation rotation) {
+        HashSet<BlockPos> attachedPositions = attachedBlocksBeingRotated.stream().map(BlockPosAndState::pos).collect(Collectors.toCollection(HashSet::new));
+
+        for (int idx = 0; idx < attachedBlocksBeingRotated.size(); idx++) {
+            BlockPosAndState attachedPosAndState = attachedBlocksBeingRotated.get(idx);
+            BlockPosAndState destination = destinations.get(idx);
+
             BlockPos attachedPos = attachedPosAndState.pos();
             BlockState attachedState = attachedPosAndState.state();
             BlockEntity attachedBlockEntity = attachedPosAndState.blockEntity();
 
-            Vec3i directionVector = attachedPos.subtract(blockAbovePos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            BlockPos attachedDestinationPos = blockAbovePos.offset(rotation.equals(BlockRotation.CLOCKWISE_90) ? Objects.requireNonNull(direction).rotateYClockwise() : Objects.requireNonNull(direction).rotateYCounterclockwise());
-            if (attachedPositions.contains(attachedDestinationPos) || world.getBlockState(attachedDestinationPos).isReplaceable()) {
+            if (attachedPositions.contains(destination.pos()) || destination.state().isReplaceable()) {
                 BlockState attachedStateRotated = attachedState.rotate(rotation);
+                world.setBlockState(destination.pos(), attachedStateRotated);
+                attachedStateRotated.getBlock().onPlaced(world, destination.pos(), attachedStateRotated, null, attachedStateRotated.getBlock().getPickStack(world, destination.pos(), attachedStateRotated));
                 if (attachedBlockEntity != null) {
-                    world.removeBlockEntity(attachedPos);
+                    ((MovableBlockEntityMixin) attachedBlockEntity).setPos(destination.pos());
+                    attachedBlockEntity.setCachedState(attachedStateRotated);
+                    attachedBlockEntity.markDirty();
+                    world.addBlockEntity(attachedBlockEntity);
                 }
-                destinationStates.add(new BlockPosAndState(attachedDestinationPos, attachedStateRotated, attachedBlockEntity));
-                destinationPositions.add(attachedDestinationPos);
             }
             else {
+                // Break block with drops
                 world.breakBlock(attachedPos, true);
             }
         }
-        for (BlockPosAndState blockPosAndState : destinationStates) {
-            world.setBlockState(blockPosAndState.pos(), blockPosAndState.state());
-            BlockEntity blockEntity = blockPosAndState.blockEntity();
-            if (blockEntity != null) {
-                ((MovableBlockEntityMixin) blockEntity).setPos(blockPosAndState.pos());
-                blockEntity.setCachedState(blockPosAndState.state());
-                blockEntity.markDirty();
-                world.addBlockEntity(blockEntity);
-            }
-        }
-        // Turn the source positions set into a set of positions that weren't just replaced
-        attachedPositions.removeAll(destinationPositions);
-        attachedPositions.forEach(attachedPosition -> {
-            FluidState fluidState = world.getFluidState(attachedPosition);
-            world.setBlockState(attachedPosition, fluidState.getBlockState());
-        });
     }
 }
