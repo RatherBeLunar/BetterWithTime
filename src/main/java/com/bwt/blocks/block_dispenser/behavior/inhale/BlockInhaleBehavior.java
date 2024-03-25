@@ -7,8 +7,11 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.BlockSoundGroup;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.event.GameEvent;
 
 public interface BlockInhaleBehavior {
     BlockInhaleBehavior NOOP = new BlockInhaleBehavior() {
@@ -26,8 +29,24 @@ public interface BlockInhaleBehavior {
 
     void inhale(BlockPointer blockPointer);
 
+    default void breakBlockNoItems(ServerWorld world, BlockState state, BlockPos pos) {
+        if (state.isAir()) {
+            return;
+        }
+        world.removeBlock(pos, false);
+        world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(null, state));
+        BlockSoundGroup soundGroup = state.getSoundGroup();
+        world.playSound(null, pos, soundGroup.getBreakSound(), SoundCategory.BLOCKS, (soundGroup.getVolume() + 1.0f) / 2.0f, soundGroup.getPitch() * 0.8f);
+    }
+
     default void breakBlockNoItems(ServerWorld world, BlockPos pos) {
-        world.breakBlock(pos, false);
+        breakBlockNoItems(world, world.getBlockState(pos), pos);
+    }
+
+    default void breakBlockNoItems(BlockPointer blockPointer) {
+        BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
+        BlockState facingState = blockPointer.world().getBlockState(facingPos);
+        breakBlockNoItems(blockPointer.world(), facingState, facingPos);
     }
 
     static void registerBehaviors() {

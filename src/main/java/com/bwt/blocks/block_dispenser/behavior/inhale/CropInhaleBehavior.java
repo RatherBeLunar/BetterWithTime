@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.util.math.BlockPointer;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
@@ -45,15 +46,16 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
 
     @Override
     public void inhale(BlockPointer blockPointer) {
-        BlockState state = blockPointer.world().getBlockState(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
-        if (!(state.getBlock() instanceof CropBlock cropBlock)) {
+        BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
+        BlockState facingState = blockPointer.world().getBlockState(facingPos);
+        if (!(facingState.getBlock() instanceof CropBlock cropBlock)) {
             return;
         }
-        int age = cropBlock.getAge(state);
+        int age = cropBlock.getAge(facingState);
         int maxAge = cropBlock.getMaxAge();
         if (age < maxAge) {
             return;
         }
-        breakBlockNoItems(blockPointer.world(), blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
+        breakBlockNoItems(blockPointer.world(), facingState, facingPos);
     }
 }

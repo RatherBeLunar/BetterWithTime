@@ -12,6 +12,6 @@ public class VoidInhaleBehavior implements BlockInhaleBehavior {
 
     @Override
     public void inhale(BlockPointer blockPointer) {
-        breakBlockNoItems(blockPointer.world(), blockPointer.pos());
+        breakBlockNoItems(blockPointer);
     }
 }

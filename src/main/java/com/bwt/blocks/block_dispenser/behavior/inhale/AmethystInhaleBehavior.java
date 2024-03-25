@@ -9,6 +9,7 @@ import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.util.math.BlockPointer;
+import net.minecraft.util.math.BlockPos;
 
 import java.util.List;
 
@@ -40,10 +41,11 @@ public class AmethystInhaleBehavior implements BlockInhaleBehavior {
 
     @Override
     public void inhale(BlockPointer blockPointer) {
-        BlockState state = blockPointer.world().getBlockState(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
-        if (!(state.isOf(Blocks.AMETHYST_CLUSTER))) {
+        BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
+        BlockState facingState = blockPointer.world().getBlockState(facingPos);
+        if (!(facingState.isOf(Blocks.AMETHYST_CLUSTER))) {
             return;
         }
-        breakBlockNoItems(blockPointer.world(), blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
+        breakBlockNoItems(blockPointer.world(), facingState, facingPos);
     }
 }
