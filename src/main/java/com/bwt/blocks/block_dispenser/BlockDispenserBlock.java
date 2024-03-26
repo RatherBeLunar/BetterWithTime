@@ -278,8 +278,12 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     protected <T extends Entity> void inhaleEntity(BlockDispenserBlockEntity blockEntity, T entity) {
         EntityInhaleBehavior entityInhaleBehavior = ENTITY_INHALE_BEHAVIORS.get(entity.getType());
+        ItemStack inhaledItems = entityInhaleBehavior.getInhaledItems(entity).copy();
+        if (!blockEntity.hasRoomFor(inhaledItems)) {
+            return;
+        }
         entityInhaleBehavior.inhale(entity);
-        blockEntity.insert(entityInhaleBehavior.getInhaledItems(entity).copy());
+        blockEntity.insert(inhaledItems);
         entityInhaleBehavior.getDroppedItems(entity).forEach(entity::dropStack);
     }
 
