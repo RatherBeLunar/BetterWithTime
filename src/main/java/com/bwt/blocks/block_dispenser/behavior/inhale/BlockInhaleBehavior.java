@@ -55,6 +55,7 @@ public interface BlockInhaleBehavior {
         BlockDispenserBlock.registerBlockInhaleBehavior(NetherPortalBlock.class, new VoidInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(DoorBlock.class, new DoubleTallBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(TallPlantBlock.class, new DoubleTallBlockInhaleBehavior());
+        BlockDispenserBlock.registerBlockInhaleBehavior(BedBlock.class, new BedBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(BlockDispenserBlock.class, new BlockInhaleBehavior() {
             @Override
             public ItemStack getInhaledItems(BlockPointer blockPointer) {
