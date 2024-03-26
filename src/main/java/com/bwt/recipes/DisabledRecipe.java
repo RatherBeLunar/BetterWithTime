@@ -15,6 +15,9 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public record DisabledRecipe(String group) implements Recipe<Inventory> {
+    public DisabledRecipe() {
+        this("");
+    }
 
     @Override
     public ItemStack createIcon() {

@@ -13,7 +13,10 @@ import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.item.ItemConvertible;
+import net.minecraft.item.Items;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.jetbrains.annotations.Nullable;
@@ -37,11 +40,16 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {/* this is not called */}
 
     public void disableRecipes(RecipeExporter exporter) {
-        disableVanilla("bone_meal", exporter);
+        disableVanilla(Items.BONE_MEAL, exporter);
+        disableVanilla(Items.BREAD, exporter);
     }
 
     public void disableVanilla(String recipeId, RecipeExporter exporter) {
-        exporter.accept(new Identifier(recipeId), new DisabledRecipe(""),null);
+        exporter.accept(new Identifier(recipeId), new DisabledRecipe(),null);
+    }
+
+    public void disableVanilla(ItemConvertible itemConvertible, RecipeExporter exporter) {
+        disableVanilla(Registries.ITEM.getId(itemConvertible.asItem()).getPath(), exporter);
     }
 
     @Override
