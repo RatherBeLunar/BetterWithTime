@@ -8,6 +8,7 @@ import net.minecraft.block.ShapeContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
@@ -104,9 +105,9 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
                 BlockPos firePos = center.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z);
                 BlockPos hibachiPos = firePos.down();
                 BlockState fireState = world.getBlockState(firePos);
-//                if (!fireState.isIn(BlockTags.FIRE)) {
-//                    continue;
-//                }
+                if (!fireState.isIn(BlockTags.FIRE)) {
+                    continue;
+                }
                 BlockState hibachiState = world.getBlockState(hibachiPos);
                 if (!hibachiState.isOf(BwtBlocks.hibachiBlock)) {
                     continue;
