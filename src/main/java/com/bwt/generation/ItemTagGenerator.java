@@ -28,6 +28,12 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         copy(BwtBlockTags.CORNER_BLOCKS, BwtItemTags.CORNER_BLOCKS);
 
         getOrCreateTagBuilder(ItemTags.ARROWS).add(BwtItems.broadheadArrowItem, BwtItems.rottedArrowItem);
+        getOrCreateTagBuilder(ItemTags.RAILS).add(BwtBlocks.stoneDetectorRailBlock.asItem(), BwtBlocks.obsidianDetectorRailBlock.asItem());
+        getOrCreateTagBuilder(ItemTags.SLABS).add(BwtBlocks.companionSlabBlock.asItem());
+
+        getOrCreateTagBuilder(ItemTags.DIRT).add(BwtBlocks.soilPlanterBlock.asItem(), BwtBlocks.grassPlanterBlock.asItem());
+        getOrCreateTagBuilder(ItemTags.SOUL_FIRE_BASE_BLOCKS).add(BwtBlocks.soulSandPlanterBlock.asItem());
+        getOrCreateTagBuilder(ItemTags.WOOL).add(BwtBlocks.companionCubeBlock.asItem(), BwtBlocks.companionSlabBlock.asItem());
 
         addHopperFilters();
     }
