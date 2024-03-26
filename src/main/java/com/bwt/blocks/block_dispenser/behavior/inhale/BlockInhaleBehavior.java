@@ -51,6 +51,7 @@ public interface BlockInhaleBehavior {
 
     static void registerBehaviors() {
         BlockDispenserBlock.registerBlockInhaleBehavior(CropBlock.class, new CropInhaleBehavior());
+        BlockDispenserBlock.registerBlockInhaleBehavior(CocoaBlock.class, new CocoaBeanInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(AmethystClusterBlock.class, new AmethystInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(NetherPortalBlock.class, new VoidInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(DoorBlock.class, new DoubleTallBlockInhaleBehavior());
