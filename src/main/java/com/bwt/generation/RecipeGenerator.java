@@ -1,9 +1,15 @@
 package com.bwt.generation;
 
+import com.bwt.items.BwtItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.DataWriter;
+import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.book.RecipeCategory;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -44,6 +50,9 @@ public class RecipeGenerator extends FabricRecipeProvider {
         sawRecipeGenerator.generate(exporter);
         turntableRecipeGenerator.generate(exporter);
         kilnRecipeGenerator.generate(exporter);
+
+        // Can't justify its own category yet
+        CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(BwtItems.flourItem), RecipeCategory.FOOD, Items.BREAD, 0.35f, 200).criterion(RecipeProvider.hasItem(BwtItems.flourItem), RecipeProvider.conditionsFromItem(BwtItems.flourItem)).offerTo(exporter);
     }
 
     @Override
