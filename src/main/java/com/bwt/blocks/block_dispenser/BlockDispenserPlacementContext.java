@@ -47,6 +47,13 @@ public class BlockDispenserPlacementContext
         return facing.getOpposite();
     }
 
+    public Direction getVerticalPlayerLookDirection() {
+        return switch (this.facing.getAxis()) {
+            case X, Z -> Direction.DOWN;
+            case Y -> facing;
+        };
+    }
+
     @Override
     public Direction[] getPlacementDirections() {
         return switch (this.facing) {
