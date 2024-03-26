@@ -1,11 +1,8 @@
 package com.bwt.blocks.block_dispenser.behavior.dispense;
 
-import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.block_dispenser.BlockDispenserPlacementContext;
 import com.mojang.logging.LogUtils;
 import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.DoorBlock;
-import net.minecraft.block.TallPlantBlock;
 import net.minecraft.block.dispenser.BlockPlacementDispenserBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -20,10 +17,10 @@ public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
 
     public static BlockDispenserBehavior DEFAULT = new BlockDispenserBehavior();
 
-    boolean checkPlacement;
-    public BlockDispenserBehavior(boolean checkPlacement) {
+    boolean dropIfPlacementFails;
+    public BlockDispenserBehavior(boolean dropIfPlacementFails) {
         super();
-        this.checkPlacement = checkPlacement;
+        this.dropIfPlacementFails = dropIfPlacementFails;
     }
 
     public BlockDispenserBehavior() {
@@ -42,16 +39,11 @@ public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
 
             try {
                 BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, placementStack, direction);
-                if (checkPlacement) {
-                    if (blockItem.getBlock().canPlaceAt(blockItem.getBlock().getDefaultState(), pointer.world(), blockPos)) {
-                        setSuccess(blockItem.place(context).isAccepted());
-                    } else {
-                        new DefaultItemDispenserBehavior().dispenseSilently(pointer, returnStack);
-                        setSuccess(true);
-                    }
-                }
-                else {
-                    setSuccess(blockItem.place(context).isAccepted());
+                boolean accepted = blockItem.place(context).isAccepted();
+                setSuccess(accepted);
+                if (!accepted && dropIfPlacementFails) {
+                    new DefaultItemDispenserBehavior().dispenseSilently(pointer, returnStack);
+                    setSuccess(true);
                 }
             } catch (Exception exception) {
                 LOGGER.error("Error trying to place block at {}", blockPos, exception);
@@ -66,7 +58,5 @@ public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
     }
 
     public static void registerBehaviors() {
-        BlockDispenserBlock.registerBlockDispenseBehavior(DoorBlock.class, new BlockDispenserBehavior(true));
-        BlockDispenserBlock.registerBlockDispenseBehavior(TallPlantBlock.class, new BlockDispenserBehavior(true));
     }
 }
