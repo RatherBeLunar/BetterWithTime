@@ -351,6 +351,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(stoneDetectorRailBlock);
             content.add(obsidianDetectorRailBlock);
             content.add(sawBlock);
+            content.add(hopperBlock);
             content.add(pulleyBlock);
             content.add(anchorBlock);
             content.add(platformBlock);

@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class CauldronScreen extends HandledScreen<CauldronScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/cauldron.png");
 
-    static final int fireIconHeight = 12;
+    static final int fireIconHeight = 14;
 
     public CauldronScreen(CauldronScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -37,8 +37,8 @@ public class CauldronScreen extends HandledScreen<CauldronScreenHandler> {
             int scaledIconHeight = Math.round(fireIconHeight * cookProgress);
             context.drawTexture(
                 TEXTURE,
-                x + 81,
-                y + 19 + fireIconHeight - scaledIconHeight,
+                x + 80,
+                y + 18 + fireIconHeight - scaledIconHeight,
                 176,
                 fireIconHeight - scaledIconHeight,
                 14,

@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class MechHopperScreen extends HandledScreen<MechHopperScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/hopper.png");
 
-    static final int gearIconHeight = 12;
+    static final int gearIconHeight = 14;
 
     public MechHopperScreen(MechHopperScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);

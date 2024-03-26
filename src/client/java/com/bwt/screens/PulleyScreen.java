@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class PulleyScreen extends HandledScreen<PulleyScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/pulley.png");
 
-    static final int gearIconHeight = 12;
+    static final int gearIconHeight = 14;
 
     public PulleyScreen(PulleyScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);

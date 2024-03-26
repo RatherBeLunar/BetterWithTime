@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class CrucibleScreen extends HandledScreen<CrucibleScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/crucible.png");
 
-    static final int fireIconHeight = 12;
+    static final int fireIconHeight = 14;
 
     public CrucibleScreen(CrucibleScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -37,8 +37,8 @@ public class CrucibleScreen extends HandledScreen<CrucibleScreenHandler> {
             int scaledIconHeight = Math.round(fireIconHeight * cookProgress);
             context.drawTexture(
                 TEXTURE,
-                x + 81,
-                y + 19 + fireIconHeight - scaledIconHeight,
+                x + 80,
+                y + 18 + fireIconHeight - scaledIconHeight,
                 176,
                 fireIconHeight - scaledIconHeight,
                 14,

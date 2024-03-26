@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 public class MillStoneScreen extends HandledScreen<MillStoneScreenHandler> {
     private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/mill_stone.png");
 
-    static final int gearIconHeight = 12;
+    static final int gearIconHeight = 14;
 
     public MillStoneScreen(MillStoneScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
