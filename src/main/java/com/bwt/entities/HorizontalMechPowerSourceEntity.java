@@ -247,6 +247,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         BlockPos pos = getBlockPos();
         BlockState hostBlockState = world.getBlockState(pos);
         if (!powered && hostBlockState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+            world.removeBlock(pos, false);
             world.setBlockState(pos, BwtBlocks.axleBlock.getDefaultState()
                     .with(AxleBlock.AXIS, hostBlockState.get(AxleBlock.AXIS)));
         }
