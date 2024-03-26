@@ -1,8 +1,6 @@
 package com.bwt.blocks.block_dispenser;
 
-import com.bwt.blocks.block_dispenser.behavior.dispense.BlockDispenserBehavior;
-import com.bwt.blocks.block_dispenser.behavior.dispense.DefaultItemDispenserBehavior;
-import com.bwt.blocks.block_dispenser.behavior.dispense.ItemClumpDispenserBehavior;
+import com.bwt.blocks.block_dispenser.behavior.dispense.*;
 import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
 import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
 import com.bwt.recipes.BlockDispenserClumpRecipe;
@@ -62,13 +60,15 @@ public class BlockDispenserBlock extends DispenserBlock {
     public void registerItemDispenseBehaviors() {
         inheritItemBehavior(
                 Items.ARMOR_STAND,
-                Items.MINECART,
-                Items.CHEST_MINECART,
-                Items.COMMAND_BLOCK_MINECART,
-                Items.COMMAND_BLOCK_MINECART,
-                Items.FURNACE_MINECART,
-                Items.HOPPER_MINECART,
-                Items.TNT_MINECART,
+
+                Items.ARROW,
+                Items.SPECTRAL_ARROW,
+                Items.TIPPED_ARROW,
+                Items.EGG
+        );
+
+        BoatDispenserBehavior boatDispenserBehavior = new BoatDispenserBehavior();
+        for (Item item : new Item[]{
                 Items.OAK_BOAT,
                 Items.SPRUCE_BOAT,
                 Items.BIRCH_BOAT,
@@ -87,7 +87,24 @@ public class BlockDispenserBlock extends DispenserBlock {
                 Items.CHERRY_CHEST_BOAT,
                 Items.MANGROVE_CHEST_BOAT,
                 Items.BAMBOO_CHEST_RAFT
-        );
+        }) {
+            BoatItem boat = (BoatItem) item;
+            ITEM_BEHAVIORS.put(boat, boatDispenserBehavior);
+        }
+
+        MinecartDispenserBehavior minecartDispenserBehavior = new MinecartDispenserBehavior();
+        for (Item item : new Item[]{
+                Items.MINECART,
+                Items.CHEST_MINECART,
+                Items.COMMAND_BLOCK_MINECART,
+                Items.COMMAND_BLOCK_MINECART,
+                Items.FURNACE_MINECART,
+                Items.HOPPER_MINECART,
+                Items.TNT_MINECART
+        }) {
+            MinecartItem minecart = (MinecartItem) item;
+            ITEM_BEHAVIORS.put(minecart, minecartDispenserBehavior);
+        }
     }
 
     public static void registerEntityInhaleBehavior(EntityType<?> entityType, EntityInhaleBehavior behavior) {

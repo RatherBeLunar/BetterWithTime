@@ -3,9 +3,11 @@
   "package": "com.bwt.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "BoatItemAccessorMixin",
     "DetectorRailMixin",
     "DyeItemAccessorMixin",
     "ExampleMixin",
+    "MinecartItemAccessorMixin",
     "MovableBlockEntityMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
