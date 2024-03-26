@@ -3,6 +3,7 @@ package com.bwt.blocks.turntable;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.Attachment;
 import net.minecraft.block.enums.BlockFace;
+import net.minecraft.block.enums.ChestType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -48,5 +49,6 @@ public interface CanRotateHelper {
         register(WallMountedBlock.class, (world, pos, state) -> state.get(WallMountedBlock.FACE).equals(BlockFace.FLOOR));
         register(BellBlock.class, (world, pos, state) -> state.get(BellBlock.ATTACHMENT).equals(Attachment.FLOOR));
         register(BedBlock.class, CanRotatePredicate.FALSE);
+        register(ChestBlock.class, (world, pos, state) -> state.get(ChestBlock.CHEST_TYPE).equals(ChestType.SINGLE));
     }
 }

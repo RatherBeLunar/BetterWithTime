@@ -150,6 +150,7 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockPosAndState destination = destinations.get(idx);
 
             BlockPos attachedPos = attachedPosAndState.pos();
+            BlockState attachedState = attachedPosAndState.state();
             BlockEntity attachedBlockEntity = attachedPosAndState.blockEntity();
 
             if (attachedPositions.contains(destination.pos()) || destination.state().isReplaceable()) {
@@ -158,6 +159,7 @@ public class TurntableBlockEntity extends BlockEntity {
                     world.removeBlockEntity(attachedPos);
                 }
                 world.removeBlock(attachedPos, false);
+                world.updateComparators(attachedPos, attachedState.getBlock());
             }
             else {
                 // Break block with drops

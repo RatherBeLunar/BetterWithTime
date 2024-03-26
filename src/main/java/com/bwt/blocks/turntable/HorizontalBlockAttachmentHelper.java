@@ -59,7 +59,15 @@ public interface HorizontalBlockAttachmentHelper {
         IsAttachedPredicate connectingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
             Vec3i directionVector = thisPos.subtract(attachedToPos);
             Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return thisState.get(ConnectingBlock.FACING_PROPERTIES.get(direction));
+            return thisState.get(ConnectingBlock.FACING_PROPERTIES.get(Objects.requireNonNull(direction).getOpposite()));
+        };
+        IsAttachedPredicate bellPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
+            Vec3i directionVector = thisPos.subtract(attachedToPos);
+            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+            return switch (thisState.get(BellBlock.ATTACHMENT)) {
+                case FLOOR, CEILING -> false;
+                case SINGLE_WALL, DOUBLE_WALL -> thisState.get(BellBlock.FACING).getOpposite().equals(direction);
+            };
         };
 
         register(WallTorchBlock.class, horizontalFacingBlockPredicate);
@@ -68,8 +76,11 @@ public interface HorizontalBlockAttachmentHelper {
         register(DeadCoralWallFanBlock.class, horizontalFacingBlockPredicate);
         register(WallBannerBlock.class, horizontalFacingBlockPredicate);
         register(TripwireHookBlock.class, horizontalFacingBlockPredicate);
+        register(LadderBlock.class, horizontalFacingBlockPredicate);
         register(VineBlock.class, connectingBlockPredicate);
+        register(GlowLichenBlock.class, connectingBlockPredicate);
         register(AmethystClusterBlock.class, facingBlockPredicate);
+        register(BellBlock.class, bellPredicate);
         register(WallHangingSignBlock.class, wallHangingSignPredicate);
         register(WallMountedBlock.class, wallMountedBlockPredicate);
     }
