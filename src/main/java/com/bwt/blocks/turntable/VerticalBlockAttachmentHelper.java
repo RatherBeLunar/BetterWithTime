@@ -35,6 +35,8 @@ public interface VerticalBlockAttachmentHelper {
 
     static void registerDefaults() {
         register(AirBlock.class, CanPropagatePredicate.FALSE);
+        register(SoulSandBlock.class, CanPropagatePredicate.TRUE);
+        register(MudBlock.class, CanPropagatePredicate.TRUE);
         register(SidingBlock.class, (world, pos, state) -> SidingBlock.isHorizontal(state));
         register(MouldingBlock.class, (world, pos, state) -> MouldingBlock.isVertical(state));
         register(AnchorBlock.class, (world, pos, state) -> AnchorBlock.isHorizontal(state));
