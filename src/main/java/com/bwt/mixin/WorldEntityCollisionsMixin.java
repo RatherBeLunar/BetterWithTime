@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BlockItem.class)
 public abstract class WorldEntityCollisionsMixin {
-    @Inject(method = "canPlace", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "canPlace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;canPlace(Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Z"), cancellable = true)
     public void canPlace(ItemPlacementContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
         if (context instanceof BlockDispenserPlacementContext) {
             cir.setReturnValue(true);
