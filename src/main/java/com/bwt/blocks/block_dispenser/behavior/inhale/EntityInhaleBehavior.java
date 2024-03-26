@@ -2,9 +2,14 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
+import com.bwt.mixin.ArmorStandAccessorMixin;
 import com.bwt.utils.DyeUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.decoration.GlowItemFrameEntity;
+import net.minecraft.entity.decoration.ItemFrameEntity;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.SheepEntity;
 import net.minecraft.entity.passive.WolfEntity;
@@ -169,5 +174,106 @@ public interface EntityInhaleBehavior {
             }
         };
         Stream.of(EntityType.BOAT, EntityType.CHEST_BOAT).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
+
+        BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ARMOR_STAND, new EntityInhaleBehavior() {
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof ArmorStandEntity armorStand)) {
+                    return;
+                }
+                armorStand.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+
+            @Override
+            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof ArmorStandEntity armorStand)) {
+                    return DefaultedList.of();
+                }
+                DefaultedList<ItemStack> heldItems = ((ArmorStandAccessorMixin) armorStand).getHeldItems();
+                DefaultedList<ItemStack> armorItems = ((ArmorStandAccessorMixin) armorStand).getArmorItems();
+                DefaultedList<ItemStack> returnItems = DefaultedList.of();
+                returnItems.addAll(heldItems);
+                returnItems.addAll(armorItems);
+                return returnItems;
+            }
+        });
+
+        BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ITEM_FRAME, new EntityInhaleBehavior() {
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof ItemFrameEntity itemFrame)) {
+                    return;
+                }
+                itemFrame.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+
+            @Override
+            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof ItemFrameEntity itemFrame)) {
+                    return DefaultedList.of();
+                }
+                DefaultedList<ItemStack> returnItems = DefaultedList.of();
+                returnItems.add(itemFrame.getHeldItemStack());
+                return returnItems;
+            }
+        });
+
+        BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.GLOW_ITEM_FRAME, new EntityInhaleBehavior() {
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof GlowItemFrameEntity itemFrame)) {
+                    return;
+                }
+                itemFrame.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+
+            @Override
+            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof GlowItemFrameEntity itemFrame)) {
+                    return DefaultedList.of();
+                }
+                DefaultedList<ItemStack> returnItems = DefaultedList.of();
+                returnItems.add(itemFrame.getHeldItemStack());
+                return returnItems;
+            }
+        });
+
+        BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.PAINTING, new EntityInhaleBehavior() {
+            @Override
+            public void inhale(Entity entity) {
+                if (!(entity instanceof PaintingEntity painting)) {
+                    return;
+                }
+                painting.kill();
+            }
+
+            @Override
+            public ItemStack getInhaledItems(Entity entity) {
+                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.setCustomName(entity.getCustomName());
+                return itemStack;
+            }
+        });
     }
 }

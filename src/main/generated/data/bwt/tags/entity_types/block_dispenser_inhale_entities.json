@@ -11,6 +11,9 @@
     "minecraft:spawner_minecart",
     "minecraft:tnt_minecart",
     "minecraft:boat",
-    "minecraft:chest_boat"
+    "minecraft:chest_boat",
+    "minecraft:armor_stand",
+    "minecraft:item_frame",
+    "minecraft:glow_item_frame"
   ]
 }

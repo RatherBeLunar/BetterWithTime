@@ -3,6 +3,7 @@
   "package": "com.bwt.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "ArmorStandAccessorMixin",
     "BoatItemAccessorMixin",
     "DetectorRailMixin",
     "DyeItemAccessorMixin",

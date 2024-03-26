@@ -26,6 +26,9 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
                 .add(EntityType.SPAWNER_MINECART)
                 .add(EntityType.TNT_MINECART)
                 .add(EntityType.BOAT)
-                .add(EntityType.CHEST_BOAT);
+                .add(EntityType.CHEST_BOAT)
+                .add(EntityType.ARMOR_STAND)
+                .add(EntityType.ITEM_FRAME)
+                .add(EntityType.GLOW_ITEM_FRAME);
     }
 }
