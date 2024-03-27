@@ -1,4 +1,4 @@
-package com.bwt.recipes.soul_forge;
+package com.bwt.recipes;
 
 import com.bwt.mixin.ShapedRecipeJsonBuilderAccessorMixin;
 import net.minecraft.advancement.Advancement;
@@ -10,6 +10,7 @@ import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
+import net.minecraft.recipe.RawShapedRecipe;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.util.Identifier;
 
@@ -28,18 +29,18 @@ public class SoulForgeShapedRecipeJsonBuilder extends ShapedRecipeJsonBuilder {
         return new SoulForgeShapedRecipeJsonBuilder(category, output, count);
     }
 
-    private SoulForgeRawShapedRecipe validate(Identifier recipeId) {
+    private RawShapedRecipe validate(Identifier recipeId) {
         ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
         if (accessor.getCriteria().isEmpty()) {
             throw new IllegalStateException("No way of obtaining recipe " + recipeId);
         }
-        return SoulForgeRawShapedRecipe.create(accessor.getInputs(), accessor.getPattern());
+        return RawShapedRecipe.create(accessor.getInputs(), accessor.getPattern());
     }
 
     @Override
     public void offerTo(RecipeExporter exporter, Identifier recipeId) {
         ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
-        SoulForgeRawShapedRecipe rawShapedRecipe = validate(recipeId);
+        RawShapedRecipe rawShapedRecipe = validate(recipeId);
         Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         accessor.getCriteria().forEach(builder::criterion);
         SoulForgeShapedRecipe shapedRecipe = new SoulForgeShapedRecipe(Objects.requireNonNullElse(accessor.getGroup(), ""), CraftingRecipeJsonBuilder.toCraftingCategory(accessor.getCategory()), rawShapedRecipe, new ItemStack(accessor.getOutput(), accessor.getCount()), accessor.getShowNotification());

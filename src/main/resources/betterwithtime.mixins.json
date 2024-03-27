@@ -11,6 +11,7 @@
     "ExampleMixin",
     "MinecartItemAccessorMixin",
     "MovableBlockEntityMixin",
+    "ShapedRecipeDimensionsMixin",
     "ShapedRecipeJsonBuilderAccessorMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",

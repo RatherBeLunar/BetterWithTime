@@ -1,6 +1,5 @@
 package com.bwt.recipes;
 
-import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;

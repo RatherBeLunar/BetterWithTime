@@ -2,7 +2,7 @@ package com.bwt.generation;
 
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.soul_forge.SoulForgeShapedRecipeJsonBuilder;
+import com.bwt.recipes.SoulForgeShapedRecipeJsonBuilder;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -421,6 +421,14 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('f', Items.FEATHER)
                 .criterion(hasItem(BwtItems.fabricItem), conditionsFromItem(BwtItems.fabricItem))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.soulForgeBlock)
+                .pattern("sss")
+                .pattern(" s ")
+                .pattern("sss")
+                .input('s', BwtItems.soulforgedSteelItem)
+                .criterion(hasItem(BwtItems.soulforgedSteelItem), conditionsFromItem(BwtItems.soulforgedSteelItem))
+                .offerTo(exporter);
+
         for (SidingBlock sidingBlock : BwtBlocks.sidingBlocks) {
             if (sidingBlock.isWood()) {
                 continue;
