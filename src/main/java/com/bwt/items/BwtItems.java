@@ -67,16 +67,19 @@ public class BwtItems implements ModInitializer {
 	public static final Item nethercoalItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nethercoal"), new Item(new FabricItemSettings()));
 //	public static final Item nitreItem = Registry.register(Registries.ITEM, new Identifier("bwt", "nitre"), new NitreItem(new FabricItemSettings()));
 	public static final Item paddingItem = Registry.register(Registries.ITEM, new Identifier("bwt", "padding"), new Item(new FabricItemSettings()));
-//	public static final Item plateArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_armor"), new PlateArmorItem(new FabricItemSettings()));
+    public static final ArmorItem plateHelmArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_helm"), new ArmorItem(SoulforgedSteelArmorMaterial.INSTANCE, ArmorItem.Type.HELMET, new Item.Settings().fireproof()));
+    public static final ArmorItem chestPlateArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "chest_plate"), new ArmorItem(SoulforgedSteelArmorMaterial.INSTANCE, ArmorItem.Type.CHESTPLATE, new Item.Settings().fireproof()));
+    public static final ArmorItem plateLeggingsArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_leggings"), new ArmorItem(SoulforgedSteelArmorMaterial.INSTANCE, ArmorItem.Type.LEGGINGS, new Item.Settings().fireproof()));
+    public static final ArmorItem plateBootsArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_boots"), new ArmorItem(SoulforgedSteelArmorMaterial.INSTANCE, ArmorItem.Type.BOOTS, new Item.Settings().fireproof()));
 	public static final Item potashItem = Registry.register(Registries.ITEM, new Identifier("bwt", "potash"), new Item(new FabricItemSettings()));
 	public static final Item redstoneEyeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "redstone_eye"), new Item(new FabricItemSettings()));
-	public static final Item refinedPickaxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_pickaxe"), new PickaxeItem(SoulforgedSteelMaterial.INSTANCE, 1, -2.8f, new FabricItemSettings().fireproof()));
-    public static final Item refinedShovelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_shovel"), new ShovelItem(SoulforgedSteelMaterial.INSTANCE, 1.5f, -3.0f, new Item.Settings().fireproof()));
-    public static final Item refinedAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_axe"), new AxeItem(SoulforgedSteelMaterial.INSTANCE, 5.0f, -3.0f, new Item.Settings().fireproof()));
-    public static final Item refinedHoeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_hoe"), new HoeItem(SoulforgedSteelMaterial.INSTANCE, -4, 0.0f, new Item.Settings().fireproof()));
-    public static final Item refinedSwordItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_sword"), new SwordItem(SoulforgedSteelMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
-    public static final Item mattockItem = Registry.register(Registries.ITEM, new Identifier("bwt", "mattock"), new MattockItem(SoulforgedSteelMaterial.INSTANCE, 1, -3.0f, new Item.Settings().fireproof()));
-    public static final Item battleAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "battle_axe"), new BattleAxeItem(SoulforgedSteelMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
+	public static final Item refinedPickaxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_pickaxe"), new PickaxeItem(SoulforgedSteelToolMaterial.INSTANCE, 1, -2.8f, new FabricItemSettings().fireproof()));
+    public static final Item refinedShovelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_shovel"), new ShovelItem(SoulforgedSteelToolMaterial.INSTANCE, 1.5f, -3.0f, new Item.Settings().fireproof()));
+    public static final Item refinedAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_axe"), new AxeItem(SoulforgedSteelToolMaterial.INSTANCE, 5.0f, -3.0f, new Item.Settings().fireproof()));
+    public static final Item refinedHoeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_hoe"), new HoeItem(SoulforgedSteelToolMaterial.INSTANCE, -4, 0.0f, new Item.Settings().fireproof()));
+    public static final Item refinedSwordItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_sword"), new SwordItem(SoulforgedSteelToolMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
+    public static final Item mattockItem = Registry.register(Registries.ITEM, new Identifier("bwt", "mattock"), new MattockItem(SoulforgedSteelToolMaterial.INSTANCE, 1, -3.0f, new Item.Settings().fireproof()));
+    public static final Item battleAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "battle_axe"), new BattleAxeItem(SoulforgedSteelToolMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
 	public static final Item ropeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rope"), new RopeItem(new FabricItemSettings()));
 	public static final Item rottedArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rotted_arrow"), new Item(new FabricItemSettings()));
 	public static final Item sailItem = Registry.register(Registries.ITEM, new Identifier("bwt", "sail"), new Item(new FabricItemSettings().maxCount(1)));
@@ -124,6 +127,11 @@ public class BwtItems implements ModInitializer {
             replaceItem(content, Items.NETHERITE_SWORD, BwtItems.refinedSwordItem);
             replaceItem(content, Items.NETHERITE_AXE, BwtItems.refinedAxeItem);
             content.addBefore(BwtItems.refinedAxeItem, BwtItems.battleAxeItem);
+            replaceItem(content, Items.NETHERITE_HELMET, BwtItems.plateHelmArmorItem);
+            replaceItem(content, Items.NETHERITE_CHESTPLATE, BwtItems.chestPlateArmorItem);
+            replaceItem(content, Items.NETHERITE_LEGGINGS, BwtItems.plateLeggingsArmorItem);
+            replaceItem(content, Items.NETHERITE_BOOTS, BwtItems.plateBootsArmorItem);
+
             content.addAfter(Items.ARROW, broadheadArrowItem, rottedArrowItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {

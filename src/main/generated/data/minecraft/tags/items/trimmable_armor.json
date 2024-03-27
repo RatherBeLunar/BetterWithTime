@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "bwt:plate_helm",
+    "bwt:chest_plate",
+    "bwt:plate_leggings",
+    "bwt:plate_boots"
+  ]
+}

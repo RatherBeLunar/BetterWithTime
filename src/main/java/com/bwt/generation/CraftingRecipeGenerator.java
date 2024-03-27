@@ -7,6 +7,8 @@ import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v1.ConventionalItemTags;
+import net.minecraft.advancement.criterion.Criteria;
+import net.minecraft.advancement.criterion.ImpossibleCriterion;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.*;
@@ -44,6 +46,16 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
 
         generateVaseDyeingRecipes(exporter);
         generateDungDyeingRecipes(exporter);
+
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.plateHelmArmorItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_HELMET).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_HELMET) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.chestPlateArmorItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_CHESTPLATE).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_CHESTPLATE) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.plateLeggingsArmorItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_LEGGINGS).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_LEGGINGS) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.plateBootsArmorItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_BOOTS).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_BOOTS) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.refinedPickaxeItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_PICKAXE).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_PICKAXE) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.refinedShovelItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_SHOVEL).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_SHOVEL) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.refinedAxeItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_AXE).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_AXE) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.refinedHoeItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_HOE).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_HOE) + "_smithing");
+        SmithingTransformRecipeJsonBuilder.create(Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE), Ingredient.ofItems(BwtItems.refinedSwordItem), Ingredient.ofItems(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, Items.NETHERITE_SWORD).criterion("hidden", Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions())).offerTo(exporter, RecipeProvider.getItemPath(Items.NETHERITE_SWORD) + "_smithing");
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.stoneDetectorRailBlock, 6)
                 .pattern("i i")

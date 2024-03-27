@@ -42,6 +42,15 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
     public void disableRecipes(RecipeExporter exporter) {
         disableVanilla(Items.BONE_MEAL, exporter);
         disableVanilla(Items.BREAD, exporter);
+        disableVanilla(Items.NETHERITE_PICKAXE, "_smithing", exporter);
+        disableVanilla(Items.NETHERITE_SHOVEL, "_smithing",exporter);
+        disableVanilla(Items.NETHERITE_AXE, "_smithing",exporter);
+        disableVanilla(Items.NETHERITE_HOE, "_smithing",exporter);
+        disableVanilla(Items.NETHERITE_SWORD, "_smithing",exporter);
+        disableVanilla(Items.NETHERITE_HELMET, "_smithing", exporter);
+        disableVanilla(Items.NETHERITE_CHESTPLATE, "_smithing", exporter);
+        disableVanilla(Items.NETHERITE_LEGGINGS, "_smithing", exporter);
+        disableVanilla(Items.NETHERITE_BOOTS, "_smithing", exporter);
     }
 
     public void disableVanilla(String recipeId, RecipeExporter exporter) {
@@ -50,6 +59,10 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
 
     public void disableVanilla(ItemConvertible itemConvertible, RecipeExporter exporter) {
         disableVanilla(Registries.ITEM.getId(itemConvertible.asItem()).getPath(), exporter);
+    }
+
+    public void disableVanilla(ItemConvertible itemConvertible, String suffix, RecipeExporter exporter) {
+        disableVanilla(Registries.ITEM.getId(itemConvertible.asItem()).withSuffixedPath(suffix).getPath(), exporter);
     }
 
     @Override

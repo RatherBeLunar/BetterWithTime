@@ -1,0 +1,25 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:netherite_pickaxe_smithing"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "hidden": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "hidden"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:netherite_pickaxe_smithing"
+    ]
+  }
+}

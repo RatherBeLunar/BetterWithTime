@@ -4,10 +4,10 @@ import net.fabricmc.yarn.constants.MiningLevels;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
 
-public class SoulforgedSteelMaterial implements ToolMaterial {
-    public static final SoulforgedSteelMaterial INSTANCE = new SoulforgedSteelMaterial();
+public class SoulforgedSteelToolMaterial implements ToolMaterial {
+    public static final SoulforgedSteelToolMaterial INSTANCE = new SoulforgedSteelToolMaterial();
 
-    private SoulforgedSteelMaterial() {}
+    private SoulforgedSteelToolMaterial() {}
 
     @Override
     public int getDurability() {
