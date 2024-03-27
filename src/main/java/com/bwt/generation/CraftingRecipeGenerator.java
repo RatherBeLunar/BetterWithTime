@@ -2,7 +2,7 @@ package com.bwt.generation;
 
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.SoulForgeShapedRecipeJsonBuilder;
+import com.bwt.recipes.SoulForgeShapedRecipe;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -433,13 +433,13 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
             if (sidingBlock.isWood()) {
                 continue;
             }
-            SoulForgeShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock, 8)
+            SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock, 8)
                     .pattern("XXXX")
                     .input('X', sidingBlock.fullBlock)
                     .criterion(hasItem(sidingBlock.fullBlock), conditionsFromItem(sidingBlock.fullBlock))
                     .offerTo(exporter);
         }
-        SoulForgeShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.blockDispenserBlock)
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.blockDispenserBlock)
                 .pattern("mmmm")
                 .pattern("muum")
                 .pattern("stts")
