@@ -1,0 +1,21 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "bwt:haft"
+    },
+    "s": {
+      "item": "bwt:soulforged_steel"
+    }
+  },
+  "pattern": [
+    "sss ",
+    " h s",
+    " h  ",
+    " h  "
+  ],
+  "result": {
+    "item": "bwt:mattock"
+  }
+}

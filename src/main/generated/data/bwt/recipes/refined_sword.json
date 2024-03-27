@@ -1,0 +1,21 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "h": {
+      "item": "bwt:haft"
+    },
+    "s": {
+      "item": "bwt:soulforged_steel"
+    }
+  },
+  "pattern": [
+    "s",
+    "s",
+    "s",
+    "h"
+  ],
+  "result": {
+    "item": "bwt:refined_sword"
+  }
+}
