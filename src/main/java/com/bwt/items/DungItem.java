@@ -9,6 +9,6 @@ import net.minecraft.util.DyeColor;
 public class DungItem extends DyeItem {
     public DungItem(Item.Settings settings) {
         super(DyeColor.BROWN, settings);
-        ((DyeItemAccessorMixin) this).getDYES().put(getColor(), ((DyeItem) Items.BROWN_DYE));
+        DyeItemAccessorMixin.getDYES().put(getColor(), ((DyeItem) Items.BROWN_DYE));
     }
 }

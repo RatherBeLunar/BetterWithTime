@@ -8,6 +8,7 @@ import com.bwt.blocks.detector.DetectorLogicBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
+import com.bwt.blocks.soul_forge.SoulForgeBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.api.ModInitializer;
@@ -18,6 +19,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
@@ -36,7 +38,6 @@ public class BwtBlocks implements ModInitializer {
             .solid()
             .requiresTool()
     );
-//	public static final Block anvilBlock = new AnvilBlock(FabricBlockSettings.create());
 	public static final Block axleBlock = new AxleBlock(FabricBlockSettings.create()
             .hardness(2F)
             .sounds(BlockSoundGroup.WOOD)
@@ -172,6 +173,7 @@ public class BwtBlocks implements ModInitializer {
 //	public static final Block stakeBlock = new StakeBlock(FabricBlockSettings.create());
     public static final Block stokedFireBlock = new StokedFireBlock(FabricBlockSettings.copyOf(Blocks.SOUL_FIRE));
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(FabricBlockSettings.copyOf(Blocks.DETECTOR_RAIL));
+	public static final Block soulForgeBlock = new SoulForgeBlock(FabricBlockSettings.copyOf(Blocks.ANVIL));
 //	public static final Block tableBlock = new TableBlock(FabricBlockSettings.create());
 	public static final Block turntableBlock = new TurntableBlock(FabricBlockSettings.create()
             .strength(2f)
@@ -333,6 +335,10 @@ public class BwtBlocks implements ModInitializer {
         // Urn
         Registry.register(Registries.BLOCK, new Identifier("bwt", "urn"), urnBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "urn"), new BlockItem(urnBlock, new FabricItemSettings()));
+        // SoulForge
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "soul_forge"), soulForgeBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "soul_forge"), new BlockItem(soulForgeBlock, new FabricItemSettings()));
+
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
             content.addAll(DyeUtils.streamColorItemsSorted(vaseBlocks).map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
@@ -359,6 +365,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(bellowsBlock);
             content.add(cauldronBlock);
             content.add(crucibleBlock);
+            content.add(soulForgeBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
@@ -374,6 +381,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(unfiredVaseBlock);
             content.add(unfiredUrnBlock);
             content.add(unfiredMouldBlock);
+            content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {

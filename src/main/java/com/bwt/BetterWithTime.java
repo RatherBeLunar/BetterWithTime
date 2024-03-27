@@ -9,6 +9,7 @@ import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
 import com.bwt.blocks.pulley.PulleyScreenHandler;
+import com.bwt.blocks.soul_forge.SoulForgeScreenHandler;
 import com.bwt.blocks.turntable.CanRotateHelper;
 import com.bwt.blocks.turntable.HorizontalBlockAttachmentHelper;
 import com.bwt.blocks.turntable.RotationProcessHelper;
@@ -67,6 +68,7 @@ public class BetterWithTime implements ModInitializer {
 	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<SoulForgeScreenHandler> soulForgeScreenHandler = new ScreenHandlerType<>(SoulForgeScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	private static final Identifier WOLF_LOOT_TABLE_ID = EntityType.WOLF.getLootTableId();
 

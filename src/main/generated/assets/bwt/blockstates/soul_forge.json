@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bwt:block/soul_forge",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bwt:block/soul_forge"
+    },
+    "facing=south": {
+      "model": "bwt:block/soul_forge",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bwt:block/soul_forge",
+      "y": 270
+    }
+  }
+}

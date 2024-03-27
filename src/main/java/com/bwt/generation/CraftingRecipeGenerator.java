@@ -2,6 +2,7 @@ package com.bwt.generation;
 
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
+import com.bwt.recipes.soul_forge.SoulForgeShapedRecipeJsonBuilder;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -419,6 +420,28 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('F', BwtItems.fabricItem)
                 .input('f', Items.FEATHER)
                 .criterion(hasItem(BwtItems.fabricItem), conditionsFromItem(BwtItems.fabricItem))
+                .offerTo(exporter);
+        for (SidingBlock sidingBlock : BwtBlocks.sidingBlocks) {
+            if (sidingBlock.isWood()) {
+                continue;
+            }
+            SoulForgeShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock, 8)
+                    .pattern("XXXX")
+                    .input('X', sidingBlock.fullBlock)
+                    .criterion(hasItem(sidingBlock.fullBlock), conditionsFromItem(sidingBlock.fullBlock))
+                    .offerTo(exporter);
+        }
+        SoulForgeShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.blockDispenserBlock)
+                .pattern("mmmm")
+                .pattern("muum")
+                .pattern("stts")
+                .pattern("srrs")
+                .input('m', Items.MOSSY_COBBLESTONE)
+                .input('u', BwtItems.soulUrnItem)
+                .input('s', Items.STONE)
+                .input('t', Items.REDSTONE_TORCH)
+                .input('r', Items.REDSTONE)
+                .criterion(hasItem(BwtItems.soulUrnItem), conditionsFromItem(BwtItems.soulUrnItem))
                 .offerTo(exporter);
     }
 

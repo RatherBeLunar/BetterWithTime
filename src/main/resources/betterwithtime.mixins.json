@@ -5,11 +5,13 @@
   "mixins": [
     "ArmorStandAccessorMixin",
     "BoatItemAccessorMixin",
+    "CraftingInventoryAccessorMixin",
     "DetectorRailMixin",
     "DyeItemAccessorMixin",
     "ExampleMixin",
     "MinecartItemAccessorMixin",
     "MovableBlockEntityMixin",
+    "ShapedRecipeJsonBuilderAccessorMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "WolfEntityMixin",

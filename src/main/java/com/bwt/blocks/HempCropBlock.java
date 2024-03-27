@@ -75,7 +75,10 @@ public class HempCropBlock extends CropBlock {
         if (!state.canPlaceAt(world, pos) && !world.getBlockState(pos.down()).isOf(this)) {
             return Blocks.AIR.getDefaultState();
         }
-        return state.with(CONNECTED_UP, neighborPos.equals(pos.up()) && neighborState.isOf(this));
+        if (neighborPos.equals(pos.up())) {
+            return state.with(CONNECTED_UP, neighborState.isOf(this));
+        }
+        return state;
     }
 
     @Override

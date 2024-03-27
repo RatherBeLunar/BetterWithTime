@@ -10,5 +10,7 @@ import java.util.Map;
 @Mixin(DyeItem.class)
 public interface DyeItemAccessorMixin {
     @Accessor
-    Map<DyeColor, DyeItem> getDYES();
+    static Map<DyeColor, DyeItem> getDYES() {
+        return null;
+    }
 }

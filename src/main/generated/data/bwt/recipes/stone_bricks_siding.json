@@ -1,0 +1,16 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "key": {
+    "X": {
+      "item": "minecraft:stone_bricks"
+    }
+  },
+  "pattern": [
+    "XXXX"
+  ],
+  "result": {
+    "count": 8,
+    "item": "bwt:stone_bricks_siding"
+  }
+}

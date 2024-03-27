@@ -1,5 +1,6 @@
 package com.bwt.recipes;
 
+import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
@@ -26,6 +27,8 @@ public class BwtRecipes implements ModInitializer {
     public static final TurntableRecipe.Serializer TURNTABLE_RECIPE_SERIALIZER = new TurntableRecipe.Serializer(TurntableRecipe::new);
     public static final RecipeType<KilnRecipe> KILN_RECIPE_TYPE = new RecipeType<>() {};
     public static final KilnRecipe.Serializer KILN_RECIPE_SERIALIZER = new KilnRecipe.Serializer(KilnRecipe::new);
+    public static final RecipeType<SoulForgeShapedRecipe> SOUL_FORGE_SHAPED_RECIPE_TYPE = new RecipeType<>() {};
+    public static final SoulForgeShapedRecipe.Serializer SOUL_FORGE_SHAPED_RECIPE_SERIALIZER = new SoulForgeShapedRecipe.Serializer();
     public static final RecipeType<DisabledRecipe> DISABLED_RECIPE_TYPE = new RecipeType<>() {};
     public static final DisabledRecipe.Serializer DISABLED_RECIPE_SERIALIZER = new DisabledRecipe.Serializer(DisabledRecipe::new);
     @Override
@@ -48,6 +51,8 @@ public class BwtRecipes implements ModInitializer {
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_SERIALIZER);
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "kiln"), KILN_RECIPE_TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "kiln"), KILN_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "soul_forge_shaped"), SOUL_FORGE_SHAPED_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "soul_forge_shaped"), SOUL_FORGE_SHAPED_RECIPE_SERIALIZER);
         Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "disabled"), DISABLED_RECIPE_TYPE);
         Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "disabled"), DISABLED_RECIPE_SERIALIZER);
     }
