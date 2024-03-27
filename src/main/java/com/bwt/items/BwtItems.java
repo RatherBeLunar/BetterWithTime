@@ -166,6 +166,8 @@ public class BwtItems implements ModInitializer {
             content.add(netherSludgeItem);
             content.add(paddingItem);
             content.add(screwItem);
+            content.add(strapItem);
+            content.add(beltItem);
             content.add(soulforgedSteelItem);
             content.add(soulUrnItem);
             content.add(tallowItem);
