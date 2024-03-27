@@ -5,6 +5,7 @@ import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -12,6 +13,8 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+
+import java.util.List;
 
 public class BwtItems implements ModInitializer {
     public static final Item cementBucketItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cement_bucket"), new CementBucketItem(new FabricItemSettings()));
@@ -67,7 +70,13 @@ public class BwtItems implements ModInitializer {
 //	public static final Item plateArmorItem = Registry.register(Registries.ITEM, new Identifier("bwt", "plate_armor"), new PlateArmorItem(new FabricItemSettings()));
 	public static final Item potashItem = Registry.register(Registries.ITEM, new Identifier("bwt", "potash"), new Item(new FabricItemSettings()));
 	public static final Item redstoneEyeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "redstone_eye"), new Item(new FabricItemSettings()));
-//	public static final Item refinedToolsItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_tools"), new RefinedToolsItem(new FabricItemSettings()));
+	public static final Item refinedPickaxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_pickaxe"), new PickaxeItem(SoulforgedSteelMaterial.INSTANCE, 1, -2.8f, new FabricItemSettings().fireproof()));
+    public static final Item refinedShovelItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_shovel"), new ShovelItem(SoulforgedSteelMaterial.INSTANCE, 1.5f, -3.0f, new Item.Settings().fireproof()));
+    public static final Item refinedAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_axe"), new AxeItem(SoulforgedSteelMaterial.INSTANCE, 5.0f, -3.0f, new Item.Settings().fireproof()));
+    public static final Item refinedHoeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_hoe"), new HoeItem(SoulforgedSteelMaterial.INSTANCE, -4, 0.0f, new Item.Settings().fireproof()));
+    public static final Item refinedSwordItem = Registry.register(Registries.ITEM, new Identifier("bwt", "refined_sword"), new SwordItem(SoulforgedSteelMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
+    public static final Item mattockItem = Registry.register(Registries.ITEM, new Identifier("bwt", "mattock"), new MattockItem(SoulforgedSteelMaterial.INSTANCE, 1, -3.0f, new Item.Settings().fireproof()));
+    public static final Item battleAxeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "battle_axe"), new BattleAxeItem(SoulforgedSteelMaterial.INSTANCE, 3, -2.4f, new Item.Settings().fireproof()));
 	public static final Item ropeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rope"), new RopeItem(new FabricItemSettings()));
 	public static final Item rottedArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "rotted_arrow"), new Item(new FabricItemSettings()));
 	public static final Item sailItem = Registry.register(Registries.ITEM, new Identifier("bwt", "sail"), new Item(new FabricItemSettings().maxCount(1)));
@@ -102,10 +111,19 @@ public class BwtItems implements ModInitializer {
     @Override
     public void onInitialize() {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
+            content.addAfter(Items.NETHERITE_PICKAXE, BwtItems.mattockItem);
+            content.addAfter(Items.NETHERITE_AXE, BwtItems.battleAxeItem);
+            replaceItem(content, Items.NETHERITE_PICKAXE, BwtItems.refinedPickaxeItem);
+            replaceItem(content, Items.NETHERITE_SHOVEL, BwtItems.refinedShovelItem);
+            replaceItem(content, Items.NETHERITE_AXE, BwtItems.refinedAxeItem);
+            replaceItem(content, Items.NETHERITE_HOE, BwtItems.refinedHoeItem);
             content.addAfter(Items.WATER_BUCKET, cementBucketItem);
             content.add(breedingHarnessItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> {
+            replaceItem(content, Items.NETHERITE_SWORD, BwtItems.refinedSwordItem);
+            replaceItem(content, Items.NETHERITE_AXE, BwtItems.refinedAxeItem);
+            content.addBefore(BwtItems.refinedAxeItem, BwtItems.battleAxeItem);
             content.addAfter(Items.ARROW, broadheadArrowItem, rottedArrowItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
@@ -153,5 +171,20 @@ public class BwtItems implements ModInitializer {
             content.add(tallowItem);
             content.add(woodBladeItem);
         });
+    }
+
+    public void replaceItem(FabricItemGroupEntries content, ItemConvertible itemToReplace, ItemConvertible newItem) {
+        Item anchorItem = itemToReplace.asItem();
+        List<ItemStack> addTo = content.getDisplayStacks();
+
+        // Iterate in reverse to add after the last match
+        for (int i = addTo.size() - 1; i >= 0; i--) {
+            if (addTo.get(i).isOf(anchorItem)) {
+                addTo.set(i, new ItemStack(newItem));
+                return;
+            }
+        }
+
+        content.add(newItem);
     }
 }

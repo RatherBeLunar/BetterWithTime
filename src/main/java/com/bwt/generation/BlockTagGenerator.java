@@ -65,6 +65,8 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         BwtBlocks.mouldingBlocks.forEach(mouldingBlock -> getOrCreateTagBuilder(mouldingBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(mouldingBlock));
         BwtBlocks.cornerBlocks.forEach(cornerBlock -> getOrCreateTagBuilder(cornerBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(cornerBlock));
 
+        getOrCreateTagBuilder(BwtBlockTags.MATTOCK_MINEABLE).forceAddTag(BlockTags.PICKAXE_MINEABLE).forceAddTag(BlockTags.SHOVEL_MINEABLE);
+        getOrCreateTagBuilder(BwtBlockTags.BATTLEAXE_MINEABLE).forceAddTag(BlockTags.AXE_MINEABLE).forceAddTag(BlockTags.SWORD_EFFICIENT);
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(BwtBlocks.anchorBlock)
 //                .add(BwtBlocks.anvilBlock)

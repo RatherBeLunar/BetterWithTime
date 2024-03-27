@@ -51,6 +51,13 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.soulForgeBlock, "Soul Forge");
         translationBuilder.add(BwtItems.screwItem, "Screw");
         translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");
+        translationBuilder.add(BwtItems.refinedPickaxeItem, "Refined Pickaxe");
+        translationBuilder.add(BwtItems.refinedShovelItem, "Refined Shovel");
+        translationBuilder.add(BwtItems.refinedAxeItem, "Refined Axe");
+        translationBuilder.add(BwtItems.refinedHoeItem, "Refined Hoe");
+        translationBuilder.add(BwtItems.refinedSwordItem, "Refined Sword");
+        translationBuilder.add(BwtItems.mattockItem, "Mattock");
+        translationBuilder.add(BwtItems.battleAxeItem, "Battle Axe");
 
         // Load an existing language file.
         try {

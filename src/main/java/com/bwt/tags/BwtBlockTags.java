@@ -21,4 +21,6 @@ public class BwtBlockTags {
     public static final TagKey<Block> VASES = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "vases"));
     public static final TagKey<Block> CROPS_CAN_PLANT_ON = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "farmland"));
     public static final TagKey<Block> SOUL_SAND_PLANTS_CAN_PLANT_ON = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "soul_sand_plants_can_plant_on"));
+    public static final TagKey<Block> MATTOCK_MINEABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "mineable/mattock"));
+    public static final TagKey<Block> BATTLEAXE_MINEABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "mineable/battle_axe"));
 }

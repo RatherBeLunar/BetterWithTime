@@ -179,6 +179,13 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.potashItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.redstoneEyeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.refinedPickaxeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.refinedShovelItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.refinedAxeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.refinedHoeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.refinedSwordItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.mattockItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.battleAxeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.rottedArrowItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.sawDustItem, Models.GENERATED);
