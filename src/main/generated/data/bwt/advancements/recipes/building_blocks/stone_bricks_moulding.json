@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_stone_corner": {
+    "has_stone_bricks_siding": {
       "conditions": {
         "items": [
           {
             "items": [
-              "bwt:stone_corner"
+              "bwt:stone_bricks_siding"
             ]
           }
         ]
@@ -15,7 +15,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:recombine_stone_corner"
+        "recipe": "bwt:stone_bricks_moulding"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -23,12 +23,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_stone_corner"
+      "has_stone_bricks_siding"
     ]
   ],
   "rewards": {
     "recipes": [
-      "minecraft:recombine_stone_corner"
+      "bwt:stone_bricks_moulding"
     ]
   }
 }

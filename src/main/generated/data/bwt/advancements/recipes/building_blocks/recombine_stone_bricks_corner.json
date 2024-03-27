@@ -1,12 +1,12 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_stone_bricks_siding": {
+    "has_stone_bricks_corner": {
       "conditions": {
         "items": [
           {
             "items": [
-              "bwt:stone_bricks_siding"
+              "bwt:stone_bricks_corner"
             ]
           }
         ]
@@ -23,7 +23,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_stone_bricks_siding"
+      "has_stone_bricks_corner"
     ]
   ],
   "rewards": {

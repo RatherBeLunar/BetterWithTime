@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "building",
+  "group": "moulding",
   "ingredients": [
     {
       "item": "bwt:acacia_planks_corner"

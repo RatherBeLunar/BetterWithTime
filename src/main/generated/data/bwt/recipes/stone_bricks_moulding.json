@@ -1,10 +1,10 @@
 {
   "type": "bwt:soul_forge_shaped",
   "category": "building",
-  "group": "siding",
+  "group": "moulding",
   "key": {
     "X": {
-      "item": "minecraft:stone_bricks"
+      "item": "bwt:stone_bricks_siding"
     }
   },
   "pattern": [
@@ -12,6 +12,6 @@
   ],
   "result": {
     "count": 8,
-    "item": "bwt:stone_bricks_siding"
+    "item": "bwt:stone_bricks_moulding"
   }
 }

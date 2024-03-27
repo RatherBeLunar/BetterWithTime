@@ -3,7 +3,6 @@ package com.bwt.blocks.soul_forge;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.mixin.CraftingInventoryAccessorMixin;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.SoulForgeShapedRecipe;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -25,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class SoulForgeBlockEntity extends LockableContainerBlockEntity implements SidedInventory, RecipeUnlocker, RecipeInputProvider {
     public static final int WIDTH = 4;
@@ -184,8 +184,9 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
         RecipeManager manager = this.world.getRecipeManager();
 
         if (lastRecipe != null) {
-            List<RecipeEntry<CraftingRecipe>> recipes = manager.listAllOfType(RecipeType.CRAFTING);
-            Optional<RecipeEntry<CraftingRecipe>> optionalRecipe = recipes.stream().filter(recipe -> recipe.id().equals(lastRecipe.id())).findFirst();
+            List<RecipeEntry<CraftingRecipe>> regularRecipes = manager.listAllOfType(RecipeType.CRAFTING);
+            List<RecipeEntry<CraftingRecipe>> soulForgeRecipes = manager.listAllOfType(BwtRecipes.SOUL_FORGE_RECIPE_TYPE);
+            Optional<RecipeEntry<CraftingRecipe>> optionalRecipe = Stream.concat(regularRecipes.stream(), soulForgeRecipes.stream()).filter(recipe -> recipe.id().equals(lastRecipe.id())).findFirst();
             if (optionalRecipe.isPresent() && optionalRecipe.get().value().matches(craftingInventory, world)) {
                 return Optional.of(optionalRecipe.get());
             }
@@ -195,7 +196,7 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
             setLastRecipe(recipe.get());
             return Optional.of(recipe.get());
         }
-        Optional<RecipeEntry<SoulForgeShapedRecipe>> recipe2 = manager.getFirstMatch(BwtRecipes.SOUL_FORGE_SHAPED_RECIPE_TYPE, craftingInventory, world);
+        Optional<RecipeEntry<CraftingRecipe>> recipe2 = manager.getFirstMatch(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, craftingInventory, world);
         if (recipe2.isPresent()) {
             setLastRecipe(recipe2.get());
             return Optional.of(recipe2.get());

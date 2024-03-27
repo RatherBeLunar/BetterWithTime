@@ -1,0 +1,20 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "p": {
+      "item": "bwt:armor_plate"
+    },
+    "s": {
+      "item": "bwt:soulforged_steel"
+    }
+  },
+  "pattern": [
+    " ss ",
+    " ss ",
+    "spps"
+  ],
+  "result": {
+    "item": "bwt:plate_boots"
+  }
+}

@@ -305,21 +305,27 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateTier3Recipes(RecipeExporter exporter) {
-        // Mini block recombining recipes
+        // Wooden Mini block recombining recipes
         for (int i = 0; i < BwtBlocks.sidingBlocks.size(); i++) {
             SidingBlock sidingBlock = BwtBlocks.sidingBlocks.get(i);
             MouldingBlock mouldingBlock = BwtBlocks.mouldingBlocks.get(i);
             CornerBlock cornerBlock = BwtBlocks.cornerBlocks.get(i);
+            if (!sidingBlock.isWood()) {
+                continue;
+            }
             ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
                     .input(sidingBlock, 2)
+                    .group("planks")
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
                     .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
             ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
                     .input(mouldingBlock, 2)
+                    .group("siding")
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
             ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
                     .input(cornerBlock, 2)
+                    .group("moulding")
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
                     .offerTo(exporter, "recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
         }

@@ -32,7 +32,7 @@ public class SoulForgeShapedRecipe extends ShapedRecipe {
 
     @Override
     public RecipeType<?> getType() {
-        return BwtRecipes.SOUL_FORGE_SHAPED_RECIPE_TYPE;
+        return BwtRecipes.SOUL_FORGE_RECIPE_TYPE;
     }
 
     public static class Serializer extends ShapedRecipe.Serializer {

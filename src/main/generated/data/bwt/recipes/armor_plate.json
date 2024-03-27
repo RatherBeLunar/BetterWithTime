@@ -1,0 +1,21 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "S": {
+      "item": "bwt:strap"
+    },
+    "p": {
+      "item": "bwt:padding"
+    },
+    "s": {
+      "item": "bwt:soulforged_steel"
+    }
+  },
+  "pattern": [
+    "SspS"
+  ],
+  "result": {
+    "item": "bwt:armor_plate"
+  }
+}

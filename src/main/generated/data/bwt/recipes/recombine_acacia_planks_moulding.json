@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "building",
+  "group": "siding",
   "ingredients": [
     {
       "item": "bwt:acacia_planks_moulding"

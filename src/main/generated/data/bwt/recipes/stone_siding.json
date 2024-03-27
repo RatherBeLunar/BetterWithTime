@@ -1,6 +1,7 @@
 {
   "type": "bwt:soul_forge_shaped",
   "category": "building",
+  "group": "siding",
   "key": {
     "X": {
       "item": "minecraft:stone"
