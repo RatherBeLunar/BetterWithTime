@@ -120,7 +120,7 @@ public class BetterWithTime implements ModInitializer {
 				BlockState result = Blocks.FARMLAND.getDefaultState();
 				HoeItem.createTillAction(result).accept(context);
 				Item tool = context.getStack().getItem();
-				int randBound = 25;
+				int randBound = 30;
 				if (tool instanceof HoeItem hoeItem) {
 					randBound -= hoeItem.getMaterial().getMiningLevel() * 2;
 				}
