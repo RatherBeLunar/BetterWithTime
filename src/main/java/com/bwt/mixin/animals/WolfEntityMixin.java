@@ -1,6 +1,8 @@
 package com.bwt.mixin.animals;
 
+import com.bwt.entities.PickUpBreedingItemGoal;
 import com.bwt.items.BwtItems;
+import com.bwt.mixin.accessors.MobEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ItemEntity;
@@ -32,7 +34,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Optional;
 
 @Mixin(WolfEntity.class)
-public abstract class WolfEntityMixin {
+public abstract class WolfEntityMixin implements MobEntityAccessorMixin {
     @Shadow protected abstract float getSoundVolume();
 
     @Unique
@@ -42,6 +44,11 @@ public abstract class WolfEntityMixin {
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     public void initDataTracker(CallbackInfo ci) {
         ((WolfEntity) ((Object) this)).getDataTracker().startTracking(IS_FED, false);
+    }
+
+    @Inject(method = "initGoals", at = @At("TAIL"))
+    public void addGoal(CallbackInfo ci) {
+        this.getGoalSelector().add(7, new PickUpBreedingItemGoal((WolfEntity) ((Object) this), 8, 1.5, 1, wolf -> !wolf.getDataTracker().get(IS_FED)));
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
