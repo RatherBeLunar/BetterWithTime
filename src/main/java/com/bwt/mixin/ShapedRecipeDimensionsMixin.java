@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Mixin(RawShapedRecipe.Data.class)
-public record ShapedRecipeDimensionsMixin() {
+public abstract class ShapedRecipeDimensionsMixin {
     @Mutable
     @Accessor
     private static void setPATTERN_CODEC(Codec<List<String>> value) {}
