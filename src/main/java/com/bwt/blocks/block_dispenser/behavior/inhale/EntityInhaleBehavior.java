@@ -2,7 +2,7 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.ArmorStandAccessorMixin;
+import com.bwt.mixin.accessors.ArmorStandAccessorMixin;
 import com.bwt.utils.DyeUtils;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;

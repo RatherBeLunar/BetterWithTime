@@ -1,4 +1,4 @@
-package com.bwt.mixin;
+package com.bwt.mixin.accessors;
 
 import net.minecraft.item.DyeItem;
 import net.minecraft.util.DyeColor;

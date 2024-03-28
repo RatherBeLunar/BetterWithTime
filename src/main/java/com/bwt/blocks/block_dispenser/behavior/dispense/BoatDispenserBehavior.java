@@ -1,7 +1,7 @@
 package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.BoatItemAccessorMixin;
+import com.bwt.mixin.accessors.BoatItemAccessorMixin;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.vehicle.BoatEntity;

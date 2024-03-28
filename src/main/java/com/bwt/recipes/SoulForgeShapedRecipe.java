@@ -1,6 +1,6 @@
 package com.bwt.recipes;
 
-import com.bwt.mixin.ShapedRecipeJsonBuilderAccessorMixin;
+import com.bwt.mixin.accessors.ShapedRecipeJsonBuilderAccessorMixin;
 import net.minecraft.advancement.Advancement;
 import net.minecraft.advancement.AdvancementRequirements;
 import net.minecraft.advancement.AdvancementRewards;

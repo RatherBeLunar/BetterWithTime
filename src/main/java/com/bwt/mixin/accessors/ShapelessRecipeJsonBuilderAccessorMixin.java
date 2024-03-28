@@ -1,4 +1,4 @@
-package com.bwt.mixin;
+package com.bwt.mixin.accessors;
 
 import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;

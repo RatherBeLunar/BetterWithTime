@@ -1,7 +1,7 @@
 package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.MinecartItemAccessorMixin;
+import com.bwt.mixin.accessors.MinecartItemAccessorMixin;
 import net.minecraft.block.AbstractRailBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;

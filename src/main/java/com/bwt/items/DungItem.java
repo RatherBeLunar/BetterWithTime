@@ -1,6 +1,6 @@
 package com.bwt.items;
 
-import com.bwt.mixin.DyeItemAccessorMixin;
+import com.bwt.mixin.accessors.DyeItemAccessorMixin;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;

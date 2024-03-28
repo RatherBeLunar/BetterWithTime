@@ -1,4 +1,4 @@
-package com.bwt.mixin;
+package com.bwt.mixin.accessors;
 
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;

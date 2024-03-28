@@ -1,4 +1,4 @@
-package com.bwt.mixin;
+package com.bwt.mixin.animals;
 
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;

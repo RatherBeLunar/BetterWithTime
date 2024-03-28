@@ -1,4 +1,4 @@
-package com.bwt.mixin;
+package com.bwt.mixin.accessors;
 
 import net.minecraft.entity.decoration.ArmorStandEntity;
 import net.minecraft.item.ItemStack;
