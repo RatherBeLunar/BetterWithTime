@@ -1,0 +1,30 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "key": {
+    "c": {
+      "item": "minecraft:cobblestone"
+    },
+    "e": {
+      "item": "bwt:redstone_eye"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "s": {
+      "item": "minecraft:stone"
+    },
+    "t": {
+      "item": "minecraft:redstone_torch"
+    }
+  },
+  "pattern": [
+    "cccc",
+    "ette",
+    "srrs",
+    "srrs"
+  ],
+  "result": {
+    "item": "bwt:detector_block"
+  }
+}

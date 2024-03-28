@@ -1,0 +1,23 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "g": {
+      "item": "minecraft:gold_nugget"
+    },
+    "l": {
+      "item": "minecraft:lapis_lazuli"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "lll",
+    "ggg",
+    " r "
+  ],
+  "result": {
+    "item": "bwt:redstone_eye"
+  }
+}
