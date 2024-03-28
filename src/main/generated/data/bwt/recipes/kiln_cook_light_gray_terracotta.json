@@ -1,0 +1,13 @@
+{
+  "type": "bwt:kiln",
+  "category": "misc",
+  "cookingTime": 1,
+  "drops": [
+    {
+      "item": "minecraft:light_gray_glazed_terracotta"
+    }
+  ],
+  "ingredient": {
+    "block": "minecraft:light_gray_terracotta"
+  }
+}

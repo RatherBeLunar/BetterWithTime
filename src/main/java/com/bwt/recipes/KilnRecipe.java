@@ -13,6 +13,7 @@ import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.recipe.Recipe;
@@ -225,11 +226,11 @@ public class KilnRecipe implements Recipe<Inventory> {
             return this;
         }
 
-        public JsonBuilder drops(Item item, int count) {
+        public JsonBuilder drops(ItemConvertible item, int count) {
             return this.drops(new ItemStack(item, count));
         }
 
-        public JsonBuilder drops(Item item) {
+        public JsonBuilder drops(ItemConvertible item) {
             return this.drops(item, 1);
         }
 
@@ -238,12 +239,12 @@ public class KilnRecipe implements Recipe<Inventory> {
             return this;
         }
 
-        public JsonBuilder result(Item item, int count) {
+        public JsonBuilder result(ItemConvertible item, int count) {
             this.drops.add(new ItemStack(item, count));
             return this;
         }
 
-        public JsonBuilder result(Item item) {
+        public JsonBuilder result(ItemConvertible item) {
             return this.result(item, 1);
         }
 
