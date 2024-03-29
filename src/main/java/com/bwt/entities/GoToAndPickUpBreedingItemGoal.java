@@ -4,13 +4,15 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
-public class PickUpBreedingItemGoal extends Goal {
+public class GoToAndPickUpBreedingItemGoal extends Goal {
     protected final AnimalEntity animal;
     protected final double searchRadius;
     protected final double pickupRadius;
@@ -20,18 +22,21 @@ public class PickUpBreedingItemGoal extends Goal {
 
     @Nullable
     protected final Predicate<AnimalEntity> wantsFoodCondition;
+    @Nullable
+    protected final Consumer<ItemStack> foodConsumer;
 
-    public PickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed, @Nullable Predicate<AnimalEntity> wantsFoodCondition) {
+    public GoToAndPickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed, @Nullable Predicate<AnimalEntity> wantsFoodCondition, @Nullable Consumer<ItemStack> foodConsumer) {
         this.animal = animal;
         this.searchRadius = searchRadius;
         this.pickupRadius = pickupRadius;
         this.speed = speed;
         this.wantsFoodCondition = wantsFoodCondition;
+        this.foodConsumer = foodConsumer;
         this.setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
     }
 
-    public PickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed) {
-        this(animal, searchRadius, pickupRadius, speed, null);
+    public GoToAndPickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed) {
+        this(animal, searchRadius, pickupRadius, speed, null, null);
     }
 
     protected boolean wantsFood() {
@@ -85,9 +90,11 @@ public class PickUpBreedingItemGoal extends Goal {
         }
         if (animal.distanceTo(targetBreedingItem) <= pickupRadius) {
             animal.getNavigation().stop();
+            if (foodConsumer != null) {
+                foodConsumer.accept(targetBreedingItem.getStack().copyWithCount(1));
+            }
             targetBreedingItem.getStack().decrement(1);
             animal.lovePlayer(null);
         }
-        targetBreedingItem = null;
     }
 }

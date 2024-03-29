@@ -1,6 +1,7 @@
 package com.bwt.mixin.animals;
 
-import com.bwt.entities.PickUpBreedingItemGoal;
+import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
+import com.bwt.entities.PickUpBreedingItemWhileSittingGoal;
 import com.bwt.items.BwtItems;
 import com.bwt.mixin.accessors.MobEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
@@ -48,7 +49,20 @@ public abstract class WolfEntityMixin implements MobEntityAccessorMixin {
 
     @Inject(method = "initGoals", at = @At("TAIL"))
     public void addGoal(CallbackInfo ci) {
-        this.getGoalSelector().add(7, new PickUpBreedingItemGoal((WolfEntity) ((Object) this), 8, 1.5, 1, wolf -> !wolf.getDataTracker().get(IS_FED)));
+        this.getGoalSelector().add(1, new PickUpBreedingItemWhileSittingGoal(
+                (WolfEntity) ((Object) this),
+                1.5,
+                wolf -> !wolf.getDataTracker().get(IS_FED),
+                this::feed
+        ));
+        this.getGoalSelector().add(7, new GoToAndPickUpBreedingItemGoal(
+                (WolfEntity) ((Object) this),
+                8,
+                1.5,
+                1,
+                wolf -> !wolf.getDataTracker().get(IS_FED),
+                this::feed
+        ));
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
@@ -63,9 +77,7 @@ public abstract class WolfEntityMixin implements MobEntityAccessorMixin {
             if (!player.getAbilities().creativeMode) {
                 itemStack.decrement(1);
             }
-            int hunger = itemStack.isOf(BwtItems.kibbleItem) ? 2 : Optional.ofNullable(itemStack.getFoodComponent()).orElse(new FoodComponent.Builder().build()).getHunger();
-            wolfThis.heal(hunger);
-            this.feed(hunger);
+            this.feed(itemStack);
             cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
@@ -186,6 +198,13 @@ public abstract class WolfEntityMixin implements MobEntityAccessorMixin {
     @Unique
     public void feed(int hungerValue) {
         setIsFed(isFed() || hungerValue > 0);
+    }
+
+    @Unique
+    public void feed(ItemStack itemStack) {
+        int hunger = itemStack.isOf(BwtItems.kibbleItem) ? 2 : Optional.ofNullable(itemStack.getFoodComponent()).orElse(new FoodComponent.Builder().build()).getHunger();
+        ((WolfEntity) ((Object) this)).heal(hunger);
+        this.feed(hunger);
     }
 
     @Unique
