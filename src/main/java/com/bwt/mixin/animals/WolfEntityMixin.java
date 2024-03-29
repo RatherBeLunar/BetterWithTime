@@ -51,14 +51,14 @@ public abstract class WolfEntityMixin implements MobEntityAccessorMixin {
     public void addGoal(CallbackInfo ci) {
         this.getGoalSelector().add(1, new PickUpBreedingItemWhileSittingGoal(
                 (WolfEntity) ((Object) this),
-                1.5,
+                1.7,
                 wolf -> !wolf.getDataTracker().get(IS_FED),
                 this::feed
         ));
         this.getGoalSelector().add(7, new GoToAndPickUpBreedingItemGoal(
                 (WolfEntity) ((Object) this),
                 8,
-                1.5,
+                1.8,
                 1,
                 wolf -> !wolf.getDataTracker().get(IS_FED),
                 this::feed
