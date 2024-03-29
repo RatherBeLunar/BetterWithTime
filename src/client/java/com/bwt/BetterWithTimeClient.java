@@ -3,6 +3,7 @@ package com.bwt;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.BwtEntities;
+import com.bwt.items.BwtItems;
 import com.bwt.models.*;
 import com.bwt.screens.*;
 import net.fabricmc.api.ClientModInitializer;
@@ -14,6 +15,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.color.world.GrassColors;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
+import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
@@ -34,6 +36,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.movingAnchorEntity, MovingAnchorEntityRenderer::new);
+		EntityRendererRegistry.register(BwtEntities.broadheadArrowEntity, BroadheadArrowEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
@@ -67,5 +70,19 @@ public class BetterWithTimeClient implements ClientModInitializer {
 			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
 		}, BwtBlocks.grassPlanterBlock);
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassPlanterBlock);
+
+		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, new Identifier("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
+			if (livingEntity == null) {
+				return 0.0F;
+			}
+			return livingEntity.getActiveItem() != itemStack ? 0.0F : (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F;
+		});
+
+		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, new Identifier("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
+			if (livingEntity == null) {
+				return 0.0F;
+			}
+			return livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0F : 0.0F;
+		});
 	}
 }

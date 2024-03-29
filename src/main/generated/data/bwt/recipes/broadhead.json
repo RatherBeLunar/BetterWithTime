@@ -1,0 +1,19 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "s": {
+      "item": "bwt:soulforged_steel"
+    }
+  },
+  "pattern": [
+    " s ",
+    "sss",
+    " s ",
+    " s "
+  ],
+  "result": {
+    "count": 16,
+    "item": "bwt:broadhead"
+  }
+}

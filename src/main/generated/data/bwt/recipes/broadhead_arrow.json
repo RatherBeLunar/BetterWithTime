@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "bwt:broadhead"
+    },
+    "f": {
+      "item": "minecraft:feather"
+    },
+    "m": {
+      "tag": "bwt:wooden_moulding_blocks"
+    }
+  },
+  "pattern": [
+    "b",
+    "m",
+    "f"
+  ],
+  "result": {
+    "count": 4,
+    "item": "bwt:broadhead_arrow"
+  }
+}

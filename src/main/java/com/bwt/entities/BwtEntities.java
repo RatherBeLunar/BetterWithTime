@@ -41,6 +41,18 @@ public class BwtEntities implements ModInitializer {
             .dimensions(EntityDimensions.fixed(MovingAnchorEntity.width, MovingAnchorEntity.height))
             .build()
     );
+    public static final EntityType<BroadheadArrowEntity> broadheadArrowEntity = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier("bwt", "broadhead_arrow"),
+            FabricEntityTypeBuilder.create(
+                    SpawnGroup.MISC,
+                    (EntityType.EntityFactory<BroadheadArrowEntity>) BroadheadArrowEntity::new
+            )
+            .dimensions(EntityDimensions.fixed(0.5f, 0.5f))
+            .trackRangeBlocks(4)
+            .trackedUpdateRate(20)
+            .build()
+    );
 
     @Override
     public void onInitialize() {

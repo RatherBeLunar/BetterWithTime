@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:bone"
+    },
+    "m": {
+      "tag": "bwt:wooden_moulding_blocks"
+    },
+    "s": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    " mb",
+    "mbs",
+    " mb"
+  ],
+  "result": {
+    "item": "bwt:composite_bow"
+  }
+}

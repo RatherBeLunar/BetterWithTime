@@ -22,11 +22,11 @@ public class BwtItems implements ModInitializer {
 	public static final Item beltItem = Registry.register(Registries.ITEM, new Identifier("bwt", "belt"), new Item(new FabricItemSettings()));
 	public static final Item breedingHarnessItem = Registry.register(Registries.ITEM, new Identifier("bwt", "breeding_harness"), new Item(new FabricItemSettings()));
 	public static final Item broadheadItem = Registry.register(Registries.ITEM, new Identifier("bwt", "broadhead"), new Item(new FabricItemSettings()));
-	public static final Item broadheadArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "broadhead_arrow"), new Item(new FabricItemSettings()));
+	public static final Item broadheadArrowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "broadhead_arrow"), new BroadheadArrowItem(new FabricItemSettings()));
 //	public static final Item candleItem = Registry.register(Registries.ITEM, new Identifier("bwt", "candle"), new CandleItem(new FabricItemSettings()));
 	public static final Item canvasItem = Registry.register(Registries.ITEM, new Identifier("bwt", "canvas"), new Item(new FabricItemSettings()));
 	public static final Item coalDustItem = Registry.register(Registries.ITEM, new Identifier("bwt", "coal_dust"), new Item(new FabricItemSettings()));
-//	public static final Item compositeBowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "composite_bow"), new CompositeBowItem(new FabricItemSettings()));
+	public static final Item compositeBowItem = Registry.register(Registries.ITEM, new Identifier("bwt", "composite_bow"), new CompositeBowItem(new FabricItemSettings().maxDamage(576)));
 	public static final Item concentratedHellfireItem = Registry.register(Registries.ITEM, new Identifier("bwt", "concentrated_hellfire"), new Item(new FabricItemSettings()));
     public static final Item cookedWolfChopItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cooked_wolf_chop"), new Item(
             new FabricItemSettings()
@@ -132,6 +132,7 @@ public class BwtItems implements ModInitializer {
             replaceItem(content, Items.NETHERITE_LEGGINGS, BwtItems.plateLeggingsArmorItem);
             replaceItem(content, Items.NETHERITE_BOOTS, BwtItems.plateBootsArmorItem);
 
+            content.addAfter(Items.BOW, compositeBowItem);
             content.addAfter(Items.ARROW, broadheadArrowItem, rottedArrowItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {

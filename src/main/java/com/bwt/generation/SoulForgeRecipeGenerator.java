@@ -172,6 +172,14 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.armorPlateItem), conditionsFromItem(BwtItems.armorPlateItem))
                 .offerTo(exporter);
 
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.broadheadItem, 16)
+                .pattern(" s ")
+                .pattern("sss")
+                .pattern(" s ")
+                .pattern(" s ")
+                .input('s', BwtItems.soulforgedSteelItem)
+                .criterion(hasItem(BwtItems.soulforgedSteelItem), conditionsFromItem(BwtItems.soulforgedSteelItem))
+                .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.redstoneEyeItem)
                 .pattern("lll")
                 .pattern("ggg")
