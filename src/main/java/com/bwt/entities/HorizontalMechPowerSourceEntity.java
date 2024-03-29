@@ -196,6 +196,9 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
                 fullUpdate();
             }
         }
+        getWorld()
+                .getOtherEntities(this, this.getBoundingBox().expand(0.1f, 0.01f, 0.1f), EntityPredicates.canBePushedBy(this))
+                .forEach(this::pushAwayFrom);
     }
 
     protected void updateRotation() {
@@ -203,7 +206,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     protected void fullUpdate() {
-        if (placementBlockedByBlock() || placementBlockedByEntity() || placementHasBadAxleState()) {
+        if (placementBlockedByBlock() || placementHasBadAxleState()) {
             destroyWithDrop();
             return;
         }
