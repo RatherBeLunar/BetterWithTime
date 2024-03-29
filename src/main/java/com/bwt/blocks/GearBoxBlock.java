@@ -1,11 +1,13 @@
 package com.bwt.blocks;
 
+import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ConnectingBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -194,6 +196,14 @@ public class GearBoxBlock extends Block implements MechPowerBlockBase, RotateWit
                 SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
 //        world.addSyncedBlockEvent(pos, this, 0, 0);
 //        world.emitGameEvent(entity, GameEvent.NOTE_BLOCK_PLAY, pos);
+    }
+
+    public static void breakGearBox(World world, BlockPos pos) {
+        world.removeBlock(pos, false);
+        world.playSound(null, pos, BwtSoundEvents.MECH_EXPLODE, SoundCategory.BLOCKS, 0.5f, 1);
+        dropStack(world, pos, Items.STICK.getDefaultStack());
+        dropStack(world, pos, BwtItems.sawDustItem.getDefaultStack());
+        dropStack(world, pos, BwtItems.gearItem.getDefaultStack());
     }
 
     private void emitGearBoxParticles(World world, BlockPos pos, Random random) {

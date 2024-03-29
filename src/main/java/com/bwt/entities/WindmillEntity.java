@@ -1,6 +1,10 @@
 package com.bwt.entities;
 
+import com.bwt.blocks.AxleBlock;
+import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -33,10 +37,12 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     private static final float rotationPerTick = -0.12F;
     private static final float rotationPerTickInStorm = -2.0F;
     private static final float rotationPerTickInNether = -0.07F;
+    private static final int secondsInStormBeforeOverpower = 30;
 
     protected static final TrackedData<Integer> dyeIndex = DataTracker.registerData(WindmillEntity.class, TrackedDataHandlerRegistry.INTEGER);
     protected static final List<TrackedData<Integer>> sailColors = IntStream.range(0, NUM_SAILS).mapToObj(i ->
             DataTracker.registerData(WindmillEntity.class, TrackedDataHandlerRegistry.INTEGER)).collect(Collectors.toList());
+    protected int overpowerTimer = 0;
 
     public WindmillEntity(EntityType<? extends WindmillEntity> entityType, World world) {
         super(entityType, world);
@@ -95,8 +101,8 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
         else if (!world.isSkyVisible(getBlockPos())) {
             return 0.0f;
         }
-        // Overworld, raining
-        else if (world.isRaining()) {
+        // Overworld, storming
+        else if (world.isRaining() && world.isThundering()) {
             return rotationPerTickInStorm;
         }
         // Overworld, not raining
@@ -125,12 +131,54 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
+    protected void fullUpdate() {
+        super.fullUpdate();
+        if (Math.abs(getRotationSpeed()) < Math.abs(rotationPerTickInStorm)) {
+            overpowerTimer = 0;
+            return;
+        }
+        overpowerTimer++;
+        if (overpowerTimer >= secondsInStormBeforeOverpower) {
+            breakConnectedGearBoxes();
+        }
+    }
+
+    protected void breakConnectedGearBoxes() {
+        BlockPos hostAxlePos = getBlockPos();
+        BlockState hostAxleState = getWorld().getBlockState(hostAxlePos);
+
+        // Bad block type
+        if (!hostAxleState.isOf(BwtBlocks.axleBlock) && !hostAxleState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+            return;
+        }
+        Direction.Axis hostAxleAxis = hostAxleState.get(AxleBlock.AXIS);
+        for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
+            for (int i = 1; i <= 4; i++) {
+                Direction direction = Direction.from(hostAxleAxis, axisDirection);
+                BlockPos connectedPos = hostAxlePos.offset(direction, i);
+                BlockState connectedState = getWorld().getBlockState(connectedPos);
+                if (connectedState.isOf(BwtBlocks.gearBoxBlock) && connectedState.get(GearBoxBlock.FACING).equals(direction.getOpposite())) {
+                    GearBoxBlock.breakGearBox(getWorld(), connectedPos);
+                    break;
+                }
+                if (!connectedState.isOf(BwtBlocks.axleBlock) && !connectedState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+                    break;
+                }
+                if (!connectedState.get(AxleBlock.AXIS).equals(hostAxleAxis)) {
+                    break;
+                }
+            }
+        }
+    }
+
+    @Override
     protected void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
         nbt.putInt("dyeIndex", dataTracker.get(dyeIndex));
         for (int i = 0; i < NUM_SAILS; i++) {
             nbt.putInt("sail" + i + "Color", dataTracker.get(sailColors.get(i)));
         }
+        nbt.putInt("overpowerTimer", overpowerTimer);
     }
 
     @Override
@@ -142,6 +190,7 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
                 dataTracker.set(sailColors.get(i), nbt.getInt("sail" + i + "Color"));
             }
         }
+        overpowerTimer = nbt.getInt("overpowerTimer");
     }
 
     @Override
