@@ -7,13 +7,11 @@
     "bwt:sandstone_siding",
     "bwt:bricks_siding",
     "bwt:nether_bricks_siding",
-    "bwt:quartz_block_siding",
     "#bwt:wooden_corner_blocks",
     "bwt:stone_corner",
     "bwt:stone_bricks_corner",
     "bwt:sandstone_corner",
     "bwt:bricks_corner",
-    "bwt:nether_bricks_corner",
-    "bwt:quartz_block_corner"
+    "bwt:nether_bricks_corner"
   ]
 }

@@ -6,7 +6,6 @@
     "bwt:stone_bricks_siding",
     "bwt:sandstone_siding",
     "bwt:bricks_siding",
-    "bwt:nether_bricks_siding",
-    "bwt:quartz_block_siding"
+    "bwt:nether_bricks_siding"
   ]
 }

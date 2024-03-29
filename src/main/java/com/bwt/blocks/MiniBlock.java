@@ -67,8 +67,7 @@ public abstract class MiniBlock extends Block implements Waterloggable, RotateWi
                 Blocks.STONE_BRICKS, Blocks.STONE_BRICK_SLAB,
                 Blocks.SANDSTONE, Blocks.SANDSTONE_SLAB,
                 Blocks.BRICKS, Blocks.BRICK_SLAB,
-                Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_SLAB,
-                Blocks.QUARTZ_BLOCK, Blocks.QUARTZ_SLAB
+                Blocks.NETHER_BRICKS, Blocks.NETHER_BRICK_SLAB
         );
         for (int i = 0; i < blockSlabPairs.size() - 1; i += 2) {
             sidingBlocks.add(SidingBlock.ofBlock(blockSlabPairs.get(i), blockSlabPairs.get(i + 1)));
