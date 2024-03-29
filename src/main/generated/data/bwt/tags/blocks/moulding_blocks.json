@@ -3,6 +3,10 @@
   "values": [
     "#bwt:wooden_moulding_blocks",
     "bwt:stone_moulding",
-    "bwt:stone_bricks_moulding"
+    "bwt:stone_bricks_moulding",
+    "bwt:sandstone_moulding",
+    "bwt:bricks_moulding",
+    "bwt:nether_bricks_moulding",
+    "bwt:quartz_block_moulding"
   ]
 }

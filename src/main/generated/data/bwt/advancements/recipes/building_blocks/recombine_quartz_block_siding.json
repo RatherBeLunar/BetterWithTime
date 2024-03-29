@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_quartz_block_siding": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "bwt:quartz_block_siding"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "minecraft:recombine_quartz_block_siding"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_quartz_block_siding"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "minecraft:recombine_quartz_block_siding"
+    ]
+  }
+}

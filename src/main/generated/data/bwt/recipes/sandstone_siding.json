@@ -1,0 +1,17 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "siding",
+  "key": {
+    "X": {
+      "item": "minecraft:sandstone"
+    }
+  },
+  "pattern": [
+    "XXXX"
+  ],
+  "result": {
+    "count": 8,
+    "item": "bwt:sandstone_siding"
+  }
+}

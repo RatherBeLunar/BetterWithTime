@@ -1,0 +1,16 @@
+{
+  "type": "bwt:soul_forge_shapeless",
+  "category": "building",
+  "group": "moulding",
+  "ingredients": [
+    {
+      "item": "bwt:bricks_corner"
+    },
+    {
+      "item": "bwt:bricks_corner"
+    }
+  ],
+  "result": {
+    "item": "bwt:bricks_moulding"
+  }
+}

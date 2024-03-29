@@ -1,0 +1,15 @@
+{
+  "type": "bwt:soul_forge_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:nether_bricks_siding"
+    },
+    {
+      "item": "bwt:nether_bricks_siding"
+    }
+  ],
+  "result": {
+    "item": "minecraft:nether_bricks"
+  }
+}

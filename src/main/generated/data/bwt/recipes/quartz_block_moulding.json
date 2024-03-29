@@ -1,0 +1,17 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "moulding",
+  "key": {
+    "X": {
+      "item": "bwt:quartz_block_siding"
+    }
+  },
+  "pattern": [
+    "XXXX"
+  ],
+  "result": {
+    "count": 8,
+    "item": "bwt:quartz_block_moulding"
+  }
+}

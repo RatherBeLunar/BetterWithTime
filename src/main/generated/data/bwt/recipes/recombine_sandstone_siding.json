@@ -1,0 +1,15 @@
+{
+  "type": "bwt:soul_forge_shapeless",
+  "category": "building",
+  "ingredients": [
+    {
+      "item": "bwt:sandstone_siding"
+    },
+    {
+      "item": "bwt:sandstone_siding"
+    }
+  ],
+  "result": {
+    "item": "minecraft:sandstone"
+  }
+}
