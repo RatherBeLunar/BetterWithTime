@@ -385,6 +385,14 @@ public class BwtBlocks implements ModInitializer {
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {
+            for (int i = 0; i < sidingBlocks.size(); i++) {
+                SidingBlock sidingBlock = sidingBlocks.get(i);
+                MouldingBlock mouldingBlock = mouldingBlocks.get(i);
+                CornerBlock cornerBlock = cornerBlocks.get(i);
+                if (content.getDisplayStacks().stream().anyMatch(itemStack -> itemStack.isOf(sidingBlock.fullBlock.asItem()))) {
+                    content.addAfter(sidingBlock.fullBlock, sidingBlock, mouldingBlock, cornerBlock);
+                }
+            }
             content.add(companionCubeBlock);
             content.add(grateBlock);
             content.add(slatsBlock);
