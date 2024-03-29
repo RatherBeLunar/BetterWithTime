@@ -125,8 +125,8 @@ public class BwtItems implements ModInitializer {
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> {
             replaceItem(content, Items.NETHERITE_SWORD, BwtItems.refinedSwordItem);
+            content.addAfter(Items.NETHERITE_AXE, BwtItems.battleAxeItem);
             replaceItem(content, Items.NETHERITE_AXE, BwtItems.refinedAxeItem);
-            content.addBefore(BwtItems.refinedAxeItem, BwtItems.battleAxeItem);
             replaceItem(content, Items.NETHERITE_HELMET, BwtItems.plateHelmArmorItem);
             replaceItem(content, Items.NETHERITE_CHESTPLATE, BwtItems.chestPlateArmorItem);
             replaceItem(content, Items.NETHERITE_LEGGINGS, BwtItems.plateLeggingsArmorItem);
@@ -185,13 +185,12 @@ public class BwtItems implements ModInitializer {
 
     public void replaceItem(FabricItemGroupEntries content, ItemConvertible itemToReplace, ItemConvertible newItem) {
         Item anchorItem = itemToReplace.asItem();
-        List<ItemStack> addTo = content.getDisplayStacks();
-
-        // Iterate in reverse to add after the last match
-        for (int i = addTo.size() - 1; i >= 0; i--) {
-            if (addTo.get(i).isOf(anchorItem)) {
-                addTo.set(i, new ItemStack(newItem));
-                return;
+        for (List<ItemStack> addTo : List.of(content.getDisplayStacks(), content.getSearchTabStacks())) {
+            for (int i = 0; i < addTo.size(); i++) {
+                if (addTo.get(i).isOf(anchorItem)) {
+                    addTo.set(i, new ItemStack(newItem));
+                    break;
+                }
             }
         }
 
