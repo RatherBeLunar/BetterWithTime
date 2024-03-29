@@ -82,7 +82,6 @@ public class PickUpBreedingItemWhileSittingGoal extends Goal {
                 foodConsumer.accept(targetBreedingItem.getStack().copyWithCount(1));
             }
             targetBreedingItem.getStack().decrement(1);
-            animal.lovePlayer(null);
         }
     }
 }
