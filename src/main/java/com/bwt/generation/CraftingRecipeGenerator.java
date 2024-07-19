@@ -79,7 +79,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('v', Items.VINE)
                 .criterion(hasItem(Items.VINE), conditionsFromItem(Items.VINE))
                 .offerTo(exporter);
-        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.dirtSlabBlock)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.dirtSlabBlock, 4)
                 .pattern("dd")
                 .input('d', Items.DIRT)
                 .criterion(hasItem(Items.DIRT), conditionsFromItem(Items.DIRT))
