@@ -14,6 +14,7 @@
     "ShapedRecipeDimensionsMixin",
     "SkeletonRottenArrowMixin",
     "SpawnerMossyCobbleMixin",
+    "SpreadableBlockMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "VillagersDropXpMixin",

@@ -77,6 +77,9 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.obsidianDetectorRailBlock, "Obsidian Detector Rail");
         translationBuilder.add(BwtBlocks.soulForgeBlock, "Soul Forge");
         translationBuilder.add(BwtBlocks.vineTrapBlock, "Vine Trap");
+        translationBuilder.add(BwtBlocks.grassSlabBlock, "Grass Slab");
+        translationBuilder.add(BwtBlocks.dirtSlabBlock, "Dirt Slab");
+        translationBuilder.add(BwtBlocks.dirtPathSlabBlock, "Dirt Path Slab");
         translationBuilder.add(BwtItems.rawEggItem, "Raw Egg");
         translationBuilder.add(BwtItems.screwItem, "Screw");
         translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");

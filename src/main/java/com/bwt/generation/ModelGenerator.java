@@ -5,7 +5,6 @@ import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
@@ -16,8 +15,6 @@ import net.minecraft.block.enums.BlockFace;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.data.client.*;
-import net.minecraft.data.family.BlockFamilies;
-import net.minecraft.data.family.BlockFamily;
 import net.minecraft.item.Items;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.DyeColor;
@@ -26,7 +23,6 @@ import net.minecraft.util.math.Direction;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public class ModelGenerator extends FabricModelProvider {
     public ModelGenerator(FabricDataOutput generator) {
@@ -35,6 +31,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        generateDirtAndGrassSlab(blockStateModelGenerator);
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
         blockStateModelGenerator.blockStateCollector.accept(
@@ -179,12 +176,12 @@ public class ModelGenerator extends FabricModelProvider {
         ));
         generateMiningChargeBlock(blockStateModelGenerator);
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier
-                        .create(BwtBlocks.vineTrapBlock)
-                        .coordinate(
-                                BlockStateVariantMap.create(VineTrapBlock.HALF)
-                                        .register(BlockHalf.BOTTOM, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)))
-                                        .register(BlockHalf.TOP, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)).put(VariantSettings.X, VariantSettings.Rotation.R180))
-                        )
+                .create(BwtBlocks.vineTrapBlock)
+                .coordinate(
+                        BlockStateVariantMap.create(VineTrapBlock.HALF)
+                                .register(BlockHalf.BOTTOM, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)))
+                                .register(BlockHalf.TOP, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)).put(VariantSettings.X, VariantSettings.Rotation.R180))
+                )
         );
 
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
@@ -527,4 +524,23 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
     }
+
+    public void generateDirtAndGrassSlab(BlockStateModelGenerator blockStateModelGenerator) {
+        //Dirt Slab
+        TexturedModel dirtTexturedModel = TexturedModel.CUBE_ALL.get(Blocks.DIRT);
+        Identifier dirtTexture = dirtTexturedModel.getTextures().getTexture(TextureKey.ALL);
+        Identifier dirtSlab = TexturedModel.makeFactory(
+                block -> new TextureMap()
+                        .put(TextureKey.BOTTOM, dirtTexture)
+                        .put(TextureKey.TOP, dirtTexture)
+                        .put(TextureKey.SIDE, dirtTexture),
+                Models.SLAB
+        ).upload(BwtBlocks.dirtSlabBlock, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.dirtSlabBlock, BlockStateVariant.create().put(VariantSettings.MODEL, dirtSlab)));
+        //Grass Slab
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.grassSlabBlock, BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/grass_slab"))));
+        //Dirt Path Slab
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.dirtPathSlabBlock, BlockStateVariant.create().put(VariantSettings.MODEL, new Identifier("bwt", "block/dirt_path_slab"))));
+    }
+
 }

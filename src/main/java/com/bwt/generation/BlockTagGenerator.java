@@ -159,7 +159,10 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.unfiredPlanterBlock)
                 .add(BwtBlocks.unfiredVaseBlock)
                 .add(BwtBlocks.unfiredUrnBlock)
-                .add(BwtBlocks.unfiredMouldBlock);
+                .add(BwtBlocks.unfiredMouldBlock)
+                .add(BwtBlocks.dirtSlabBlock)
+                .add(BwtBlocks.dirtPathSlabBlock)
+                .add(BwtBlocks.grassSlabBlock);
 
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(BwtBlocks.axleBlock)

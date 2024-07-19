@@ -5,6 +5,9 @@
     "bwt:unfired_planter",
     "bwt:unfired_vase",
     "bwt:unfired_urn",
-    "bwt:unfired_mould"
+    "bwt:unfired_mould",
+    "bwt:dirt_slab",
+    "bwt:dirt_path_slab",
+    "bwt:grass_slab"
   ]
 }
