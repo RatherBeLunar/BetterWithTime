@@ -1,6 +1,7 @@
 package com.bwt.mixin;
 
 import com.bwt.blocks.dirt_slab.GrassSlabBlock;
+import com.bwt.blocks.dirt_slab.SpreadHandler;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SpreadableBlock;
 import net.minecraft.server.world.ServerWorld;
@@ -16,7 +17,7 @@ public class SpreadableBlockMixin {
 
     @Inject(method = "randomTick", at = @At("TAIL"))
     public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
-        GrassSlabBlock.spreadGrassToDirtSlabs(state, world, pos, random);
+        SpreadHandler.randomTick(state, world, pos, random);
     }
 
 }

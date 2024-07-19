@@ -1,7 +1,10 @@
 {
   "variants": {
-    "": {
+    "snowy=false": {
       "model": "bwt:block/grass_slab"
+    },
+    "snowy=true": {
+      "model": "bwt:block/snowy_grass_slab"
     }
   }
 }

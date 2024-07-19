@@ -162,7 +162,8 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.unfiredMouldBlock)
                 .add(BwtBlocks.dirtSlabBlock)
                 .add(BwtBlocks.dirtPathSlabBlock)
-                .add(BwtBlocks.grassSlabBlock);
+                .add(BwtBlocks.grassSlabBlock)
+                .add(BwtBlocks.myceliumSlabBlock);
 
         getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
                 .add(BwtBlocks.axleBlock)
@@ -349,5 +350,19 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.wickerPaneBlock)
                 .add(BwtBlocks.hempCropBlock)
                 .add(BwtBlocks.companionSlabBlock);
+
+        getOrCreateTagBuilder(BwtBlockTags.CAN_CONVERT_TO_PODZOL)
+                .add(Blocks.DIRT)
+                .add(Blocks.GRASS_BLOCK)
+                .add(Blocks.COARSE_DIRT)
+                .add(Blocks.MYCELIUM)
+                .add(Blocks.ROOTED_DIRT)
+                .add(Blocks.MOSS_BLOCK)
+                .add(Blocks.MUD)
+                .add(Blocks.MUDDY_MANGROVE_ROOTS);
+        getOrCreateTagBuilder(BwtBlockTags.CAN_CONVERT_TO_PODZOL_SLAB)
+                .add(BwtBlocks.dirtSlabBlock)
+                .add(BwtBlocks.grassSlabBlock)
+                .add(BwtBlocks.myceliumSlabBlock);
     }
 }
