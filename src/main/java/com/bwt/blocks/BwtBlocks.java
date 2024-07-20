@@ -5,6 +5,10 @@ import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.crucible.CrucibleBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
+import com.bwt.blocks.dirt_slab.DirtPathSlabBlock;
+import com.bwt.blocks.dirt_slab.DirtSlabBlock;
+import com.bwt.blocks.dirt_slab.GrassSlabBlock;
+import com.bwt.blocks.dirt_slab.MyceliumSlabBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
@@ -14,12 +18,10 @@ import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
@@ -236,7 +238,11 @@ public class BwtBlocks implements ModInitializer {
             .allowsSpawning(Blocks::never)
             .noCollision()
     );
-
+    public static final Block dirtSlabBlock = new DirtSlabBlock(AbstractBlock.Settings.copy(Blocks.DIRT));
+    public static final Block dirtPathSlabBlock = new DirtPathSlabBlock(AbstractBlock.Settings.copy(Blocks.DIRT_PATH));
+    public static final Block grassSlabBlock = new GrassSlabBlock(AbstractBlock.Settings.copy(Blocks.GRASS_BLOCK));
+    public static final Block myceliumSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.MYCELIUM));
+    public static final Block podzolSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.PODZOL));
 
     @Override
     public void onInitialize() {
@@ -391,6 +397,21 @@ public class BwtBlocks implements ModInitializer {
         // Vine trap
         Registry.register(Registries.BLOCK, new Identifier("bwt", "vine_trap"), vineTrapBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
+        // Dirt Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "dirt_slab"), dirtSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "dirt_slab"), new BlockItem(dirtSlabBlock, new Item.Settings()));
+        // Dirt Path Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "dirt_path_slab"), dirtPathSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "dirt_path_slab"), new BlockItem(dirtPathSlabBlock, new Item.Settings()));
+        // Grass Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "grass_slab"), grassSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "grass_slab"), new BlockItem(grassSlabBlock, new Item.Settings()));
+        // Mycelium Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "mycelium_slab"), myceliumSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "mycelium_slab"), new BlockItem(myceliumSlabBlock, new Item.Settings()));
+        // Podzol Slab
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "podzol_slab"), podzolSlabBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "podzol_slab"), new BlockItem(podzolSlabBlock, new Item.Settings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
@@ -489,6 +510,16 @@ public class BwtBlocks implements ModInitializer {
             content.add(paddingBlock);
             content.add(ropeCoilBlock);
             content.add(concentratedHellfireBlock);
+            content.add(dirtSlabBlock);
+            content.add(dirtPathSlabBlock);
+            content.add(grassSlabBlock);
+            content.add(myceliumSlabBlock);
+            content.add(podzolSlabBlock);
         });
+
+        FlattenableBlockRegistry.register(BwtBlocks.grassSlabBlock, BwtBlocks.dirtPathSlabBlock.getDefaultState());
+        FlattenableBlockRegistry.register(BwtBlocks.dirtSlabBlock, BwtBlocks.dirtPathSlabBlock.getDefaultState());
+        FlattenableBlockRegistry.register(BwtBlocks.myceliumSlabBlock, BwtBlocks.dirtPathSlabBlock.getDefaultState());
+        FlattenableBlockRegistry.register(BwtBlocks.podzolSlabBlock, BwtBlocks.dirtPathSlabBlock.getDefaultState());
     }
 }

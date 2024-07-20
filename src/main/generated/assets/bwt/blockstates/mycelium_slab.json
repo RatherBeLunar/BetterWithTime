@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "snowy=false": {
+      "model": "bwt:block/mycelium_slab"
+    },
+    "snowy=true": {
+      "model": "bwt:block/snowy_mycelium_slab"
+    }
+  }
+}
