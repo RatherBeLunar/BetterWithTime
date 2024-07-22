@@ -4,6 +4,8 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.blocks.cauldron.CauldronBlockEntity;
 import com.bwt.blocks.crucible.CrucibleBlockEntity;
+import com.bwt.blocks.infernal_enchanter.InfernalEnchanterBlock;
+import com.bwt.blocks.infernal_enchanter.InfernalEnchanterBlockEntity;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.bwt.blocks.pulley.PulleyBlockEntity;
@@ -50,6 +52,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             Id.of("turntable_block_entity"),
             BlockEntityType.Builder.create(TurntableBlockEntity::new, BwtBlocks.turntableBlock).build()
+    );
+    public static final BlockEntityType<InfernalEnchanterBlockEntity> infernalEnchanterBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            new Identifier("bwt", "infernal_enchanter_entity"),
+            BlockEntityType.Builder.create(InfernalEnchanterBlockEntity::new, BwtBlocks.infernalEnchanterBlock).build()
     );
 
     @Override

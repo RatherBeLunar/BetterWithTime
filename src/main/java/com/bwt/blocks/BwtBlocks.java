@@ -6,6 +6,7 @@ import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.crucible.CrucibleBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
+import com.bwt.blocks.infernal_enchanter.InfernalEnchanterBlock;
 import com.bwt.blocks.dirt_slab.DirtPathSlabBlock;
 import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.dirt_slab.GrassSlabBlock;
@@ -30,6 +31,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -259,6 +261,7 @@ public class BwtBlocks implements ModInitializer {
             .allowsSpawning(Blocks::never)
             .noCollision()
     );
+    public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(AbstractBlock.Settings.copy(Blocks.NETHERITE_BLOCK).luminance(InfernalEnchanterBlock.STATE_TO_LUMINANCE));
     public static final Block dirtSlabBlock = new DirtSlabBlock(AbstractBlock.Settings.copy(Blocks.DIRT), Blocks.DIRT);
     public static final Block dirtPathSlabBlock = new DirtPathSlabBlock(AbstractBlock.Settings.copy(Blocks.DIRT_PATH), Blocks.DIRT_PATH);
     public static final Block grassSlabBlock = new GrassSlabBlock(AbstractBlock.Settings.copy(Blocks.GRASS_BLOCK), Blocks.GRASS_BLOCK);
@@ -437,6 +440,9 @@ public class BwtBlocks implements ModInitializer {
         // Podzol Slab
         Registry.register(Registries.BLOCK, Id.of("podzol_slab"), podzolSlabBlock);
         Registry.register(Registries.ITEM, Id.of("podzol_slab"), new BlockItem(podzolSlabBlock, new Item.Settings()));
+        // Infernal Enchanter
+        Registry.register(Registries.BLOCK, Id.of("infernal_enchanter"), infernalEnchanterBlock);
+        Registry.register(Registries.ITEM, Id.of("infernal_enchanter"), new BlockItem(infernalEnchanterBlock, new Item.Settings()));
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
             content.addAfter(Items.CHERRY_LEAVES, BwtBlocks.bloodWoodBlocks.leavesBlock);
@@ -495,6 +501,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(unfiredMouldBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
+            content.add(infernalEnchanterBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {

@@ -211,6 +211,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.vineTrapBlock, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.infernalEnchanterBlock, ModelIds.getBlockModelId(BwtBlocks.infernalEnchanterBlock));
         blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
     }
 
