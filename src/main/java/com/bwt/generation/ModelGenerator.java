@@ -208,6 +208,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.vineTrapBlock, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.infernalEnchanterBlock, ModelIds.getBlockModelId(BwtBlocks.infernalEnchanterBlock));
         blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
     }
 
@@ -527,4 +528,5 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
     }
+
 }

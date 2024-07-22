@@ -5,6 +5,7 @@ import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.crucible.CrucibleBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.blocks.detector.DetectorLogicBlock;
+import com.bwt.blocks.infernal_enchanter.InfernalEnchanterBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mill_stone.MillStoneBlock;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
@@ -236,7 +237,7 @@ public class BwtBlocks implements ModInitializer {
             .allowsSpawning(Blocks::never)
             .noCollision()
     );
-
+    public static final Block infernalEnchanterBlock = new InfernalEnchanterBlock(AbstractBlock.Settings.copy(Blocks.NETHERITE_BLOCK).luminance(InfernalEnchanterBlock.STATE_TO_LUMINANCE));
 
     @Override
     public void onInitialize() {
@@ -391,6 +392,9 @@ public class BwtBlocks implements ModInitializer {
         // Vine trap
         Registry.register(Registries.BLOCK, new Identifier("bwt", "vine_trap"), vineTrapBlock);
         Registry.register(Registries.ITEM, new Identifier("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
+        // Infernal Enchanter
+        Registry.register(Registries.BLOCK, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterBlock);
+        Registry.register(Registries.ITEM, new Identifier("bwt", "infernal_enchanter"), new BlockItem(infernalEnchanterBlock, new Item.Settings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
@@ -447,6 +451,7 @@ public class BwtBlocks implements ModInitializer {
                     BwtBlocks.bloodWoodBlocks.signBlock,
                     BwtBlocks.bloodWoodBlocks.hangingSignBlock
             );
+            content.add(infernalEnchanterBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {

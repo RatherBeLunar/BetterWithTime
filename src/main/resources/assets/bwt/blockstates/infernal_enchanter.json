@@ -1,0 +1,7 @@
+{
+  "multipart": [
+    {
+      "apply": { "model": "bwt:block/infernal_enchanter" }
+    }
+  ]
+}
