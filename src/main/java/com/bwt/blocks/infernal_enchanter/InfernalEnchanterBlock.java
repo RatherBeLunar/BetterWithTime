@@ -1,22 +1,23 @@
 package com.bwt.blocks.infernal_enchanter;
 
 import com.bwt.block_entities.BwtBlockEntities;
+import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.MapCodec;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMaps;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.Util;
+import net.minecraft.state.property.EnumProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
@@ -25,7 +26,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.ToIntFunction;
 
 public class InfernalEnchanterBlock extends BlockWithEntity {
@@ -39,16 +39,15 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
 
     public static final BooleanProperty LIT;
 
-
     public InfernalEnchanterBlock(Settings settings) {
         super(settings);
         setDefaultState(getDefaultState().with(LIT, true));
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if ((Boolean) state.get(LIT)) {
+        if (state.get(LIT)) {
             PARTICLE_OFFSETS.forEach((offset) -> {
-                spawnCandleParticles(world, offset.add((double) pos.getX(), (double) pos.getY(), (double) pos.getZ()), random);
+                spawnCandleParticles(world, offset.add(pos.getX(), pos.getY(), pos.getZ()), random);
             });
         }
     }
@@ -91,10 +90,21 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
         return new InfernalEnchanterBlockEntity(pos, state);
     }
 
+    @Override
+    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
+        if (world.isClient) return ActionResult.SUCCESS;
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (blockEntity instanceof InfernalEnchanterBlockEntity infernalEnchanterBlockEntity) {
+            player.openHandledScreen(infernalEnchanterBlockEntity);
+        }
+        return ActionResult.CONSUME;
+    }
+
     @Nullable
     protected static <A extends BlockEntity, E extends InfernalEnchanterBlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
         return world.isClient ? null : BlockWithEntity.validateTicker(givenType, expectedType, E::tick);
     }
+
 
     @Nullable
     @Override
