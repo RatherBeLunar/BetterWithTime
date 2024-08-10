@@ -5,6 +5,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.blocks.crucible.CrucibleScreenHandler;
+import com.bwt.blocks.infernal_enchanter.InfernalEnchanterScreenHandler;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
@@ -54,6 +55,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,6 +81,7 @@ public class BetterWithTime implements ModInitializer {
 	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<SoulForgeScreenHandler> soulForgeScreenHandler = new ScreenHandlerType<>(SoulForgeScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ScreenHandlerType<InfernalEnchanterScreenHandler> infernalEnchanterScreenHandler = new ScreenHandlerType<>(InfernalEnchanterScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	static {
 		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("block_dispenser"), blockDispenserScreenHandler);
@@ -88,6 +91,7 @@ public class BetterWithTime implements ModInitializer {
 		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("pulley"), pulleyScreenHandler);
 		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("hopper"), mechHopperScreenHandler);
 		soulForgeScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("soul_forge"), soulForgeScreenHandler);
+        infernalEnchanterScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterScreenHandler);
 	}
 
 	@Override

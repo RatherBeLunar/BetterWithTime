@@ -7,13 +7,19 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.CandleBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
@@ -22,12 +28,14 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
-public class InfernalEnchanterBlockEntity extends BlockEntity {
+public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
+
+    private Inventory inventory;
 
     public InfernalEnchanterBlockEntity(BlockPos pos, BlockState state) {
         super(BwtBlockEntities.infernalEnchanterBlockEntity, pos, state);
+        this.inventory = new SimpleInventory(2);
     }
-
 
     public static final List<BlockPos> CANDLE_OFFSETS = BlockPos.stream(-8, -1, -8, 8, 1, 8).map(BlockPos::toImmutable).toList();
 
@@ -126,6 +134,58 @@ public class InfernalEnchanterBlockEntity extends BlockEntity {
 
     public static <E extends InfernalEnchanterBlockEntity> void tick(World world, BlockPos blockPos, BlockState blockState, E e) {
         e.tick(world, blockPos, blockState);
+    }
+
+    @Override
+    public Text getDisplayName() {
+        return Text.translatable(getCachedState().getBlock().getTranslationKey());
+    }
+
+    @Override
+    public int size() {
+        return inventory.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return inventory.isEmpty();
+    }
+
+    @Override
+    public ItemStack getStack(int slot) {
+        return inventory.getStack(slot);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot, int amount) {
+        return inventory.removeStack(slot, amount);
+    }
+
+    @Override
+    public ItemStack removeStack(int slot) {
+        return inventory.removeStack(slot);
+    }
+
+    @Override
+    public void setStack(int slot, ItemStack stack) {
+        inventory.setStack(slot, stack);
+    }
+
+    @Override
+    public boolean canPlayerUse(PlayerEntity player) {
+        return inventory.canPlayerUse(player);
+    }
+
+    @Override
+    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+        //We provide *this* to the screenHandler as our class Implements Inventory
+        //Only the Server has the Inventory at the start, this will be synced to the client in the ScreenHandler
+        return new InfernalEnchanterScreenHandler(syncId, playerInventory);
+    }
+
+    @Override
+    public void clear() {
+
     }
 
     @FunctionalInterface

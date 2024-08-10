@@ -82,6 +82,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		HandledScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
 		HandledScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);
 		HandledScreens.register(BetterWithTime.soulForgeScreenHandler, SoulForgeScreen::new);
+		HandledScreens.register(BetterWithTime.infernalEnchanterScreenHandler, InfernalEnchanterScreen::new);
 
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
 			if (view == null || pos == null) {
