@@ -11,9 +11,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
@@ -31,10 +36,11 @@ import java.util.stream.Collectors;
 public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
 
     private Inventory inventory;
+    private int enchantmentPowerLevel;
 
     public InfernalEnchanterBlockEntity(BlockPos pos, BlockState state) {
         super(BwtBlockEntities.infernalEnchanterBlockEntity, pos, state);
-        this.inventory = new SimpleInventory(2);
+        this.inventory = new Inventory(2);
     }
 
     public static final List<BlockPos> CANDLE_OFFSETS = BlockPos.stream(-8, -1, -8, 8, 1, 8).map(BlockPos::toImmutable).toList();
@@ -110,7 +116,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         return lit && this.playersInRange == 0;
     }
 
-    public void tick(World world, BlockPos blockPos, BlockState blockState) {
+    public void tick(@NotNull World world, BlockPos blockPos, BlockState blockState) {
         if(world.getTime() % 5 != 0) {
             return;
         }
@@ -121,6 +127,9 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
             }
             return;
         }
+
+        this.enchantmentPowerLevel = 4;
+        this.markDirty();
 
         this.findPlayersNearby();
         if (this.isFirstEnter()) {
@@ -180,7 +189,21 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
         //We provide *this* to the screenHandler as our class Implements Inventory
         //Only the Server has the Inventory at the start, this will be synced to the client in the ScreenHandler
-        return new InfernalEnchanterScreenHandler(syncId, playerInventory);
+        return new InfernalEnchanterScreenHandler(syncId, playerInventory, inventory, propertyDelegate, ScreenHandlerContext.create(world, pos));
+    }
+
+    @Override
+    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.readNbt(nbt, registryLookup);
+        this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
+        this.enchantmentPowerLevel  = nbt.getInt("enchantmentPowerLevel");
+    }
+
+    @Override
+    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
+        super.writeNbt(nbt, registryLookup);
+        nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
+        nbt.putInt("enchantmentPowerLevel", this.enchantmentPowerLevel);
     }
 
     @Override
@@ -231,4 +254,37 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
             });
         }
     }
+
+    public class Inventory extends SimpleInventory {
+        public Inventory(int size) {
+            super(size);
+        }
+        @Override
+        public void markDirty() {
+            InfernalEnchanterBlockEntity.this.markDirty();
+        }
+    }
+
+    protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+        @Override
+        public int get(int index) {
+            return switch (index) {
+                case 0 -> InfernalEnchanterBlockEntity.this.enchantmentPowerLevel;
+                default -> 0;
+            };
+        }
+
+        @Override
+        public void set(int index, int value) {
+            switch (index) {
+                case 0 -> InfernalEnchanterBlockEntity.this.enchantmentPowerLevel = value;
+                default -> {}
+            }
+        }
+
+        @Override
+        public int size() {
+            return 1;
+        }
+    };
 }
