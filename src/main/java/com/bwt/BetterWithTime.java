@@ -20,6 +20,7 @@ import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
+import com.bwt.items.components.BwtDataComponents;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
@@ -65,6 +66,7 @@ public class BetterWithTime implements ModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
     public static final Logger LOGGER = LoggerFactory.getLogger("betterwithtime");
 
+	public static final BwtDataComponents dataComponents = new BwtDataComponents();
 	public static final BwtBlocks blocks = new BwtBlocks();
 	public static final BwtBlockEntities blockEntities = new BwtBlockEntities();
 	public static final BwtItems items = new BwtItems();
@@ -100,6 +102,7 @@ public class BetterWithTime implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
+		dataComponents.onInitialize();
 		blocks.onInitialize();
 		blockEntities.onInitialize();
 		items.onInitialize();

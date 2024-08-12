@@ -4,9 +4,12 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
 import com.bwt.utils.Id;
+import com.bwt.items.components.ArcaneEnchantmentComponent;
+import com.bwt.items.components.BwtDataComponents;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.effect.StatusEffectInstance;
@@ -15,6 +18,7 @@ import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 
 import java.util.List;
 
@@ -105,6 +109,10 @@ public class BwtItems implements ModInitializer {
             new Item.Settings().food(FoodComponents.PORKCHOP))
     );
 	public static final Item woodBladeItem = Registry.register(Registries.ITEM, Id.of("wood_blade"), new Item(new Item.Settings()));
+    public static final ArcaneTomeItem arcaneTome = Registry.register(Registries.ITEM, Id.of("arcane_tome"), new ArcaneTomeItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON).component(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, ArcaneEnchantmentComponent.DEFAULT).component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)));
+
+
+
 
     @Override
     public void onInitialize() {
@@ -170,6 +178,7 @@ public class BwtItems implements ModInitializer {
             content.add(soapItem);
             content.add(tallowItem);
             content.add(woodBladeItem);
+            ArcaneTomeItem.forEnchantments().forEach(content::add);
         });
     }
 
