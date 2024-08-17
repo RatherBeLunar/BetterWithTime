@@ -1,15 +1,16 @@
 package com.bwt.screens;
 
 import com.bwt.blocks.infernal_enchanter.InfernalEnchanterScreenHandler;
-import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
+import net.minecraft.client.gui.screen.ingame.EnchantingPhrases;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.EnchantmentScreenHandler;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -19,11 +20,25 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
     private final int BUTTON_WIDTH = 108, BUTTON_HEIGHT = 19;
     private Button[] buttons = new Button[5];
 
+
     public InfernalEnchanterScreen(InfernalEnchanterScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         backgroundHeight = 211;
         playerInventoryTitleY = backgroundHeight - 94;
     }
+
+    @Override
+    protected void init() {
+        super.init();
+        // Center the title
+        titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+        for (int i = 0; i < 5; i++) {
+            buttons[i] = new Button(i, x + 60, y + 17 + (i * 19), BUTTON_WIDTH, BUTTON_HEIGHT, this);
+        }
+    }
+
 
 
     @Override
@@ -60,29 +75,18 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         this.drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
-    @Override
-    protected void init() {
-        super.init();
-        // Center the title
-        titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        for (int i = 0; i < 5; i++) {
-            buttons[i] = new Button(i, x + 60, y + 17 + (i * 19), BUTTON_WIDTH, BUTTON_HEIGHT, this.handler.getPropertyDelegate());
-        }
-    }
 
     private static class Button implements Drawable {
         private final int id, x, y, w, h;
-        private final PropertyDelegate propertyDelegate;
+        private final InfernalEnchanterScreen screen;
 
-        private Button(int id, int x, int y, int w, int h, PropertyDelegate propertyDelegate) {
+        private Button(int id, int x, int y, int w, int h, InfernalEnchanterScreen screen) {
             this.id = id;
             this.x = x;
             this.y = y;
             this.w = w;
             this.h = h;
-            this.propertyDelegate = propertyDelegate;
+            this.screen = screen;
         }
 
         public boolean mouseClick(double mouseX, double mouseY, int input) {
@@ -93,22 +97,63 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         }
 
         private boolean isDisabled() {
-            int level = this.propertyDelegate.get(0);
-            return this.id + 1 > level;
+            int enchanterTier = this.screen.handler.getPropertyDelegate().get(0);
+            if( this.id + 1 > enchanterTier) {
+                return true;
+            }
+
+            int levelRequired = this.screen.handler.getButtonLevel(this.id);
+
+            var player = this.screen.client.player;
+            int playerLevel = player.experienceLevel;
+            if(playerLevel < levelRequired) {
+                return true;
+            }
+
+            if(!this.screen.handler.canEnchantToolWithEnchantment()) {
+               return true;
+            }
+
+            return false;
         }
+
 
         @Override
         public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+            int levelRequired = this.screen.handler.getButtonLevel(this.id);
+            EnchantingPhrases.getInstance().setSeed(this.screen.handler.seed.get());
+
+
+
+
+
             if (this.isDisabled()) {
                 RenderSystem.enableBlend();
                 context.drawTexture(TEXTURE, x, y, 0, 230, w, h);
                 RenderSystem.disableBlend();
             } else {
-                if (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h) {
+
+                boolean selected = (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h);
+
+                var levelString = String.format("%d", levelRequired);
+                int levelColor = 8453920;
+                // 4226832
+                int textColor = selected ? 16777088 : 6839882;
+
+                int p = 86 - this.screen.textRenderer.getWidth(levelString);
+
+
+
+
+                if (selected) {
                     RenderSystem.enableBlend();
                     context.drawTexture(TEXTURE, x, y, 108, 211, w, h);
                     RenderSystem.disableBlend();
                 }
+                StringVisitable stringVisitable = EnchantingPhrases.getInstance().generatePhrase(this.screen.textRenderer, p);
+                context.drawTextWrapped(this.screen.textRenderer, stringVisitable, x + 2, y + 2, p, textColor);
+
+                context.drawTextWithShadow(this.screen.textRenderer, levelString , x + w - 2 - this.screen.textRenderer.getWidth(levelString), y + 9 , levelColor);
             }
         }
     }

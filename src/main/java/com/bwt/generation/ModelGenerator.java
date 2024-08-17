@@ -267,6 +267,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.woodBladeItem, Models.GENERATED);
+        itemModelGenerator.register(BwtItems.arcaneTome, Models.GENERATED);
     }
 
     private void generateBloodWoodBlocks(BlockStateModelGenerator blockStateModelGenerator) {

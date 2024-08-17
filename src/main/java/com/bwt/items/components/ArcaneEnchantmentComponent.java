@@ -48,7 +48,7 @@ public class ArcaneEnchantmentComponent implements TooltipAppender {
             tooltip.accept(getEnchantmentName(enchantment));
         }
     }
-    public RegistryEntry<Enchantment> getEnchantment() {
+    public RegistryEntry<Enchantment> getEnchantmentEntry() {
         return this.enchantment;
     }
 
@@ -79,14 +79,19 @@ public class ArcaneEnchantmentComponent implements TooltipAppender {
         return "ArcaneEnchantment{enchantment=" + var10000 + ", showInTooltip=" + this.showInTooltip + "}";
     }
 
+    public Enchantment getEnchantment() {
+        return this.enchantment.getKey().map(Registries.ENCHANTMENT::get).orElseGet(null);
+    }
 
 
     static {
         CODEC =  RecordCodecBuilder.create((instance) -> instance.group(
-                Registries.ENCHANTMENT.getEntryCodec().fieldOf("enchantment").forGetter(ArcaneEnchantmentComponent::getEnchantment),
+                Registries.ENCHANTMENT.getEntryCodec().fieldOf("enchantment").forGetter(ArcaneEnchantmentComponent::getEnchantmentEntry
+                ),
                 Codec.BOOL.optionalFieldOf("show_in_tooltip", true).forGetter(ArcaneEnchantmentComponent::isShowInTooltip)).apply(instance, ArcaneEnchantmentComponent::new)
         );
         PACKET_CODEC = PacketCodec.tuple(PacketCodecs.registryEntry(RegistryKeys.ENCHANTMENT), (component) -> component.enchantment, PacketCodecs.BOOL, (component) -> component.showInTooltip, ArcaneEnchantmentComponent::new);
     }
+
 
 }
