@@ -196,10 +196,6 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
             return false;
         }
 
-        if (tool.canBeEnchantedWith(enchantment, EnchantingContext.ANVIL)) {
-            return false;
-        }
-
 
         boolean isEnchantable = canEnchantToolWithEnchantment();
 
