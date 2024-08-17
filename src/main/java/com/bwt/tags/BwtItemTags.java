@@ -2,10 +2,19 @@ package com.bwt.tags;
 
 import com.bwt.utils.Id;
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BwtItemTags {
     public static final TagKey<Item> SIDING_BLOCKS = TagKey.of(RegistryKeys.ITEM, Id.of("siding_blocks"));
@@ -33,4 +42,19 @@ public class BwtItemTags {
     public static final TagKey<Item> MINING_CHARGE_IMMUNE = TagKey.of(RegistryKeys.ITEM, Id.of("mining_charge_immune"));
     public static final TagKey<Item> BLOOD_WOOD_LOGS = TagKey.of(RegistryKeys.ITEM, Id.of("blood_wood_logs"));
     public static final TagKey<Item> CAN_INFERNAL_ENCHANT = TagKey.of(RegistryKeys.ITEM, Id.of("can_infernal_enchant"));
+
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_HELMETS = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/helmets"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_CHESTPLATES = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/chestplates"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_LEGGINGS = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/leggings"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_BOOTS = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/boots"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_ARMOR = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/armor"));
+
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_PICKAXE = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/pickaxe"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_TOOL = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/tool"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_SWORD = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/sword"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_MELEE_WEAPON = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/melee_weapon"));
+    public static final TagKey<Item> INFERNAL_ENCHANTABLE_DURABLITY = TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantable/durability"));
+
+    public static final Map<Enchantment, TagKey<Item>> CAN_APPLY_INFERNAL_ENCHANT_TO = Registries.ENCHANTMENT.getKeys().stream().map(key -> Pair.of(Registries.ENCHANTMENT.get(key), TagKey.of(RegistryKeys.ITEM, Id.of( "infernal_enchantments/" + key.getValue().getPath())))).collect(Collectors.toMap(Pair::getLeft, Pair::getRight));
+    
 }

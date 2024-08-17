@@ -13,14 +13,18 @@ import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
+import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.spongepowered.asm.mixin.injection.struct.InjectorGroupInfo;
 
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -140,6 +144,12 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.SAW_DUSTS, "Saw Dusts", translationBuilder);
         addTagName(BwtItemTags.MINING_CHARGE_IMMUNE, "Mining Charge Immune", translationBuilder);
         addTagName(BwtItemTags.BLOOD_WOOD_LOGS, "Blood Wood Logs", translationBuilder);
+
+        for(Map.Entry<Enchantment, TagKey<Item>> entry : BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.entrySet()) {
+            var enchant = entry.getKey();
+            addTagName(BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchant), nameKeyToTitleCase(enchant.getTranslationKey().replaceFirst("enchantment.", "")), translationBuilder);
+        }
+
     }
 
     protected void addEmiNames(TranslationBuilder translationBuilder) {

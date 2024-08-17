@@ -5,15 +5,27 @@ import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.tags.CompatibilityTags;
+import com.google.common.collect.ObjectArrays;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Identifier;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.stream.Streams;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
     public ItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, BlockTagGenerator blockTagGenerator) {
@@ -81,9 +93,10 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
         getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
-        getOrCreateTagBuilder(BwtItemTags.CAN_INFERNAL_ENCHANT).add(BwtItems.netheriteMattockItem, BwtItems.netheriteBattleAxeItem);
+
 
         addHopperFilters();
+        addInfernalEnchantableItems();
     }
 
     protected void addHopperFilters() {
@@ -247,7 +260,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.PRISMARINE_CRYSTALS,
                         Items.NAUTILUS_SHELL,
                         Items.POPPED_CHORUS_FRUIT
-            );
+                );
 
         getOrCreateTagBuilder(BwtItemTags.PASSES_TRAPDOOR_FILTER)
                 .addTag(BwtItemTags.PASSES_GRATE_FILTER)
@@ -441,4 +454,76 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.SKULL_BANNER_PATTERN
                 );
     }
+
+    protected void addInfernalEnchantableItems() {
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_HELMETS)
+                .add(Items.NETHERITE_HELMET);
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_CHESTPLATES)
+                .add(Items.NETHERITE_CHESTPLATE);
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_LEGGINGS)
+                .add(Items.NETHERITE_LEGGINGS);
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_BOOTS)
+                .add(Items.NETHERITE_BOOTS);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_HELMETS)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_CHESTPLATES)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_LEGGINGS)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_BOOTS);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE)
+                .add(Items.NETHERITE_PICKAXE).add(BwtItems.netheriteMattockItem);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_SWORD)
+                .add(Items.NETHERITE_SWORD);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_SWORD)
+                .add(BwtItems.netheriteBattleAxeItem);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE)
+                .add(Items.NETHERITE_SHOVEL, Items.NETHERITE_AXE, Items.NETHERITE_HOE, BwtItems.netheriteMattockItem);
+
+        getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_DURABLITY)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);
+
+
+        addInfernalEnchantable(Enchantments.EFFICIENCY)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL);
+
+
+        //TODO complete tag membership
+        addInfernalEnchantable(Enchantments.FORTUNE)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL);
+        addInfernalEnchantable(Enchantments.LOOTING)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);
+        addInfernalEnchantable(Enchantments.SHARPNESS)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);
+        addInfernalEnchantable(Enchantments.PROTECTION)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR);
+        addInfernalEnchantable(Enchantments.THORNS)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR);
+        addInfernalEnchantable(Enchantments.UNBREAKING)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_DURABLITY);
+
+
+        addInfernalEnchantable(Enchantments.AQUA_AFFINITY).addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_HELMETS);
+        addInfernalEnchantable(Enchantments.BANE_OF_ARTHROPODS).addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);
+
+        FabricTagBuilder builder = getOrCreateTagBuilder(BwtItemTags.CAN_INFERNAL_ENCHANT);
+        for(TagKey<Item> tag : BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.values()) {
+            builder.addOptionalTag(tag);
+        }
+
+    }
+
+    protected FabricTagBuilder  addInfernalEnchantable(Enchantment enchantment) {
+        return getOrCreateTagBuilder(BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchantment));
+    }
+
+
 }

@@ -37,4 +37,5 @@ public class BwtBlockTags {
     public static final TagKey<Block> BLOOD_WOOD_PLANTABLE_ON = TagKey.of(RegistryKeys.BLOCK, Id.of("blood_wood_plantable_on"));
     public static final TagKey<Block> CAN_CONVERT_TO_PODZOL = TagKey.of(RegistryKeys.BLOCK, Id.of("can_convert_to_podzol"));
     public static final TagKey<Block> CAN_CONVERT_TO_PODZOL_SLAB = TagKey.of(RegistryKeys.BLOCK, Id.of("can_convert_to_podzol_slab"));
+    public static final TagKey<Block> INFERNAL_ENCHANTMENT_POWER_PROVIDER = TagKey.of(RegistryKeys.BLOCK, Id.of("infernal_enchantment_power_provider"));
 }

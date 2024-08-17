@@ -9,6 +9,7 @@ import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookingProgressPayload;
 import com.bwt.models.*;
 import com.bwt.screens.*;
 import com.bwt.utils.Id;
+import com.bwt.screens.infernal_enchanter.InfernalEnchanterScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

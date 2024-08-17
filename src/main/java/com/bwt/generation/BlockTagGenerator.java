@@ -77,6 +77,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.FIRE).add(BwtBlocks.stokedFireBlock);
         getOrCreateTagBuilder(BlockTags.WOOL).add(BwtBlocks.companionCubeBlock);
         getOrCreateTagBuilder(BwtBlockTags.WOOL_SLABS).add(BwtBlocks.companionSlabBlock);
+        getOrCreateTagBuilder(BwtBlockTags.INFERNAL_ENCHANTMENT_POWER_PROVIDER).add(Blocks.BOOKSHELF, Blocks.CHISELED_BOOKSHELF);
 
         addTools();
         addMaterialInheritedBlockTags();
