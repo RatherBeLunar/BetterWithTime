@@ -353,6 +353,7 @@
   "gamerule.disableVanillaHopperTransfer": "Disable Vanilla Hopper Transfer",
   "gamerule.lensBeamRange": "Lens Beam Range",
   "gamerule.lensBeamRange.description": "Impacts performance!",
+  "item.bwt.arcane_tome": "Arcane Tome",
   "item.bwt.armor_plate": "Armor Plate",
   "item.bwt.belt": "Belt",
   "item.bwt.breeding_harness": "Breeding Harness",

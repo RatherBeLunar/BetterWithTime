@@ -81,6 +81,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
         getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
+        getOrCreateTagBuilder(BwtItemTags.CAN_INFERNAL_ENCHANT).add(BwtItems.netheriteMattockItem, BwtItems.netheriteBattleAxeItem);
+
         addHopperFilters();
     }
 

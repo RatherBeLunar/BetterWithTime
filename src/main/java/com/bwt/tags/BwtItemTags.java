@@ -32,4 +32,5 @@ public class BwtItemTags {
     public static final TagKey<Item> SAW_DUSTS = TagKey.of(RegistryKeys.ITEM, Id.of("saw_dusts"));
     public static final TagKey<Item> MINING_CHARGE_IMMUNE = TagKey.of(RegistryKeys.ITEM, Id.of("mining_charge_immune"));
     public static final TagKey<Item> BLOOD_WOOD_LOGS = TagKey.of(RegistryKeys.ITEM, Id.of("blood_wood_logs"));
+    public static final TagKey<Item> CAN_INFERNAL_ENCHANT = TagKey.of(RegistryKeys.ITEM, Id.of("can_infernal_enchant"));
 }
