@@ -1,7 +1,6 @@
 package com.bwt.blocks.infernal_enchanter;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -14,9 +13,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.EnumProperty;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -24,7 +21,6 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.ToIntFunction;

@@ -6,6 +6,7 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
 import com.bwt.models.*;
 import com.bwt.screens.*;
+import com.bwt.screens.infernal_enchanter.InfernalEnchanterScreen;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

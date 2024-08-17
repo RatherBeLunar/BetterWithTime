@@ -1,15 +1,12 @@
-package com.bwt.screens;
+package com.bwt.screens.infernal_enchanter;
 
 import com.bwt.blocks.infernal_enchanter.InfernalEnchanterScreenHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.screen.ingame.EnchantingPhrases;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.EnchantmentScreenHandler;
-import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -38,7 +35,6 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
             buttons[i] = new Button(i, x + 60, y + 17 + (i * 19), BUTTON_WIDTH, BUTTON_HEIGHT, this);
         }
     }
-
 
 
     @Override
@@ -98,20 +94,21 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
 
         private boolean isDisabled() {
             int enchanterTier = this.screen.handler.getPropertyDelegate().get(0);
-            if( this.id + 1 > enchanterTier) {
+            if (this.id + 1 > enchanterTier) {
                 return true;
             }
 
-            int levelRequired = this.screen.handler.getButtonLevel(this.id);
+            int levelRequired = this.screen.handler.getButtonCost(this.id);
 
             var player = this.screen.client.player;
             int playerLevel = player.experienceLevel;
-            if(playerLevel < levelRequired) {
+            if (!player.isCreative() && playerLevel < levelRequired) {
                 return true;
             }
 
-            if(!this.screen.handler.canEnchantToolWithEnchantment()) {
-               return true;
+
+            if (!this.screen.handler.canEnchantToolWithEnchantment(this.id)) {
+                return true;
             }
 
             return false;
@@ -120,12 +117,8 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
 
         @Override
         public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-            int levelRequired = this.screen.handler.getButtonLevel(this.id);
-            EnchantingPhrases.getInstance().setSeed(this.screen.handler.seed.get());
-
-
-
-
+            int levelRequired = this.screen.handler.getButtonCost(this.id);
+            var enchantment = this.screen.handler.getEnchantment();
 
             if (this.isDisabled()) {
                 RenderSystem.enableBlend();
@@ -137,23 +130,22 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
 
                 var levelString = String.format("%d", levelRequired);
                 int levelColor = 8453920;
-                // 4226832
+
                 int textColor = selected ? 16777088 : 6839882;
 
                 int p = 86 - this.screen.textRenderer.getWidth(levelString);
-
-
-
 
                 if (selected) {
                     RenderSystem.enableBlend();
                     context.drawTexture(TEXTURE, x, y, 108, 211, w, h);
                     RenderSystem.disableBlend();
+                    context.drawTooltip(this.screen.textRenderer, InfernalEnchantingPhrases.tooltipForEnchantment(enchantment,  this.screen.handler.getResultEnchantmentLevel(this.id)), mouseX, mouseY);
                 }
-                StringVisitable stringVisitable = EnchantingPhrases.getInstance().generatePhrase(this.screen.textRenderer, p);
+                StringVisitable stringVisitable = InfernalEnchantingPhrases.getInstance().generatePhrase(this.screen.textRenderer, p, enchantment, this.screen.handler.getResultEnchantmentLevel(id));
                 context.drawTextWrapped(this.screen.textRenderer, stringVisitable, x + 2, y + 2, p, textColor);
+                context.drawTextWithShadow(this.screen.textRenderer, levelString, x + w - 2 - this.screen.textRenderer.getWidth(levelString), y + 9, levelColor);
 
-                context.drawTextWithShadow(this.screen.textRenderer, levelString , x + w - 2 - this.screen.textRenderer.getWidth(levelString), y + 9 , levelColor);
+
             }
         }
     }

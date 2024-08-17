@@ -34,4 +34,5 @@ public class BwtBlockTags {
     public static final TagKey<Block> BATTLEAXE_MINEABLE = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "mineable/battle_axe"));
     public static final TagKey<Block> BLOOD_WOOD_LOGS = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "blood_wood_logs"));
     public static final TagKey<Block> BLOOD_WOOD_PLANTABLE_ON = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "blood_wood_plantable_on"));
+    public static final TagKey<Block> INFERNAL_ENCHANTMENT_POWER_PROVIDER = TagKey.of(RegistryKeys.BLOCK, new Identifier("bwt", "infernal_enchantment_power_provider"));
 }

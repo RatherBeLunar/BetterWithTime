@@ -3,21 +3,19 @@ package com.bwt.blocks.infernal_enchanter;
 import com.bwt.BetterWithTime;
 import com.bwt.items.components.BwtDataComponents;
 import com.bwt.tags.BwtItemTags;
-import net.fabricmc.fabric.api.item.v1.EnchantingContext;
+import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.Stats;
 
 public class InfernalEnchanterScreenHandler extends ScreenHandler {
 
@@ -54,7 +52,7 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         this.addSlot(new Slot(inventory, 0, 17, 37) {
             @Override
             public boolean canInsert(ItemStack stack) {
-                return stack.isEnchantable();
+                return stack.isIn(BwtItemTags.CAN_INFERNAL_ENCHANT);
             }
         });
         this.addSlot(new Slot(inventory, 1, 17, 75) {
@@ -152,7 +150,7 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         super.onContentChanged(inventory);
     }
 
-    public boolean canEnchantToolWithEnchantment() {
+    public boolean canEnchantToolWithEnchantment(int buttonId) {
 
         ItemStack tool = this.slots.get(0).getStack();
         ItemStack enchantSource = this.slots.get(1).getStack();
@@ -170,52 +168,53 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
             return false;
         }
 
-        //TODO rewrite this to use custom tags for each enchant
-        //  if (!tool.canBeEnchantedWith(enchantment, EnchantingContext.ANVIL)) {
-    //         return false;
-    //      }
+        var resultLevel = this.getResultEnchantmentLevel(buttonId);
+        if(resultLevel > enchantment.getMaxLevel()) {
+            return false;
+        }
+
+        TagKey<Item> canApplyEnchantTo = BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchantment);
+        if(canApplyEnchantTo == null) {
+            return false;
+        }
+
+        if (!tool.isIn(canApplyEnchantTo)) {
+            return false;
+        }
 
         return true;
-
     }
 
     @Override
-    public boolean onButtonClick(PlayerEntity player, int id) {
-        player.sendMessage(Text.literal(String.format("%d", id)));
-
-
+    public boolean onButtonClick(PlayerEntity player, int buttonId) {
         ItemStack tool = this.slots.get(0).getStack();
         ItemStack enchantSource = this.slots.get(1).getStack();
-        var arcaneEnchantSource = enchantSource.get(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT);
-        if (arcaneEnchantSource == null) {
+        var enchantment = this.getEnchantment();
+        if(enchantment == null) {
             return false;
         }
-
-        var enchantment = arcaneEnchantSource.getEnchantment();
-        if (enchantment == null) {
-            return false;
-        }
-
-
-        boolean isEnchantable = canEnchantToolWithEnchantment();
+        boolean isEnchantable = canEnchantToolWithEnchantment(buttonId);
 
         if (isEnchantable) {
             this.context.run((world, blockPos) -> {
-
-
-                int requiredLevels = getButtonLevel(id);
+                int cost = getButtonCost(buttonId);
                 int playerLevels = player.experienceLevel;
-                if (playerLevels < requiredLevels) {
+                if (!player.isCreative() && playerLevels < cost) {
                     //skip if player doesn't have the levels
                     return;
                 }
-                player.applyEnchantmentCosts(tool, requiredLevels);
-                //TODO sounds,stats
 
+                int appliedTier = getResultEnchantmentLevel(buttonId);
+                if(this.propertyDelegate.get(0) < appliedTier) {
+                    //skip if the enchanter is not powerful enough and somehow the button packet was sent
+                    return;
+                }
 
-                // TODO validate this
-
-                int appliedTier = Math.min(enchantment.getMaxLevel(), id + 1);
+                player.applyEnchantmentCosts(tool, cost);
+                player.incrementStat(Stats.ENCHANT_ITEM);
+                if (player instanceof ServerPlayerEntity) {
+                    Criteria.ENCHANTED_ITEM.trigger((ServerPlayerEntity)player, tool, appliedTier);
+                }
                 tool.addEnchantment(enchantment, appliedTier);
                 enchantSource.decrement(1);
             });
@@ -223,12 +222,29 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         }
 
 
-        return super.onButtonClick(player, id);
+        return super.onButtonClick(player, buttonId);
     }
 
 
-    public int getButtonLevel(int id) {
+    public int getButtonCost(int id) {
         double n = (id + 1) / BUTTON_COUNT;
         return (int) (n * MAX_LEVEL);
     }
+
+    public int getResultEnchantmentLevel(int buttonId) {
+        return buttonId + 1;
+    }
+
+    public Enchantment getEnchantment() {
+
+        ItemStack enchantSource = this.slots.get(1).getStack();
+        var arcaneEnchantSource = enchantSource.get(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT);
+        if (arcaneEnchantSource == null) {
+            return null;
+        }
+        return arcaneEnchantSource.getEnchantment();
+    }
+
+
+
 }
