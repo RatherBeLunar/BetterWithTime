@@ -3,8 +3,8 @@ package com.bwt.blocks.infernal_enchanter;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.tags.BwtBlockTags;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.ChiseledBookshelfBlock;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -13,17 +13,22 @@ import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.text.Text;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
 import java.util.List;
 
 public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
@@ -40,7 +45,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     }
 
     public static final List<BlockPos> CANDLE_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
-    public static final List<BlockPos> POWER_SOURCE_OFFSETS = BlockPos.stream(-8, -8, -8, 8,8,8).map(BlockPos::toImmutable).toList();
+    public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-8, -8, -8, 8,8,8).map(BlockPos::toImmutable).toList();
 
     private final InfernalEnchanterAnimationsController animationsController;
 
@@ -48,8 +53,8 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     public void tick(@NotNull World world, BlockPos blockPos, BlockState blockState) {
 
         this.animationsController.tick(world, blockPos, blockState);
-        if (world.getTime() % 5 == 0) {
-            this.calculateEnchantmentPowerLevel(world, blockPos);
+        if (world.getTime() % 10 == 0) {
+            this.calculateEnchantmentPowerLevel();
         }
     }
 
@@ -58,27 +63,63 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         return occupied / ChiseledBookshelfBlock.SLOT_OCCUPIED_PROPERTIES.size();
     }
 
-    public void calculateEnchantmentPowerLevel(World world, BlockPos blockPos) {
+    public boolean isPowerProvider(BlockPos pos) {
+        return world.getBlockState(pos).isIn(BwtBlockTags.INFERNAL_ENCHANTMENT_POWER_PROVIDER);
+    }
 
-        double sumSources = POWER_SOURCE_OFFSETS.stream().map(blockPos::add).map(world::getBlockState).filter(blockState -> blockState.isIn(BwtBlockTags.INFERNAL_ENCHANTMENT_POWER_PROVIDER)).mapToDouble(
-                blockState -> {
-                    if(blockState.getBlock() instanceof ChiseledBookshelfBlock) {
-                        return (int) (getChiseledBookshelfPowerLevel(blockState));
-                    } else {
-                        return 1;
-                    }
-                }
-        ).sum();
+    public double getPowerSourceValue(BlockPos offset) {
+        BlockPos p = this.getPos().add(offset);
+        BlockState state = world.getBlockState(p);
+        if(state.getBlock() instanceof ChiseledBookshelfBlock) {
+            return getChiseledBookshelfPowerLevel(state);
+        }
+        return 1;
+    }
+
+    public boolean canRayTraceToPowerProvider(BlockPos offset) {
+        BlockPos p = this.getPos().add(offset);
+        BlockState state = world.getBlockState(p);
+
+        var start = getPos().toCenterPos();
+        var end = p.toCenterPos();
+
+        var result = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, ShapeContext.absent()));
+
+        if(result == null || result.getType() == HitResult.Type.MISS) {
+            return false;
+        }
+
+        var resultPos = result.getBlockPos();
+        if(!p.equals(resultPos)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public void spawnLetterParticles() {
+        Iterator iter = POWER_PROVIDER_OFFSETS.iterator();
+        var random = world.getRandom();
+        while(iter.hasNext()) {
+            BlockPos offset = (BlockPos) iter.next();
+            if (random.nextInt(16) == 0 && (isPowerProvider(getPos().add(offset)) && canRayTraceToPowerProvider(offset))) {
+                world.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5, (double)pos.getY() + 2.0, (double)pos.getZ() + 0.5, (double)((float) offset.getX() + random.nextFloat()) - 0.5, (double)((float) offset.getY() - random.nextFloat() - 1.0F), (double)((float) offset.getZ() + random.nextFloat()) - 0.5);
+            }
+        }
+    }
 
 
-        var cappedSumSources = Math.min(sumSources, MAX_POWER_SOURCE_REQUIRED);
-        int powerLevel = (int) Math.floor(cappedSumSources / (MAX_POWER_SOURCE_REQUIRED / ENCHANTER_LEVELS));
+    public void calculateEnchantmentPowerLevel() {
+        var found = POWER_PROVIDER_OFFSETS.stream().filter(this::isPowerProvider).toList();
+
+        double sum = found.stream().mapToDouble(this::getPowerSourceValue).sum();
+
+        var cappedSum = Math.min(sum, MAX_POWER_SOURCE_REQUIRED);
+        int powerLevel = (int) Math.floor(cappedSum / (MAX_POWER_SOURCE_REQUIRED / ENCHANTER_LEVELS));
         int finalPowerLevel = Math.min(powerLevel, ENCHANTER_LEVELS);
 
         this.enchantmentPowerLevel = finalPowerLevel;
         this.markDirty();
-
-
     }
 
     public static <E extends InfernalEnchanterBlockEntity> void tick(World world, BlockPos blockPos, BlockState blockState, E e) {

@@ -169,7 +169,7 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         }
 
         var resultLevel = this.getResultEnchantmentLevel(buttonId);
-        if(resultLevel > enchantment.getMaxLevel()) {
+         if(resultLevel > enchantment.getMaxLevel()) {
             return false;
         }
 

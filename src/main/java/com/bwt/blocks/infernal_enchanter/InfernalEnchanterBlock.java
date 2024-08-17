@@ -9,6 +9,7 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
@@ -23,6 +24,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Iterator;
 import java.util.function.ToIntFunction;
 
 public class InfernalEnchanterBlock extends BlockWithEntity {
@@ -46,6 +48,11 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
             PARTICLE_OFFSETS.forEach((offset) -> {
                 spawnCandleParticles(world, offset.add(pos.getX(), pos.getY(), pos.getZ()), random);
             });
+        }
+
+        var entity = world.getBlockEntity(pos);
+        if(entity instanceof InfernalEnchanterBlockEntity ie) {
+            ie.spawnLetterParticles();
         }
     }
 
@@ -108,7 +115,8 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> givenType) {
         return validateTicker(world, givenType, BwtBlockEntities.infernalEnchanterBlockEntity);
     }
-    
+
+
     public static double P = 1 / 16.0;
 
     static {
