@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "chance": 0.004,
+              "condition": "minecraft:random_chance"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            },
+            {
+              "components": {
+                "bwt:arcane_enchantment": {
+                  "enchantment": "minecraft:fire_aspect"
+                }
+              },
+              "function": "minecraft:set_components"
+            }
+          ],
+          "name": "bwt:arcane_tome"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

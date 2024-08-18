@@ -21,6 +21,7 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.items.components.BwtDataComponents;
+import com.bwt.loot_tables.BwtLootTables;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
@@ -76,6 +77,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtGameRules gameRules = new BwtGameRules();
 	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
 	public static final TrackedDataHandlers dataHandlers = new TrackedDataHandlers();
+	public static final BwtLootTables lootTables = new BwtLootTables();
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<CrucibleScreenHandler> crucibleScreenHandler = new ScreenHandlerType<>(CrucibleScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -112,6 +114,7 @@ public class BetterWithTime implements ModInitializer {
 		gameRules.onInitialize();
 		soundEvents.onInitialize();
 		dataHandlers.onInitialize();
+		lootTables.onInitialize();
 
 		// Fuel maps
 		// Vanilla change to account for the moulding -> stick recipe

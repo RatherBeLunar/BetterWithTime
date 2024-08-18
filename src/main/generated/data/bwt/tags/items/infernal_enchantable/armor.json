@@ -1,0 +1,20 @@
+{
+  "values": [
+    {
+      "id": "#bwt:infernal_enchantable/helmets",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantable/chestplates",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantable/leggings",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantable/boots",
+      "required": false
+    }
+  ]
+}

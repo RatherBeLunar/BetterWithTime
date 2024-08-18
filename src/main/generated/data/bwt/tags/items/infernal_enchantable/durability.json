@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "#bwt:infernal_enchantable/armor",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantable/tool",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantable/melee_weapon",
+      "required": false
+    }
+  ]
+}

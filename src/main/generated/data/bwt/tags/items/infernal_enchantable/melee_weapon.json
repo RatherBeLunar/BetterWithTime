@@ -1,0 +1,9 @@
+{
+  "values": [
+    {
+      "id": "#bwt:infernal_enchantable/sword",
+      "required": false
+    },
+    "bwt:netherite_battle_axe"
+  ]
+}
