@@ -11,15 +11,22 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.FoodComponents;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
+import net.minecraft.loot.LootTable;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Rarity;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BwtItems implements ModInitializer {
     public static final Item cementBucketItem = Registry.register(Registries.ITEM, new Identifier("bwt", "cement_bucket"), new CementBucketItem(new Item.Settings()));
@@ -109,9 +116,6 @@ public class BwtItems implements ModInitializer {
     );
 	public static final Item woodBladeItem = Registry.register(Registries.ITEM, new Identifier("bwt", "wood_blade"), new Item(new Item.Settings()));
     public static final ArcaneTomeItem arcaneTome = Registry.register(Registries.ITEM, new Identifier("bwt", "arcane_tome"), new ArcaneTomeItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON).component(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, ArcaneEnchantmentComponent.DEFAULT).component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)));
-
-
-
 
     @Override
     public void onInitialize() {

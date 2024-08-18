@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#bwt:infernal_enchantable/pickaxe",
+      "required": false
+    },
+    "minecraft:netherite_shovel",
+    "minecraft:netherite_axe",
+    "minecraft:netherite_hoe",
+    "bwt:netherite_mattock"
+  ]
+}
