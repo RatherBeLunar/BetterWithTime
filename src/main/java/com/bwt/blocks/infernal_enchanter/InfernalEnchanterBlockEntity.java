@@ -102,7 +102,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         var random = world.getRandom();
         while(iter.hasNext()) {
             BlockPos offset = (BlockPos) iter.next();
-            if (random.nextInt(16) == 0 && (isPowerProvider(getPos().add(offset)) && canRayTraceToPowerProvider(offset))) {
+            if (random.nextInt(64) == 0 && (isPowerProvider(getPos().add(offset)) && canRayTraceToPowerProvider(offset))) {
                 world.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5, (double)pos.getY() + 2.0, (double)pos.getZ() + 0.5, (double)((float) offset.getX() + random.nextFloat()) - 0.5, (double)((float) offset.getY() - random.nextFloat() - 1.0F), (double)((float) offset.getZ() + random.nextFloat()) - 0.5);
             }
         }
