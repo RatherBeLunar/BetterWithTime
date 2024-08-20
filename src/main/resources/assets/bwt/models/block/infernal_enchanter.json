@@ -1,5 +1,5 @@
 {
-	"credit": "Made with Blockbench",
+	"parent": "block/block",
     "textures": {
       "candle": "minecraft:block/black_candle",
       "particle": "block/enchanting_table_bottom",
