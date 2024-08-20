@@ -144,6 +144,18 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.SAW_DUSTS, "Saw Dusts", translationBuilder);
         addTagName(BwtItemTags.MINING_CHARGE_IMMUNE, "Mining Charge Immune", translationBuilder);
         addTagName(BwtItemTags.BLOOD_WOOD_LOGS, "Blood Wood Logs", translationBuilder);
+        addTagName(BwtItemTags.CAN_INFERNAL_ENCHANT, "Infernal Enchanting", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR, "Infernal Enchanting: Armor", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_HELMETS, "Infernal Enchanting: Helmets", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_CHESTPLATES, "Infernal Enchanting: Chestplates", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_LEGGINGS, "Infernal Enchanting: Leggings", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_BOOTS, "Infernal Enchanting: Boots", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL, "Infernal Enchanting: Tools", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_DURABLITY, "Infernal Enchanting: With Durability", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON, "Infernal Enchanting: Melee Weapons", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_SWORD, "Infernal Enchanting: Swords", translationBuilder);
+        addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE, "Infernal Enchanting: Pickaxes", translationBuilder);
+
 
         for(Map.Entry<Enchantment, TagKey<Item>> entry : BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.entrySet()) {
             var enchant = entry.getKey();
