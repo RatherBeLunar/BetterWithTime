@@ -31,7 +31,7 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
 
 
     public InfernalEnchanterScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(2), new ArrayPropertyDelegate(1), ScreenHandlerContext.EMPTY);
+        this(syncId, playerInventory, new SimpleInventory(2), new ArrayPropertyDelegate(2), ScreenHandlerContext.EMPTY);
     }
 
     private int playerInventoryStartIndex, playerInventoryEndIndex;

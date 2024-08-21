@@ -50,6 +50,16 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         return super.mouseClicked(mouseX, mouseY, input);
     }
 
+    protected void drawSizeBar(DrawContext context) {
+        int x = (width - backgroundWidth) / 2;
+        int y = (height - backgroundHeight) / 2;
+        int enchantmentPowerSourceCount = this.handler.getPropertyDelegate().get(1);
+
+        context.drawTexture(TEXTURE, x + 50 ,y + 34, 176,32, 5, 61);
+        context.drawTexture(TEXTURE, x + 50 ,y + 34, 176+5,32, 5, 1+enchantmentPowerSourceCount);
+//        context.drawTexture(TEXTURE_SIZE_BAR, x + 8, y + 17, 5, 0, 5, enchantmentPowerSourceCount + 1);
+    }
+
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
@@ -58,6 +68,7 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        drawSizeBar(context);
 
         for (Button button : buttons) {
             button.render(context, mouseX, mouseY, delta);

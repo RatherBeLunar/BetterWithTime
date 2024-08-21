@@ -34,7 +34,7 @@ import java.util.List;
 public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
 
     private Inventory inventory;
-    private int enchantmentPowerLevel;
+    private int enchantmentPowerLevel, enchantmentPowerSourceCount;
     private static final double MAX_POWER_SOURCE_REQUIRED = 60;
     private static final int ENCHANTER_LEVELS = 5;
 
@@ -64,7 +64,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     }
 
     public boolean isPowerProvider(BlockPos pos) {
-        return world.getBlockState(pos).isIn(BwtBlockTags.INFERNAL_ENCHANTMENT_POWER_PROVIDER);
+        return world.getBlockState(getPos().add(pos)).isIn(BwtBlockTags.INFERNAL_ENCHANTMENT_POWER_PROVIDER);
     }
 
     public double getPowerSourceValue(BlockPos offset) {
@@ -119,6 +119,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         int finalPowerLevel = Math.min(powerLevel, ENCHANTER_LEVELS);
 
         this.enchantmentPowerLevel = finalPowerLevel;
+        this.enchantmentPowerSourceCount = (int) Math.floor(sum);
         this.markDirty();
     }
 
@@ -178,6 +179,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         super.readNbt(nbt, registryLookup);
         this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
         this.enchantmentPowerLevel = nbt.getInt("enchantmentPowerLevel");
+        this.enchantmentPowerSourceCount = nbt.getInt("enchantmentPowerSourceCount");
     }
 
     @Override
@@ -185,6 +187,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         super.writeNbt(nbt, registryLookup);
         nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
         nbt.putInt("enchantmentPowerLevel", this.enchantmentPowerLevel);
+        nbt.putInt("enchantmentPowerSourceCount", this.enchantmentPowerSourceCount);
     }
 
     @Override
@@ -209,6 +212,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         public int get(int index) {
             return switch (index) {
                 case 0 -> InfernalEnchanterBlockEntity.this.enchantmentPowerLevel;
+                case 1 -> InfernalEnchanterBlockEntity.this.enchantmentPowerSourceCount;
                 default -> 0;
             };
         }
@@ -217,6 +221,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> InfernalEnchanterBlockEntity.this.enchantmentPowerLevel = value;
+                case 1 -> InfernalEnchanterBlockEntity.this.enchantmentPowerSourceCount = value;
                 default -> {
                 }
             }
@@ -224,7 +229,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
 
         @Override
         public int size() {
-            return 1;
+            return 2;
         }
     };
 }
