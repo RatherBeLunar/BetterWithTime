@@ -2,10 +2,10 @@
 	"parent": "block/block",
     "textures": {
       "candle": "minecraft:block/black_candle",
-      "particle": "block/enchanting_table_bottom",
-      "bottom": "block/enchanting_table_bottom",
-      "top": "block/enchanting_table_top",
-      "side": "block/enchanting_table_side"
+      "particle": "bwt:block/infernal_enchanter_bottom",
+      "bottom": "bwt:block/infernal_enchanter_bottom",
+      "top": "bwt:block/infernal_enchanter_top",
+      "side": "bwt:block/infernal_enchanter_side"
     },
 	"elements": [
 		{
@@ -13,10 +13,10 @@
 			"to": [16, 8, 16],
 			"color": 5,
 			"faces": {
-				"north": {"uv": [0, 4, 16, 12], "texture": "#side"},
-				"east": {"uv": [0, 4, 16, 12], "texture": "#side"},
-				"south": {"uv": [0, 4, 16, 12], "texture": "#side"},
-				"west": {"uv": [0, 4, 16, 12], "texture": "#side"},
+				"north": {"uv": [0, 8, 16, 16], "texture": "#side"},
+				"east": {"uv": [0, 8, 16, 16], "texture": "#side"},
+				"south": {"uv": [0, 8, 16, 16], "texture": "#side"},
+				"west": {"uv": [0, 8, 16, 16], "texture": "#side"},
 				"up": {"uv": [0, 0, 16, 16], "texture": "#top"},
 				"down": {"uv": [0, 0, 16, 16], "texture": "#bottom"}
 			}
