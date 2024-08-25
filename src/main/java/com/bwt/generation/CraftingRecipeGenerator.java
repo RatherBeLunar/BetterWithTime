@@ -611,6 +611,17 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('n', Items.NETHERITE_INGOT)
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.infernalEnchanterBlock)
+                .pattern("cbc")
+                .pattern("nen")
+                .pattern("nnn")
+                .input('n', Items.NETHERITE_INGOT)
+                .input('e', Items.ENCHANTING_TABLE)
+                .input('b', Items.BONE)
+                .input('c', ItemTags.CANDLES)
+                .criterion(hasItem(Items.ENCHANTING_TABLE), conditionsFromItem(Items.ENCHANTING_TABLE))
+                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
+                .offerTo(exporter);
     }
 
     private Identifier highEfficiencyId(ItemConvertible itemConvertible) {

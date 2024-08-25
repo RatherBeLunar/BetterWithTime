@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "b": {
+      "item": "minecraft:bone"
+    },
+    "c": {
+      "tag": "minecraft:candles"
+    },
+    "e": {
+      "item": "minecraft:enchanting_table"
+    },
+    "n": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "pattern": [
+    "cbc",
+    "nen",
+    "nnn"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:infernal_enchanter"
+  }
+}
