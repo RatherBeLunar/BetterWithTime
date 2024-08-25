@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_enchanting_table": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:enchanting_table"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_netherite_ingot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:netherite_ingot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:infernal_enchanter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_enchanting_table",
+      "has_netherite_ingot"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:infernal_enchanter"
+    ]
+  }
+}
