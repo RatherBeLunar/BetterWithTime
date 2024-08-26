@@ -18,6 +18,9 @@ public class BwtDataComponents  implements ModInitializer  {
     public static DataComponentType<ArcaneEnchantmentComponent> ARCANE_ENCHANTMENT_COMPONENT = register(new Identifier("bwt", "arcane_enchantment"),
             builder -> builder.codec(ArcaneEnchantmentComponent.CODEC).packetCodec(ArcaneEnchantmentComponent.PACKET_CODEC).cache());
 
+    public static DataComponentType<InfernalEnchanterDecorationComponent> INFERNAL_ENCHANTER_DECORATION_COMPONENT = register(new Identifier("bwt", "infernal_enchanter_decoration"),
+            builder -> builder.codec(InfernalEnchanterDecorationComponent.CODEC).packetCodec(InfernalEnchanterDecorationComponent.PACKET_CODEC).cache());
+
 
     @Override
     public void onInitialize() {

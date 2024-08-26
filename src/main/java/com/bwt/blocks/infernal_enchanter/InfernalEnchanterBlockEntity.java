@@ -1,11 +1,15 @@
 package com.bwt.blocks.infernal_enchanter;
 
 import com.bwt.block_entities.BwtBlockEntities;
+import com.bwt.items.components.BwtDataComponents;
+import com.bwt.items.components.InfernalEnchanterDecorationComponent;
 import com.bwt.tags.BwtBlockTags;
+import com.google.common.collect.ImmutableList;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChiseledBookshelfBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
@@ -20,9 +24,13 @@ import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +45,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     private int enchantmentPowerLevel, enchantmentPowerSourceCount;
     private static final double MAX_POWER_SOURCE_REQUIRED = 60;
     private static final int ENCHANTER_LEVELS = 5;
+    private InfernalEnchanterDecorationComponent decorationComponent;
 
     public InfernalEnchanterBlockEntity(BlockPos pos, BlockState state) {
         super(BwtBlockEntities.infernalEnchanterBlockEntity, pos, state);
@@ -45,10 +54,16 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     }
 
     public static final List<BlockPos> CANDLE_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
-    public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-8, -8, -8, 8,8,8).map(BlockPos::toImmutable).toList();
+    public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
 
     private final InfernalEnchanterAnimationsController animationsController;
 
+    private static final ImmutableList<Vec3d> PARTICLE_OFFSETS;
+    public static double P = 1 / 16.0;
+
+    static {
+        PARTICLE_OFFSETS = ImmutableList.of(new Vec3d(2 * P, 13 * P, 2 * P), new Vec3d(14 * P, 13 * P, 2 * P), new Vec3d(2 * P, 13 * P, 14 * P), new Vec3d(14 * P, 13 * P, 14 * P));
+    }
 
     public void tick(@NotNull World world, BlockPos blockPos, BlockState blockState) {
 
@@ -56,7 +71,19 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         if (world.getTime() % 10 == 0) {
             this.calculateEnchantmentPowerLevel();
         }
+        if (world.getTime() % 10 == 0) {
+
+            if (blockState.get(InfernalEnchanterBlock.LIT)) {
+                var up = blockPos.up();
+                PARTICLE_OFFSETS.forEach((offset) -> {
+                    spawnCandleParticles(world, offset.add(up.getX(), up.getY(), up.getZ()), world.getRandom());
+                });
+            }
+        }
+
+
     }
+
 
     public static double getChiseledBookshelfPowerLevel(BlockState state) {
         double occupied = ChiseledBookshelfBlock.SLOT_OCCUPIED_PROPERTIES.stream().filter(state::get).mapToDouble(property -> 1).sum();
@@ -70,7 +97,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     public double getPowerSourceValue(BlockPos offset) {
         BlockPos p = this.getPos().add(offset);
         BlockState state = world.getBlockState(p);
-        if(state.getBlock() instanceof ChiseledBookshelfBlock) {
+        if (state.getBlock() instanceof ChiseledBookshelfBlock) {
             return getChiseledBookshelfPowerLevel(state);
         }
         return 1;
@@ -85,12 +112,12 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
 
         var result = world.raycast(new RaycastContext(start, end, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.ANY, ShapeContext.absent()));
 
-        if(result == null || result.getType() == HitResult.Type.MISS) {
+        if (result == null || result.getType() == HitResult.Type.MISS) {
             return false;
         }
 
         var resultPos = result.getBlockPos();
-        if(!p.equals(resultPos)) {
+        if (!p.equals(resultPos)) {
             return false;
         }
 
@@ -100,10 +127,10 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
     public void spawnLetterParticles() {
         Iterator iter = POWER_PROVIDER_OFFSETS.iterator();
         var random = world.getRandom();
-        while(iter.hasNext()) {
+        while (iter.hasNext()) {
             BlockPos offset = (BlockPos) iter.next();
             if (random.nextInt(64) == 0 && (isPowerProvider(getPos().add(offset)) && canRayTraceToPowerProvider(offset))) {
-                world.addParticle(ParticleTypes.ENCHANT, (double)pos.getX() + 0.5, (double)pos.getY() + 2.0, (double)pos.getZ() + 0.5, (double)((float) offset.getX() + random.nextFloat()) - 0.5, (double)((float) offset.getY() - random.nextFloat() - 1.0F), (double)((float) offset.getZ() + random.nextFloat()) - 0.5);
+                world.addParticle(ParticleTypes.ENCHANT, (double) pos.getX() + 0.5, (double) pos.getY() + 2.0, (double) pos.getZ() + 0.5, (double) ((float) offset.getX() + random.nextFloat()) - 0.5, (double) ((float) offset.getY() - random.nextFloat() - 1.0F), (double) ((float) offset.getZ() + random.nextFloat()) - 0.5);
             }
         }
     }
@@ -180,6 +207,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
         this.enchantmentPowerLevel = nbt.getInt("enchantmentPowerLevel");
         this.enchantmentPowerSourceCount = nbt.getInt("enchantmentPowerSourceCount");
+        this.decorationComponent = InfernalEnchanterDecorationComponent.fromNbt(nbt);
     }
 
     @Override
@@ -188,6 +216,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
         nbt.putInt("enchantmentPowerLevel", this.enchantmentPowerLevel);
         nbt.putInt("enchantmentPowerSourceCount", this.enchantmentPowerSourceCount);
+        this.decorationComponent.toNbt(nbt);
     }
 
     @Override
@@ -195,6 +224,37 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
 
     }
 
+    @Override
+    public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
+        return this.createComponentlessNbt(registryLookup);
+    }
+
+    @Override
+    protected void addComponents(ComponentMap.Builder componentMapBuilder) {
+        super.addComponents(componentMapBuilder);
+        componentMapBuilder.add(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, this.decorationComponent);
+    }
+
+    @Override
+    protected void readComponents(ComponentsAccess components) {
+        super.readComponents(components);
+        this.decorationComponent = components.getOrDefault(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT);
+    }
+
+    public InfernalEnchanterDecorationComponent getDecorationComponent() {
+        return decorationComponent;
+    }
+
+    private static void spawnCandleParticles(World world, Vec3d vec3d, Random random) {
+        float f = random.nextFloat();
+        if (f < 0.3F) {
+            world.addParticle(ParticleTypes.SMOKE, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
+            if (f < 0.17F) {
+                world.playSound(vec3d.x + 0.5, vec3d.y + 0.5, vec3d.z + 0.5, SoundEvents.BLOCK_CANDLE_AMBIENT, SoundCategory.BLOCKS, 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F, false);
+            }
+        }
+        world.addParticle(ParticleTypes.SMALL_FLAME, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
+    }
 
     public class Inventory extends SimpleInventory {
         public Inventory(int size) {

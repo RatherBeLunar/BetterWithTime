@@ -30,7 +30,7 @@ import java.util.function.ToIntFunction;
 public class InfernalEnchanterBlock extends BlockWithEntity {
 
     public static final ToIntFunction<BlockState> STATE_TO_LUMINANCE;
-    private static final ImmutableList<Vec3d> PARTICLE_OFFSETS;
+
 
     public static final MapCodec<InfernalEnchanterBlock> CODEC = createCodec(InfernalEnchanterBlock::new);
 
@@ -44,28 +44,13 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if (state.get(LIT)) {
-            PARTICLE_OFFSETS.forEach((offset) -> {
-                spawnCandleParticles(world, offset.add(pos.getX(), pos.getY(), pos.getZ()), random);
-            });
-        }
-
         var entity = world.getBlockEntity(pos);
         if(entity instanceof InfernalEnchanterBlockEntity ie) {
             ie.spawnLetterParticles();
         }
     }
 
-    private static void spawnCandleParticles(World world, Vec3d vec3d, Random random) {
-        float f = random.nextFloat();
-        if (f < 0.3F) {
-            world.addParticle(ParticleTypes.SMOKE, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
-            if (f < 0.17F) {
-                world.playSound(vec3d.x + 0.5, vec3d.y + 0.5, vec3d.z + 0.5, SoundEvents.BLOCK_CANDLE_AMBIENT, SoundCategory.BLOCKS, 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F, false);
-            }
-        }
-        world.addParticle(ParticleTypes.SMALL_FLAME, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
-    }
+
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -117,12 +102,12 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
     }
 
 
-    public static double P = 1 / 16.0;
+
 
     static {
         LIT = RedstoneTorchBlock.LIT;
 
-        PARTICLE_OFFSETS = ImmutableList.of(new Vec3d(2 * P, 13 * P, 2 * P), new Vec3d(14 * P, 13 * P, 2 * P), new Vec3d(2 * P, 13 * P, 14 * P), new Vec3d(14 * P, 13 * P, 14 * P));
+
         STATE_TO_LUMINANCE = (state) -> (Boolean)state.get(LIT) ? 3 * 4 : 0;
     }
 

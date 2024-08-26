@@ -36,13 +36,14 @@ public class BetterWithTimeClient implements ClientModInitializer {
 	public static final EntityModelLayer MECH_HOPPER_FILL_LAYER = new EntityModelLayer(Id.of("mech_hopper_fill"), "main");
 	public static final EntityModelLayer CAULDRON_FILL_LAYER = new EntityModelLayer(Id.of("cauldron_fill"), "main");
 	public static final EntityModelLayer CRUCIBLE_FILL_LAYER = new EntityModelLayer(Id.of("crucible_fill"), "main");
-
+    public static final EntityModelLayer INFERNAL_ENCHANTER_CANDLE_LAYER = new EntityModelLayer(Id.of( "infernal_enchanter_candle"), "main");
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
 		BlockEntityRendererFactories.register(BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntityRenderer::new);
 		BlockEntityRendererFactories.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
 		BlockEntityRendererFactories.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
+        BlockEntityRendererFactories.register(BwtBlockEntities.infernalEnchanterBlockEntity, InfernalEnchanterBlockEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
