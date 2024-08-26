@@ -12,6 +12,9 @@ import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
 import com.bwt.blocks.soul_forge.SoulForgeBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
+import com.bwt.items.InfernalEnchanterBlockItem;
+import com.bwt.items.components.BwtDataComponents;
+import com.bwt.items.components.InfernalEnchanterDecorationComponent;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -394,7 +397,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, new Identifier("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
         // Infernal Enchanter
         Registry.register(Registries.BLOCK, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "infernal_enchanter"), new BlockItem(infernalEnchanterBlock, new Item.Settings()));
+        Registry.register(Registries.ITEM, new Identifier("bwt", "infernal_enchanter"), new InfernalEnchanterBlockItem(infernalEnchanterBlock, new Item.Settings().component(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT)));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
