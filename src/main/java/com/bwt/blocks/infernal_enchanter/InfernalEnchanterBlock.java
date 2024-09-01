@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.function.ToIntFunction;
 
 public class InfernalEnchanterBlock extends BlockWithEntity {
@@ -40,17 +41,48 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
 
     public InfernalEnchanterBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(LIT, true));
+        setDefaultState(getDefaultState().with(LIT, false));
+    }
+
+    private static final ImmutableList<Vec3d> PARTICLE_OFFSETS;
+    public static double P = 1 / 16.0;
+
+    static {
+        PARTICLE_OFFSETS = ImmutableList.of(new Vec3d(2 * P, 13 * P, 2 * P), new Vec3d(14 * P, 13 * P, 2 * P), new Vec3d(2 * P, 13 * P, 14 * P), new Vec3d(14 * P, 13 * P, 14 * P));
     }
 
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         var entity = world.getBlockEntity(pos);
-        if(entity instanceof InfernalEnchanterBlockEntity ie) {
+        if (entity instanceof InfernalEnchanterBlockEntity ie) {
             ie.spawnLetterParticles();
         }
     }
 
+    protected static void spawnCandleParticles(BlockState state, World world, BlockPos pos, Random random) {
+        PARTICLE_OFFSETS.forEach((offset) -> {
+            spawnCandleParticle(world, offset.add(pos.getX(), pos.getY(), pos.getZ()), random);
+        });
+    }
 
+    protected static void spawnCandleParticle(World world, Vec3d vec3d, Random random) {
+
+        float f = random.nextFloat();
+        if (f < 0.3F) {
+            if(world instanceof ServerWorld serverWorld) {
+                serverWorld.spawnParticles(ParticleTypes.SMOKE, vec3d.x, vec3d.y, vec3d.z, 1, 0.0, 0.0, 0.0, 0.0);
+            } else {
+                world.addParticle(ParticleTypes.SMOKE, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
+            }
+            if (f < 0.17F) {
+                world.playSound(vec3d.x + 0.5, vec3d.y + 0.5, vec3d.z + 0.5, SoundEvents.BLOCK_CANDLE_AMBIENT, SoundCategory.BLOCKS, 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F, false);
+            }
+        }
+        if(world instanceof ServerWorld serverWorld) {
+            serverWorld.spawnParticles(ParticleTypes.SMALL_FLAME, vec3d.x, vec3d.y, vec3d.z, 1, 0.0, 0.0, 0.0, 0.0);
+        } else {
+            world.addParticle(ParticleTypes.SMALL_FLAME, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
+        }
+    }
 
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
@@ -79,6 +111,7 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
         return new InfernalEnchanterBlockEntity(pos, state);
     }
 
+
     @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) return ActionResult.SUCCESS;
@@ -102,13 +135,11 @@ public class InfernalEnchanterBlock extends BlockWithEntity {
     }
 
 
-
-
     static {
         LIT = RedstoneTorchBlock.LIT;
 
 
-        STATE_TO_LUMINANCE = (state) -> (Boolean)state.get(LIT) ? 3 * 4 : 0;
+        STATE_TO_LUMINANCE = (state) -> (Boolean) state.get(LIT) ? 3 * 4 : 0;
     }
 
 

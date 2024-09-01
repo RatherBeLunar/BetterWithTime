@@ -15,21 +15,25 @@ public class Animations {
 
     @FunctionalInterface
     interface AnimationFrame {
-        void animate(World world);
+        void animate(World world, BlockPos pos);
     }
 
+    public static AnimationFrame PAUSE_FRAME = (w,p)-> {};
 
     public record EntranceAnimationFrame(
             List<BlockPos> blockPosIterator) implements AnimationFrame {
         @Override
-        public void animate(World world) {
+        public void animate(World world, BlockPos pos) {
+            var state = world.getBlockState(pos);
+            if(state.getBlock() == BwtBlocks.infernalEnchanterBlock) {
+                world.playSound(null, pos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5F, world.getRandom().nextFloat() * 0.4F + 0.8F);
+                world.setBlockState(pos, state.with(InfernalEnchanterBlock.LIT, true), 11);
+                world.markDirty(pos);
+            }
+
             blockPosIterator.forEach(detectPos -> {
                 BlockState detectState = world.getBlockState(detectPos);
-                if(detectState.getBlock() == BwtBlocks.infernalEnchanterBlock) {
-                    world.playSound(null, detectPos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5F, world.getRandom().nextFloat() * 0.4F + 0.8F);
-                    world.setBlockState(detectPos, detectState.with(InfernalEnchanterBlock.LIT, true), 11);
-                    world.markDirty(detectPos);
-                }
+
                 if (detectState.isIn(BlockTags.CANDLES) && detectState.contains(CandleBlock.LIT)) {
                     world.playSound(null, detectPos, SoundEvents.BLOCK_FIRE_AMBIENT, SoundCategory.BLOCKS, 0.5F, world.getRandom().nextFloat() * 0.4F + 0.8F);
                     world.setBlockState(detectPos, detectState.with(CandleBlock.LIT, true), 11);
@@ -42,7 +46,7 @@ public class Animations {
 
     public record LeavingAnimationFrame(List<BlockPos> blockPosIterator) implements AnimationFrame {
         @Override
-        public void animate(World world) {
+        public void animate(World world, BlockPos pos) {
             blockPosIterator.forEach(detectPos -> {
                 BlockState detectState = world.getBlockState(detectPos);
                 if(detectState.getBlock() == BwtBlocks.infernalEnchanterBlock) {
