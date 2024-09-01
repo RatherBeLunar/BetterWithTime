@@ -4,7 +4,6 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.items.components.BwtDataComponents;
 import com.bwt.items.components.InfernalEnchanterDecorationComponent;
 import com.bwt.tags.BwtBlockTags;
-import com.google.common.collect.ImmutableList;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ChiseledBookshelfBlock;
 import net.minecraft.block.ShapeContext;
@@ -19,21 +18,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
@@ -53,35 +46,22 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         this.animationsController = new InfernalEnchanterAnimationsController();
     }
 
-    public static final List<BlockPos> CANDLE_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
     public static final List<BlockPos> POWER_PROVIDER_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
+    public static final List<BlockPos> EXTERNAL_CANDLE_OFFSETS = BlockPos.stream(-8, -8, -8, 8, 8, 8).map(BlockPos::toImmutable).toList();
 
     private final InfernalEnchanterAnimationsController animationsController;
 
-    private static final ImmutableList<Vec3d> PARTICLE_OFFSETS;
-    public static double P = 1 / 16.0;
 
-    static {
-        PARTICLE_OFFSETS = ImmutableList.of(new Vec3d(2 * P, 13 * P, 2 * P), new Vec3d(14 * P, 13 * P, 2 * P), new Vec3d(2 * P, 13 * P, 14 * P), new Vec3d(14 * P, 13 * P, 14 * P));
-    }
 
     public void tick(@NotNull World world, BlockPos blockPos, BlockState blockState) {
 
         this.animationsController.tick(world, blockPos, blockState);
         if (world.getTime() % 10 == 0) {
             this.calculateEnchantmentPowerLevel();
-        }
-        if (world.getTime() % 10 == 0) {
-
-            if (blockState.get(InfernalEnchanterBlock.LIT)) {
-                var up = blockPos.up();
-                PARTICLE_OFFSETS.forEach((offset) -> {
-                    spawnCandleParticles(world, offset.add(up.getX(), up.getY(), up.getZ()), world.getRandom());
-                });
+            if(blockState.get(InfernalEnchanterBlock.LIT)) {
+                InfernalEnchanterBlock.spawnCandleParticles(world.getBlockState(getPos()), world, getPos(), world.getRandom());
             }
         }
-
-
     }
 
 
@@ -245,16 +225,7 @@ public class InfernalEnchanterBlockEntity extends BlockEntity implements NamedSc
         return decorationComponent;
     }
 
-    private static void spawnCandleParticles(World world, Vec3d vec3d, Random random) {
-        float f = random.nextFloat();
-        if (f < 0.3F) {
-            world.addParticle(ParticleTypes.SMOKE, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
-            if (f < 0.17F) {
-                world.playSound(vec3d.x + 0.5, vec3d.y + 0.5, vec3d.z + 0.5, SoundEvents.BLOCK_CANDLE_AMBIENT, SoundCategory.BLOCKS, 1.0F + random.nextFloat(), random.nextFloat() * 0.7F + 0.3F, false);
-            }
-        }
-        world.addParticle(ParticleTypes.SMALL_FLAME, vec3d.x, vec3d.y, vec3d.z, 0.0, 0.0, 0.0);
-    }
+
 
     public class Inventory extends SimpleInventory {
         public Inventory(int size) {

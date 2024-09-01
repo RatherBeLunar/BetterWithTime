@@ -3,6 +3,7 @@ package com.bwt.blocks.infernal_enchanter;
 import com.google.common.collect.Queues;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -25,7 +26,7 @@ public class InfernalEnchanterAnimationsController {
         if (reverse) {
             comparator = comparator.reversed();
         }
-        var rings = InfernalEnchanterBlockEntity.CANDLE_OFFSETS.stream().map(blockPos::add).collect(Collectors.groupingBy(detectPos -> {
+        var rings = InfernalEnchanterBlockEntity.EXTERNAL_CANDLE_OFFSETS.stream().map(blockPos::add).collect(Collectors.groupingBy(detectPos -> {
             int distX = Math.abs(detectPos.getX() - blockPos.getX());
             int distZ = Math.abs(detectPos.getZ() - blockPos.getZ());
             return Math.max(distX, distZ);
@@ -45,14 +46,13 @@ public class InfernalEnchanterAnimationsController {
         if (!this.ANIMATION_QUEUE.isEmpty()) {
             Animations.AnimationFrame frame = this.ANIMATION_QUEUE.poll();
             if (frame != null) {
-                frame.animate(world);
+                frame.animate(world, blockPos);
             }
             return;
         }
 
         this.findPlayersNearby(world, blockPos);
         if (this.isFirstEnter(world, blockPos)) {
-            world.setBlockState(blockPos, blockState.with(InfernalEnchanterBlock.LIT, true));
             onFirstEnter(world, blockPos, blockState);
         } else if (isLeaving(world, blockPos)) {
             onLeave(world, blockPos, blockState);
@@ -64,15 +64,13 @@ public class InfernalEnchanterAnimationsController {
     public void onFirstEnter(World world, BlockPos blockPos, BlockState blockState) {
 
         var rings = InfernalEnchanterAnimationsController.getRings(blockPos, true);
-
         ANIMATION_QUEUE.clear();
+        InfernalEnchanterBlock.spawnCandleParticles(blockState, world, blockPos, world.random);
         for (var ring : rings) {
             var frame = new Animations.EntranceAnimationFrame(ring.getValue());
             ANIMATION_QUEUE.add(frame);
-            ANIMATION_QUEUE.add(w -> {
-            });
-            ANIMATION_QUEUE.add(w -> {
-            });
+            ANIMATION_QUEUE.add(Animations.PAUSE_FRAME);
+            ANIMATION_QUEUE.add(Animations.PAUSE_FRAME);
         }
 
     }
