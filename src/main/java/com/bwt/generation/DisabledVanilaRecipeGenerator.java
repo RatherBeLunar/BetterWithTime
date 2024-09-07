@@ -1,6 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.recipes.DisabledRecipe;
+import com.bwt.utils.Id;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -64,7 +65,7 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
     }
 
     public void disableVanilla(String recipeId, RecipeExporter exporter) {
-        exporter.accept(new Identifier(recipeId), new DisabledRecipe(),null);
+        exporter.accept(Id.mc(recipeId), new DisabledRecipe(),null);
     }
 
     public void disableVanilla(ItemConvertible itemConvertible, RecipeExporter exporter) {

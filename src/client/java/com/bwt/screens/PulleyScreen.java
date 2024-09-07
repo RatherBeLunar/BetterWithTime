@@ -1,6 +1,7 @@
 package com.bwt.screens;
 
 import com.bwt.blocks.pulley.PulleyScreenHandler;
+import com.bwt.utils.Id;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -10,7 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class PulleyScreen extends HandledScreen<PulleyScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/pulley.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/pulley.png");
 
     static final int gearIconHeight = 14;
 

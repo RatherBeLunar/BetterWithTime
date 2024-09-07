@@ -2,6 +2,7 @@ package com.bwt.models;
 
 import com.bwt.entities.BroadheadArrowEntity;
 import com.bwt.entities.DynamiteEntity;
+import com.bwt.utils.Id;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.OverlayTexture;
@@ -20,7 +21,7 @@ import net.minecraft.util.math.RotationAxis;
 
 @Environment(value= EnvType.CLIENT)
 public class DynamiteEntityRenderer extends EntityRenderer<DynamiteEntity> {
-    public static final Identifier TEXTURE = new Identifier("bwt", "textures/item/dynamite.png");
+    public static final Identifier TEXTURE = Id.of("textures/item/dynamite.png");
     private final ItemRenderer itemRenderer;
     private final float scale;
     private final boolean lit;

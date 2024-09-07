@@ -2,8 +2,8 @@ package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.HopperFilterRecipe;
-import com.bwt.recipes.SoulBottlingRecipe;
+import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
+import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeExporter;

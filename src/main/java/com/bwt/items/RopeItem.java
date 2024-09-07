@@ -4,6 +4,7 @@ import com.bwt.blocks.AnchorBlock;
 import com.bwt.blocks.BwtBlocks;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.util.ActionResult;
@@ -12,7 +13,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class RopeItem extends BlockItem {
-    public RopeItem(Settings settings) {
+    public RopeItem(Item.Settings settings) {
         super(BwtBlocks.ropeBlock, settings);
     }
 

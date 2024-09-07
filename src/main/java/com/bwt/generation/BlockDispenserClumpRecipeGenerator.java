@@ -1,6 +1,6 @@
 package com.bwt.generation;
 
-import com.bwt.recipes.BlockDispenserClumpRecipe;
+import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Blocks;

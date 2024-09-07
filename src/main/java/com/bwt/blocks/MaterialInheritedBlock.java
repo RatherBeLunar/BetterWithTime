@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.utils.Id;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.WoodType;
@@ -35,8 +36,8 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<TableBlock> tableBlocks
     ) {
         WoodType.stream().forEach(woodType -> {
-            Block fullBlock = Registries.BLOCK.get(new Identifier(woodType.name() + "_planks"));
-            Block slabBlock = Registries.BLOCK.get(new Identifier(woodType.name() + "_slab"));
+            Block fullBlock = Registries.BLOCK.get(Id.mc(woodType.name() + "_planks"));
+            Block slabBlock = Registries.BLOCK.get(Id.mc(woodType.name() + "_slab"));
             sidingBlocks.add(SidingBlock.ofBlock(fullBlock, slabBlock));
             mouldingBlocks.add(MouldingBlock.ofBlock(fullBlock, slabBlock));
             cornerBlocks.add(CornerBlock.ofBlock(fullBlock, slabBlock));
@@ -83,12 +84,12 @@ public abstract class MaterialInheritedBlock extends Block {
             PedestalBlock pedestalBlock = pedestalBlocks.get(i);
             TableBlock tableBlock = tableBlocks.get(i);
             Identifier blockId = Registries.BLOCK.getId(sidingBlock.fullBlock);
-            Identifier sidingId = new Identifier("bwt", blockId.getPath() + "_siding");
-            Identifier mouldingId = new Identifier("bwt", blockId.getPath() + "_moulding");
-            Identifier cornerId = new Identifier("bwt", blockId.getPath() + "_corner");
-            Identifier columnId = new Identifier("bwt", blockId.getPath() + "_column");
-            Identifier pedestalId = new Identifier("bwt", blockId.getPath() + "_pedestal");
-            Identifier tableId = new Identifier("bwt", blockId.getPath() + "_table");
+            Identifier sidingId = Id.of(blockId.getPath() + "_siding");
+            Identifier mouldingId = Id.of(blockId.getPath() + "_moulding");
+            Identifier cornerId = Id.of(blockId.getPath() + "_corner");
+            Identifier columnId = Id.of(blockId.getPath() + "_column");
+            Identifier pedestalId = Id.of(blockId.getPath() + "_pedestal");
+            Identifier tableId = Id.of(blockId.getPath() + "_table");
             Registry.register(Registries.BLOCK, sidingId, sidingBlock);
             Registry.register(Registries.BLOCK, mouldingId, mouldingBlock);
             Registry.register(Registries.BLOCK, cornerId, cornerBlock);

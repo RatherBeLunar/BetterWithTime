@@ -20,5 +20,6 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(EntityLootTableGenerator::new);
 		pack.addProvider(AdvancementsGenerator::new);
 		pack.addProvider(BwtConfiguredFeatures::new);
+		pack.addProvider((output, registriesFuture) -> new EmiDefaultsGenerator(output, registriesFuture));
 	}
 }

@@ -5,6 +5,7 @@ package com.bwt.models;
 
 import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
+import com.bwt.utils.Id;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -26,7 +27,7 @@ import java.util.Optional;
 @Environment(value=EnvType.CLIENT)
 public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHopperBlockEntity> {
     private final BlockRenderManager manager;
-    private static final Identifier FILL_TEXTURE = new Identifier("bwt", "textures/block/hopper_fill.png");
+    private static final Identifier FILL_TEXTURE = Id.of("textures/block/hopper_fill.png");
     protected MechHopperFillModel model;
 
     public MechHopperBlockEntityRenderer(BlockEntityRendererFactory.Context ctx) {
@@ -36,10 +37,8 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
 
     protected Identifier getFilterTexture(Item filterItem) {
         Optional<Identifier> identifier = Registries.ITEM.getEntry(filterItem).getKey().map(RegistryKey::getValue);
-        if (identifier.isEmpty()) {
-            return new Identifier("minecraft", "textures/block/air.png");
-        }
-        return identifier.get().withPrefixedPath("textures/block/").withSuffixedPath(".png");
+        return identifier.map(value -> value.withPrefixedPath("textures/block/").withSuffixedPath(".png"))
+                .orElseGet(() -> Id.mc("textures/block/air.png"));
 
     }
 
@@ -62,7 +61,7 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
             matrixStack.push();
             matrixStack.scale(0.99f, 1, 0.99f);
             matrixStack.translate(0.01f, (hopperBlockEntity.slotsOccupied * (14f - 7f) / (MechHopperBlockEntity.INVENTORY_SIZE - 1f) + 7f) / 16f, 0.01f);
-            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), -1);
             matrixStack.pop();
         }
         // Render the filter
@@ -71,7 +70,7 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
             matrixStack.push();
             matrixStack.scale(0.99f, 1, 0.99f);
             matrixStack.translate(0.01f, 15f / 16f, 0.01f);
-            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), -1);
             matrixStack.pop();
         }
     }

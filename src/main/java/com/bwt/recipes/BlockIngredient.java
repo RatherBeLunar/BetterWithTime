@@ -1,5 +1,6 @@
 package com.bwt.recipes;
 
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -12,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
@@ -61,7 +63,7 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
     }
 
     public static class Serializer implements CustomIngredientSerializer<BlockIngredient> {
-        private static final Identifier ID = new Identifier("bwt", "block_ingredient");
+        private static final Identifier ID = Id.of("block_ingredient");
         public static final MapCodec<BlockIngredient> CODEC = createCodec();
         public static final PacketCodec<RegistryByteBuf, BlockIngredient> PACKET_CODEC = PacketCodec.ofStatic(
                 Serializer::write, Serializer::read
@@ -101,8 +103,8 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
         }
 
         public static void write(RegistryByteBuf buf, BlockIngredient ingredient) {
-            buf.writeIdentifier(ingredient.optionalBlockTagKey.map(TagKey::id).orElse(new Identifier("", "")));
-            buf.writeIdentifier(ingredient.optionalBlock.map(Registries.BLOCK::getId).orElse(new Identifier("", "")));
+            buf.writeIdentifier(ingredient.optionalBlockTagKey.map(TagKey::id).orElse(Id.of("", "")));
+            buf.writeIdentifier(ingredient.optionalBlock.map(Registries.BLOCK::getId).orElse(Id.of("", "")));
         }
     }
 }

@@ -39,7 +39,7 @@ public abstract class HorizontalMechPowerSourceEntityRenderer<T extends Horizont
         if (p > 0.0f) {
             matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(MathHelper.sin(p) * p * q / 10.0f * (float)entity.getDamageWobbleSide()));
         }
-        this.model.render(entity, matrices, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+        this.model.render(entity, matrices, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), -1);
         matrices.pop();
         matrices.pop();
     }

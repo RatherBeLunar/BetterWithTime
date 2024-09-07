@@ -4,6 +4,7 @@ import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
@@ -99,23 +100,23 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     public static void offerCompacting2x2(RecipeExporter exporter, ItemConvertible inputItem, ItemConvertible outputBlock, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
-        ShapedRecipeJsonBuilder.create(category, outputBlock).input('#', inputItem).pattern("##").pattern("##").criterion(hasItem(inputItem), conditionsFromItem(inputItem)).group(group).offerTo(exporter, recipeId != null ? new Identifier("bwt", recipeId) : new Identifier("bwt", RecipeProvider.getRecipeName(outputBlock)));
+        ShapedRecipeJsonBuilder.create(category, outputBlock).input('#', inputItem).pattern("##").pattern("##").criterion(hasItem(inputItem), conditionsFromItem(inputItem)).group(group).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputBlock)));
     }
 
     public static void offerUncompacting2x2(RecipeExporter exporter, ItemConvertible inputBlock, ItemConvertible outputItem, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
-        ShapelessRecipeJsonBuilder.create(category, outputItem, 4).input(inputBlock).group(group).criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).offerTo(exporter, recipeId != null ? new Identifier("bwt", recipeId) : new Identifier("bwt", RecipeProvider.getRecipeName(outputItem)));
+        ShapelessRecipeJsonBuilder.create(category, outputItem, 4).input(inputBlock).group(group).criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputItem)));
     }
 
     public static void offer2x1Slab(RecipeExporter exporter, ItemConvertible inputBlock, ItemConvertible outputSlab, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
-        ShapedRecipeJsonBuilder.create(category, outputSlab, 4).input('#', inputBlock).pattern("##").criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).group(group).offerTo(exporter, recipeId != null ? new Identifier("bwt", recipeId) : new Identifier("bwt", RecipeProvider.getRecipeName(outputSlab)));
+        ShapedRecipeJsonBuilder.create(category, outputSlab, 4).input('#', inputBlock).pattern("##").criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).group(group).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputSlab)));
     }
 
     public static void offer2x1SlabRecombining(RecipeExporter exporter, ItemConvertible inputSlab, ItemConvertible outputBlock, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
-        ShapedRecipeJsonBuilder.create(category, outputBlock).input('#', inputSlab).pattern("#").pattern("#").criterion(hasItem(inputSlab), conditionsFromItem(inputSlab)).group(group).offerTo(exporter, recipeId != null ? new Identifier("bwt", recipeId) : new Identifier("bwt", RecipeProvider.getRecipeName(outputBlock)));
+        ShapedRecipeJsonBuilder.create(category, outputBlock).input('#', inputSlab).pattern("#").pattern("#").criterion(hasItem(inputSlab), conditionsFromItem(inputSlab)).group(group).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputBlock)));
     }
 
     public static void offer2x1SlabUncompacting(RecipeExporter exporter, ItemConvertible inputSlab, ItemConvertible outputItem, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
-        ShapelessRecipeJsonBuilder.create(category, outputItem, 2).input(inputSlab).group(group).criterion(hasItem(inputSlab), conditionsFromItem(inputSlab)).offerTo(exporter, recipeId != null ? new Identifier("bwt", recipeId) : new Identifier("bwt", RecipeProvider.getRecipeName(outputItem)));
+        ShapelessRecipeJsonBuilder.create(category, outputItem, 2).input(inputSlab).group(group).criterion(hasItem(inputSlab), conditionsFromItem(inputSlab)).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputItem)));
     }
 
     public static void offer2x2BlockSlabFamily(RecipeExporter exporter, ItemConvertible baseItem, ItemConvertible block, ItemConvertible slab, String itemGroup) {
@@ -236,7 +237,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input(Items.BONE)
                 .input(Items.WATER_BUCKET)
                 .criterion(hasItem(Items.BONE), conditionsFromItem(Items.BONE))
-                .offerTo(exporter, new Identifier("bwt", "cauldron_from_vanilla"));
+                .offerTo(exporter, Id.of("cauldron_from_vanilla"));
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.lightBlockBlock)
                 .pattern(" p ")
                 .pattern("pfp")
@@ -601,7 +602,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private Identifier highEfficiencyId(ItemConvertible itemConvertible) {
-        return new Identifier("bwt", Registries.ITEM.getId(itemConvertible.asItem()).withPrefixedPath("he_").getPath());
+        return Id.of(Registries.ITEM.getId(itemConvertible.asItem()).withPrefixedPath("he_").getPath());
     }
 
     private void generateHighEfficiencyRecipes(RecipeExporter exporter) {

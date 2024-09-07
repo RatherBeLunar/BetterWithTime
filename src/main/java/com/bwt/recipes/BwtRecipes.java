@@ -1,13 +1,22 @@
 package com.bwt.recipes;
 
+import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
+import com.bwt.recipes.cooking_pots.*;
+import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
+import com.bwt.recipes.kiln.KilnRecipe;
+import com.bwt.recipes.mill_stone.MillStoneRecipe;
+import com.bwt.recipes.saw.SawRecipe;
+import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapelessRecipe;
+import com.bwt.recipes.turntable.TurntableRecipe;
+import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.entity.Hopper;
 import net.minecraft.recipe.CraftingRecipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 
 public class BwtRecipes implements ModInitializer {
     public static final RecipeType<BlockDispenserClumpRecipe> BLOCK_DISPENSER_CLUMP_RECIPE_TYPE = new RecipeType<>() {};
@@ -39,32 +48,32 @@ public class BwtRecipes implements ModInitializer {
     public static final DisabledRecipe.Serializer DISABLED_RECIPE_SERIALIZER = new DisabledRecipe.Serializer();
     @Override
     public void onInitialize() {
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "cauldron"), CAULDRON_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "cauldron"), CAULDRON_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "stoked_cauldron"), STOKED_CAULDRON_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "stoked_cauldron"), STOKED_CAULDRON_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "crucible"), CRUCIBLE_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "crucible"), CRUCIBLE_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "stoked_crucible"), STOKED_CRUCIBLE_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "stoked_crucible"), STOKED_CRUCIBLE_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "mill_stone"), MILL_STONE_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "mill_stone"), MILL_STONE_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "hopper_filter"), HOPPER_FILTER_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "hopper_filter"), HOPPER_FILTER_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "soul_bottling"), SOUL_BOTTLING_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "soul_bottling"), SOUL_BOTTLING_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "saw"), SAW_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "saw"), SAW_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "turntable"), TURNTABLE_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "kiln"), KILN_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "kiln"), KILN_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "soul_forge"), SOUL_FORGE_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "soul_forge_shaped"), SOUL_FORGE_SHAPED_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "soul_forge_shapeless"), SOUL_FORGE_SHAPELESS_RECIPE_SERIALIZER);
-        Registry.register(Registries.RECIPE_TYPE, new Identifier("bwt", "disabled"), DISABLED_RECIPE_TYPE);
-        Registry.register(Registries.RECIPE_SERIALIZER, new Identifier("bwt", "disabled"), DISABLED_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("block_dispenser_clump"), BLOCK_DISPENSER_CLUMP_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("cauldron"), CAULDRON_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("cauldron"), CAULDRON_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("stoked_cauldron"), STOKED_CAULDRON_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("stoked_cauldron"), STOKED_CAULDRON_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("crucible"), CRUCIBLE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("crucible"), CRUCIBLE_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("stoked_crucible"), STOKED_CRUCIBLE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("stoked_crucible"), STOKED_CRUCIBLE_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("mill_stone"), MILL_STONE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("mill_stone"), MILL_STONE_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("hopper_filter"), HOPPER_FILTER_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("hopper_filter"), HOPPER_FILTER_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("soul_bottling"), SOUL_BOTTLING_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("soul_bottling"), SOUL_BOTTLING_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("saw"), SAW_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("saw"), SAW_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("turntable"), TURNTABLE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("turntable"), TURNTABLE_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("kiln"), KILN_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("kiln"), KILN_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("soul_forge"), SOUL_FORGE_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("soul_forge_shaped"), SOUL_FORGE_SHAPED_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("soul_forge_shapeless"), SOUL_FORGE_SHAPELESS_RECIPE_SERIALIZER);
+        Registry.register(Registries.RECIPE_TYPE, Id.of("disabled"), DISABLED_RECIPE_TYPE);
+        Registry.register(Registries.RECIPE_SERIALIZER, Id.of("disabled"), DISABLED_RECIPE_SERIALIZER);
     }
 }

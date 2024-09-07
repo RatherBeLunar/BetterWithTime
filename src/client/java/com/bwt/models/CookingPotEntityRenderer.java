@@ -57,7 +57,7 @@ public class CookingPotEntityRenderer implements BlockEntityRenderer<AbstractCoo
             matrixStack.translate(-0.5f, -0.5f, -0.5f);
             matrixStack.scale(0.99f, 1, 0.99f);
             matrixStack.translate(0.01f, (cookingPotBlockEntity.slotsOccupied * (13f - 2f) / (cookingPotBlockEntity.inventory.size() - 1f) + 2f) / 16f, 0.01f);
-            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), 1, 1, 1, 1);
+            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), -1);
             matrixStack.pop();
         }
     }

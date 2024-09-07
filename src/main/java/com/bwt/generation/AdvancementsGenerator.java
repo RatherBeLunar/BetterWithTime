@@ -3,6 +3,7 @@ package com.bwt.generation;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricAdvancementProvider;
 import net.minecraft.advancement.Advancement;
@@ -24,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class AdvancementsGenerator extends FabricAdvancementProvider {
-    public static final Identifier background = new Identifier("textures/gui/advancements/backgrounds/adventure.png");
+    public static final Identifier background = Id.mc("textures/gui/advancements/backgrounds/adventure.png");
 
     public AdvancementsGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
         super(output, registryLookup);

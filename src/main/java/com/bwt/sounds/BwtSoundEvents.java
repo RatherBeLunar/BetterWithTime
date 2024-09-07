@@ -1,5 +1,6 @@
 package com.bwt.sounds;
 
+import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -31,7 +32,7 @@ public class BwtSoundEvents implements ModInitializer {
     public static SoundEvent MINING_CHARGE_PRIME = register("entity.mining_charge.prime");
 
     protected static SoundEvent register(String id) {
-        return BwtSoundEvents.register(new Identifier("bwt", id));
+        return BwtSoundEvents.register(Id.of(id));
     }
 
     protected static SoundEvent register(Identifier id) {
@@ -39,7 +40,7 @@ public class BwtSoundEvents implements ModInitializer {
     }
 
     protected static RegistryEntry.Reference<SoundEvent> registerReference(String id) {
-        return BwtSoundEvents.registerReference(new Identifier(id));
+        return BwtSoundEvents.registerReference(Id.mc(id));
     }
 
     protected static RegistryEntry.Reference<SoundEvent> registerReference(Identifier id) {

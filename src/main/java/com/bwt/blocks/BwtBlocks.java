@@ -16,6 +16,7 @@ import com.bwt.items.InfernalEnchanterBlockItem;
 import com.bwt.items.components.BwtDataComponents;
 import com.bwt.items.components.InfernalEnchanterDecorationComponent;
 import com.bwt.utils.DyeUtils;
+import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.block.*;
@@ -245,98 +246,98 @@ public class BwtBlocks implements ModInitializer {
     @Override
     public void onInitialize() {
         // Axle
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "axle"), axleBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "axle"), new BlockItem(axleBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "axle_power_source"), axlePowerSourceBlock);
+        Registry.register(Registries.BLOCK, Id.of("axle"), axleBlock);
+        Registry.register(Registries.ITEM, Id.of("axle"), new BlockItem(axleBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("axle_power_source"), axlePowerSourceBlock);
         // Gearbox
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "gear_box"), gearBoxBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("gear_box"), gearBoxBlock);
+        Registry.register(Registries.ITEM, Id.of("gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));
         // Hibachi
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "hibachi"), hibachiBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "hibachi"), new BlockItem(hibachiBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("hibachi"), hibachiBlock);
+        Registry.register(Registries.ITEM, Id.of("hibachi"), new BlockItem(hibachiBlock, new Item.Settings()));
         // Light Block
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "light_block"), lightBlockBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "light_block"), new BlockItem(lightBlockBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("light_block"), lightBlockBlock);
+        Registry.register(Registries.ITEM, Id.of("light_block"), new BlockItem(lightBlockBlock, new Item.Settings()));
         // Block Dispenser
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "block_dispenser"), blockDispenserBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "block_dispenser"), new BlockItem(blockDispenserBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("block_dispenser"), blockDispenserBlock);
+        Registry.register(Registries.ITEM, Id.of("block_dispenser"), new BlockItem(blockDispenserBlock, new Item.Settings()));
         // Cauldron / Stewing Pot
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "cauldron"), cauldronBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "cauldron"), new BlockItem(cauldronBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("cauldron"), cauldronBlock);
+        Registry.register(Registries.ITEM, Id.of("cauldron"), new BlockItem(cauldronBlock, new Item.Settings()));
         // Obsidian pressure plate
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_pressure_plate"), obsidianPressuePlateBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("obsidian_pressure_plate"), obsidianPressuePlateBlock);
+        Registry.register(Registries.ITEM, Id.of("obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new Item.Settings()));
         // Hemp crop
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "hemp_crop_block"), hempCropBlock);
+        Registry.register(Registries.BLOCK, Id.of("hemp_crop_block"), hempCropBlock);
         // Detector Block
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_block"), detectorBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "detector_block"), new BlockItem(detectorBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "detector_logic_block"), detectorLogicBlock);
+        Registry.register(Registries.BLOCK, Id.of("detector_block"), detectorBlock);
+        Registry.register(Registries.ITEM, Id.of("detector_block"), new BlockItem(detectorBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("detector_logic_block"), detectorLogicBlock);
         // Mill Stone
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "mill_stone"), millStoneBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "mill_stone"), new BlockItem(millStoneBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("mill_stone"), millStoneBlock);
+        Registry.register(Registries.ITEM, Id.of("mill_stone"), new BlockItem(millStoneBlock, new Item.Settings()));
         // Companion Cube
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_cube"), companionCubeBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "companion_cube"), new BlockItem(companionCubeBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("companion_cube"), companionCubeBlock);
+        Registry.register(Registries.ITEM, Id.of("companion_cube"), new BlockItem(companionCubeBlock, new Item.Settings()));
         // Companion Slab
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "companion_slab"), companionSlabBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "companion_slab"), new BlockItem(companionSlabBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("companion_slab"), companionSlabBlock);
+        Registry.register(Registries.ITEM, Id.of("companion_slab"), new BlockItem(companionSlabBlock, new Item.Settings()));
         // Hand Crank
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "hand_crank"), handCrankBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "hand_crank"), new BlockItem(handCrankBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("hand_crank"), handCrankBlock);
+        Registry.register(Registries.ITEM, Id.of("hand_crank"), new BlockItem(handCrankBlock, new Item.Settings()));
         // Anchor
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "anchor"), anchorBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "anchor"), new BlockItem(anchorBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("anchor"), anchorBlock);
+        Registry.register(Registries.ITEM, Id.of("anchor"), new BlockItem(anchorBlock, new Item.Settings()));
         // Rope
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "rope"), ropeBlock);
+        Registry.register(Registries.BLOCK, Id.of("rope"), ropeBlock);
         // Stone Detector Rail
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "stone_detector_rail"), stoneDetectorRailBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "stone_detector_rail"), new BlockItem(stoneDetectorRailBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("stone_detector_rail"), stoneDetectorRailBlock);
+        Registry.register(Registries.ITEM, Id.of("stone_detector_rail"), new BlockItem(stoneDetectorRailBlock, new Item.Settings()));
         // Obsidian Detector Rail
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "obsidian_detector_rail"), obsidianDetectorRailBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "obsidian_detector_rail"), new BlockItem(obsidianDetectorRailBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("obsidian_detector_rail"), obsidianDetectorRailBlock);
+        Registry.register(Registries.ITEM, Id.of("obsidian_detector_rail"), new BlockItem(obsidianDetectorRailBlock, new Item.Settings()));
         // Bwt Hopper
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "hopper"), hopperBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "hopper"), new BlockItem(hopperBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("hopper"), hopperBlock);
+        Registry.register(Registries.ITEM, Id.of("hopper"), new BlockItem(hopperBlock, new Item.Settings()));
         // Grate
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "grate"), grateBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "grate"), new BlockItem(grateBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("grate"), grateBlock);
+        Registry.register(Registries.ITEM, Id.of("grate"), new BlockItem(grateBlock, new Item.Settings()));
         // Slats
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "slats"), slatsBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "slats"), new BlockItem(slatsBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("slats"), slatsBlock);
+        Registry.register(Registries.ITEM, Id.of("slats"), new BlockItem(slatsBlock, new Item.Settings()));
         // Wicker
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker"), wickerPaneBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "wicker"), new BlockItem(wickerPaneBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("wicker"), wickerPaneBlock);
+        Registry.register(Registries.ITEM, Id.of("wicker"), new BlockItem(wickerPaneBlock, new Item.Settings()));
         // Saw
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "saw"), sawBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "saw"), new BlockItem(sawBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("saw"), sawBlock);
+        Registry.register(Registries.ITEM, Id.of("saw"), new BlockItem(sawBlock, new Item.Settings()));
         // Pulley
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "pulley"), pulleyBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "pulley"), new BlockItem(pulleyBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("pulley"), pulleyBlock);
+        Registry.register(Registries.ITEM, Id.of("pulley"), new BlockItem(pulleyBlock, new Item.Settings()));
         // Platform
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "platform"), platformBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "platform"), new BlockItem(platformBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("platform"), platformBlock);
+        Registry.register(Registries.ITEM, Id.of("platform"), new BlockItem(platformBlock, new Item.Settings()));
         // Turntable
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "turntable"), turntableBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "turntable"), new BlockItem(turntableBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("turntable"), turntableBlock);
+        Registry.register(Registries.ITEM, Id.of("turntable"), new BlockItem(turntableBlock, new Item.Settings()));
         // Stoked Fire
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "stoked_fire"), stokedFireBlock);
+        Registry.register(Registries.BLOCK, Id.of("stoked_fire"), stokedFireBlock);
         // Bellows
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "bellows"), bellowsBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "bellows"), new BlockItem(bellowsBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("bellows"), bellowsBlock);
+        Registry.register(Registries.ITEM, Id.of("bellows"), new BlockItem(bellowsBlock, new Item.Settings()));
         // Unfired Pottery
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_crucible"), unfiredCrucibleBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_crucible"), new BlockItem(unfiredCrucibleBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_planter"), unfiredPlanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_planter"), new BlockItem(unfiredPlanterBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_vase"), unfiredVaseBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_vase"), new BlockItem(unfiredVaseBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_urn"), unfiredUrnBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_urn"), new BlockItem(unfiredUrnBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "unfired_mould"), unfiredMouldBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "unfired_mould"), new BlockItem(unfiredMouldBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_crucible"), unfiredCrucibleBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_crucible"), new BlockItem(unfiredCrucibleBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_planter"), unfiredPlanterBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_planter"), new BlockItem(unfiredPlanterBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_vase"), unfiredVaseBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_vase"), new BlockItem(unfiredVaseBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_urn"), unfiredUrnBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_urn"), new BlockItem(unfiredUrnBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_mould"), unfiredMouldBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_mould"), new BlockItem(unfiredMouldBlock, new Item.Settings()));
         // Kiln
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "kiln"), kilnBlock);
+        Registry.register(Registries.BLOCK, Id.of("kiln"), kilnBlock);
         // Blood Wood
         bloodWoodBlocks.register();
         // Mini blocks
@@ -345,59 +346,61 @@ public class BwtBlocks implements ModInitializer {
                 columnBlocks, pedestalBlocks, tableBlocks
         );
         // Crucible
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "crucible"), crucibleBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "crucible"), new BlockItem(crucibleBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("crucible"), crucibleBlock);
+        Registry.register(Registries.ITEM, Id.of("crucible"), new BlockItem(crucibleBlock, new Item.Settings()));
         // Planters
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "planter"), planterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "planter"), new BlockItem(planterBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "soil_planter"), soilPlanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "soil_planter"), new BlockItem(soilPlanterBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "soul_sand_planter"), soulSandPlanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "soul_sand_planter"), new BlockItem(soulSandPlanterBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "grass_planter"), grassPlanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "grass_planter"), new BlockItem(grassPlanterBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("planter"), planterBlock);
+        Registry.register(Registries.ITEM, Id.of("planter"), new BlockItem(planterBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("soil_planter"), soilPlanterBlock);
+        Registry.register(Registries.ITEM, Id.of("soil_planter"), new BlockItem(soilPlanterBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("soul_sand_planter"), soulSandPlanterBlock);
+        Registry.register(Registries.ITEM, Id.of("soul_sand_planter"), new BlockItem(soulSandPlanterBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("grass_planter"), grassPlanterBlock);
+        Registry.register(Registries.ITEM, Id.of("grass_planter"), new BlockItem(grassPlanterBlock, new Item.Settings()));
         // Vases
         VaseBlock.registerColors(vaseBlocks);
         // Urn
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "urn"), urnBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "urn"), new BlockItem(urnBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("urn"), urnBlock);
+        Registry.register(Registries.ITEM, Id.of("urn"), new BlockItem(urnBlock, new Item.Settings()));
         // SoulForge
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "soul_forge"), soulForgeBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "soul_forge"), new BlockItem(soulForgeBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("soul_forge"), soulForgeBlock);
+        Registry.register(Registries.ITEM, Id.of("soul_forge"), new BlockItem(soulForgeBlock, new Item.Settings()));
         // Wool slabs
         DyeUtils.WOOL_COLORS.forEach((dyeColor, woolBlock) -> {
             SlabBlock woolSlabBlock = new SlabBlock(AbstractBlock.Settings.copy(woolBlock));
             woolSlabBlocks.put(dyeColor, woolSlabBlock);
-            Registry.register(Registries.BLOCK, new Identifier("bwt", dyeColor.getName() + "_wool_slab"), woolSlabBlock);
-            Registry.register(Registries.ITEM, new Identifier("bwt", dyeColor.getName() + "_wool_slab"), new BlockItem(woolSlabBlock, new Item.Settings()));
+            Registry.register(Registries.BLOCK, Id.of(dyeColor.getName() + "_wool_slab"), woolSlabBlock);
+            Registry.register(Registries.ITEM, Id.of(dyeColor.getName() + "_wool_slab"), new BlockItem(woolSlabBlock, new Item.Settings()));
         });
         // Buddy Block
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "buddy_block"), buddyBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "buddy_block"), new BlockItem(buddyBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("buddy_block"), buddyBlock);
+        Registry.register(Registries.ITEM, Id.of("buddy_block"), new BlockItem(buddyBlock, new Item.Settings()));
         // Aesthetic compacting blocks
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "soap_block"), soapBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "soap_block"), new BlockItem(soapBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker_block"), wickerBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "wicker_block"), new BlockItem(wickerBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "dung_block"), dungBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "dung_block"), new BlockItem(dungBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "padding_block"), paddingBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "padding_block"), new BlockItem(paddingBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "rope_coil_block"), ropeCoilBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "rope_coil_block"), new BlockItem(ropeCoilBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "concentrated_hellfire_block"), concentratedHellfireBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "concentrated_hellfire_block"), new BlockItem(concentratedHellfireBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "wicker_slab"), wickerSlabBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "wicker_slab"), new BlockItem(wickerSlabBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("soap_block"), soapBlock);
+        Registry.register(Registries.ITEM, Id.of("soap_block"), new BlockItem(soapBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("wicker_block"), wickerBlock);
+        Registry.register(Registries.ITEM, Id.of("wicker_block"), new BlockItem(wickerBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("dung_block"), dungBlock);
+        Registry.register(Registries.ITEM, Id.of("dung_block"), new BlockItem(dungBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("padding_block"), paddingBlock);
+        Registry.register(Registries.ITEM, Id.of("padding_block"), new BlockItem(paddingBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("rope_coil_block"), ropeCoilBlock);
+        Registry.register(Registries.ITEM, Id.of("rope_coil_block"), new BlockItem(ropeCoilBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("concentrated_hellfire_block"), concentratedHellfireBlock);
+        Registry.register(Registries.ITEM, Id.of("concentrated_hellfire_block"), new BlockItem(concentratedHellfireBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("wicker_slab"), wickerSlabBlock);
+        Registry.register(Registries.ITEM, Id.of("wicker_slab"), new BlockItem(wickerSlabBlock, new Item.Settings()));
         // Mining charge
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "mining_charge"), miningChargeBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "mining_charge"), new BlockItem(miningChargeBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("mining_charge"), miningChargeBlock);
+        Registry.register(Registries.ITEM, Id.of("mining_charge"), new BlockItem(miningChargeBlock, new Item.Settings()));
         // Vine trap
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "vine_trap"), vineTrapBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("bwt", "vine_trap"), vineTrapBlock);
+        Registry.register(Registries.ITEM, Id.of("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
         // Infernal Enchanter
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "infernal_enchanter"), new InfernalEnchanterBlockItem(infernalEnchanterBlock, new Item.Settings().component(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT)));
+        Registry.register(Registries.BLOCK, Id.of("bwt", "infernal_enchanter"), infernalEnchanterBlock);
+        Registry.register(Registries.ITEM, Id.of("bwt", "infernal_enchanter"), new InfernalEnchanterBlockItem(infernalEnchanterBlock, new Item.Settings().component(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT)));
+        Registry.register(Registries.BLOCK, Id.of("vine_trap"), vineTrapBlock);
+        Registry.register(Registries.ITEM, Id.of("vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);

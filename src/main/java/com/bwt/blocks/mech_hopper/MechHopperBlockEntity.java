@@ -2,11 +2,12 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.items.BwtItems;
 import com.bwt.mixin.VanillaHopperInvoker;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.HopperFilterRecipe;
-import com.bwt.recipes.SoulBottlingRecipe;
+import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
+import com.bwt.recipes.hopper_filter.HopperFilterRecipeInput;
+import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
+import com.bwt.recipes.soul_bottling.SoulBottlingRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.SimpleSingleStackInventory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
@@ -16,7 +17,6 @@ import net.fabricmc.fabric.api.transfer.v1.storage.base.CombinedStorage;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.Entity;
@@ -206,11 +206,12 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
     protected static void bottleSouls(World world, MechHopperBlockEntity blockEntity) {
         BlockState blockBelowState = world.getBlockState(blockEntity.getPos().down());
 
-        RecipeManager recipeManager = world.getRecipeManager();
-        Optional<SoulBottlingRecipe> optionalRecipe = recipeManager.listAllOfType(BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE).stream()
-                .map(RecipeEntry::value)
-                .filter(soulBottlingRecipe -> soulBottlingRecipe.matches(blockBelowState))
-                .findFirst();
+        SoulBottlingRecipeInput recipeInput = new SoulBottlingRecipeInput(blockBelowState.getBlock());
+        Optional<SoulBottlingRecipe> optionalRecipe = world.getRecipeManager().getFirstMatch(
+                BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE,
+                recipeInput,
+                world
+        ).map(RecipeEntry::value);
 
         // If unpowered, we just need to check for explosions
         // Otherwise, nothing happens while unpowered
@@ -230,7 +231,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         SoulBottlingRecipe recipe = optionalRecipe.get();
 
         // Not enough souls to fill bottle yet
-        if (blockEntity.soulCount < recipe.getSoulCount()) {
+        if (blockEntity.soulCount < recipe.soulCount()) {
             return;
         }
 
@@ -330,11 +331,13 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         }
         Item filterItem = blockEntity.getFilterItem();
 
-        RecipeManager recipeManager = world.getRecipeManager();
-        Optional<HopperFilterRecipe> optionalRecipe = recipeManager.listAllOfType(BwtRecipes.HOPPER_FILTER_RECIPE_TYPE).stream()
-                .map(RecipeEntry::value)
-                .filter(hopperFilterRecipe -> hopperFilterRecipe.matches(filterItem, itemStack))
-                .findFirst();
+        HopperFilterRecipeInput recipeInput = new HopperFilterRecipeInput(filterItem, itemStack);
+        Optional<HopperFilterRecipe> optionalRecipe = world.getRecipeManager().getFirstMatch(
+                BwtRecipes.HOPPER_FILTER_RECIPE_TYPE,
+                recipeInput,
+                world
+        ).map(RecipeEntry::value);
+
         if (optionalRecipe.isPresent()) {
             processRecipe(world, itemEntity, blockEntity, optionalRecipe.get(), itemStack);
             return;
@@ -362,9 +365,9 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         int inputCount = itemStack.getCount();
 
         // Results get inserted into the hopper
-        ItemStack resultStack = recipe.getResult();
+        ItemStack resultStack = recipe.result();
         // Byproducts get spawned on top of the hopper
-        ItemStack byproductStack = recipe.getByproduct();
+        ItemStack byproductStack = recipe.byproduct();
 
         // Operations may be limited by space in the hopper's inventory
         int operationsSucceeded;
@@ -397,7 +400,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
             }
         }
 
-        int soulsInserted = operationsSucceeded * recipe.getSoulCount();
+        int soulsInserted = operationsSucceeded * recipe.soulCount();
         if (soulsInserted > 0) {
             int newSoulCount = blockEntity.soulCount + soulsInserted;
             if (newSoulCount > SOUL_STORAGE_LIMIT && blockEntity.mechPower <= 0) {

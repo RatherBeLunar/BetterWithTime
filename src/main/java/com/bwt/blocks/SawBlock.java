@@ -4,7 +4,8 @@ import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.SawRecipe;
+import com.bwt.recipes.saw.SawRecipe;
+import com.bwt.recipes.saw.SawRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
@@ -23,13 +24,10 @@ import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -240,11 +238,13 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         if (targetState.isAir()) {
             return;
         }
-        RecipeManager recipeManager = world.getRecipeManager();
-        Optional<SawRecipe> recipe = recipeManager.listAllOfType(BwtRecipes.SAW_RECIPE_TYPE).stream()
-                .map(RecipeEntry::value)
-                .filter(sawRecipeRecipe -> sawRecipeRecipe.matches(targetState.getBlock()))
-                .findFirst();
+
+        SawRecipeInput recipeInput = new SawRecipeInput(targetState.getBlock());
+        Optional<SawRecipe> recipe = world.getRecipeManager().getFirstMatch(
+                BwtRecipes.SAW_RECIPE_TYPE,
+                recipeInput,
+                world
+        ).map(RecipeEntry::value);
         // Cutting
         if (recipe.isEmpty()) {
             if (targetState.isIn(BwtBlockTags.SAW_BREAKS_NO_DROPS)) {

@@ -42,7 +42,7 @@ import java.util.function.Predicate;
 public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 4;
 
-    public final Inventory inventory = new Inventory(INVENTORY_SIZE);
+    public final PulleyBlockEntity.Inventory inventory = new com.bwt.blocks.pulley.PulleyBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
     protected int mechPower;
 

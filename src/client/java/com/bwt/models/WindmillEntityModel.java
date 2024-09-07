@@ -5,6 +5,7 @@ import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.DyeColor;
+import net.minecraft.util.math.ColorHelper;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,13 +54,12 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
     }
 
     @Override
-    public void render(WindmillEntity entity, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
+    public void render(WindmillEntity entity, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
         shafts.forEach(shaft -> shaft.render(matrices, vertices, light, overlay));
         for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
             ModelPart sail = sails.get(i);
             DyeColor sailColor = entity.getSailColor(i);
-            float[] sailRgb = sailColor.getColorComponents();
-            sail.render(matrices, vertices, light, overlay, sailRgb[0], sailRgb[1], sailRgb[2], alpha);
+            sail.render(matrices, vertices, light, overlay, ColorHelper.Argb.mixColor(color, sailColor.getEntityColor()));
         }
     }
 }

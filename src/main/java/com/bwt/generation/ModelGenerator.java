@@ -5,6 +5,7 @@ import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
+import com.bwt.utils.Id;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -391,7 +392,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateSidingBlock(BlockStateModelGenerator blockStateModelGenerator, SidingBlock sidingBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(sidingBlock.fullBlock);
-        Model model = new Model(Optional.of(new Identifier("bwt", "block/siding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model model = new Model(Optional.of(Id.of("block/siding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         model.upload(sidingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
@@ -407,8 +408,8 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateMouldingBlock(BlockStateModelGenerator blockStateModelGenerator, MouldingBlock mouldingBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(mouldingBlock.fullBlock);
-        Model horizontalModel = new Model(Optional.of(new Identifier("bwt", "block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Model verticalModel = new Model(Optional.of(new Identifier("bwt", "block/moulding_vertical")), Optional.of("_vertical"), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model horizontalModel = new Model(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model verticalModel = new Model(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         Identifier horizontalId = horizontalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         Identifier verticalId = verticalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(mouldingBlock).coordinate(createMouldingOrientationMap(horizontalId, verticalId)));
@@ -417,7 +418,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateCornerBlock(BlockStateModelGenerator blockStateModelGenerator, CornerBlock cornerBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(cornerBlock.fullBlock);
-        Model model = new Model(Optional.of(new Identifier("bwt", "block/corner")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model model = new Model(Optional.of(Id.of("block/corner")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         model.upload(cornerBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
@@ -433,7 +434,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateColumnBlock(BlockStateModelGenerator blockStateModelGenerator, ColumnBlock columnBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(columnBlock.fullBlock);
-        Model model = new Model(Optional.of(new Identifier("bwt", "block/column")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model model = new Model(Optional.of(Id.of("block/column")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         model.upload(columnBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(columnBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(columnBlock)).put(VariantSettings.UVLOCK, true)));
         blockStateModelGenerator.registerParentedItemModel(columnBlock, ModelIds.getBlockModelId(columnBlock));
@@ -441,7 +442,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generatePedestalBlock(BlockStateModelGenerator blockStateModelGenerator, PedestalBlock pedestalBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(pedestalBlock.fullBlock);
-        Model model = new Model(Optional.of(new Identifier("bwt", "block/pedestal")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model model = new Model(Optional.of(Id.of("block/pedestal")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         model.upload(pedestalBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
@@ -460,8 +461,8 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateTableBlock(BlockStateModelGenerator blockStateModelGenerator, TableBlock tableBlock) {
         TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(tableBlock.fullBlock);
-        Model tableModel = new Model(Optional.of(new Identifier("bwt", "block/table")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Model tableNoSupportModel = new Model(Optional.of(new Identifier("bwt", "block/table_no_support")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model tableModel = new Model(Optional.of(Id.of("block/table")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
+        Model tableNoSupportModel = new Model(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
         Identifier tableModelId = tableModel.upload(ModelIds.getBlockModelId(tableBlock), texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         Identifier noSupportModelId = tableNoSupportModel.upload(ModelIds.getBlockSubModelId(tableBlock, "_no_support"), texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(
@@ -474,7 +475,7 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public void generateVaseBlock(BlockStateModelGenerator blockStateModelGenerator, VaseBlock vaseBlock) {
-        Identifier modelId = new Model(Optional.of(new Identifier("bwt", "block/vase")), Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE).upload(ModelIds.getBlockModelId(vaseBlock), TextureMap.texture(vaseBlock).put(TextureKey.PARTICLE, TextureMap.getId(vaseBlock)), blockStateModelGenerator.modelCollector);
+        Identifier modelId = new Model(Optional.of(Id.of("block/vase")), Optional.empty(), TextureKey.TEXTURE, TextureKey.PARTICLE).upload(ModelIds.getBlockModelId(vaseBlock), TextureMap.texture(vaseBlock).put(TextureKey.PARTICLE, TextureMap.getId(vaseBlock)), blockStateModelGenerator.modelCollector);
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(vaseBlock, BlockStateVariant.create().put(VariantSettings.MODEL, modelId)));
     }
 

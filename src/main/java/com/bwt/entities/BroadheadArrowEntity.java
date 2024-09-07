@@ -7,12 +7,12 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class BroadheadArrowEntity extends PersistentProjectileEntity {
-    private static final ItemStack DEFAULT_STACK = new ItemStack(BwtItems.broadheadArrowItem);
 
     public BroadheadArrowEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
-        super(entityType, world, DEFAULT_STACK);
+        super(entityType, world);
     }
 
     @Override
@@ -20,12 +20,12 @@ public class BroadheadArrowEntity extends PersistentProjectileEntity {
         return BwtItems.broadheadArrowItem.getDefaultStack();
     }
 
-    public BroadheadArrowEntity(World world, double x, double y, double z, ItemStack stack) {
-        super(BwtEntities.broadheadArrowEntity, x, y, z, world, stack);
+    public BroadheadArrowEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack weapon) {
+        super(BwtEntities.broadheadArrowEntity, x, y, z, world, stack, weapon);
     }
 
-    public BroadheadArrowEntity(World world, LivingEntity owner, ItemStack stack) {
-        super(BwtEntities.broadheadArrowEntity, owner, world, stack);
+    public BroadheadArrowEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
+        super(BwtEntities.broadheadArrowEntity, owner, world, stack, shotFrom);
     }
 
     public void initFromStack(ItemStack stack) {

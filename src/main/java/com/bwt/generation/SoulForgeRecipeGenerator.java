@@ -2,8 +2,9 @@ package com.bwt.generation;
 
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.SoulForgeShapedRecipe;
-import com.bwt.recipes.SoulForgeShapelessRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapelessRecipe;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
@@ -29,7 +30,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
     }
 
     private Identifier highEfficiencyId(ItemConvertible itemConvertible) {
-        return new Identifier("bwt", Registries.ITEM.getId(itemConvertible.asItem()).withPrefixedPath("he_").getPath());
+        return Id.of(Registries.ITEM.getId(itemConvertible.asItem()).withPrefixedPath("he_").getPath());
     }
 
     private void createHighEfficiencyBlockFamilyRecipe(RecipeExporter exporter, BlockFamily blockFamily, BlockFamily.Variant variant, Function<Block, CraftingRecipeJsonBuilder> builder) {
@@ -307,7 +308,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.LAPIS_LAZULI), conditionsFromItem(Items.LAPIS_LAZULI))
                 .offerTo(exporter);
 
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.detectorBlock)
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.detectorBlock)
                 .pattern("cccc")
                 .pattern("ette")
                 .pattern("srrs")
@@ -319,7 +320,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .input('r', Items.REDSTONE)
                 .criterion(hasItem(BwtItems.redstoneEyeItem), conditionsFromItem(BwtItems.redstoneEyeItem))
                 .offerTo(exporter);
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.buddyBlock)
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.buddyBlock)
                 .pattern("sses")
                 .pattern("etts")
                 .pattern("stte")
@@ -330,7 +331,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.redstoneEyeItem), conditionsFromItem(BwtItems.redstoneEyeItem))
                 .offerTo(exporter);
 
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, BwtBlocks.blockDispenserBlock)
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.blockDispenserBlock)
                 .pattern("mmmm")
                 .pattern("muum")
                 .pattern("stts")

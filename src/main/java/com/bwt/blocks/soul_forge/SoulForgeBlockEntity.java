@@ -13,6 +13,7 @@ import net.minecraft.inventory.SidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.recipe.*;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -128,7 +129,10 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
         if (slot > 0) return this.inventory.get(slot - 1);
         if (!output.isEmpty()) return output;
         Optional<RecipeEntry<CraftingRecipe>> recipe = getCurrentRecipe();
-        return recipe.map(craftingRecipe -> craftingRecipe.value().craft(craftingInventory, world.getRegistryManager())).orElse(ItemStack.EMPTY);
+        return recipe
+                .filter(craftingRecipe -> world != null)
+                .map(craftingRecipe -> craftingRecipe.value().craft(craftingInventory.createRecipeInput(), world.getRegistryManager()))
+                .orElse(ItemStack.EMPTY);
     }
 
     @Override
@@ -202,16 +206,16 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
             List<RecipeEntry<CraftingRecipe>> regularRecipes = manager.listAllOfType(RecipeType.CRAFTING);
             List<RecipeEntry<CraftingRecipe>> soulForgeRecipes = manager.listAllOfType(BwtRecipes.SOUL_FORGE_RECIPE_TYPE);
             Optional<RecipeEntry<CraftingRecipe>> optionalRecipe = Stream.concat(regularRecipes.stream(), soulForgeRecipes.stream()).filter(recipe -> recipe.id().equals(lastRecipe.id())).findFirst();
-            if (optionalRecipe.isPresent() && optionalRecipe.get().value().matches(craftingInventory, world)) {
+            if (optionalRecipe.isPresent() && optionalRecipe.get().value().matches(craftingInventory.createRecipeInput(), world)) {
                 return optionalRecipe;
             }
         }
-        Optional<RecipeEntry<CraftingRecipe>> recipe = manager.getFirstMatch(RecipeType.CRAFTING, craftingInventory, world);
+        Optional<RecipeEntry<CraftingRecipe>> recipe = manager.getFirstMatch(RecipeType.CRAFTING, craftingInventory.createRecipeInput(), world);
         if (recipe.isPresent()) {
             setLastRecipe(recipe.get());
             return recipe;
         }
-        Optional<RecipeEntry<CraftingRecipe>> recipe2 = manager.getFirstMatch(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, craftingInventory, world);
+        Optional<RecipeEntry<CraftingRecipe>> recipe2 = manager.getFirstMatch(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, craftingInventory.createRecipeInput(), world);
         if (recipe2.isPresent()) {
             setLastRecipe(recipe2.get());
             return recipe2;
@@ -224,8 +228,8 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
         Optional<RecipeEntry<CraftingRecipe>> optionalRecipe = getCurrentRecipe();
         if (optionalRecipe.isEmpty()) return ItemStack.EMPTY;
         RecipeEntry<CraftingRecipe> recipe = optionalRecipe.get();
-        ItemStack result = recipe.value().craft(craftingInventory, world.getRegistryManager());
-        DefaultedList<ItemStack> remaining = world.getRecipeManager().getRemainingStacks(RecipeType.CRAFTING, craftingInventory, world);
+        ItemStack result = recipe.value().craft(craftingInventory.createRecipeInput(), world.getRegistryManager());
+        DefaultedList<ItemStack> remaining = world.getRecipeManager().getRemainingStacks(RecipeType.CRAFTING, craftingInventory.createRecipeInput(), world);
         for (int i = 0; i < GRID_SIZE; i++) {
             ItemStack current = inventory.get(i);
             ItemStack remainingStack = remaining.get(i);
@@ -248,7 +252,7 @@ public class SoulForgeBlockEntity extends LockableContainerBlockEntity implement
         this.openScreens.remove(container);
     }
 
-    public boolean matches(Recipe<? super CraftingInventory> recipe) {
-        return this.world != null && recipe.matches(this.craftingInventory, this.world);
+    public boolean matches(Recipe<CraftingRecipeInput> recipe) {
+        return this.world != null && recipe.matches(this.craftingInventory.createRecipeInput(), this.world);
     }
 }

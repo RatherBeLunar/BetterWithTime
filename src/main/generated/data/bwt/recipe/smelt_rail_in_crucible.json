@@ -1,0 +1,19 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "minecraft:rail"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "id": "minecraft:iron_ingot"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:netherite_axe"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "id": "minecraft:netherite_ingot"
+    }
+  ]
+}

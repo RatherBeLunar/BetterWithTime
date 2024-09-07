@@ -4,7 +4,8 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
-import com.bwt.recipes.MillStoneRecipe;
+import com.bwt.recipes.mill_stone.MillStoneRecipe;
+import com.bwt.recipes.mill_stone.MillStoneRecipeInput;
 import com.bwt.utils.OrderedRecipeMatcher;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -38,7 +39,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
     public static final int timeToGrind = 200;
     protected static final int INVENTORY_SIZE = 3;
 
-    public final Inventory inventory = new Inventory(INVENTORY_SIZE);
+    public final MillStoneBlockEntity.Inventory inventory = new com.bwt.blocks.mill_stone.MillStoneBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
     protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
@@ -72,8 +73,8 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         if (!state.isOf(BwtBlocks.millStoneBlock) || !state.get(MillStoneBlock.MECH_POWERED)) {
             return;
         }
-        RecipeManager recipeManager = world.getRecipeManager();
-        List<RecipeEntry<MillStoneRecipe>> matches = recipeManager.getAllMatches(BwtRecipes.MILL_STONE_RECIPE_TYPE, blockEntity.inventory, world);
+        MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getHeldStacks());
+        List<RecipeEntry<MillStoneRecipe>> matches = world.getRecipeManager().getAllMatches(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, world);
         if (matches.isEmpty()) {
             if (blockEntity.grindProgressTime != 0) {
                 blockEntity.grindProgressTime = 0;

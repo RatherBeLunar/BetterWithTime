@@ -1,6 +1,7 @@
 package com.bwt.screens;
 
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
+import com.bwt.utils.Id;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -10,7 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class CauldronScreen extends HandledScreen<CauldronScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/cauldron.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/cauldron.png");
 
     static final int fireIconHeight = 14;
 

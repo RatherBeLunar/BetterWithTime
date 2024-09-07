@@ -7,7 +7,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 
 public class BattleAxeItem extends MiningToolItem {
-    public BattleAxeItem(ToolMaterial material, Settings settings) {
+    public BattleAxeItem(ToolMaterial material, Item.Settings settings) {
         super(material, BwtBlockTags.BATTLEAXE_MINEABLE, settings);
     }
 

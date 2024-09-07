@@ -341,7 +341,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
                 BlockState state = entry.getValue();
                 if (state.canPlaceAt(getWorld(), blockPos)) {
                     if (getWorld().setBlockState(blockPos, state, Block.NOTIFY_ALL)) {
-                        ((ServerWorld) this.getWorld()).getChunkManager().threadedAnvilChunkStorage.sendToOtherNearbyPlayers(this, new BlockUpdateS2CPacket(blockPos, this.getWorld().getBlockState(blockPos)));
+                        ((ServerWorld) this.getWorld()).getChunkManager().sendToOtherNearbyPlayers(this, new BlockUpdateS2CPacket(blockPos, this.getWorld().getBlockState(blockPos)));
                     }
                     if (blockEntities.containsKey(entry.getKey())) {
                         BlockEntity blockEntity = getWorld().getBlockEntity(blockPos);

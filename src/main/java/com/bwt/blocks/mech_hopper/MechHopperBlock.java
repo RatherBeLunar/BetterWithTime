@@ -5,6 +5,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
+import com.mojang.datafixers.types.templates.Tag;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,6 +14,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -57,9 +59,17 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         filterMap.put(item, predicate);
     }
 
+    public record TagFilter(TagKey<Item> tagKey) implements Predicate<ItemStack> {
+
+        @Override
+        public boolean test(ItemStack itemStack) {
+            return itemStack.isIn(this.tagKey);
+        }
+    }
+
     public static void addDefaultFilters() {
-        addFilter(Items.LADDER, itemStack -> itemStack.isIn(BwtItemTags.PASSES_LADDER_FILTER));
-        addFilter(Items.IRON_BARS, itemStack -> itemStack.isIn(BwtItemTags.PASSES_IRON_BARS_FILTER));
+        addFilter(Items.LADDER, new TagFilter(BwtItemTags.PASSES_LADDER_FILTER));
+        addFilter(Items.IRON_BARS, new TagFilter(BwtItemTags.PASSES_IRON_BARS_FILTER));
         for (Item trapdoor : new Item[]{
                 Items.ACACIA_TRAPDOOR,
                 Items.BAMBOO_TRAPDOOR,
@@ -82,13 +92,13 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
                 Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
                 Items.WEATHERED_COPPER_TRAPDOOR,
         }) {
-            addFilter(trapdoor, itemStack -> itemStack.isIn(BwtItemTags.PASSES_TRAPDOOR_FILTER));
+            addFilter(trapdoor, new TagFilter(BwtItemTags.PASSES_TRAPDOOR_FILTER));
         }
 
         addFilter(Items.SOUL_SAND, itemStack -> false);
-        addFilter(BwtBlocks.grateBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_GRATE_FILTER));
-        addFilter(BwtBlocks.slatsBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_SLATS_FILTER));
-        addFilter(BwtBlocks.wickerPaneBlock.asItem(), itemStack -> itemStack.isIn(BwtItemTags.PASSES_WICKER_FILTER));
+        addFilter(BwtBlocks.grateBlock.asItem(), new TagFilter(BwtItemTags.PASSES_GRATE_FILTER));
+        addFilter(BwtBlocks.slatsBlock.asItem(), new TagFilter(BwtItemTags.PASSES_SLATS_FILTER));
+        addFilter(BwtBlocks.wickerPaneBlock.asItem(), new TagFilter(BwtItemTags.PASSES_WICKER_FILTER));
     }
 
     @Override

@@ -3,22 +3,19 @@ package com.bwt.blocks.soul_forge;
 import com.bwt.BetterWithTime;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ScreenHandlerSlotUpdateS2CPacket;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeMatcher;
-import net.minecraft.recipe.RecipeUnlocker;
+import net.minecraft.recipe.*;
 import net.minecraft.recipe.book.RecipeBookCategory;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 
-public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<CraftingInventory> {
+public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<CraftingRecipeInput, CraftingRecipe> {
     private final Inventory inventory;
     private final PlayerEntity player;
 
@@ -70,9 +67,9 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
     }
 
     @Override
-    public boolean matches(RecipeEntry<? extends Recipe<CraftingInventory>> recipeEntry) {
+    public boolean matches(RecipeEntry<CraftingRecipe> recipe) {
         if (inventory instanceof SoulForgeBlockEntity soulForgeBlockEntity) {
-            soulForgeBlockEntity.matches(recipeEntry.value());
+            return soulForgeBlockEntity.matches(recipe.value());
         }
         return false;
     }

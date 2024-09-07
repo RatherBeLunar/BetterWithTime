@@ -5,7 +5,7 @@ import net.minecraft.item.*;
 import net.minecraft.util.ActionResult;
 
 public class MattockItem extends MiningToolItem {
-    public MattockItem(ToolMaterial material, Settings settings) {
+    public MattockItem(ToolMaterial material, Item.Settings settings) {
         super(material, BwtBlockTags.MATTOCK_MINEABLE, settings);
     }
 

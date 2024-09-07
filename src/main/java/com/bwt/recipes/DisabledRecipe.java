@@ -4,20 +4,16 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Blocks;
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.recipe.*;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public record DisabledRecipe(String group) implements Recipe<Inventory> {
+public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     public DisabledRecipe() {
         this("");
     }
@@ -33,7 +29,7 @@ public record DisabledRecipe(String group) implements Recipe<Inventory> {
     }
 
     @Override
-    public boolean matches(@Nullable Inventory inventory, World world) {
+    public boolean matches(@Nullable RecipeInput input, World world) {
         return false;
     }
 
@@ -63,7 +59,7 @@ public record DisabledRecipe(String group) implements Recipe<Inventory> {
     }
 
     @Override
-    public ItemStack craft(Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+    public ItemStack craft(RecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         return ItemStack.EMPTY;
     }
 

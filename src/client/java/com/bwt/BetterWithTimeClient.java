@@ -7,6 +7,7 @@ import com.bwt.items.BwtItems;
 import com.bwt.models.*;
 import com.bwt.screens.*;
 import com.bwt.screens.infernal_enchanter.InfernalEnchanterScreen;
+import com.bwt.utils.Id;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -14,7 +15,6 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.color.world.GrassColors;
 import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
@@ -23,6 +23,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.biome.GrassColors;
 
 @Environment(EnvType.CLIENT)
 public class BetterWithTimeClient implements ClientModInitializer {
@@ -92,14 +93,14 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		}, BwtBlocks.grassPlanterBlock);
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassPlanterBlock);
 
-		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, new Identifier("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
+		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {
 				return 0.0F;
 			}
-			return livingEntity.getActiveItem() != itemStack ? 0.0F : (itemStack.getMaxUseTime() - livingEntity.getItemUseTimeLeft()) / 20.0F;
+			return livingEntity.getActiveItem() != itemStack ? 0.0F : (itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / 20.0F;
 		});
 
-		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, new Identifier("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
+		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, Id.mc("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {
 				return 0.0F;
 			}

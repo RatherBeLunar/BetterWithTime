@@ -1,9 +1,10 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.AbstractCookingPotRecipe;
-import com.bwt.recipes.AbstractCookingPotRecipeType;
+import com.bwt.recipes.cooking_pots.AbstractCookingPotRecipe;
+import com.bwt.recipes.cooking_pots.AbstractCookingPotRecipeType;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.recipes.cooking_pots.CookingPotRecipeInput;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.FireData;
@@ -55,7 +56,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     public int slotsOccupied;
 
 
-    public final Inventory inventory = new Inventory(INVENTORY_SIZE);
+    public final AbstractCookingPotBlockEntity.Inventory inventory = new AbstractCookingPotBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
 
@@ -164,7 +165,9 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
         RecipeManager recipeManager = world.getRecipeManager();
         AbstractCookingPotRecipeType recipeTypeToGet = fireData.fireType().equals(FireType.STOKED) ? stokedRecipeType : unstokedRecipeType;
-        List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(recipeTypeToGet, inventory, world);
+
+        CookingPotRecipeInput recipeInput = new CookingPotRecipeInput(inventory.getHeldStacks());
+        List<RecipeEntry<AbstractCookingPotRecipe>> matches = recipeManager.getAllMatches(recipeTypeToGet, recipeInput, world);
         if (matches.isEmpty()) {
             if (cookProgressTime != 0) {
                 cookProgressTime = 0;

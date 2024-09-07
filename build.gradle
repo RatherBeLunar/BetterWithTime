@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6.5'
+	id 'fabric-loom' version '1.7-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -16,6 +16,14 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+
+	//For EMI https://github.com/RatherBeLunar/BetterWithTime/issues/1
+	/* --- */
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/"
+	}
+	/* --- */
 }
 
 loom {
@@ -47,6 +55,12 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
+
+	//For EMI https://github.com/RatherBeLunar/BetterWithTime/issues/1
+	/* --- */
+	modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
+	modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+	/* --- */
 }
 
 processResources {

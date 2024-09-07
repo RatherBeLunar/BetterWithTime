@@ -51,7 +51,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ConventionalItemTags.LAPIS_GEMS)
                 .forceAddTag(ConventionalItemTags.DIAMOND_GEMS)
                 .forceAddTag(ConventionalItemTags.QUARTZ_GEMS)
-                .forceAddTag(ConventionalItemTags.COAL)
+                .forceAddTag(ItemTags.COALS)
                 .add(Items.FLINT)
                 .add(Items.ANCIENT_DEBRIS);
 
@@ -379,12 +379,13 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ItemTags.CHEST_BOATS)
                 .forceAddTag(ItemTags.DOORS)
                 .forceAddTag(ConventionalItemTags.ENTITY_WATER_BUCKETS)
-                .forceAddTag(ItemTags.MUSIC_DISCS)
+                .forceAddTag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
+                .forceAddTag(ConventionalItemTags.MUSIC_DISCS)
                 .forceAddTag(ItemTags.SAPLINGS)
                 .forceAddTag(ConventionalItemTags.TOOLS)
-                .forceAddTag(ConventionalItemTags.BOWS_TOOLS)
-                .forceAddTag(ConventionalItemTags.CROSSBOWS_TOOLS)
-                .forceAddTag(ConventionalItemTags.SHIELDS_TOOLS)
+                .forceAddTag(ConventionalItemTags.BOW_TOOLS)
+                .forceAddTag(ConventionalItemTags.CROSSBOW_TOOLS)
+                .forceAddTag(ConventionalItemTags.SHIELD_TOOLS)
                 .add(
                         Items.WRITABLE_BOOK,
                         Items.LAVA_BUCKET,

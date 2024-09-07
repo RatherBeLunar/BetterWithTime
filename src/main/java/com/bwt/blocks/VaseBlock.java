@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.item.BlockItem;
@@ -34,8 +35,8 @@ public class VaseBlock extends Block {
                     .hardness(0f)
             );
             vaseBlocks.put(dyeColor, vaseBlock);
-            Registry.register(Registries.BLOCK, new Identifier("bwt", "vase_" + dyeColor.getName()), vaseBlock);
-            Registry.register(Registries.ITEM, new Identifier("bwt", "vase_" + dyeColor.getName()), new BlockItem(vaseBlock, new Item.Settings()));
+            Registry.register(Registries.BLOCK, Id.of("vase_" + dyeColor.getName()), vaseBlock);
+            Registry.register(Registries.ITEM, Id.of("vase_" + dyeColor.getName()), new BlockItem(vaseBlock, new Item.Settings()));
         });
     }
 

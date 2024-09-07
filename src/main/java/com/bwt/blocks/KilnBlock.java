@@ -1,7 +1,8 @@
 package com.bwt.blocks;
 
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.KilnRecipe;
+import com.bwt.recipes.kiln.KilnRecipe;
+import com.bwt.recipes.kiln.KilnRecipeInput;
 import com.bwt.utils.FireData;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -10,7 +11,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
@@ -128,11 +128,12 @@ public class KilnBlock extends Block {
     }
 
     private Optional<KilnRecipe> getRecipe(World world, BlockState cookingBlockState) {
-        RecipeManager recipeManager = world.getRecipeManager();
-        return recipeManager.listAllOfType(BwtRecipes.KILN_RECIPE_TYPE).stream()
-                .map(RecipeEntry::value)
-                .filter(kilnRecipe -> kilnRecipe.matches(cookingBlockState.getBlock()))
-                .findFirst();
+        KilnRecipeInput recipeInput = new KilnRecipeInput(cookingBlockState.getBlock());
+        return world.getRecipeManager().getFirstMatch(
+                BwtRecipes.KILN_RECIPE_TYPE,
+                recipeInput,
+                world
+        ).map(RecipeEntry::value);
     }
 
     private void cookBlock(World world, BlockPos cookingBlockPos, KilnRecipe recipe) {

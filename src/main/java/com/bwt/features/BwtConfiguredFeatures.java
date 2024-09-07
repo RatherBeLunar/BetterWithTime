@@ -4,6 +4,7 @@ import java.util.OptionalInt;
 
 import com.bwt.blocks.BloodWoodLogBlock;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.utils.Id;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
@@ -59,6 +60,6 @@ public class BwtConfiguredFeatures extends FabricDynamicRegistryProvider {
     }
 
     public static RegistryKey<ConfiguredFeature<?, ?>> registerKey(String name) {
-        return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, new Identifier("bwt", name));
+        return RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE, Id.of(name));
     }
 }

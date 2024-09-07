@@ -7,7 +7,8 @@ import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.entities.MiningChargeEntity;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.BlockDispenserClumpRecipe;
+import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
+import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipeInput;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
@@ -305,9 +306,10 @@ public class BlockDispenserBlock extends DispenserBlock {
                     .orElse(BlockDispenserBehavior.DEFAULT);
         }
 
+        BlockDispenserClumpRecipeInput recipeInput = new BlockDispenserClumpRecipeInput(entity.getItems());
         Optional<BlockDispenserClumpRecipe> match = world.getRecipeManager().getFirstMatch(
                 BwtRecipes.BLOCK_DISPENSER_CLUMP_RECIPE_TYPE,
-                entity,
+                recipeInput,
                 world
         ).map(RecipeEntry::value);
 

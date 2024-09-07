@@ -1,7 +1,7 @@
 package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserPlacementContext;
-import com.bwt.recipes.BlockDispenserClumpRecipe;
+import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
 import net.minecraft.block.DispenserBlock;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -22,13 +22,13 @@ public class ItemClumpDispenserBehavior extends BlockDispenserBehavior {
     @Override
     protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
         this.setSuccess(false);
-        Item item = recipe.getOutput().getItem();
+        Item item = recipe.block().getItem();
         if (item instanceof BlockItem blockItem) {
             Direction direction = pointer.state().get(DispenserBlock.FACING);
             BlockPos blockPos = pointer.pos().offset(direction);
 
             try {
-                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, recipe.getOutput().copy(), direction);
+                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, recipe.block().copy(), direction);
                 setSuccess(blockItem.place(context).isAccepted());
             } catch (Exception exception) {
                 LOGGER.error("Error trying to place block at {}", blockPos, exception);

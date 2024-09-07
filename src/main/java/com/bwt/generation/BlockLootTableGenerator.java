@@ -6,8 +6,8 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
@@ -16,6 +16,7 @@ import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
 import net.minecraft.predicate.StatePredicate;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 
 import java.util.concurrent.CompletableFuture;
@@ -120,6 +121,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
     }
 
     private void addHempDrop() {
+        RegistryWrapper.Impl<Enchantment> enchantmentRegistry = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
         addDrop(
                 BwtBlocks.hempCropBlock,
                 applyExplosionDecay(
@@ -134,7 +136,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
                                         // Regardless of growth, drop some seeds
                                         .with(ItemEntry.builder(BwtItems.hempSeedsItem)
                                                 .conditionally(RandomChanceLootCondition.builder(0.5f))
-                                                .apply(ApplyBonusLootFunction.binomialWithBonusCount(Enchantments.FORTUNE, 0.5f, 0))
+                                                .apply(ApplyBonusLootFunction.binomialWithBonusCount(enchantmentRegistry.getOrThrow(Enchantments.FORTUNE), 0.5f, 0))
                                         )
                                 )
                 )

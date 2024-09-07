@@ -1,7 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.SoulForgeShapedRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Blocks;

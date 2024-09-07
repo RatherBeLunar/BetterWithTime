@@ -1,5 +1,6 @@
 package com.bwt.recipes;
 
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -63,7 +64,7 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     }
 
     public static class Serializer implements CustomIngredientSerializer<IngredientWithCount> {
-        private static final Identifier ID = new Identifier("bwt", "ingredient_with_count");
+        private static final Identifier ID = Id.of("ingredient_with_count");
         public static final MapCodec<IngredientWithCount> ALLOW_EMPTY_CODEC = createCodec(Ingredient.ALLOW_EMPTY_CODEC);
         public static final MapCodec<IngredientWithCount> DISALLOW_EMPTY_CODEC = createCodec(Ingredient.DISALLOW_EMPTY_CODEC);
         public static final PacketCodec<RegistryByteBuf, IngredientWithCount> PACKET_CODEC = PacketCodec.ofStatic(

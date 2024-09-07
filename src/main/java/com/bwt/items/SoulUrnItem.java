@@ -4,7 +4,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 public class SoulUrnItem extends Item {
-    public SoulUrnItem(Settings settings) {
+    public SoulUrnItem(Item.Settings settings) {
         super(settings);
     }
 

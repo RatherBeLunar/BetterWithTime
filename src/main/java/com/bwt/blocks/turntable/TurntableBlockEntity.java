@@ -4,7 +4,8 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.TurntableRecipe;
+import com.bwt.recipes.turntable.TurntableRecipe;
+import com.bwt.recipes.turntable.TurntableRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockPosAndState;
 import net.minecraft.block.Block;
@@ -85,7 +86,6 @@ public class TurntableBlockEntity extends BlockEntity {
 
     protected static List<BlockPosAndState> getBlocksToRotate(World world, BlockPos turntablePos) {
         RecipeManager recipeManager = world.getRecipeManager();
-        List<RecipeEntry<TurntableRecipe>> recipeEntries = recipeManager.listAllOfType(BwtRecipes.TURNTABLE_RECIPE_TYPE);
 
         List<BlockPosAndState> blocksToRotate = new ArrayList<>();
         for (int j = 1; j <= blocksAboveToRotate; j++) {
@@ -102,9 +102,13 @@ public class TurntableBlockEntity extends BlockEntity {
             blocksToRotate.add(new BlockPosAndState(blockAbovePos, blockAboveState, blockAboveEntity));
 
             // Crafting
-            boolean recipeExistsForBlock = recipeEntries.stream()
-                    .map(RecipeEntry::value)
-                    .anyMatch(turntableRecipe -> turntableRecipe.matches(blockAboveState.getBlock()));
+            TurntableRecipeInput recipeInput = new TurntableRecipeInput(blockAboveState.getBlock());
+            boolean recipeExistsForBlock = recipeManager.getFirstMatch(
+                    BwtRecipes.TURNTABLE_RECIPE_TYPE,
+                    recipeInput,
+                    world
+            ).isPresent();
+
             if (recipeExistsForBlock) {
                 // Don't propagate rotation upward for craftables
                 break;
@@ -173,7 +177,6 @@ public class TurntableBlockEntity extends BlockEntity {
 
     protected static void rotateCentralColumnBlocks(World world, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, BlockRotation rotation) {
         RecipeManager recipeManager = world.getRecipeManager();
-        List<RecipeEntry<TurntableRecipe>> recipeEntries = recipeManager.listAllOfType(BwtRecipes.TURNTABLE_RECIPE_TYPE);
         boolean recipeFound = false;
 
         for (BlockPosAndState blockToRotate : blocksToRotate) {
@@ -185,10 +188,13 @@ public class TurntableBlockEntity extends BlockEntity {
             RotationProcessHelper.processRotation(world, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
 
             // Crafting
-            Optional<TurntableRecipe> recipe = recipeEntries.stream()
-                    .map(RecipeEntry::value)
-                    .filter(turntableRecipe -> turntableRecipe.matches(blockToRotateState.getBlock()))
-                    .findFirst();
+            TurntableRecipeInput recipeInput = new TurntableRecipeInput(blockToRotateState.getBlock());
+            Optional<TurntableRecipe> recipe = recipeManager.getFirstMatch(
+                    BwtRecipes.TURNTABLE_RECIPE_TYPE,
+                    recipeInput,
+                    world
+            ).map(RecipeEntry::value);
+
             if (recipe.isPresent()) {
                 recipeFound = true;
                 blockEntity.craftingTurnCounter += 1;

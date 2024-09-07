@@ -2,8 +2,8 @@ package com.bwt.generation;
 
 import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.SawRecipe;
-import com.bwt.tags.BwtItemTags;
+import com.bwt.recipes.saw.SawRecipe;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.block.Block;
@@ -51,10 +51,10 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             }
             Block planksBlock = sidingBlock.fullBlock;
             Identifier planksId = Registries.BLOCK.getId(planksBlock);
-            Identifier logId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_log"));
-            Identifier woodId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_wood"));
-            Identifier hyphaeId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_hyphae"));
-            Identifier stemId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stem"));
+            Identifier logId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_log"));
+            Identifier woodId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_wood"));
+            Identifier hyphaeId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_hyphae"));
+            Identifier stemId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stem"));
 
             Item dustItem = planksBlock == BwtBlocks.bloodWoodBlocks.planksBlock ? BwtItems.soulDustItem : BwtItems.sawDustItem;
             // Logs/Stems/Hyphae -> planks
@@ -63,7 +63,7 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
                 if (!logBlock.equals(Blocks.AIR)) {
                     SawRecipe.JsonBuilder.create(logBlock).result(planksBlock, 4).result(dustItem, 2).offerTo(exporter);
                 }
-                Block strippedBlock = Registries.BLOCK.get(new Identifier(logIshId.getNamespace(), "stripped_" + logIshId.getPath()));
+                Block strippedBlock = Registries.BLOCK.get(Id.of(logIshId.getNamespace(), "stripped_" + logIshId.getPath()));
                 if (!strippedBlock.equals(Blocks.AIR)) {
                     SawRecipe.JsonBuilder.create(strippedBlock).result(planksBlock, 4).result(dustItem, 2).offerTo(exporter);
                 }
@@ -74,10 +74,10 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             SawRecipe.JsonBuilder.create(mouldingBlock).result(cornerBlock, 2).offerTo(exporter);
             SawRecipe.JsonBuilder.create(cornerBlock).result(BwtItems.gearItem, 2).offerTo(exporter);
             // Recycling recipes
-            Identifier fenceId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
-            Identifier fenceGateId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence_gate"));
-            Identifier stairsId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stairs"));
-            Identifier slabId = new Identifier(planksId.getNamespace(), planksId.getPath().replace("_planks", "_slab"));
+            Identifier fenceId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
+            Identifier fenceGateId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence_gate"));
+            Identifier stairsId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stairs"));
+            Identifier slabId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_slab"));
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceId)).result(cornerBlock, 2).offerTo(exporter);
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceGateId)).result(cornerBlock).result(Items.STICK).offerTo(exporter);
             SawRecipe.JsonBuilder.create(Registries.BLOCK.get(stairsId)).result(sidingBlock).result(mouldingBlock).offerTo(exporter);

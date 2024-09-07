@@ -3,6 +3,7 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
@@ -10,6 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.BlockPointer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -22,6 +26,7 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
     @Override
     public ItemStack getInhaledItems(BlockPointer blockPointer) {
         World world = blockPointer.world();
+        RegistryWrapper.Impl<Enchantment> enchantmentRegistry = world.getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
         BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
         BlockState facingState = world.getBlockState(facingPos);
         BlockEntity facingBlockEntity = world.getBlockEntity(facingPos);
@@ -29,7 +34,8 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
         Vec3d centerPos = blockPointer.pos().toCenterPos();
         for (Item tool : new Item[]{Items.NETHERITE_PICKAXE, Items.SHEARS}) {
             ItemStack itemStack = new ItemStack(tool);
-            itemStack.addEnchantment(Enchantments.SILK_TOUCH, 1);
+            RegistryEntry.Reference<Enchantment> silkTouch = enchantmentRegistry.getOrThrow(Enchantments.SILK_TOUCH);
+            itemStack.addEnchantment(silkTouch, 1);
             LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(blockPointer.world())
                     .add(LootContextParameters.ORIGIN, centerPos)
                     .add(LootContextParameters.TOOL, itemStack)

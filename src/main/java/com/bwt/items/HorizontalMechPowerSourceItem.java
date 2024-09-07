@@ -18,7 +18,7 @@ import net.minecraft.world.event.GameEvent;
 public class HorizontalMechPowerSourceItem extends Item {
     protected HorizontalMechPowerSourceEntity.Factory entityFactory;
 
-    public HorizontalMechPowerSourceItem(HorizontalMechPowerSourceEntity.Factory entityFactory, Settings settings) {
+    public HorizontalMechPowerSourceItem(HorizontalMechPowerSourceEntity.Factory entityFactory, Item.Settings settings) {
         super(settings);
         this.entityFactory = entityFactory;
     }

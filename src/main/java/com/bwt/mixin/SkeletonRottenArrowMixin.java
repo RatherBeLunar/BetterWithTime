@@ -10,6 +10,7 @@ import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -37,9 +38,7 @@ public abstract class SkeletonRottenArrowMixin extends HostileEntity {
     }
 
     @Override
-    protected void drop(DamageSource source) {
-        super.drop(source);
+    protected void drop(ServerWorld serverWorld, DamageSource source) {
+        super.drop(serverWorld, source);
     }
-
-
 }

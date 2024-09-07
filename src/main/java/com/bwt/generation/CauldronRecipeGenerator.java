@@ -2,15 +2,13 @@ package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.CauldronRecipe;
-import com.bwt.recipes.StokedCauldronRecipe;
+import com.bwt.recipes.cooking_pots.CauldronRecipe;
+import com.bwt.recipes.cooking_pots.StokedCauldronRecipe;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.component.DataComponentType;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
@@ -45,11 +43,11 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
 
     private void generateUnstoked(RecipeExporter exporter) {
         generateFoods(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.dungItem).ingredient(BwtItems.scouredLeatherItem).result(BwtItems.tannedLeatherItem).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(Items.GLOWSTONE_DUST).ingredient(Items.REDSTONE).ingredient(BwtItems.hempFiberItem).result(BwtItems.filamentItem).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).result(BwtItems.concentratedHellfireItem).group("concentrated_hellfire").offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem).ingredient(BwtItems.coalDustItem).result(BwtItems.nethercoalItem, 2).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).ingredient(BwtItems.potashItem).result(BwtItems.netherSludgeItem, 8).offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.dungItem).ingredient(BwtItems.scouredLeatherItem).result(BwtItems.tannedLeatherItem).markDefault().offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(Items.GLOWSTONE_DUST).ingredient(Items.REDSTONE).ingredient(BwtItems.hempFiberItem).result(BwtItems.filamentItem).markDefault().offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).result(BwtItems.concentratedHellfireItem).markDefault().group("concentrated_hellfire").offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem).ingredient(BwtItems.coalDustItem).result(BwtItems.nethercoalItem, 2).markDefault().offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).ingredient(BwtItems.potashItem).result(BwtItems.netherSludgeItem, 8).markDefault().offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.SAND).ingredient(Items.GRAVEL).ingredient(BwtItems.soulUrnItem).ingredient(Items.BUCKET).result(BwtItems.cementBucketItem).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create()
                 .ingredient(Items.OAK_SAPLING)

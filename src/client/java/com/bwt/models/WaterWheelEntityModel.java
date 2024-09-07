@@ -66,8 +66,8 @@ public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<
     }
 
     @Override
-    public void render(WaterWheelEntity entity, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {
-        blades.forEach(blade -> blade.render(matrices, vertices, light, overlay));
-        struts.forEach(blade -> blade.render(matrices, vertices, light, overlay));
+    public void render(WaterWheelEntity entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
+        blades.forEach(blade -> blade.render(matrixStack, vertexConsumer, light, uv, color));
+        struts.forEach(blade -> blade.render(matrixStack, vertexConsumer, light, uv, color));
     }
 }

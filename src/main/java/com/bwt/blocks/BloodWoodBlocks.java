@@ -1,10 +1,11 @@
 package com.bwt.blocks;
 
 import com.bwt.features.BwtConfiguredFeatures;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.WoodTypeBuilder;
 import net.minecraft.block.*;
-import net.minecraft.block.enums.Instrument;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.data.family.BlockFamilies;
 import net.minecraft.data.family.BlockFamily;
@@ -15,7 +16,6 @@ import net.minecraft.item.SignItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Direction;
 
 import java.util.Optional;
@@ -50,10 +50,10 @@ public class BloodWoodBlocks {
 
 
     public BloodWoodBlocks initialize() {
-        blockSetType = BlockSetTypeBuilder.copyOf(BlockSetType.CRIMSON).register(new Identifier("bwt", "blood_wood"));
-        woodType = WoodTypeBuilder.copyOf(WoodType.CRIMSON).register(new Identifier("bwt", "blood_wood"), blockSetType);
+        blockSetType = BlockSetTypeBuilder.copyOf(BlockSetType.CRIMSON).register(Id.of("blood_wood"));
+        woodType = WoodTypeBuilder.copyOf(WoodType.CRIMSON).register(Id.of("blood_wood"), blockSetType);
 
-        logBlock = new BloodWoodLogBlock(AbstractBlock.Settings.create().mapColor(state -> state.get(BloodWoodLogBlock.AXIS) == Direction.Axis.Y ? MapColor.DARK_CRIMSON : MapColor.OFF_WHITE).instrument(Instrument.BASS).strength(2.0f).sounds(BlockSoundGroup.NETHER_STEM).burnable());
+        logBlock = new BloodWoodLogBlock(AbstractBlock.Settings.create().mapColor(state -> state.get(BloodWoodLogBlock.AXIS) == Direction.Axis.Y ? MapColor.DARK_CRIMSON : MapColor.OFF_WHITE).instrument(NoteBlockInstrument.BASS).strength(2.0f).sounds(BlockSoundGroup.NETHER_STEM).burnable());
         strippedLogBlock = Blocks.createLogBlock(MapColor.DARK_CRIMSON, MapColor.OFF_WHITE, BlockSoundGroup.NETHER_STEM);
         woodBlock = new PillarBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_HYPHAE));
         strippedWoodBlock = new PillarBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_HYPHAE));
@@ -115,42 +115,42 @@ public class BloodWoodBlocks {
     }
 
     public void register() {
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_log"), logBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_log"), new BlockItem(logBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "stripped_blood_wood_log"), strippedLogBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "stripped_blood_wood_log"), new BlockItem(strippedLogBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood"), woodBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood"), new BlockItem(woodBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "stripped_blood_wood"), strippedWoodBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "stripped_blood_wood"), new BlockItem(strippedWoodBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_leaves"), leavesBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_leaves"), new BlockItem(leavesBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_sapling"), saplingBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_sapling"), saplingItem);
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "potted_blood_wood_sapling"), pottedSaplingBlock);
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_planks"), planksBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_planks"), new BlockItem(planksBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_button"), buttonBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_button"), new BlockItem(buttonBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_fence"), fenceBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_fence"), new BlockItem(fenceBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_fence_gate"), fenceGateBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_fence_gate"), new BlockItem(fenceGateBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_pressure_plate"), pressurePlateBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_pressure_plate"), new BlockItem(pressurePlateBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_sign"), signBlock);
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_wall_sign"), wallSignBlock);
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_hanging_sign"), hangingSignBlock);
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_wall_hanging_sign"), wallHangingSignBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_sign"), new SignItem(new Item.Settings().maxCount(16), signBlock, wallSignBlock));
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_hanging_sign"), new HangingSignItem(hangingSignBlock, wallHangingSignBlock, new Item.Settings().maxCount(16)));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_slab"), slabBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_slab"), new BlockItem(slabBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_stairs"), stairsBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_stairs"), new BlockItem(stairsBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_door"), doorBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_door"), new BlockItem(doorBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, new Identifier("bwt", "blood_wood_trapdoor"), trapdoorBlock);
-        Registry.register(Registries.ITEM, new Identifier("bwt", "blood_wood_trapdoor"), new BlockItem(trapdoorBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_log"), logBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_log"), new BlockItem(logBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood_log"), strippedLogBlock);
+        Registry.register(Registries.ITEM, Id.of("stripped_blood_wood_log"), new BlockItem(strippedLogBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood"), woodBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood"), new BlockItem(woodBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood"), strippedWoodBlock);
+        Registry.register(Registries.ITEM, Id.of("stripped_blood_wood"), new BlockItem(strippedWoodBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_leaves"), leavesBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_leaves"), new BlockItem(leavesBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_sapling"), saplingBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_sapling"), saplingItem);
+        Registry.register(Registries.BLOCK, Id.of("potted_blood_wood_sapling"), pottedSaplingBlock);
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_planks"), planksBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_planks"), new BlockItem(planksBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_button"), buttonBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_button"), new BlockItem(buttonBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_fence"), fenceBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_fence"), new BlockItem(fenceBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_fence_gate"), fenceGateBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_fence_gate"), new BlockItem(fenceGateBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_pressure_plate"), pressurePlateBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_pressure_plate"), new BlockItem(pressurePlateBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_sign"), signBlock);
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_wall_sign"), wallSignBlock);
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_hanging_sign"), hangingSignBlock);
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_wall_hanging_sign"), wallHangingSignBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_sign"), new SignItem(new Item.Settings().maxCount(16), signBlock, wallSignBlock));
+        Registry.register(Registries.ITEM, Id.of("blood_wood_hanging_sign"), new HangingSignItem(hangingSignBlock, wallHangingSignBlock, new Item.Settings().maxCount(16)));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_slab"), slabBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_slab"), new BlockItem(slabBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_stairs"), stairsBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_stairs"), new BlockItem(stairsBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_door"), doorBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_door"), new BlockItem(doorBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_trapdoor"), trapdoorBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_trapdoor"), new BlockItem(trapdoorBlock, new Item.Settings()));
     }
 }

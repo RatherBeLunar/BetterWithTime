@@ -1,0 +1,18 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:chainmail_helmet"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 5,
+      "id": "minecraft:iron_ingot"
+    }
+  ]
+}

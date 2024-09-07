@@ -1,5 +1,6 @@
 package com.bwt.damage_types;
 
+import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
@@ -12,7 +13,7 @@ public class BwtDamageTypes implements ModInitializer {
     public static RegistryKey<DamageType> SAW_DAMAGE_TYPE;
     @Override
     public void onInitialize() {
-         SAW_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier("bwt", "saw"));
+         SAW_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Id.of("saw"));
     }
 
     public static DamageSource of(World world, RegistryKey<DamageType> key) {

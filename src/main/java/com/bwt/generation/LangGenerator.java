@@ -33,6 +33,7 @@ public class LangGenerator extends FabricLanguageProvider {
     public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
         addSubtitles(translationBuilder);
         addTagNames(translationBuilder);
+        addEmiNames(translationBuilder);
 
         translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
         BwtBlocks.sidingBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "siding"));
@@ -133,6 +134,26 @@ public class LangGenerator extends FabricLanguageProvider {
             addTagName(BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchant), nameKeyToTitleCase(enchant.getTranslationKey().replaceFirst("enchantment.", "")), translationBuilder);
         }
 
+    }
+
+    protected void addEmiNames(TranslationBuilder translationBuilder) {
+        addEmiCategory("crucible", "Crucible", translationBuilder);
+        addEmiCategory("stoked_crucible", "Stoked Crucible", translationBuilder);
+        addEmiCategory("stoked_crucible_reclaim", "Stoked Crucible: Reclaim", translationBuilder);
+        addEmiCategory("cauldron", "Cauldron", translationBuilder);
+        addEmiCategory("stoked_cauldron", "Stoked Cauldron", translationBuilder);
+        addEmiCategory("mill_stone", "Mill Stone", translationBuilder);
+        addEmiCategory("saw", "Saw", translationBuilder);
+        addEmiCategory("soul_forge", "Soul Forge", translationBuilder);
+        addEmiCategory("turntable", "Turntable", translationBuilder);
+        addEmiCategory("kiln", "Kiln", translationBuilder);
+        addEmiCategory("hopper_souls", "Hopper: Soul Extraction", translationBuilder);
+        addEmiCategory("hopper_filtering", "Hopper: Filter", translationBuilder);
+        translationBuilder.add("emi.tooltip.bwt.hopper_souls_power", "Mechanical Power to the Hopper is advised.");
+    }
+
+    protected void addEmiCategory(String key, String name, TranslationBuilder translationBuilder) {
+        translationBuilder.add("emi.category.bwt." + key, name);
     }
 
     protected void addSubtitles(TranslationBuilder translationBuilder) {

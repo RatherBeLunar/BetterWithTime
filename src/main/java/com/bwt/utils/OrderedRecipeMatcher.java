@@ -1,9 +1,9 @@
 package com.bwt.utils;
 
-import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Comparator;
@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class OrderedRecipeMatcher {
-    public static <I extends Inventory, R extends Recipe<I>> Recipe<I> getFirstRecipe(List<RecipeEntry<R>> matches, DefaultedList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
+    public static <I extends RecipeInput, R extends Recipe<I>> void getFirstRecipe(List<RecipeEntry<R>> matches, DefaultedList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
         // For each inventory item, in order
         for (ItemStack inventoryStack : inventoryItems) {
             // Filter down to recipes that contain that item in its ingredients.
@@ -24,10 +24,9 @@ public class OrderedRecipeMatcher {
             while (matchIterator.hasNext()) {
                 R match = matchIterator.next().value();
                 if (predicateConsumer.test(match)) {
-                    return match;
+                    return;
                 }
             }
         }
-        return null;
     }
 }

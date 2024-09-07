@@ -23,6 +23,9 @@
 		],
 		"fabric-datagen": [
 			"com.bwt.BetterWithTimeDataGenerator"
+		],
+		"emi": [
+          "com.bwt.emi.BwtEmiPlugin"
 		]
 	},
 	"accessWidener" : "bwt.accesswidener",
@@ -34,10 +37,10 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.15.6",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
-		"fabric-api": ">=0.97.0+1.20.4"
+		"fabricloader": ">=0.16.4",
+		"minecraft": "~1.21.1",
+		"java": ">=21",
+		"fabric-api": ">=0.103.0+1.21.1"
 	},
 	"suggests": {
 		"another-mod": "*"

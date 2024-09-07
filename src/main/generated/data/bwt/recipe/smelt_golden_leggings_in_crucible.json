@@ -1,0 +1,18 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:golden_leggings"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 7,
+      "id": "minecraft:gold_ingot"
+    }
+  ]
+}

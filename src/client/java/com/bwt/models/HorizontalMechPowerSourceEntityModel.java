@@ -11,7 +11,8 @@ public abstract class HorizontalMechPowerSourceEntityModel<T extends HorizontalM
     @Override
     public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {}
 
-    public abstract void render(T entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, float red, float green, float blue, float alpha);
+    public abstract void render(T entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, int color);
 
-    public final void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, float red, float green, float blue, float alpha) {}
+    @Override
+    public final void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {}
 }

@@ -2,7 +2,7 @@ package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.MillStoneRecipe;
+import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeExporter;
@@ -22,11 +22,11 @@ public class MillStoneRecipeGenerator extends FabricRecipeProvider {
     }
 
     protected void generateMillStoneRecipes(RecipeExporter exporter) {
-        MillStoneRecipe.JsonBuilder.create().ingredient(Items.COAL).result(BwtItems.coalDustItem).offerTo(exporter);
-        MillStoneRecipe.JsonBuilder.create().ingredient(Items.NETHERRACK).result(BwtItems.groundNetherrackItem).offerTo(exporter);
-        MillStoneRecipe.JsonBuilder.create().ingredient(BwtItems.hempItem).result(BwtItems.hempFiberItem, 4).offerTo(exporter);
-        MillStoneRecipe.JsonBuilder.create().ingredient(Items.LEATHER).result(BwtItems.scouredLeatherItem).offerTo(exporter);
-        MillStoneRecipe.JsonBuilder.create().ingredient(Items.WHEAT).result(BwtItems.flourItem).offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.COAL).result(BwtItems.coalDustItem).markDefault().offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.NETHERRACK).result(BwtItems.groundNetherrackItem).markDefault().offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(BwtItems.hempItem).result(BwtItems.hempFiberItem, 4).markDefault().offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.LEATHER).result(BwtItems.scouredLeatherItem).markDefault().offerTo(exporter);
+        MillStoneRecipe.JsonBuilder.create().ingredient(Items.WHEAT).result(BwtItems.flourItem).markDefault().offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.SUGAR_CANE).result(Items.SUGAR).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(Items.BONE).result(Items.BONE_MEAL, 3).offerTo(exporter);
         MillStoneRecipe.JsonBuilder.create().ingredient(BwtBlocks.companionCubeBlock.asItem())
