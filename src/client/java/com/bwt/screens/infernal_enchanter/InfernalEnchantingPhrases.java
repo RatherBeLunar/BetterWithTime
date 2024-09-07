@@ -1,10 +1,13 @@
 package com.bwt.screens.infernal_enchanter;
 
+import com.bwt.utils.Id;
 import com.mojang.datafixers.kinds.IdF;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.StringVisitable;
@@ -15,7 +18,7 @@ import net.minecraft.util.math.random.Random;
 
 @Environment(EnvType.CLIENT)
 public class InfernalEnchantingPhrases {
-    private static final Identifier FONT_ID = new Identifier("minecraft", "alt");
+    private static final Identifier FONT_ID = Id.of("minecraft", "alt");
     private static final Style STYLE;
     private static final InfernalEnchantingPhrases INSTANCE;
     private final Random random = Random.create();
@@ -28,7 +31,7 @@ public class InfernalEnchantingPhrases {
         return INSTANCE;
     }
 
-    public StringVisitable generatePhrase(TextRenderer textRenderer, int width, Enchantment enchantment, int level) {
+    public StringVisitable generatePhrase(TextRenderer textRenderer, int width, RegistryEntry<Enchantment> enchantment, int level) {
         var text = rot13ByLevel(enchantment, level).fillStyle(STYLE);
         return textRenderer.getTextHandler().trimToWidth(text, width, Style.EMPTY);
     }
@@ -48,13 +51,13 @@ public class InfernalEnchantingPhrases {
     }
 
 
-    public static MutableText rot13ByLevel(Enchantment enchantment, int level) {
+    public static MutableText rot13ByLevel(RegistryEntry<Enchantment> enchantment, int level) {
         var text = tooltipForEnchantment(enchantment, level);
         return INSTANCE.rot13(text, 13 + level);
     }
 
-    public static MutableText tooltipForEnchantment(Enchantment enchantment, int level) {
-        return (MutableText) enchantment.getName(level);
+    public static MutableText tooltipForEnchantment(RegistryEntry<Enchantment> enchantment, int level) {
+        return (MutableText) Enchantment.getName(enchantment, level);
     }
 
     static {

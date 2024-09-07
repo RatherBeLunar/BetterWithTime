@@ -394,13 +394,11 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("mining_charge"), miningChargeBlock);
         Registry.register(Registries.ITEM, Id.of("mining_charge"), new BlockItem(miningChargeBlock, new Item.Settings()));
         // Vine trap
-        Registry.register(Registries.BLOCK, Id.of("bwt", "vine_trap"), vineTrapBlock);
-        Registry.register(Registries.ITEM, Id.of("bwt", "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of( "vine_trap"), vineTrapBlock);
+        Registry.register(Registries.ITEM, Id.of( "vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
         // Infernal Enchanter
-        Registry.register(Registries.BLOCK, Id.of("bwt", "infernal_enchanter"), infernalEnchanterBlock);
-        Registry.register(Registries.ITEM, Id.of("bwt", "infernal_enchanter"), new InfernalEnchanterBlockItem(infernalEnchanterBlock, new Item.Settings().component(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT)));
-        Registry.register(Registries.BLOCK, Id.of("vine_trap"), vineTrapBlock);
-        Registry.register(Registries.ITEM, Id.of("vine_trap"), new BlockItem(vineTrapBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("infernal_enchanter"), infernalEnchanterBlock);
+        Registry.register(Registries.ITEM, Id.of("infernal_enchanter"), new InfernalEnchanterBlockItem(infernalEnchanterBlock, new Item.Settings().component(BwtDataComponents.INFERNAL_ENCHANTER_DECORATION_COMPONENT, InfernalEnchanterDecorationComponent.DEFAULT)));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);

@@ -2,16 +2,17 @@ package com.bwt.items.components;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.item.TooltipType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
-import net.minecraft.item.TooltipAppender;
+import net.minecraft.item.tooltip.TooltipAppender;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.EnchantmentTags;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -31,9 +32,9 @@ public class ArcaneEnchantmentComponent implements TooltipAppender {
     }
 
 
-    private static Text getEnchantmentName(Enchantment enchantment) {
-        MutableText mutableText = Text.translatable(enchantment.getTranslationKey());
-        if (enchantment.isCursed()) {
+    private static Text getEnchantmentName(RegistryEntry<Enchantment> enchantment) {
+        MutableText mutableText =  enchantment.value().description().copy();
+        if (enchantment.isIn(EnchantmentTags.CURSE)) {
             mutableText.formatted(Formatting.RED);
         } else {
             mutableText.formatted(Formatting.GRAY);
@@ -42,12 +43,13 @@ public class ArcaneEnchantmentComponent implements TooltipAppender {
         return mutableText;
     }
 
+    @Override
     public void appendTooltip(Item.TooltipContext context, Consumer<Text> tooltip, TooltipType type) {
         if (this.showInTooltip) {
-            Enchantment enchantment = this.enchantment.value();
-            tooltip.accept(getEnchantmentName(enchantment));
+            tooltip.accept(getEnchantmentName(this.enchantment));
         }
     }
+
     public RegistryEntry<Enchantment> getEnchantmentEntry() {
         return this.enchantment;
     }
@@ -79,19 +81,20 @@ public class ArcaneEnchantmentComponent implements TooltipAppender {
         return "ArcaneEnchantment{enchantment=" + var10000 + ", showInTooltip=" + this.showInTooltip + "}";
     }
 
-    public Enchantment getEnchantment() {
-        return this.enchantment.getKey().map(Registries.ENCHANTMENT::get).orElseGet(null);
+    public RegistryEntry<Enchantment> getEnchantment() {
+        return this.enchantment;
     }
 
 
     static {
         CODEC =  RecordCodecBuilder.create((instance) -> instance.group(
-                Registries.ENCHANTMENT.getEntryCodec().fieldOf("enchantment").forGetter(ArcaneEnchantmentComponent::getEnchantmentEntry
+                Enchantment.ENTRY_CODEC.fieldOf("enchantment").forGetter(ArcaneEnchantmentComponent::getEnchantmentEntry
                 ),
                 Codec.BOOL.optionalFieldOf("show_in_tooltip", true).forGetter(ArcaneEnchantmentComponent::isShowInTooltip)).apply(instance, ArcaneEnchantmentComponent::new)
         );
         PACKET_CODEC = PacketCodec.tuple(PacketCodecs.registryEntry(RegistryKeys.ENCHANTMENT), (component) -> component.enchantment, PacketCodecs.BOOL, (component) -> component.showInTooltip, ArcaneEnchantmentComponent::new);
     }
+
 
 
 }

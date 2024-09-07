@@ -84,14 +84,14 @@ public class BetterWithTime implements ModInitializer {
 	public static ScreenHandlerType<InfernalEnchanterScreenHandler> infernalEnchanterScreenHandler = new ScreenHandlerType<>(InfernalEnchanterScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 
 	static {
-		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "block_dispenser"), blockDispenserScreenHandler);
-		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "cauldron"), cauldronScreenHandler);
-		crucibleScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "crucible"), crucibleScreenHandler);
-		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "mill_stone"), millStoneScreenHandler);
-		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "pulley"), pulleyScreenHandler);
-		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "hopper"), mechHopperScreenHandler);
-		soulForgeScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "soul_forge"), soulForgeScreenHandler);
-		infernalEnchanterScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterScreenHandler);
+		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "block_dispenser"), blockDispenserScreenHandler);
+		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "cauldron"), cauldronScreenHandler);
+		crucibleScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "crucible"), crucibleScreenHandler);
+		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "mill_stone"), millStoneScreenHandler);
+		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "pulley"), pulleyScreenHandler);
+		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "hopper"), mechHopperScreenHandler);
+		soulForgeScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "soul_forge"), soulForgeScreenHandler);
+		infernalEnchanterScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("bwt", "infernal_enchanter"), infernalEnchanterScreenHandler);
 	}
 
 	@Override
@@ -99,9 +99,8 @@ public class BetterWithTime implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
-		dataComponents.onInitialize();
 		blocks.onInitialize();
+		dataComponents.onInitialize();
 		blockEntities.onInitialize();
 		items.onInitialize();
 		entities.onInitialize();
@@ -146,7 +145,7 @@ public class BetterWithTime implements ModInitializer {
 		RotationProcessHelper.registerDefaults();
 		HorizontalBlockAttachmentHelper.registerDefaults();
 		VerticalBlockAttachmentHelper.registerDefaults();
-		LootTableEvents.MODIFY.register((key, tableBuilder, source) -> {
+		LootTableEvents.MODIFY.register((key, tableBuilder, source, registries) -> {
 			if (!source.isBuiltin()) {
 				return;
 			}
@@ -159,7 +158,7 @@ public class BetterWithTime implements ModInitializer {
                                         .conditionally(
                                                 EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true)))
                                         )
-						).apply(EnchantedCountIncreaseLootFunction.builder(wrapperLookup, UniformLootNumberProvider.create(0.0f, 1.0f)));
+						).apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0.0f, 1.0f)));
 
 				tableBuilder.pool(poolBuilder);
 			}
