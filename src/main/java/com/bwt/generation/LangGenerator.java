@@ -13,14 +13,13 @@ import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.spongepowered.asm.mixin.injection.struct.InjectorGroupInfo;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -39,6 +38,7 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagNames(translationBuilder);
         addEmiNames(translationBuilder);
 
+        addArcaneTomeNames(translationBuilder, registryLookup);
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
         translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");
@@ -157,10 +157,16 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE, "Infernal Enchanting: Pickaxes", translationBuilder);
 
 
-        for(Map.Entry<Enchantment, TagKey<Item>> entry : BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.entrySet()) {
-            var enchant = entry.getKey();
-            addTagName(BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchant), nameKeyToTitleCase(enchant.getTranslationKey().replaceFirst("enchantment.", "")), translationBuilder);
-        }
+    }
+
+    protected void addArcaneTomeNames(TranslationBuilder translationBuilder, RegistryWrapper.WrapperLookup registryLookup) {
+        var enchantmentRegistry = registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+
+        enchantmentRegistry.streamEntries().forEach(e -> {
+            var tag = BwtItemTags.canApplyInfernal(e.registryKey());
+            addTagName(tag, e.value().description().copy().getString(), translationBuilder);
+        });
+
 
     }
 

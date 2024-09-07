@@ -11,25 +11,20 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.stream.Streams;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
+import java.util.concurrent.ExecutionException;
 
 public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
-    public ItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, BlockTagGenerator blockTagGenerator) {
-        super(output, completableFuture, blockTagGenerator);
+
+    public ItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup, BlockTagGenerator blockTagGenerator) {
+        super(output, registryLookup, blockTagGenerator);
     }
 
     @Override
@@ -94,9 +89,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
 
-
         addHopperFilters();
-        addInfernalEnchantableItems();
+        addInfernalEnchantableItems(registryLookup);
     }
 
     protected void addHopperFilters() {
@@ -455,7 +449,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 );
     }
 
-    protected void addInfernalEnchantableItems() {
+    protected void addInfernalEnchantableItems(RegistryWrapper.WrapperLookup registryLookup) {
 
         getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_HELMETS)
                 .add(Items.NETHERITE_HELMET);
@@ -515,14 +509,18 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         addInfernalEnchantable(Enchantments.BANE_OF_ARTHROPODS).addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);
 
         FabricTagBuilder builder = getOrCreateTagBuilder(BwtItemTags.CAN_INFERNAL_ENCHANT);
-        for(TagKey<Item> tag : BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.values()) {
-            builder.addOptionalTag(tag);
-        }
+
+        var enchantmentRegistry = registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
+
+        enchantmentRegistry.streamKeys().forEach(k -> {
+            builder.addOptionalTag(BwtItemTags.canApplyInfernal(k));
+        });
+
 
     }
 
-    protected FabricTagBuilder  addInfernalEnchantable(Enchantment enchantment) {
-        return getOrCreateTagBuilder(BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchantment));
+    protected FabricTagBuilder addInfernalEnchantable(RegistryKey<Enchantment> enchantment) {
+        return getOrCreateTagBuilder(BwtItemTags.canApplyInfernal(enchantment));
     }
 
 

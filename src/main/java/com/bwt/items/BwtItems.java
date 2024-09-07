@@ -147,6 +147,7 @@ public class BwtItems implements ModInitializer {
             content.addAfter(Items.WHEAT_SEEDS, hempSeedsItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(content -> {
+
             content.addAfter(Items.WHEAT, hempItem);
             content.add(hempFiberItem);
             content.add(dungItem);
@@ -182,7 +183,12 @@ public class BwtItems implements ModInitializer {
             content.add(soapItem);
             content.add(tallowItem);
             content.add(woodBladeItem);
-            ArcaneTomeItem.forEnchantments().forEach(content::add);
+
+            content.getContext().lookup().getOptionalWrapper(RegistryKeys.ENCHANTMENT).ifPresent(enchantmentRegistry -> {
+                enchantmentRegistry.streamEntries().map(ArcaneTomeItem::forEnchantment).forEach(content::add);
+            });
+
+
         });
     }
 

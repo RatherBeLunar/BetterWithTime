@@ -55,7 +55,7 @@ public class BwtBlockEntities implements ModInitializer {
     );
     public static final BlockEntityType<InfernalEnchanterBlockEntity> infernalEnchanterBlockEntity = Registry.register(
             Registries.BLOCK_ENTITY_TYPE,
-            new Identifier("bwt", "infernal_enchanter_entity"),
+            Id.of("bwt", "infernal_enchanter_entity"),
             BlockEntityType.Builder.create(InfernalEnchanterBlockEntity::new, BwtBlocks.infernalEnchanterBlock).build()
     );
 

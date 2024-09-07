@@ -103,9 +103,8 @@ public class BetterWithTime implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-
-		dataComponents.onInitialize();
 		blocks.onInitialize();
+		dataComponents.onInitialize();
 		blockEntities.onInitialize();
 		items.onInitialize();
 		entities.onInitialize();
@@ -165,7 +164,7 @@ public class BetterWithTime implements ModInitializer {
                                         .conditionally(
                                                 EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true)))
                                         )
-						).apply(EnchantedCountIncreaseLootFunction.builder(wrapperLookup, UniformLootNumberProvider.create(0.0f, 1.0f)));
+						).apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0.0f, 1.0f)));
 
 				tableBuilder.pool(poolBuilder);
 			}

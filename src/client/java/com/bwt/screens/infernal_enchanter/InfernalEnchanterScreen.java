@@ -1,6 +1,7 @@
 package com.bwt.screens.infernal_enchanter;
 
 import com.bwt.blocks.infernal_enchanter.InfernalEnchanterScreenHandler;
+import com.bwt.utils.Id;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
@@ -12,7 +13,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier("bwt", "textures/gui/container/infernal_enchanter.png");
+    private static final Identifier TEXTURE = Id.of("bwt", "textures/gui/container/infernal_enchanter.png");
 
     private final int BUTTON_WIDTH = 108, BUTTON_HEIGHT = 19;
     private Button[] buttons = new Button[5];

@@ -1,5 +1,6 @@
 package com.bwt.loot_tables;
 
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -41,13 +42,13 @@ public class ArcaneTomeLootTables {
     }
 
     public static <T extends Entity> Identifier getEntityArcaneTomeLootTableId(EntityType<T> entityType) {
-        return new Identifier("bwt", "arcane_tome/" + entityType.getLootTableId().getValue().getPath());
+        return Id.of("bwt", "arcane_tome/" + entityType.getLootTableId().getValue().getPath());
     }
 
     public static <T extends Entity> Identifier getEntityArcaneTomeLootTableId(EntityType<T> entityType, RegistryKey<DimensionType> dimensionType) {
         var dimension = dimensionType.getValue().getPath();
         var entity = entityType.getLootTableId().getValue().getPath();
-        var path = String.format("arcane_time/%s/%s", dimension, entity);
-        return new Identifier("bwt", path);
+        var path = String.format("arcane_tome/%s/%s", dimension, entity);
+        return Id.of("bwt", path);
     }
 }

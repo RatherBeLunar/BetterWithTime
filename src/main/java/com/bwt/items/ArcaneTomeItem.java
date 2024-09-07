@@ -2,13 +2,14 @@ package com.bwt.items;
 
 import com.bwt.items.components.ArcaneEnchantmentComponent;
 import com.bwt.items.components.BwtDataComponents;
-import net.minecraft.client.item.TooltipType;
-import net.minecraft.component.DataComponentType;
+import net.minecraft.component.ComponentType;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.TooltipAppender;
+import net.minecraft.item.tooltip.TooltipAppender;
+import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.text.Text;
 
@@ -27,7 +28,7 @@ public class ArcaneTomeItem extends Item {
         appendComponentTooltip(stack, BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, context, tooltip::add, type);
     }
 
-    private <T extends TooltipAppender> void appendComponentTooltip(ItemStack stack, DataComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type) {
+    private <T extends TooltipAppender> void appendComponentTooltip(ItemStack stack, ComponentType<T> componentType, Item.TooltipContext context, Consumer<Text> textConsumer, TooltipType type) {
         T tooltipAppender = stack.get(componentType);
         if (tooltipAppender != null) {
             tooltipAppender.appendTooltip(context, textConsumer, type);
@@ -42,11 +43,6 @@ public class ArcaneTomeItem extends Item {
         ItemStack itemStack = new ItemStack(BwtItems.arcaneTome);
         itemStack.set(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, new ArcaneEnchantmentComponent(enchantment, true));
         return itemStack;
-    }
-
-    public static Collection<ItemStack> forEnchantments() {
-        var l = Registries.ENCHANTMENT.streamEntries().map(ArcaneTomeItem::forEnchantment).toList();
-        return l;
     }
 
 

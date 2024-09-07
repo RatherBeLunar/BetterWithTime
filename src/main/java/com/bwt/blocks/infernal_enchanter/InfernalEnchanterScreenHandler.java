@@ -11,6 +11,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
@@ -169,11 +170,11 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         }
 
         var resultLevel = this.getResultEnchantmentLevel(buttonId);
-         if(resultLevel > enchantment.getMaxLevel()) {
+         if(resultLevel > enchantment.value().getMaxLevel()) {
             return false;
         }
 
-        TagKey<Item> canApplyEnchantTo = BwtItemTags.CAN_APPLY_INFERNAL_ENCHANT_TO.get(enchantment);
+        TagKey<Item> canApplyEnchantTo = BwtItemTags.canApplyInfernal(enchantment.getKey().orElse(null));
         if(canApplyEnchantTo == null) {
             return false;
         }
@@ -235,13 +236,15 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         return buttonId + 1;
     }
 
-    public Enchantment getEnchantment() {
+    public RegistryEntry<Enchantment> getEnchantment() {
 
         ItemStack enchantSource = this.slots.get(1).getStack();
         var arcaneEnchantSource = enchantSource.get(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT);
         if (arcaneEnchantSource == null) {
             return null;
         }
+
+
         return arcaneEnchantSource.getEnchantment();
     }
 

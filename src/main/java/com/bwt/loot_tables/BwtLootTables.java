@@ -33,8 +33,8 @@ public class BwtLootTables implements ModInitializer {
                 .add(LootContextParameters.THIS_ENTITY, entity)
                 .add(LootContextParameters.ORIGIN, entity.getPos())
                 .add(LootContextParameters.DAMAGE_SOURCE, damageSource)
-                .addOptional(LootContextParameters.KILLER_ENTITY, damageSource.getAttacker())
-                .addOptional(LootContextParameters.DIRECT_KILLER_ENTITY, damageSource.getSource());
+                .addOptional(LootContextParameters.ATTACKING_ENTITY, damageSource.getAttacker())
+                .addOptional(LootContextParameters.DIRECT_ATTACKING_ENTITY, damageSource.getSource());
         if (causedByPlayer && attackingPlayer != null) {
             builder = builder.add(LootContextParameters.LAST_DAMAGE_PLAYER, attackingPlayer).luck(attackingPlayer.getLuck());
         }
