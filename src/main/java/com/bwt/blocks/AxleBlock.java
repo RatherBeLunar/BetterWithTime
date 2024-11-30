@@ -15,7 +15,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -25,7 +24,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AxleBlock extends PillarBlock {
+public class AxleBlock extends PillarBlock implements IMechPowerBlock {
     public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 4);
 
     protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
@@ -100,21 +99,19 @@ public class AxleBlock extends PillarBlock {
         dropStack(world, pos, BwtItems.hempFiberItem.getDefaultStack());
     }
 
-    public BlockState updatePowerState(BlockState state, BlockState neighborState, BlockPos neighborPos) {
-        BlockState updatedState = state;
-        if (neighborState.isOf(BwtBlocks.gearBoxBlock) && ((GearBoxBlock) neighborState.getBlock()).isMechPowered(neighborState)) {
-            updatedState = updatedState.with(MECH_POWER, 1);
-        }
-        else if (neighborState.isOf(BwtBlocks.axlePowerSourceBlock) && neighborState.get(AXIS).equals(updatedState.get(AXIS))) {
-            updatedState = updatedState.with(MECH_POWER, 1);
-        }
-        else if (neighborState.isOf(BwtBlocks.axleBlock) && neighborState.get(AXIS).equals(updatedState.get(AXIS))) {
-            int neighborPower = neighborState.get(MECH_POWER);
-            if (neighborPower > 0) {
-                updatedState = updatedState.with(MECH_POWER, neighborPower + 1);
-            }
-        }
-        return updatedState;
+    @Override
+    public boolean canTransferPower(BlockState blockState, Direction direction) {
+        return blockState.contains(AXIS) && blockState.get(AXIS).equals(direction.getAxis());
+    }
+
+    @Override
+    public boolean isMechPowered(BlockState blockState) {
+        return blockState.get(MECH_POWER) > 0;
+    }
+
+    @Override
+    public int getMechPower(BlockState blockState) {
+        return blockState.get(MECH_POWER);
     }
 
     public void updatePowerStates(BlockState state, World world, BlockPos pos) {
@@ -123,32 +120,23 @@ public class AxleBlock extends PillarBlock {
 
         int maxPowerNeighbor = 0;
         int greaterPowerNeighbors = 0;
-        for (int i: new int[]{-1, 1}) {
+        for (int i : new int[]{-1, 1}) {
             BlockPos neighborPos = pos.offset(axis, i);
             BlockState neighborState = world.getBlockState(neighborPos);
             Block neighborBlock = neighborState.getBlock();
 
             int neighborPower = 0;
-            if (
-                    // Gear Box
-                    neighborState.isOf(BwtBlocks.gearBoxBlock)
-                    // Powered
-                    && ((GearBoxBlock) neighborBlock).isMechPowered(neighborState)
-                    // Not getting power from this axle
-                    && !neighborPos.offset(neighborState.get(GearBoxBlock.FACING)).equals(pos)
-            ) {
-                neighborPower = 4;
-            }
-            else if (
-                    neighborState.isOf(BwtBlocks.axlePowerSourceBlock)
-                    && neighborState.get(AXIS).equals(axis)
-            ) {
-                neighborPower = 4;
-            }
-            else if (
-                    neighborState.isOf(BwtBlocks.axleBlock)
-                    && neighborState.get(AXIS).equals(axis)) {
-                neighborPower = neighborState.get(MECH_POWER);
+
+            if (neighborBlock instanceof IMechPowerBlock neighborMechPowerBlock) {
+                var direction = Direction.from(axis, i == -1 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
+                var isMechPowered = neighborMechPowerBlock.isMechPowered(neighborState);
+                var canRepeatPower = neighborMechPowerBlock.canRepeatPower(neighborState, direction);
+                var canTransferPower = neighborMechPowerBlock.canTransferPower(neighborState, direction);
+                if (isMechPowered && canRepeatPower) {
+                    neighborPower = 4;
+                } else if (canTransferPower) {
+                    neighborPower = neighborMechPowerBlock.getMechPower(neighborState);
+                }
             }
 
             if (neighborPower > maxPowerNeighbor) {
@@ -175,34 +163,13 @@ public class AxleBlock extends PillarBlock {
                 return;
             }
             newPower = maxPowerNeighbor - 1;
-        }
-        else {
+        } else {
             newPower = 0;
         }
 
         if (newPower != currentPower) {
             world.setBlockState(pos, state.with(MECH_POWER, newPower));
         }
-
-
-
-//        BlockState updatedState = state;
-//        for (int i : new int[]{-1, 1}) {
-//            BlockPos neighborPos = pos.offset(state.get(AXIS), i);
-//            updatedState = updatePowerState(updatedState, world, neighborPos);
-//        }
-//
-//        if (updatedState.get(MECH_POWER) >= 4) {
-//            updatedState = breakAxle(world, pos);
-//            return updatedState;
-//        }
-//
-//        // If no change, we don't need to update
-//        if (!updatedState.getEntries().equals(state.getEntries())) {
-//            world.setBlockState(pos, updatedState);
-//        }
-//
-//        return updatedState;
     }
 
 

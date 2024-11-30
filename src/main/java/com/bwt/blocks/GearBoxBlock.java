@@ -26,6 +26,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -64,11 +65,10 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     @Override
-    public boolean isMechPowered(BlockState blockState) {
-        return MechPowerBlockBase.super.isMechPowered(blockState) && !blockState.get(POWERED);
+    public boolean canRepeatPower(BlockState blockState, @Nullable Direction direction) {
+        // not the direction the gearbox is getting power from
+        return blockState.get(FACING) != direction;
     }
-
-
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {

@@ -49,6 +49,7 @@ public class BwtBlocks implements ModInitializer {
             .nonOpaque()
     );
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(AbstractBlock.Settings.copy(axleBlock));
+    public static final Block creativePowerSourceBlock = new CreativePowerSource(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS).hardness(2F));
 //	public static final Block barrelBlock = new BarrelBlock(AbstractBlock.Settings.create());
 	public static final Block bellowsBlock = new BellowsBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS));
 	public static final BlockDispenserBlock blockDispenserBlock = new BlockDispenserBlock(AbstractBlock.Settings.copy(Blocks.DISPENSER)
@@ -265,6 +266,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("axle"), axleBlock);
         Registry.register(Registries.ITEM, Id.of("axle"), new BlockItem(axleBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("axle_power_source"), axlePowerSourceBlock);
+        Registry.register(Registries.BLOCK, Id.of("creative_power_source"), creativePowerSourceBlock);
+        Registry.register(Registries.ITEM, Id.of("creative_power_source"), new BlockItem(creativePowerSourceBlock, new Item.Settings()));
         // Gearbox
         Registry.register(Registries.BLOCK, Id.of("gear_box"), gearBoxBlock);
         Registry.register(Registries.ITEM, Id.of("gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));

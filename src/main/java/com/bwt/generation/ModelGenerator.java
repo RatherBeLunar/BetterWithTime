@@ -209,6 +209,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.vineTrapBlock, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.creativePowerSourceBlock, ModelIds.getBlockModelId(BwtBlocks.creativePowerSourceBlock));
         blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
     }
 
@@ -267,6 +268,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.woodBladeItem, Models.GENERATED);
+
     }
 
     private void generateBloodWoodBlocks(BlockStateModelGenerator blockStateModelGenerator) {
