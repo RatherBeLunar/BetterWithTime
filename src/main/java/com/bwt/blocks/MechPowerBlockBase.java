@@ -18,21 +18,20 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public interface MechPowerBlockBase {
+public interface MechPowerBlockBase extends IMechPowerBlock {
     int turnOnTickRate = 10;
     int turnOffTickRate = 9;
 
-    BooleanProperty MECH_POWERED = BooleanProperty.of("mech_powered");
+    static int getTurnOnTickRate() {
+        return turnOnTickRate;
+    }
 
-    static int getTurnOnTickRate() { return turnOnTickRate; }
-    static int getTurnOffTickRate() { return turnOffTickRate; }
+    static int getTurnOffTickRate() {
+        return turnOffTickRate;
+    }
 
     default void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(MECH_POWERED);
-    }
-
-    default boolean isMechPowered(BlockState blockState) {
-        return blockState.get(MECH_POWERED);
     }
 
     default Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
@@ -49,8 +48,14 @@ public interface MechPowerBlockBase {
         return Arrays.stream(Direction.values())
                 .filter(direction -> {
                     BlockState inputBlockState = world.getBlockState(pos.offset(direction));
-                    return (axlePredicate.test(direction) && inputBlockState.getBlock() instanceof AxleBlock && AxleBlock.isPowered(inputBlockState))
-                            || (handCrankPredicate.test(direction) && inputBlockState.getBlock() instanceof HandCrankBlock && HandCrankBlock.isPowered(inputBlockState));
+                    var inputBlock = inputBlockState.getBlock();
+                    if (inputBlock instanceof IMechPowerBlock inputMechBlock) {
+                        return axlePredicate.test(direction) && inputMechBlock.isMechPowered(inputBlockState) && (
+                                inputMechBlock.canTransferPower(inputBlockState, direction.getOpposite())
+                        );
+                    }
+                    // (axlePredicate.test(direction) && inputBlockState.getBlock() instanceof AxleBlock && AxleBlock.isPowered(inputBlockState))
+                    return (handCrankPredicate.test(direction) && inputBlockState.getBlock() instanceof HandCrankBlock && HandCrankBlock.isPowered(inputBlockState));
                 });
     }
 
