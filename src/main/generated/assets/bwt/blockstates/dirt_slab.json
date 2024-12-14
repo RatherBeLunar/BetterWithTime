@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "snowy=false": {
+      "model": "bwt:block/dirt_slab"
+    },
+    "snowy=true": {
+      "model": "bwt:block/snowy_dirt_slab"
+    }
+  }
+}

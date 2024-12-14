@@ -35,4 +35,6 @@ public class BwtBlockTags {
     public static final TagKey<Block> BATTLEAXE_MINEABLE = TagKey.of(RegistryKeys.BLOCK, Id.of("mineable/battle_axe"));
     public static final TagKey<Block> BLOOD_WOOD_LOGS = TagKey.of(RegistryKeys.BLOCK, Id.of("blood_wood_logs"));
     public static final TagKey<Block> BLOOD_WOOD_PLANTABLE_ON = TagKey.of(RegistryKeys.BLOCK, Id.of("blood_wood_plantable_on"));
+    public static final TagKey<Block> CAN_CONVERT_TO_PODZOL = TagKey.of(RegistryKeys.BLOCK, Id.of("can_convert_to_podzol"));
+    public static final TagKey<Block> CAN_CONVERT_TO_PODZOL_SLAB = TagKey.of(RegistryKeys.BLOCK, Id.of("can_convert_to_podzol_slab"));
 }

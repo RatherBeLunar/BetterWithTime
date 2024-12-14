@@ -1,5 +1,5 @@
 {
-  "parent": "minecraft:block/cross",
+  "parent": "bwt:block/crop_cross",
   "textures": {
     "cross": "bwt:block/hemp6"
   }

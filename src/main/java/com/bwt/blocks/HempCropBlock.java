@@ -50,9 +50,14 @@ public class HempCropBlock extends CropBlock {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         int age = state.get(AGE);
+        boolean connectedUp = state.get(CONNECTED_UP);
 
         double height = (age + 1) / 8d;
         double halfWidth = 0.2f;
+
+        if (age == getMaxAge() && !connectedUp) {
+            height -= 2 / 16d;
+        }
 
         return VoxelShapes.cuboid(
                 0.5D - halfWidth, 0D, 0.5D - halfWidth,

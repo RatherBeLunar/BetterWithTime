@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "mycelium_slab",
+  "key": {
+    "#": {
+      "item": "minecraft:mycelium"
+    }
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bwt:mycelium_slab"
+  }
+}

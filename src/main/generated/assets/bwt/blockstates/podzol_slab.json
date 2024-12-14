@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "snowy=false": {
+      "model": "bwt:block/podzol_slab"
+    },
+    "snowy=true": {
+      "model": "bwt:block/snowy_podzol_slab"
+    }
+  }
+}

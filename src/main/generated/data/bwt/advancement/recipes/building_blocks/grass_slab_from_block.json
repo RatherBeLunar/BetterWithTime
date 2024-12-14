@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_grass_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:grass_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:grass_slab_from_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_grass_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:grass_slab_from_block"
+    ]
+  }
+}

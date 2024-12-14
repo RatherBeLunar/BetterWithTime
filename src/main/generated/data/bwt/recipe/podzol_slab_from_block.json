@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "podzol_slab",
+  "key": {
+    "#": {
+      "item": "minecraft:podzol"
+    }
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bwt:podzol_slab"
+  }
+}

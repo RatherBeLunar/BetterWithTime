@@ -74,7 +74,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.hopperBlock);
 //        addDrop(BwtBlocks.infernalEnchanterBlock);
         addDrop(BwtBlocks.kilnBlock, Blocks.BRICKS);
-//        addDrop(BwtBlocks.lensBlock);
+        addDrop(BwtBlocks.lensBlock);
         addDrop(BwtBlocks.lightBlockBlock);
         addDrop(BwtBlocks.millStoneBlock);
 //        addDrop(BwtBlocks.miningChargeBlock);
@@ -91,13 +91,13 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.platformBlock);
         addDrop(BwtBlocks.pulleyBlock);
         addDrop(BwtBlocks.ropeBlock);
+        addDrop(BwtBlocks.ropeCoilBlock);
         addDrop(BwtBlocks.sawBlock);
 //        addDrop(BwtBlocks.screwPumpBlock);
         addDrop(BwtBlocks.slatsBlock);
 //        addDrop(BwtBlocks.stakeBlock);
         addDrop(BwtBlocks.stokedFireBlock);
         addDrop(BwtBlocks.stoneDetectorRailBlock);
-//        addDrop(BwtBlocks.tableBlock);
         addDrop(BwtBlocks.turntableBlock);
         addDrop(BwtBlocks.unfiredCrucibleBlock);
         addDrop(BwtBlocks.unfiredPlanterBlock);
@@ -117,6 +117,11 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         BwtBlocks.columnBlocks.forEach(this::addDrop);
         BwtBlocks.pedestalBlocks.forEach(this::addDrop);
         BwtBlocks.tableBlocks.forEach(this::addDrop);
+        addDrop(BwtBlocks.dirtSlabBlock);
+        addDrop(BwtBlocks.dirtPathSlabBlock, BwtBlocks.dirtSlabBlock);
+        addDrop(BwtBlocks.grassSlabBlock, drops(BwtBlocks.grassSlabBlock, BwtBlocks.dirtSlabBlock));
+        addDrop(BwtBlocks.myceliumSlabBlock, drops(BwtBlocks.myceliumSlabBlock, BwtBlocks.dirtSlabBlock));
+        addDrop(BwtBlocks.podzolSlabBlock, drops(BwtBlocks.podzolSlabBlock, BwtBlocks.dirtSlabBlock));
     }
 
     private void addHempDrop() {

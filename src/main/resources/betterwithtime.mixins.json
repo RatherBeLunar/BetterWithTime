@@ -3,6 +3,7 @@
   "package": "com.bwt.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AlterGroundTreeDecoratorMixin",
     "DetectorRailMixin",
     "EggEntityMixin",
     "EntityVoxelShapeCollisionMixin",
@@ -14,6 +15,7 @@
     "ShapedRecipeDimensionsMixin",
     "SkeletonRottenArrowMixin",
     "SpawnerMossyCobbleMixin",
+    "SpreadableBlockMixin",
     "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "VillagersDropXpMixin",

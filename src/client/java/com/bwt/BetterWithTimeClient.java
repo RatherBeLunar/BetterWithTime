@@ -67,7 +67,8 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.trapdoorBlock
 		);
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),
-				BwtBlocks.bloodWoodBlocks.leavesBlock
+				BwtBlocks.bloodWoodBlocks.leavesBlock,
+				BwtBlocks.grassSlabBlock
 		);
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
@@ -88,6 +89,18 @@ public class BetterWithTimeClient implements ClientModInitializer {
 			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
 		}, BwtBlocks.grassPlanterBlock);
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassPlanterBlock);
+
+		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+			if (view == null || pos == null) {
+				return GrassColors.getDefaultColor();
+			}
+			RegistryEntry<Biome> biomeEntry = view.getBiomeFabric(pos);
+			if (biomeEntry == null) {
+				return GrassColors.getDefaultColor();
+			}
+			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
+		}, BwtBlocks.grassSlabBlock);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassSlabBlock);
 
 		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {

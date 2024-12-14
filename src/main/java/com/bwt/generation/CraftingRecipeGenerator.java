@@ -80,6 +80,10 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('v', Items.VINE)
                 .criterion(hasItem(Items.VINE), conditionsFromItem(Items.VINE))
                 .offerTo(exporter);
+        offer2x1SlabRecipes(exporter, RecipeCategory.BUILDING_BLOCKS, Blocks.DIRT, BwtBlocks.dirtSlabBlock, "dirt");
+        offer2x1SlabRecipes(exporter, RecipeCategory.BUILDING_BLOCKS, Blocks.GRASS_BLOCK, BwtBlocks.grassSlabBlock, "grass");
+        offer2x1SlabRecipes(exporter, RecipeCategory.BUILDING_BLOCKS, Blocks.MYCELIUM, BwtBlocks.myceliumSlabBlock, "mycelium");
+        offer2x1SlabRecipes(exporter, RecipeCategory.BUILDING_BLOCKS, Blocks.PODZOL, BwtBlocks.podzolSlabBlock, "podzol");
     }
 
     private void generateBloodWoodRecipes(RecipeExporter exporter) {
@@ -107,7 +111,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         ShapelessRecipeJsonBuilder.create(category, outputItem, 4).input(inputBlock).group(group).criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputItem)));
     }
 
-    public static void offer2x1Slab(RecipeExporter exporter, ItemConvertible inputBlock, ItemConvertible outputSlab, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
+    public static void offer2x1SlabCreating(RecipeExporter exporter, ItemConvertible inputBlock, ItemConvertible outputSlab, RecipeCategory category, @Nullable String group, @Nullable String recipeId) {
         ShapedRecipeJsonBuilder.create(category, outputSlab, 4).input('#', inputBlock).pattern("##").criterion(hasItem(inputBlock), conditionsFromItem(inputBlock)).group(group).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputSlab)));
     }
 
@@ -119,11 +123,15 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         ShapelessRecipeJsonBuilder.create(category, outputItem, 2).input(inputSlab).group(group).criterion(hasItem(inputSlab), conditionsFromItem(inputSlab)).offerTo(exporter, recipeId != null ? Id.of(recipeId) : Id.of(RecipeProvider.getRecipeName(outputItem)));
     }
 
+    public static void offer2x1SlabRecipes(RecipeExporter exporter, RecipeCategory category, ItemConvertible block, ItemConvertible slab, String itemGroup) {
+        offer2x1SlabCreating(exporter, block, slab, category, itemGroup + "_slab", itemGroup + "_slab_from_block");
+        offer2x1SlabRecombining(exporter, slab, block, category, itemGroup + "_block", itemGroup + "_block_from_slab");
+    }
+
     public static void offer2x2BlockSlabFamily(RecipeExporter exporter, ItemConvertible baseItem, ItemConvertible block, ItemConvertible slab, String itemGroup) {
         offerCompacting2x2(exporter, baseItem, block, RecipeCategory.DECORATIONS, itemGroup + "_block", null);
         offerUncompacting2x2(exporter, block, baseItem, RecipeCategory.MISC, itemGroup, itemGroup + "_from_block");
-        offer2x1Slab(exporter, block, slab, RecipeCategory.DECORATIONS, itemGroup + "_slab", itemGroup + "_slab_from_block");
-        offer2x1SlabRecombining(exporter, slab, block, RecipeCategory.DECORATIONS, itemGroup + "_block", itemGroup + "_block_from_slab");
+        offer2x1SlabRecipes(exporter, RecipeCategory.DECORATIONS, block, slab, itemGroup);
         offer2x1SlabUncompacting(exporter, slab, baseItem, RecipeCategory.MISC, itemGroup, itemGroup + "_from_slab");
     }
 

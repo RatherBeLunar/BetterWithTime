@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_podzol": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:podzol"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:podzol_slab_from_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_podzol"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:podzol_slab_from_block"
+    ]
+  }
+}

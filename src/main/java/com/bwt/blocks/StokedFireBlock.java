@@ -57,6 +57,9 @@ public class StokedFireBlock extends AbstractFireBlock {
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
         state = super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        if (!this.canPlaceAt(state, world, pos)) {
+            return Blocks.AIR.getDefaultState();
+        }
         if (direction == Direction.UP) {
             return state.with(TWO_HIGH, neighborState.isAir());
         }

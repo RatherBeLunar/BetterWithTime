@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "dirt_slab",
+  "key": {
+    "#": {
+      "item": "minecraft:dirt"
+    }
+  },
+  "pattern": [
+    "##"
+  ],
+  "result": {
+    "count": 4,
+    "id": "bwt:dirt_slab"
+  }
+}
