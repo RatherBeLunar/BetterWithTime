@@ -120,18 +120,17 @@ public class AxleBlock extends PillarBlock implements IMechPowerBlock {
 
         int maxPowerNeighbor = 0;
         int greaterPowerNeighbors = 0;
-        for (int i : new int[]{-1, 1}) {
-            BlockPos neighborPos = pos.offset(axis, i);
+        for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
+            Direction direction = Direction.from(axis, axisDirection);
+            BlockPos neighborPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(neighborPos);
-            Block neighborBlock = neighborState.getBlock();
 
             int neighborPower = 0;
 
-            if (neighborBlock instanceof IMechPowerBlock neighborMechPowerBlock) {
-                var direction = Direction.from(axis, i == -1 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE);
-                var isMechPowered = neighborMechPowerBlock.isMechPowered(neighborState);
-                var canRepeatPower = neighborMechPowerBlock.canRepeatPower(neighborState, direction);
-                var canTransferPower = neighborMechPowerBlock.canTransferPower(neighborState, direction);
+            if (neighborState.getBlock() instanceof IMechPowerBlock neighborMechPowerBlock) {
+                boolean isMechPowered = neighborMechPowerBlock.isMechPowered(neighborState);
+                boolean canRepeatPower = neighborMechPowerBlock.canRepeatPower(neighborState, direction);
+                boolean canTransferPower = neighborMechPowerBlock.canTransferPower(neighborState, direction);
                 if (isMechPowered && canRepeatPower) {
                     neighborPower = 4;
                 } else if (canTransferPower) {
