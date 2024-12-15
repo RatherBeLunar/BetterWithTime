@@ -2,6 +2,12 @@ package com.bwt.blocks;
 
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
+import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.NodeProvider;
+import com.bwt.mechanical.api.digraph.Node;
+import com.bwt.mechanical.impl.DirectionTools;
+import com.bwt.mechanical.impl.Machine;
+import com.bwt.mechanical.impl.SoundTools;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.saw.SawRecipe;
@@ -42,16 +48,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
+public class SawBlock extends SimpleFacingBlock implements NodeProvider {
     private static final int powerChangeTickRate = 10;
 
     private static final int sawTimeBaseTickRate = 15;
     private static final int sawTimeTickRateVariance = 4;
 
-    // This base height prevents chickens slipping through grinders, while allowing items to pass
+    //TODO  This base height prevents chickens slipping through grinders, while allowing items to pass
 
     public static final float baseHeight = 16f - 4f;
 
@@ -98,27 +103,37 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     protected static final List<VoxelShape> OUTLINE_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> BlockUtils.rotateCuboidFromUp(direction, UPWARD_BASE_BOX)).toList();
 
+
+    private final Machine machine;
+
     public SawBlock(Settings settings) {
         super(settings);
+        this.machine = new Machine() {
+            @Override
+            public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+                return DirectionTools.filter(direction -> !direction.equals(blockState.get(FACING)));
+            }
+        };
+        this.setDefaultState(this.getDefaultState().with(machine.getMechPowered(), false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowerBlockBase.super.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(FACING);
     }
 
     @NotNull
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite()).with(MECH_POWERED, false);
+        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
     }
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        // note that we can't validate if the update is required here as the block will have
-        // its facing set after being added
+        //TODO  note that we can't validate if the update is required here as the block will have
+        //TODO  its facing set after being added
         world.scheduleBlockTick(pos, this, powerChangeTickRate);
     }
 
@@ -142,22 +157,21 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
         super.scheduledTick(state, world, pos, random);
 
-        boolean bReceivingPower = isReceivingMechPower(world, state, pos);
-        boolean bOn = isMechPowered(state);
+        var bReceivingPower = this.machine.isReceivingInput(world, state, pos);
+        var bOn = this.machine.isPowered(state);
 
         if (bOn != bReceivingPower) {
             emitSawParticles(world, state, pos);
 
-            world.setBlockState(pos, state.with(MECH_POWERED, bReceivingPower));
+            world.setBlockState(pos, this.machine.asPowered(state, bReceivingPower));
 
             if (bReceivingPower) {
-                playBangSound(world, pos);
-                // the saw doesn't cut on the update in which it is powered, so check if another
-                // update is required
+                SoundTools.playBangSound(world, pos);
+                //TODO  the saw doesn't cut on the update in which it is powered, so check if another
+                //TODO  update is required
                 scheduleUpdateIfRequired(world, state, pos);
             }
-        }
-        else if (bOn) {
+        } else if (bOn) {
             sawBlockToFront(world, state, pos);
         }
     }
@@ -165,13 +179,13 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         super.onEntityCollision(state, world, pos, entity);
-        if (!isMechPowered(state)) {
+        if (!this.machine.isPowered(state)) {
             return;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
-        // construct bounding box from saw
+        //TODO  construct bounding box from saw
         if (BLADE_SHAPES.get(state.get(FACING).getId()).getBoundingBox().offset(pos)
                 .intersects(livingEntity.getBoundingBox(entity.getPose()).offset(livingEntity.getPos()))) {
 
@@ -192,15 +206,15 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     }
 
     protected void scheduleUpdateIfRequired(World world, BlockState state, BlockPos pos) {
-        if (isMechPowered(state) != isReceivingMechPower(world, state, pos)) {
+
+        if (this.machine.isPowered(state) != this.machine.isReceivingInput(world, state, pos)) {
             world.scheduleBlockTick(pos, this, powerChangeTickRate);
             return;
         }
-        if (!isMechPowered(state)) {
+        if (!this.machine.isPowered(state)) {
             return;
         }
-
-        // check if we have something to cut in front of us
+        //TODO  check if we have something to cut in front of us
         BlockPos targetPos = pos.offset(state.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
         if (!targetState.isIn(BlockTags.AIR)) {
@@ -210,7 +224,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
 
 
     void emitSawParticles(World world, BlockState state, BlockPos pos) {
-        // compute position of saw blade
+        //TODO  compute position of saw blade
         Direction facing = state.get(FACING);
         VoxelShape bladeFace = BLADE_SHAPES.get(facing.getId()).asCuboid().offset(pos.getX(), pos.getY(), pos.getZ());
         double bladeMaxX = bladeFace.getMax(Direction.Axis.X);
@@ -245,16 +259,16 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
                 recipeInput,
                 world
         ).map(RecipeEntry::value);
-        // Cutting
+        //TODO  Cutting
         if (recipe.isEmpty()) {
             if (targetState.isIn(BwtBlockTags.SAW_BREAKS_NO_DROPS)) {
                 world.breakBlock(targetPos, false);
-                playBangSound(world, pos);
+                SoundTools.playBangSound(world, pos);
                 return;
             }
             if (targetState.isIn(BwtBlockTags.SAW_BREAKS_DROPS_LOOT)) {
                 world.breakBlock(targetPos, true);
-                playBangSound(world, pos);
+                SoundTools.playBangSound(world, pos);
                 return;
             }
             if (!targetState.isIn(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
@@ -269,7 +283,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
         BlockIngredient blockIngredient = recipe.get().getIngredient();
 
-        // The companion slab is the only partial block that doesn't just get cut regardless of collision
+        //TODO  The companion slab is the only partial block that doesn't just get cut regardless of collision
         if (blockIngredient.test(BwtBlocks.companionSlabBlock) && state.get(FACING).getAxis().isHorizontal()) {
             return;
         }
@@ -279,15 +293,13 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             if (state.get(FACING).getAxis().isHorizontal()) {
                 results.get(0).setCount(1);
                 world.setBlockState(targetPos, BwtBlocks.companionSlabBlock.getDefaultState());
-            }
-            else {
+            } else {
                 world.breakBlock(targetPos, false);
             }
-        }
-        else {
+        } else {
             world.breakBlock(targetPos, false);
         }
-        playBangSound(world, pos);
+        SoundTools.playBangSound(world, pos);
 
         if (targetState.contains(Properties.SLAB_TYPE) && targetState.get(Properties.SLAB_TYPE).equals(SlabType.DOUBLE)) {
             results.forEach(stack -> stack.setCount(stack.getCount() * 2));
@@ -299,31 +311,26 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     public void breakSaw(World world, BlockPos pos) {
         dropItemsOnBreak(world, pos);
         world.breakBlock(pos, false);
-        playBangSound(world, pos, 1);
+        SoundTools.playBangSound(world, pos, 1);
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState state, BlockPos pos) {
-        return direction -> !direction.equals(state.get(FACING));
-    }
+//TODO     @Override
+//TODO     public void overpower(World world, BlockPos pos) {
+//TODO         breakSaw(world, pos);
+//TODO     }
 
-    @Override
-    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-        return direction -> false;
-    }
-
-//    @Override
-//    public void overpower(World world, BlockPos pos) {
-//        breakSaw(world, pos);
-//    }
-
-    //----------- Client Side Functionality -----------//
+    //TODO ----------- Client Side Functionality -----------//TODO 
 
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
-        if (isMechPowered(state)) {
+        if (this.machine.isPowered(state)) {
             emitSawParticles(world, state, pos);
         }
+    }
+
+    @Override
+    public Node getNode() {
+        return this.machine;
     }
 }
