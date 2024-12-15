@@ -149,11 +149,11 @@ public class HandCrankBlock extends Block {
             BlockPos neighborPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(neighborPos);
             Block neighborBlock = neighborState.getBlock();
-            if (neighborBlock instanceof MechPowerBlockBase mechNeighborBlock) {
-                if (mechNeighborBlock.getValidHandCrankFaces(neighborState, neighborPos).test(direction.getOpposite())) {
-                    numPotentialDevicesToPower++;
-                }
-            }
+//            if (neighborBlock instanceof MechPowerBlockBase mechNeighborBlock) {
+//                if (mechNeighborBlock.getValidHandCrankFaces(neighborState, neighborPos).test(direction.getOpposite())) {
+//                    numPotentialDevicesToPower++;
+//                }
+//            }
         }
 
         return numPotentialDevicesToPower > 1;

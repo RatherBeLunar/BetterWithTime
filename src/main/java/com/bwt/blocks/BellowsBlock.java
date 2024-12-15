@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -26,7 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class BellowsBlock extends Block implements MechPowerBlockBase {
+public class BellowsBlock extends Block {
     public static DirectionProperty FACING = HorizontalFacingBlock.FACING;
     public static final float compressedHeight = 11;
     protected static final int tickRate = 37;
@@ -35,17 +36,19 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
 
     public BellowsBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return state.get(MECH_POWERED) ? COMPRESSED_SHAPE : VoxelShapes.fullCube();
+        //TODO        return state.get(MECH_POWERED) ? COMPRESSED_SHAPE : VoxelShapes.fullCube();
+        return VoxelShapes.fullCube();
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        builder.add(MECH_POWERED, FACING);
+        builder.add(FACING);
+        MechPowered.appendProperties(builder);
     }
 
     @Override
@@ -53,15 +56,15 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction != blockState.get(FACING) && direction != Direction.UP;
-    }
-
-    @Override
-    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction.getAxis().isHorizontal();
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> direction != blockState.get(FACING) && direction != Direction.UP;
+//    }
+//
+//    @Override
+//    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> direction.getAxis().isHorizontal();
+//    }
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
@@ -70,9 +73,9 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        if (isReceivingMechPower(world, state, pos) != isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, tickRate);
-        }
+//        if (isReceivingMechPower(world, state, pos) != isMechPowered(state)) {
+//TODO             world.scheduleBlockTick(pos, this, tickRate);
+//TODO         }
     }
 
     @Override
@@ -85,15 +88,15 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        boolean isReceivingMechPower = isReceivingMechPower(world, state, pos);
-        if (isReceivingMechPower == isMechPowered(state)) {
-            return;
-        }
-        world.setBlockState(pos, state.with(MECH_POWERED, isReceivingMechPower));
-        world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
-        if (isReceivingMechPower) {
-            stokeFire(world, pos, state);
-        }
+//        boolean isReceivingMechPower = isReceivingMechPower(world, state, pos);
+//TODO         if (isReceivingMechPower == isMechPowered(state)) {
+//TODO             return;
+//TODO         }
+//TODO         world.setBlockState(pos, state.with(MECH_POWERED, isReceivingMechPower));
+//TODO         world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
+//TODO         if (isReceivingMechPower) {
+//TODO             stokeFire(world, pos, state);
+//TODO         }
     }
 
     public void stokeFire(World world, BlockPos pos, BlockState state) {

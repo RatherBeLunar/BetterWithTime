@@ -2,10 +2,9 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.types.templates.Tag;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
@@ -13,13 +12,15 @@ import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -31,20 +32,17 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBase {
+public class MechHopperBlock extends BlockWithEntity {
     public static final MapCodec<MechHopperBlock> CODEC = MechHopperBlock.createCodec(MechHopperBlock::new);
 
     protected static final VoxelShape OUTLINE_SHAPE = VoxelShapes.union(
-//            Block.createCuboidShape(0, 4, 0, 16, 16, 2),
-//            Block.createCuboidShape(0, 4, 0, 2, 16, 16),
-//            Block.createCuboidShape(0, 4, 14, 16, 16, 16),
-//            Block.createCuboidShape(14, 4, 0, 16, 16, 16),
+//TODO             Block.createCuboidShape(0, 4, 0, 16, 16, 2),
+//TODO             Block.createCuboidShape(0, 4, 0, 2, 16, 16),
+//TODO             Block.createCuboidShape(0, 4, 14, 16, 16, 16),
+//TODO             Block.createCuboidShape(14, 4, 0, 16, 16, 16),
             Block.createCuboidShape(0, 4, 0, 16, 16, 16),
             Block.createCuboidShape(5, 0, 5, 11, 4, 11)
     );
@@ -103,13 +101,13 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowerBlockBase.super.appendProperties(builder);
+        MechPowered.appendProperties(builder);
     }
 
     @Nullable
     @Override
     public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(MECH_POWERED, false);
+        return getDefaultState().with(MechPowered.MECH_POWERED, false);
     }
 
     @Override
@@ -134,15 +132,15 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        boolean isMechPowered = isReceivingMechPower(world, state, pos);
-        // If block just turned on
-        if (isMechPowered && !isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
-        }
-        // If block just turned off
-        else if (!isMechPowered && isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
-        }
+//TODO         boolean isMechPowered = isReceivingMechPower(world, state, pos);
+//TODO         //TODO  If block just turned on
+//TODO         if (isMechPowered && !isMechPowered(state)) {
+//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
+//TODO         }
+//TODO         //TODO  If block just turned off
+//TODO         else if (!isMechPowered && isMechPowered(state)) {
+//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
+//TODO         }
     }
 
     @Override
@@ -180,7 +178,9 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
     }
 
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
+        return state;
+        // TODO
+//        return state.with(MechPowered.MECH_POWERED, isReceivingMechPower(world, state, pos));
     }
 
     public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
@@ -188,7 +188,7 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         world.setBlockState(pos, updatedState);
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            hopperBlockEntity.mechPower = updatedState.get(MechHopperBlock.MECH_POWERED) ? 1 : 0;
+            hopperBlockEntity.mechPower = updatedState.get(MechPowered.MECH_POWERED) ? 1 : 0;
         }
     }
 
@@ -218,10 +218,10 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         return ActionResult.CONSUME;
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> !direction.getAxis().isVertical();
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> !direction.getAxis().isVertical();
+//    }
 
     @Nullable
     protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType) {

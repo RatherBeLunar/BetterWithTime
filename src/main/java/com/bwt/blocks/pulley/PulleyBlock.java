@@ -1,7 +1,7 @@
 package com.bwt.blocks.pulley;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -20,7 +20,6 @@ import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -29,30 +28,28 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 
-public class PulleyBlock extends BlockWithEntity implements MechPowerBlockBase {
+public class PulleyBlock extends BlockWithEntity {
     public static final BooleanProperty POWERED = Properties.POWERED;
 
     public static final int pulleyTickRate = 10;
 
     public PulleyBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(POWERED, false));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowerBlockBase.super.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(POWERED);
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> !direction.equals(Direction.DOWN);
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> !direction.equals(Direction.DOWN);
+//    }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -112,16 +109,18 @@ public class PulleyBlock extends BlockWithEntity implements MechPowerBlockBase {
     }
 
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state.with(POWERED, world.isReceivingRedstonePower(pos))
-                .with(MECH_POWERED, isReceivingMechPower(world, state, pos));
+        return state;
+        // TODO
+//        return state.with(POWERED, world.isReceivingRedstonePower(pos))
+//                .with(MECH_POWERED, isReceivingMechPower(world, state, pos));
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
         // Compute new state but don't update yet
-        BlockState newState = getPowerStates(state, world, pos);
-        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
-            world.scheduleBlockTick(pos, this, pulleyTickRate);
-        }
+//        BlockState newState = getPowerStates(state, world, pos);
+//        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
+//            world.scheduleBlockTick(pos, this, pulleyTickRate);
+//        }
     }
 
 
@@ -136,7 +135,7 @@ public class PulleyBlock extends BlockWithEntity implements MechPowerBlockBase {
 
     public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
         BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.getBlockEntity(pos, BwtBlockEntities.pulleyBlockEntity).ifPresent(pulleyBlockEntity -> pulleyBlockEntity.mechPower = updatedState.get(MECH_POWERED) ? 1 : 0);
+        world.getBlockEntity(pos, BwtBlockEntities.pulleyBlockEntity).ifPresent(pulleyBlockEntity -> pulleyBlockEntity.mechPower = updatedState.get(MechPowered.MECH_POWERED) ? 1 : 0);
         world.setBlockState(pos, updatedState);
     }
 
