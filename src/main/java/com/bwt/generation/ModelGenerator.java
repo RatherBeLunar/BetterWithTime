@@ -6,6 +6,7 @@ import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.lens.LensBeamBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.utils.DyeUtils;
 import com.google.gson.JsonObject;
 import com.bwt.utils.Id;
@@ -117,7 +118,7 @@ public class ModelGenerator extends FabricModelProvider {
         Identifier bellowsId = TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
         Identifier bellowsCompressedId = bellowsId.withSuffixedPath("_compressed");
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.bellowsBlock)
-                .coordinate(BlockStateVariantMap.create(BellowsBlock.MECH_POWERED)
+                .coordinate(BlockStateVariantMap.create(MechPowered.MECH_POWERED)
                         .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsCompressedId))
                         .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsId))
                 )
@@ -212,6 +213,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.vineTrapBlock, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.creativePowerSourceBlock, ModelIds.getBlockModelId(BwtBlocks.creativePowerSourceBlock));
         blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
     }
 
@@ -270,6 +272,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
         itemModelGenerator.register(BwtItems.woodBladeItem, Models.GENERATED);
+
     }
 
     private void generateBloodWoodBlocks(BlockStateModelGenerator blockStateModelGenerator) {

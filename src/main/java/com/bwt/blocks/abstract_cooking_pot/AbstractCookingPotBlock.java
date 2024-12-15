@@ -1,9 +1,6 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
-import com.bwt.blocks.AxleBlock;
-import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.HandCrankBlock;
-import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
@@ -21,7 +18,6 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -31,10 +27,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Predicate;
 
-public abstract class AbstractCookingPotBlock extends BlockWithEntity implements MechPowerBlockBase {
+public abstract class AbstractCookingPotBlock extends BlockWithEntity {
     public static final DirectionProperty TIP_DIRECTION = DirectionProperty.of("tip_direction", direction -> direction != Direction.DOWN);
 
     public static Box box1 = new Box(1, 0, 1, 15, 16, 15);
@@ -45,12 +40,12 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
 
     public AbstractCookingPotBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(TIP_DIRECTION, Direction.UP).with(MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(TIP_DIRECTION, Direction.UP).with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowerBlockBase.super.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(TIP_DIRECTION);
     }
 
@@ -80,15 +75,15 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
         super.onStateReplaced(state, world, pos, newState, moved);
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction.getAxis().isHorizontal();
-    }
-
-    @Override
-    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-        return getValidAxleInputFaces(blockState, pos);
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> direction.getAxis().isHorizontal();
+//    }
+//
+//    @Override
+//    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
+//        return getValidAxleInputFaces(blockState, pos);
+//    }
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
@@ -97,15 +92,15 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        boolean isMechPowered = getPowerInputFaces(world, pos, state).count() == 1;
-        // If block just turned on
-        if (isMechPowered && !isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
-        }
-        // If block just turned off
-        else if (!isMechPowered && isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
-        }
+//TODO        boolean isMechPowered = getPowerInputFaces(world, pos, state).count() == 1;
+//        // If block just turned on
+//        if (isMechPowered && !isMechPowered(state)) {
+//            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
+//        }
+//        // If block just turned off
+//        else if (!isMechPowered && isMechPowered(state)) {
+//            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
+//        }
     }
 
     @Override
@@ -118,15 +113,15 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Optional<Direction> input = getPowerInputFaces(world, pos, state).findFirst();
-        if (input.isPresent() == isMechPowered(state)) {
-            return;
-        }
-        if (input.isEmpty()) {
-            world.setBlockState(pos, state.with(TIP_DIRECTION, Direction.UP).with(MECH_POWERED, false));
-            return;
-        }
-        world.setBlockState(pos, state.with(TIP_DIRECTION, input.get().rotateYClockwise()).with(MECH_POWERED, true));
+//TODO        Optional<Direction> input = getPowerInputFaces(world, pos, state).findFirst();
+//        if (input.isPresent() == isMechPowered(state)) {
+//            return;
+//        }
+//        if (input.isEmpty()) {
+//            world.setBlockState(pos, state.with(TIP_DIRECTION, Direction.UP).with(MECH_POWERED, false));
+//            return;
+//        }
+//        world.setBlockState(pos, state.with(TIP_DIRECTION, input.get().rotateYClockwise()).with(MECH_POWERED, true));
     }
 
     @Nullable

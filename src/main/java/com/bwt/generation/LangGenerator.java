@@ -95,6 +95,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");
         translationBuilder.add(BwtItems.netheriteMattockItem, "Netherite Mattock");
         translationBuilder.add(BwtItems.netheriteBattleAxeItem, "Netherite Battle Axe");
+        translationBuilder.add(BwtBlocks.creativePowerSourceBlock, "Creative Power Source");
 
         translationBuilder.add(BwtEntities.broadheadArrowEntity, "Broadhead Arrow");
         translationBuilder.add(BwtEntities.dynamiteEntity, "Dynamite");

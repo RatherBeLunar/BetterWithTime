@@ -1,7 +1,7 @@
 package com.bwt.blocks.turntable;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -21,7 +21,6 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -29,10 +28,9 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Predicate;
 
-public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBase {
+public class TurntableBlock extends BlockWithEntity {
     public static final int turntableTickRate = 10;
 
     public static final IntProperty TICK_SETTING = IntProperty.of("tick_setting", 0, 3);
@@ -40,13 +38,14 @@ public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBas
 
     public TurntableBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        builder.add(TICK_SETTING, MECH_POWERED, POWERED);
+        MechPowered.appendProperties(builder);
+        builder.add(TICK_SETTING, POWERED);
     }
 
     @Override
@@ -81,32 +80,34 @@ public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBas
         return ActionResult.SUCCESS;
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction == Direction.DOWN;
-    }
-
-    @Override
-    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-        return direction -> false;
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> direction == Direction.DOWN;
+//    }
+//
+//    @Override
+//    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> false;
+//    }
 
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        boolean redstonePowered = world.isReceivingRedstonePower(pos);
-        boolean mechPowered = isReceivingMechPower(world, state, pos);
-        BlockState updatedState = state;
-        updatedState = updatedState.with(POWERED, redstonePowered);
-        updatedState = updatedState.with(MECH_POWERED, mechPowered);
-        return updatedState;
+//        boolean redstonePowered = world.isReceivingRedstonePower(pos);
+//        boolean mechPowered = isReceivingMechPower(world, state, pos);
+//        BlockState updatedState = state;
+//        updatedState = updatedState.with(POWERED, redstonePowered);
+//        updatedState = updatedState.with(MECH_POWERED, mechPowered);
+//        return updatedState;
+        //TODO
+        return state;
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        // Compute new state but don't update yet
-        BlockState newState = getPowerStates(state, world, pos);
-        // If block just turned on
-        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
-            world.scheduleBlockTick(pos, this, turntableTickRate);
-        }
+//        // Compute new state but don't update yet
+//        BlockState newState = getPowerStates(state, world, pos);
+//        // If block just turned on
+//        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
+//            world.scheduleBlockTick(pos, this, turntableTickRate);
+//        }
     }
 
     @Override

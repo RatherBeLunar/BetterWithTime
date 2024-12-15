@@ -1,7 +1,7 @@
 package com.bwt.blocks.mill_stone;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.blocks.MechPowerBlockBase;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -18,7 +18,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -27,35 +26,34 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Predicate;
 
-public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBase {
+public class MillStoneBlock extends BlockWithEntity {
     public MillStoneBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowerBlockBase.super.appendProperties(builder);
+        MechPowered.appendProperties(builder);
     }
 
-    @Override
-    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction.getAxis().isVertical();
-    }
+//    @Override
+//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
+//        return direction -> direction.getAxis().isVertical();
+//    }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        super.randomDisplayTick(state, world, pos, random);
-        if (!isMechPowered(state)) {
-            return;
-        }
-        emitGearBoxParticles(world, pos, random);
-        if (random.nextInt(4) == 0) {
-            playMechSound(world, pos);
-        }
+//TODO         super.randomDisplayTick(state, world, pos, random);
+//TODO         if (!isMechPowered(state)) {
+//TODO             return;
+//TODO         }
+//TODO         emitGearBoxParticles(world, pos, random);
+//TODO         if (random.nextInt(4) == 0) {
+//TODO             playMechSound(world, pos);
+//TODO         }
     }
 
     @Override
@@ -107,19 +105,21 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
     }
 
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
+        return state;
+                // TODO
+        //return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        boolean isMechPowered = isReceivingMechPower(world, state, pos);
-        // If block just turned on
-        if (isMechPowered && !isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
-        }
-        // If block just turned off
-        else if (!isMechPowered && isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
-        }
+//        boolean isMechPowered = isReceivingMechPower(world, state, pos);
+//TODO         //TODO TODO  If block just turned on
+//TODO         if (isMechPowered && !isMechPowered(state)) {
+//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
+//TODO         }
+//TODO         //TODO TODO  If block just turned off
+//TODO         else if (!isMechPowered && isMechPowered(state)) {
+//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
+//TODO         }
     }
 
     @Override
