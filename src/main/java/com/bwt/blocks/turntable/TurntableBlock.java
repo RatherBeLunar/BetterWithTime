@@ -1,7 +1,10 @@
 package com.bwt.blocks.turntable;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.ControlledPowerState;
+import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.PowerState;
+import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -14,7 +17,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -28,23 +30,22 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
+import java.util.List;
 
-public class TurntableBlock extends BlockWithEntity {
+public class TurntableBlock extends MachineBlockWithEntity {
     public static final int turntableTickRate = 10;
 
     public static final IntProperty TICK_SETTING = IntProperty.of("tick_setting", 0, 3);
     public static final BooleanProperty POWERED = Properties.POWERED;
 
     public TurntableBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
+        super(settings, turntableTickRate, turntableTickRate);
+        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        MechPowered.appendProperties(builder);
         builder.add(TICK_SETTING, POWERED);
     }
 
@@ -80,48 +81,27 @@ public class TurntableBlock extends BlockWithEntity {
         return ActionResult.SUCCESS;
     }
 
-//    @Override
-//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> direction == Direction.DOWN;
-//    }
-//
-//    @Override
-//    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> false;
-//    }
-
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-//        boolean redstonePowered = world.isReceivingRedstonePower(pos);
-//        boolean mechPowered = isReceivingMechPower(world, state, pos);
-//        BlockState updatedState = state;
-//        updatedState = updatedState.with(POWERED, redstonePowered);
-//        updatedState = updatedState.with(MECH_POWERED, mechPowered);
-//        return updatedState;
-        //TODO
-        return state;
-    }
-
+    @Override
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-//        // Compute new state but don't update yet
-//        BlockState newState = getPowerStates(state, world, pos);
-//        // If block just turned on
-//        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
-//            world.scheduleBlockTick(pos, this, turntableTickRate);
-//        }
+        super.schedulePowerUpdate(state, world, pos);
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
-            return;
-        }
-        schedulePowerUpdate(state, world, pos);
+    public PowerState getPowerState(World world, BlockState state, BlockPos pos, Random random) {
+        var powerState = super.getPowerState(world, state, pos, random);
+        var nowControlled = world.isReceivingRedstonePower(pos);
+        var previousControlled = state.get(POWERED);
+        return new ControlledPowerState(powerState, previousControlled, nowControlled){
+            @Override
+            public boolean isPowered() {
+                return this.now();
+            }
+        };
     }
 
     @Override
-    public void scheduledTick(BlockState blockState, ServerWorld world, BlockPos pos, Random random) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.setBlockState(pos, updatedState);
+    public BlockState asPoweredState(World world, BlockPos pos, BlockState state, PowerState powerState) {
+        return super.asPoweredState(world, pos, state, powerState).with(POWERED, ((ControlledPowerState) powerState).nowControlled());
     }
 
     @Nullable
@@ -134,4 +114,10 @@ public class TurntableBlock extends BlockWithEntity {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
         return TurntableBlock.validateTicker(world, type);
     }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return List.of(Direction.DOWN);
+    }
+
 }

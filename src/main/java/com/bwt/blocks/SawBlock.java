@@ -2,11 +2,9 @@ package com.bwt.blocks;
 
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.MechPowered;
-import com.bwt.mechanical.api.NodeProvider;
-import com.bwt.mechanical.api.digraph.Node;
+import com.bwt.mechanical.api.PowerState;
 import com.bwt.mechanical.impl.DirectionTools;
-import com.bwt.mechanical.impl.Machine;
+import com.bwt.mechanical.impl.MachineSimpleFacingBlock;
 import com.bwt.mechanical.impl.SoundTools;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
@@ -24,15 +22,12 @@ import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.collection.DefaultedList;
@@ -42,15 +37,13 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class SawBlock extends SimpleFacingBlock implements NodeProvider {
+public class SawBlock extends MachineSimpleFacingBlock {
     private static final int powerChangeTickRate = 10;
 
     private static final int sawTimeBaseTickRate = 15;
@@ -103,38 +96,8 @@ public class SawBlock extends SimpleFacingBlock implements NodeProvider {
     protected static final List<VoxelShape> OUTLINE_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> BlockUtils.rotateCuboidFromUp(direction, UPWARD_BASE_BOX)).toList();
 
-
-    private final Machine machine;
-
     public SawBlock(Settings settings) {
-        super(settings);
-        this.machine = new Machine() {
-            @Override
-            public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
-                return DirectionTools.filter(direction -> !direction.equals(blockState.get(FACING)));
-            }
-        };
-        this.setDefaultState(this.getDefaultState().with(machine.getMechPowered(), false));
-    }
-
-    @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowered.appendProperties(builder);
-        builder.add(FACING);
-    }
-
-    @NotNull
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite());
-    }
-
-    @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        //TODO  note that we can't validate if the update is required here as the block will have
-        //TODO  its facing set after being added
-        world.scheduleBlockTick(pos, this, powerChangeTickRate);
+        super(settings, powerChangeTickRate);
     }
 
     @Override
@@ -148,38 +111,9 @@ public class SawBlock extends SimpleFacingBlock implements NodeProvider {
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-        scheduleUpdateIfRequired(world, state, pos);
-    }
-
-    @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, net.minecraft.util.math.random.Random random) {
-        super.scheduledTick(state, world, pos, random);
-
-        var bReceivingPower = this.machine.isReceivingInput(world, state, pos);
-        var bOn = this.machine.isPowered(state);
-
-        if (bOn != bReceivingPower) {
-            emitSawParticles(world, state, pos);
-
-            world.setBlockState(pos, this.machine.asPowered(state, bReceivingPower));
-
-            if (bReceivingPower) {
-                SoundTools.playBangSound(world, pos);
-                //TODO  the saw doesn't cut on the update in which it is powered, so check if another
-                //TODO  update is required
-                scheduleUpdateIfRequired(world, state, pos);
-            }
-        } else if (bOn) {
-            sawBlockToFront(world, state, pos);
-        }
-    }
-
-    @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         super.onEntityCollision(state, world, pos, entity);
-        if (!this.machine.isPowered(state)) {
+        if (!this.isStatePowered(state)) {
             return;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
@@ -205,23 +139,30 @@ public class SawBlock extends SimpleFacingBlock implements NodeProvider {
         ));
     }
 
-    protected void scheduleUpdateIfRequired(World world, BlockState state, BlockPos pos) {
+    @Override
+    public void whilePowered(PowerState powerState) {
+        this.sawBlockToFront(powerState.world(), powerState.state(), powerState.pos());
+    }
 
-        if (this.machine.isPowered(state) != this.machine.isReceivingInput(world, state, pos)) {
-            world.scheduleBlockTick(pos, this, powerChangeTickRate);
-            return;
-        }
-        if (!this.machine.isPowered(state)) {
-            return;
-        }
-        //TODO  check if we have something to cut in front of us
-        BlockPos targetPos = pos.offset(state.get(FACING));
+    @Override
+    public void onPowerChanged(PowerState powerState) {
+        scheduleSawTimeUpdate(powerState.world(), powerState.pos(), powerState.state());
+    }
+
+    void scheduleSawTimeUpdate(World world, BlockPos pos, BlockState blockState) {
+
+        BlockPos targetPos = pos.offset(blockState.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
         if (!targetState.isIn(BlockTags.AIR)) {
             world.scheduleBlockTick(pos, this, sawTimeBaseTickRate + world.random.nextInt(sawTimeTickRateVariance));
         }
     }
 
+    @Override
+    protected void neighborUpdate(BlockState blockState, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborUpdate(blockState, world, pos, sourceBlock, sourcePos, notify);
+        scheduleSawTimeUpdate(world, pos, blockState);
+    }
 
     void emitSawParticles(World world, BlockState state, BlockPos pos) {
         //TODO  compute position of saw blade
@@ -314,23 +255,24 @@ public class SawBlock extends SimpleFacingBlock implements NodeProvider {
         SoundTools.playBangSound(world, pos, 1);
     }
 
-//TODO     @Override
-//TODO     public void overpower(World world, BlockPos pos) {
-//TODO         breakSaw(world, pos);
-//TODO     }
+     @Override
+     public void overpower(PowerState powerState) {
+         breakSaw(powerState.world(), powerState.pos());
+     }
 
     //TODO ----------- Client Side Functionality -----------//TODO 
 
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
-        if (this.machine.isPowered(state)) {
+        if (this.isStatePowered(state)) {
             emitSawParticles(world, state, pos);
         }
     }
 
     @Override
-    public Node getNode() {
-        return this.machine;
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return DirectionTools.filter(dir -> !dir.equals(blockState.get(FACING)));
     }
+
 }

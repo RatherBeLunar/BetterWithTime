@@ -9,9 +9,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import org.apache.commons.lang3.stream.Streams;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class MechTools {
 
@@ -20,7 +23,9 @@ public class MechTools {
             return Optional.empty();
         }
         var block = state.getBlock();
-        if (block instanceof NodeProvider) {
+        if (block instanceof Node node) {
+            return Optional.of(node);
+        } else if (block instanceof NodeProvider) {
             return Optional.of(((NodeProvider) block).getNode());
         }
         return Optional.empty();
@@ -40,35 +45,35 @@ public class MechTools {
             return Optional.empty();
         }
         var block = state.getBlock();
-        if (block instanceof ArcProvider arcProvider) {
+        if (block instanceof Arc arc) {
+            return Optional.of(arc);
+        } else if (block instanceof ArcProvider arcProvider) {
             var arc = arcProvider.getArc();
             return Optional.ofNullable(arc);
         }
         return Optional.empty();
     }
 
+    public static boolean isReceivingPowerFromArcOrSourceDirection(World world, BlockState state, BlockPos blockPos, List<Direction> inputFaces) {
+        return !getReceivingPowerFromArcOrSourceDirections(world, state, blockPos, inputFaces).isEmpty();
+    }
 
-    public static boolean isReceivingPowerFromArcOrSource(World world, BlockState state, BlockPos blockPos, List<Direction> inputFaces) {
-        for(Direction direction : inputFaces) {
+    @NotNull
+    public static List<Direction> getReceivingPowerFromArcOrSourceDirections(World world, BlockState state, BlockPos blockPos, @NotNull  List<Direction> inputFaces) {
+
+        return Streams.of(inputFaces).filter(direction -> {
             var inputPos = blockPos.offset(direction);
             var inputState = world.getBlockState(inputPos);
             var optNode = MechTools.getSourceNode(inputState);
             var neighborPos = blockPos.offset(direction);
             var neighborState = world.getBlockState(neighborPos);
-            if(optNode.isPresent()) {
-                var node = optNode.get();
-                if(node.isSendingOutput(world, neighborState, neighborPos, direction.getOpposite())) {
-                    return true;
-                }
+            if (optNode.isPresent()) {
+                return optNode.map(node -> node.isSendingOutput(world, neighborState, neighborPos, direction.getOpposite())).orElse(false);
+            } else {
+                var optArc = MechTools.getArc(inputState);
+                return optArc.map(value -> value.isSendingOutput(world, inputState, inputPos, direction)).orElse(false);
             }
-            var arc = MechTools.getArc(inputState);
-            if(arc.isPresent()) {
-                if(arc.get().isSendingOutput(world, inputState, inputPos, direction)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        }).toList();
     }
 
 }

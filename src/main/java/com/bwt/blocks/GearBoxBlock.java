@@ -1,10 +1,10 @@
 package com.bwt.blocks;
 
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.NodeProvider;
 import com.bwt.mechanical.api.digraph.Node;
 import com.bwt.mechanical.impl.Gearbox;
+import com.bwt.mechanical.api.IMechPoweredBlock;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -53,13 +53,13 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
 
     public GearBoxBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false));
+        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        MechPowered.appendProperties(builder);
+        IMechPoweredBlock.appendProperties(builder);
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, POWERED);
     }
 
@@ -78,7 +78,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
             return ActionResult.PASS;
         }
         //TODO  Prevent exploits by turning power off and wait for scheduled reload of power state
-        updatedState = updatedState.with(MechPowered.MECH_POWERED, false);
+        updatedState = updatedState.with(IMechPoweredBlock.MECH_POWERED, false);
         world.setBlockState(pos, updatedState);
         schedulePowerUpdate(updatedState, world, pos);
         return ActionResult.SUCCESS;
@@ -146,7 +146,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
         boolean mechPowered = this.gearbox.isReceivingInput(world, state, pos);
         BlockState updatedState = state;
         updatedState = updatedState.with(POWERED, redstonePowered);
-        updatedState = updatedState.with(MechPowered.MECH_POWERED, mechPowered);
+        updatedState = updatedState.with(IMechPoweredBlock.MECH_POWERED, mechPowered);
         return updatedState;
     }
 

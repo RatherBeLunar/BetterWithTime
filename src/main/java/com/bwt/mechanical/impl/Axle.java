@@ -2,12 +2,10 @@ package com.bwt.mechanical.impl;
 
 import com.bwt.mechanical.api.digraph.Arc;
 import com.bwt.mechanical.api.digraph.Node;
-import com.bwt.mechanical.api.digraph.SourceNode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -48,7 +46,7 @@ public abstract class Axle implements Arc {
         OVERPOWERED
     }
 
-    public Pair<PowerState, Integer> calculatePowerLevel(World world, BlockState state, BlockPos pos) {
+    public CalcPowerResult calculatePowerLevel(World world, BlockState state, BlockPos pos) {
 
         int currentPower = getPowerLevel(state);
 
@@ -89,8 +87,7 @@ public abstract class Axle implements Arc {
         }
         if (greaterPowerNeighbors >= 2) {
             // We're getting power from multiple directions at once
-//            breakAxle(world, pos);
-            return new Pair<>(PowerState.OVERPOWERED, 0);
+            return new CalcPowerResult(PowerState.OVERPOWERED, 0);
         }
 
         int newPower;
@@ -98,8 +95,7 @@ public abstract class Axle implements Arc {
         if (maxPowerNeighbor > currentPower) {
             if (maxPowerNeighbor == 1) {
                 //  Power has overextended
-//                breakAxle(world, pos);
-                return new Pair<>(PowerState.OVERPOWERED, 0);
+                return new CalcPowerResult(PowerState.OVERPOWERED, 0);
             }
 
             newPower = maxPowerNeighbor - 1;
@@ -108,15 +104,16 @@ public abstract class Axle implements Arc {
         }
 
         if (newPower != currentPower) {
-            return new Pair<>(newPower == 0 ? PowerState.UNPOWERED : PowerState.POWERED, newPower);
+            return new CalcPowerResult(newPower == 0 ? PowerState.UNPOWERED : PowerState.POWERED, newPower);
         } else {
-            return new Pair<>(PowerState.UNCHANGED, newPower);
+            return new CalcPowerResult(PowerState.UNCHANGED, newPower);
         }
-
     }
 
     @Override
     public boolean isSendingOutput(World world, BlockState state, BlockPos blockPos, Direction direction) {
         return direction.getAxis() == getAxis(world, blockPos, state) && isPowered(state);
     }
+
+    public record CalcPowerResult(PowerState state, int power) { }
 }

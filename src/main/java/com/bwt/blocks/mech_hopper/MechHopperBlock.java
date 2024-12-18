@@ -2,7 +2,11 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.PowerState;
+import com.bwt.mechanical.impl.DirectionTools;
+import com.bwt.mechanical.impl.MachineBlock;
+import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
 import com.mojang.serialization.MapCodec;
@@ -32,10 +36,11 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-public class MechHopperBlock extends BlockWithEntity {
+public class MechHopperBlock extends MachineBlockWithEntity {
     public static final MapCodec<MechHopperBlock> CODEC = MechHopperBlock.createCodec(MechHopperBlock::new);
 
     protected static final VoxelShape OUTLINE_SHAPE = VoxelShapes.union(
@@ -55,6 +60,11 @@ public class MechHopperBlock extends BlockWithEntity {
 
     public static void addFilter(Item item, Predicate<ItemStack> predicate) {
         filterMap.put(item, predicate);
+    }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return DirectionTools.filter(dir -> dir.getAxis().isHorizontal());
     }
 
     public record TagFilter(TagKey<Item> tagKey) implements Predicate<ItemStack> {
@@ -101,13 +111,7 @@ public class MechHopperBlock extends BlockWithEntity {
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowered.appendProperties(builder);
-    }
-
-    @Nullable
-    @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(MechPowered.MECH_POWERED, false);
+        IMechPoweredBlock.appendProperties(builder);
     }
 
     @Override
@@ -131,35 +135,10 @@ public class MechHopperBlock extends BlockWithEntity {
         return OUTLINE_SHAPE;
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-//TODO         boolean isMechPowered = isReceivingMechPower(world, state, pos);
-//TODO         //TODO  If block just turned on
-//TODO         if (isMechPowered && !isMechPowered(state)) {
-//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
-//TODO         }
-//TODO         //TODO  If block just turned off
-//TODO         else if (!isMechPowered && isMechPowered(state)) {
-//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
-//TODO         }
-    }
-
-    @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        schedulePowerUpdate(state, world, pos);
-    }
-
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         ItemScatterer.onStateReplaced(state, newState, world, pos);
         super.onStateReplaced(state, world, pos, newState, moved);
-    }
-
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
-            return;
-        }
-        schedulePowerUpdate(state, world, pos);
     }
 
     @Override
@@ -177,24 +156,13 @@ public class MechHopperBlock extends BlockWithEntity {
         return 0;
     }
 
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state;
-        // TODO
-//        return state.with(MechPowered.MECH_POWERED, isReceivingMechPower(world, state, pos));
-    }
-
-    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.setBlockState(pos, updatedState);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            hopperBlockEntity.mechPower = updatedState.get(MechPowered.MECH_POWERED) ? 1 : 0;
-        }
-    }
-
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        this.updatePowerTransfer(world, state, pos);
+    public void onPowerChanged(PowerState powerState) {
+        super.onPowerChanged(powerState);
+        BlockEntity blockEntity = powerState.world().getBlockEntity(powerState.pos());
+        if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
+            hopperBlockEntity.mechPower = powerState.now() ? 1 : 0;
+        }
     }
 
     @Override
@@ -217,11 +185,6 @@ public class MechHopperBlock extends BlockWithEntity {
         }
         return ActionResult.CONSUME;
     }
-
-//    @Override
-//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> !direction.getAxis().isVertical();
-//    }
 
     @Nullable
     protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType) {

@@ -1,9 +1,9 @@
 package com.bwt.blocks;
 
-import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.NodeProvider;
 import com.bwt.mechanical.api.digraph.Node;
 import com.bwt.mechanical.api.digraph.SourceNode;
+import com.bwt.mechanical.api.IMechPoweredBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -40,7 +40,7 @@ public class CreativePowerSource extends Block implements NodeProvider {
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowered.appendProperties(builder);
+        IMechPoweredBlock.appendProperties(builder);
     }
 
     @Override

@@ -26,8 +26,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
-
 public class AxleBlock extends PillarBlock implements ArcProvider {
 
 
@@ -114,68 +112,13 @@ public class AxleBlock extends PillarBlock implements ArcProvider {
     public void updatePowerStates(BlockState state, World world, BlockPos pos) {
 
         var response = this.arc.calculatePowerLevel(world, state, pos);
-        var powerState = response.getLeft();
-        var newPowerLevel = response.getRight();
+        var powerState = response.state();
+        var newPowerLevel = response.power();
         if (powerState == Axle.PowerState.UNPOWERED || powerState == Axle.PowerState.POWERED) {
             world.setBlockState(pos, state.with(Axle.MECH_POWER, newPowerLevel));
         } else if (powerState == Axle.PowerState.OVERPOWERED) {
             breakAxle(world, pos);
         }
-
-         /*int currentPower = state.get(MECH_POWER);
-         Direction.Axis axis = state.get(AXIS);
-
-         int maxPowerNeighbor = 0;
-         int greaterPowerNeighbors = 0;
-         for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
-             Direction direction = Direction.from(axis, axisDirection);
-             BlockPos neighborPos = pos.offset(direction);
-             BlockState neighborState = world.getBlockState(neighborPos);
-
-             int neighborPower = 0;
-
-             if (neighborState.getBlock() instanceof IMechPowerBlock neighborMechPowerBlock) {
-                 boolean isMechPowered = neighborMechPowerBlock.isMechPowered(neighborState);
-                 boolean canRepeatPower = neighborMechPowerBlock.canRepeatPower(neighborState, direction);
-                 boolean canTransferPower = neighborMechPowerBlock.canTransferPower(neighborState, direction);
-                 if (isMechPowered && canRepeatPower) {
-                     neighborPower = 4;
-                 } else if (canTransferPower) {
-                     neighborPower = neighborMechPowerBlock.getMechPower(neighborState);
-                 }
-             }
-
-             if (neighborPower > maxPowerNeighbor) {
-                 maxPowerNeighbor = neighborPower;
-             }
-
-             if (neighborPower > currentPower) {
-                 greaterPowerNeighbors++;
-             }
-         }
-
-         if (greaterPowerNeighbors >= 2) {
-              // We're getting power from multiple directions at once
-             breakAxle(world, pos);
-             return;
-         }
-
-         int newPower;
-
-         if (maxPowerNeighbor > currentPower) {
-             if (maxPowerNeighbor == 1) {
-                 //  Power has overextended
-                 breakAxle(world, pos);
-                 return;
-             }
-             newPower = maxPowerNeighbor - 1;
-         } else {
-             newPower = 0;
-         }
-
-         if (newPower != currentPower) {
-             world.setBlockState(pos, state.with(MECH_POWER, newPower));
-         }*/
     }
 
 

@@ -1,7 +1,11 @@
 package com.bwt.blocks.pulley;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.ControlledPowerState;
+import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.PowerState;
+import com.bwt.mechanical.impl.DirectionTools;
+import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -28,36 +32,31 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
+import java.util.List;
 
-public class PulleyBlock extends BlockWithEntity {
+public class PulleyBlock extends MachineBlockWithEntity {
     public static final BooleanProperty POWERED = Properties.POWERED;
 
     public static final int pulleyTickRate = 10;
 
     public PulleyBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false));
+        super(settings, pulleyTickRate);
+        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowered.appendProperties(builder);
+        IMechPoweredBlock.appendProperties(builder);
         builder.add(POWERED);
     }
-
-//    @Override
-//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> !direction.equals(Direction.DOWN);
-//    }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
-//        if (!isMechPowered(state) || state.get(POWERED)) {
-//            return;
-//        }
-//        emitParticles(world, pos, random);
+        if (!isStatePowered(state) || state.get(POWERED)) {
+            return;
+        }
+        emitParticles(world, pos, random);
     }
 
     @Override
@@ -108,22 +107,18 @@ public class PulleyBlock extends BlockWithEntity {
         return PulleyBlock.validateTicker(world, givenType);
     }
 
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state;
-        // TODO
-//        return state.with(POWERED, world.isReceivingRedstonePower(pos))
-//                .with(MECH_POWERED, isReceivingMechPower(world, state, pos));
+    @Override
+    public PowerState getPowerState(World world, BlockState state, BlockPos pos, Random random) {
+        var powerState = super.getPowerState(world, state, pos, random);
+        var nowControlled = world.isReceivingRedstonePower(pos);
+        var previousControlled = state.get(POWERED);
+        return new ControlledPowerState(powerState, previousControlled, nowControlled);
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        // Compute new state but don't update yet
-//        BlockState newState = getPowerStates(state, world, pos);
-//        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
-//            world.scheduleBlockTick(pos, this, pulleyTickRate);
-//        }
+    @Override
+    public BlockState asPoweredState(World world, BlockPos pos, BlockState state, PowerState powerState) {
+        return super.asPoweredState(world, pos, state, powerState).with(POWERED, ((ControlledPowerState) powerState).nowControlled());
     }
-
-
 
     @Override
     public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
@@ -133,27 +128,25 @@ public class PulleyBlock extends BlockWithEntity {
         schedulePowerUpdate(state, world, pos);
     }
 
-    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.getBlockEntity(pos, BwtBlockEntities.pulleyBlockEntity).ifPresent(pulleyBlockEntity -> pulleyBlockEntity.mechPower = updatedState.get(MechPowered.MECH_POWERED) ? 1 : 0);
-        world.setBlockState(pos, updatedState);
-    }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        this.updatePowerTransfer(world, state, pos);
+    public void onPowerChanged(PowerState powerState) {
+        super.onPowerChanged(powerState);
+        powerState.world().getBlockEntity(powerState.pos(), BwtBlockEntities.pulleyBlockEntity).ifPresent(pulleyBlockEntity -> pulleyBlockEntity.mechPower = powerState.now() ? 1 : 0);
     }
 
+
     private void playMechSound(World world, BlockPos pos) {
-        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MECH_BANG, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
+        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MECH_BANG, SoundCategory.BLOCKS, 0.125f, 1.25F, false);
     }
 
     private void emitParticles(World world, BlockPos pos, Random random) {
         for (int i = 0; i < 5; i++) {
-            float smokeX = (float)pos.getX() + random.nextFloat();
-            float smokeY = (float)pos.getY() + random.nextFloat() * 0.5F + 1.0F;
-            float smokeZ = (float)pos.getZ() + random.nextFloat();
-            world.addParticle(ParticleTypes.SMOKE, smokeX, smokeY, smokeZ, 0D, 0D, 0D );
+
+            float smokeX = (float) pos.getX() + random.nextFloat();
+            float smokeY = (float) pos.getY() + random.nextFloat() * 0.5F + 1.0F;
+            float smokeZ = (float) pos.getZ() + random.nextFloat();
+            world.addParticle(ParticleTypes.SMOKE, smokeX, smokeY, smokeZ, 0D, 0D, 0D);
         }
     }
 
@@ -165,5 +158,10 @@ public class PulleyBlock extends BlockWithEntity {
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
         return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+    }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return DirectionTools.filter(dir -> dir != Direction.DOWN);
     }
 }

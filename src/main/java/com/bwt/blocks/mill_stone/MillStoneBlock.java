@@ -1,7 +1,8 @@
 package com.bwt.blocks.mill_stone;
 
 import com.bwt.block_entities.BwtBlockEntities;
-import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.impl.DirectionTools;
+import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.Block;
@@ -14,7 +15,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
@@ -26,41 +26,31 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
+import java.util.List;
 
-public class MillStoneBlock extends BlockWithEntity {
+public class MillStoneBlock extends MachineBlockWithEntity {
+
     public MillStoneBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false));
+        super(settings, 10, 9);
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        MechPowered.appendProperties(builder);
+        super.appendProperties(builder);
     }
-
-//    @Override
-//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> direction.getAxis().isVertical();
-//    }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-//TODO         super.randomDisplayTick(state, world, pos, random);
-//TODO         if (!isMechPowered(state)) {
-//TODO             return;
-//TODO         }
-//TODO         emitGearBoxParticles(world, pos, random);
-//TODO         if (random.nextInt(4) == 0) {
-//TODO             playMechSound(world, pos);
-//TODO         }
+         super.randomDisplayTick(state, world, pos, random);
+         if (!isStatePowered(state)) {
+             return;
+         }
+         emitGearBoxParticles(world, pos, random);
+         if (random.nextInt(4) == 0) {
+             playMechSound(world, pos);
+         }
     }
-
-    @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        schedulePowerUpdate(state, world, pos);
-    }
-
+    
     @Override
     public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         ItemScatterer.onStateReplaced(state, newState, world, pos);
@@ -103,43 +93,7 @@ public class MillStoneBlock extends BlockWithEntity {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> givenType) {
         return MillStoneBlock.validateTicker(world, givenType);
     }
-
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state;
-                // TODO
-        //return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
-    }
-
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-//        boolean isMechPowered = isReceivingMechPower(world, state, pos);
-//TODO         //TODO TODO  If block just turned on
-//TODO         if (isMechPowered && !isMechPowered(state)) {
-//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
-//TODO         }
-//TODO         //TODO TODO  If block just turned off
-//TODO         else if (!isMechPowered && isMechPowered(state)) {
-//TODO             world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
-//TODO         }
-    }
-
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
-            return;
-        }
-        schedulePowerUpdate(state, world, pos);
-    }
-
-    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.setBlockState(pos, updatedState);
-    }
-
-    @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        this.updatePowerTransfer(world, state, pos);
-    }
-
+    
     private void playMechSound(World world, BlockPos pos) {
         world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
     }
@@ -162,5 +116,10 @@ public class MillStoneBlock extends BlockWithEntity {
     @Override
     public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
         return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+    }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return DirectionTools.fromAxis(Direction.Axis.Y);
     }
 }

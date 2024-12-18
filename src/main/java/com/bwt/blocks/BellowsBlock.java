@@ -1,7 +1,6 @@
 package com.bwt.blocks;
 
-import com.bwt.mechanical.api.MechPowered;
-import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.mechanical.api.IMechPoweredBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -11,7 +10,6 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.math.BlockPos;
@@ -23,10 +21,6 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Predicate;
-
 public class BellowsBlock extends Block {
     public static DirectionProperty FACING = HorizontalFacingBlock.FACING;
     public static final float compressedHeight = 11;
@@ -36,7 +30,7 @@ public class BellowsBlock extends Block {
 
     public BellowsBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false));
     }
 
     @Override
@@ -48,7 +42,7 @@ public class BellowsBlock extends Block {
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-        MechPowered.appendProperties(builder);
+        IMechPoweredBlock.appendProperties(builder);
     }
 
     @Override

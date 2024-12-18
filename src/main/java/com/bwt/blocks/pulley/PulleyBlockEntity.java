@@ -6,8 +6,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.RopeBlock;
 import com.bwt.entities.MovingRopeEntity;
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.MechPowered;
-import com.bwt.utils.BlockPosAndState;
+import com.bwt.mechanical.api.IMechPoweredBlock;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -31,7 +30,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.property.EnumProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -80,7 +78,7 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
     }
 
     public static boolean isMechPowered(BlockState state) {
-        return state.get(MechPowered.MECH_POWERED);
+        return state.get(IMechPoweredBlock.MECH_POWERED);
     }
 
     public static boolean isRedstonePowered(BlockState state) {
@@ -302,7 +300,9 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
                 takeRope(false);
             } else {
                 tryNextOperation(world, pulleyPos, pulleyState);
-                rope.discard();
+                if(this.rope != null) {
+                    rope.discard();
+                }
                 ropeId = null;
                 return false;
             }
