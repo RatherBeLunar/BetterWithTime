@@ -1,15 +1,16 @@
 package com.bwt.mechanical.impl;
 
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.PowerState;
-import com.bwt.mechanical.api.digraph.SinkNode;
+import com.bwt.mechanical.api.digraph.Node;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
-public interface MachineBlock extends SinkNode, IMechPoweredBlock {
+public interface MachineBlock extends Node, MechPowered {
 
     static final int turnOnTickRate = 10;
     static final int turnOffTickRate = 9;
@@ -33,7 +34,7 @@ public interface MachineBlock extends SinkNode, IMechPoweredBlock {
     default PowerState getPowerState(World world, BlockState state, BlockPos pos, Random random) {
         var powerDirections = MechTools.getReceivingPowerFromArcOrSourceDirections(world, state, pos, getInputFaces(world, pos, state));
         var bReceivingPower = powerDirections.stream().findFirst().isPresent();
-        var bOn = isStatePowered(state);
+        var bOn = isPowered(state);
         return new PowerState(world, pos, state, powerDirections, bOn, bReceivingPower, random);
     }
 
@@ -75,4 +76,8 @@ public interface MachineBlock extends SinkNode, IMechPoweredBlock {
 
     default void overpower(PowerState powerState) {}
 
+    @Override
+    default boolean isSendingOutput(World world, BlockState state, BlockPos blockPos, Direction direction) {
+        return false;
+    }
 }

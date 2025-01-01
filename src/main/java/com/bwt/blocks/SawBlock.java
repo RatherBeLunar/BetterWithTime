@@ -113,7 +113,7 @@ public class SawBlock extends MachineSimpleFacingBlock {
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
         super.onEntityCollision(state, world, pos, entity);
-        if (!this.isStatePowered(state)) {
+        if (!this.isPowered(state)) {
             return;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
@@ -265,7 +265,7 @@ public class SawBlock extends MachineSimpleFacingBlock {
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, net.minecraft.util.math.random.Random random) {
-        if (this.isStatePowered(state)) {
+        if (this.isPowered(state)) {
             emitSawParticles(world, state, pos);
         }
     }

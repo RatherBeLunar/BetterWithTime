@@ -2,7 +2,7 @@ package com.bwt.blocks.turntable;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.mechanical.api.ControlledPowerState;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.PowerState;
 import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.sounds.BwtSoundEvents;
@@ -40,7 +40,7 @@ public class TurntableBlock extends MachineBlockWithEntity {
 
     public TurntableBlock(Settings settings) {
         super(settings, turntableTickRate, turntableTickRate);
-        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
     }
 
     @Override

@@ -2,7 +2,7 @@ package com.bwt.blocks.mill_stone;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.recipes.mill_stone.MillStoneRecipe;
@@ -70,7 +70,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
-        if (!state.isOf(BwtBlocks.millStoneBlock) || !state.get(IMechPoweredBlock.MECH_POWERED)) {
+        if (!state.isOf(BwtBlocks.millStoneBlock) || !state.get(MechPowered.MECH_POWERED)) {
             return;
         }
         MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getHeldStacks());

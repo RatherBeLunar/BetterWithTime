@@ -1,10 +1,11 @@
 package com.bwt.blocks;
 
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.NodeProvider;
-import com.bwt.mechanical.api.digraph.Node;
-import com.bwt.mechanical.impl.Gearbox;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.ControlledPowerState;
+import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.PowerState;
+import com.bwt.mechanical.impl.MachineSimpleFacingBlock;
+import com.bwt.mechanical.impl.MechTools;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -13,7 +14,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHand, NodeProvider {
+public class GearBoxBlock extends MachineSimpleFacingBlock implements RotateWithEmptyHand {
 
     public static final int turnOnTickRate = 10;
     public static final int turnOffTickRate = 9;
@@ -44,29 +44,20 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
 
     public static final BooleanProperty POWERED = Properties.POWERED;
 
-    private final Gearbox gearbox = new Gearbox() {
-        @Override
-        public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
-            return List.of(blockState.get(FACING));
-        }
-    };
-
     public GearBoxBlock(Settings settings) {
-        super(settings);
-        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false));
+        super(settings, turnOnTickRate, turnOffTickRate);
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        IMechPoweredBlock.appendProperties(builder);
         builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, POWERED);
     }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
-        if (this.gearbox.isPowered(state)) {
+        if (this.isPowered(state)) {
             emitGearBoxParticles(world, pos, random);
         }
     }
@@ -78,9 +69,8 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
             return ActionResult.PASS;
         }
         //TODO  Prevent exploits by turning power off and wait for scheduled reload of power state
-        updatedState = updatedState.with(IMechPoweredBlock.MECH_POWERED, false);
+        updatedState = updatedState.with(MechPowered.MECH_POWERED, false);
         world.setBlockState(pos, updatedState);
-        schedulePowerUpdate(updatedState, world, pos);
         return ActionResult.SUCCESS;
     }
 
@@ -89,10 +79,16 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
         return withConnectionProperties(super.getPlacementState(ctx), ctx.getWorld(), ctx.getBlockPos());
     }
 
-    @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        schedulePowerUpdate(state, world, pos);
-    }
+
+//    @Override
+//    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+//        super.onPlaced(world, pos, state, placer, itemStack);
+//    }
+//
+//    @Override
+//    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+//        schedulePowerUpdate(state, world, pos);
+//    }
 
     public static BlockState withConnectionProperties(BlockState state, BlockView world, BlockPos pos) {
         BlockState downBlock = world.getBlockState(pos.down());
@@ -141,47 +137,49 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
         return updatedState;
     }
 
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        boolean redstonePowered = world.isReceivingRedstonePower(pos);
-        boolean mechPowered = this.gearbox.isReceivingInput(world, state, pos);
-        BlockState updatedState = state;
-        updatedState = updatedState.with(POWERED, redstonePowered);
-        updatedState = updatedState.with(IMechPoweredBlock.MECH_POWERED, mechPowered);
-        return updatedState;
-    }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        //Compute new state but don 't update yet
-        BlockState newState = getPowerStates(state, world, pos);
-        //If block just turned on
+//
+//    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
+//        boolean redstonePowered = world.isReceivingRedstonePower(pos);
+//        boolean mechPowered = this.isReceivingInput(world, state, pos);
+//        BlockState updatedState = state;
+//        updatedState = updatedState.with(POWERED, redstonePowered);
+//        updatedState = updatedState.with(MechPowered.MECH_POWERED, mechPowered);
+//        return updatedState;
+//    }
+//
+//    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
+//        //Compute new state but don 't update yet
+//        BlockState newState = getPowerStates(state, world, pos);
+//        //If block just turned on
+//
+//        if (this.isPowered(newState) && !this.isPowered(state)) {
+//            world.scheduleBlockTick(pos, this, turnOnTickRate);
+//        } else if (!this.isPowered(newState) && this.isPowered(state)) {
+//            world.scheduleBlockTick(pos, this, turnOffTickRate);
+//        }
+//    }
+//
+//    @Override
+//    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+//        if (world.isClient) {
+//            return;
+//        }
+//        schedulePowerUpdate(state, world, pos);
+//    }
 
-        if (this.gearbox.isPowered(newState) && !this.gearbox.isPowered(state)) {
-            world.scheduleBlockTick(pos, this, turnOnTickRate);
-        } else if (!this.gearbox.isPowered(newState) && this.gearbox.isPowered(state)) {
-            world.scheduleBlockTick(pos, this, turnOffTickRate);
-        }
-    }
+//    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
+//        BlockState updatedState = getPowerStates(blockState, world, pos);
+//        if (this.isPowered(updatedState)) {
+//            this.playMechSound(world, pos);
+//        }
+//        world.setBlockState(pos, updatedState);
+//    }
 
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
-            return;
-        }
-        schedulePowerUpdate(state, world, pos);
-    }
-
-    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        if (this.gearbox.isPowered(updatedState)) {
-            this.playMechSound(world, pos);
-        }
-        world.setBlockState(pos, updatedState);
-    }
-
-    @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        this.updatePowerTransfer(world, state, pos);
-    }
+//    @Override
+//    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+//        this.updatePowerTransfer(world, state, pos);
+//    }
 
     private void playMechSound(World world, BlockPos pos) {
         world.playSound(null, pos, BwtSoundEvents.GEAR_BOX_ACTIVATE,
@@ -207,9 +205,47 @@ public class GearBoxBlock extends SimpleFacingBlock implements RotateWithEmptyHa
         }
     }
 
+    @Override
+    public PowerState getPowerState(World world, BlockState state, BlockPos pos, Random random) {
+        var powerState = super.getPowerState(world, state, pos, random);
+        var nowControlled = world.isReceivingRedstonePower(pos);
+        var previousControlled = state.get(POWERED);
+        return new ControlledPowerState(powerState, previousControlled, nowControlled) {
+            @Override
+            public boolean isPowered() {
+                return this.now();
+            }
+        };
+    }
+
 
     @Override
-    public Node getNode() {
-        return gearbox;
+    public BlockState asPoweredState(World world, BlockPos pos, BlockState state, PowerState powerState) {
+
+        return super.asPoweredState(world, pos, state, powerState).with(POWERED, ((ControlledPowerState) powerState).nowControlled());
+    }
+
+    @Override
+    public void onPowerChanged(PowerState powerState) {
+        if(powerState.isPowered()) {
+            this.playMechSound(powerState.world(), powerState.pos());
+        }
+    }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return List.of(blockState.get(FACING));
+    }
+
+    @Override
+    public boolean isReceivingInput(World world, BlockState state, BlockPos blockPos) {
+        var inputFaces = getInputFaces(world, blockPos, state);
+        return MechTools.isReceivingPowerFromArcOrSourceDirection(world, state, blockPos, inputFaces);
+    }
+
+    @Override
+    public boolean isSendingOutput(World world, BlockState state, BlockPos blockPos, Direction direction) {
+        var inputFaces = getInputFaces(world, blockPos, state);
+        return !inputFaces.contains(direction) && isPowered(state) && state.get(POWERED);
     }
 }

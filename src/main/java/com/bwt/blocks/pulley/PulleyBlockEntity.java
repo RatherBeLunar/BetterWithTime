@@ -6,7 +6,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.RopeBlock;
 import com.bwt.entities.MovingRopeEntity;
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -78,7 +78,7 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
     }
 
     public static boolean isMechPowered(BlockState state) {
-        return state.get(IMechPoweredBlock.MECH_POWERED);
+        return state.get(MechPowered.MECH_POWERED);
     }
 
     public static boolean isRedstonePowered(BlockState state) {

@@ -2,10 +2,9 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.PowerState;
 import com.bwt.mechanical.impl.DirectionTools;
-import com.bwt.mechanical.impl.MachineBlock;
 import com.bwt.mechanical.impl.MachineBlockWithEntity;
 import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
@@ -17,19 +16,16 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -111,7 +107,7 @@ public class MechHopperBlock extends MachineBlockWithEntity {
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.bwt.mechanical.impl;
 
-import com.bwt.mechanical.api.ArcProvider;
-import com.bwt.mechanical.api.NodeProvider;
 import com.bwt.mechanical.api.digraph.Arc;
 import com.bwt.mechanical.api.digraph.Node;
 import com.bwt.mechanical.api.digraph.SourceNode;
@@ -14,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public class MechTools {
 
@@ -25,8 +22,6 @@ public class MechTools {
         var block = state.getBlock();
         if (block instanceof Node node) {
             return Optional.of(node);
-        } else if (block instanceof NodeProvider) {
-            return Optional.of(((NodeProvider) block).getNode());
         }
         return Optional.empty();
     }
@@ -47,9 +42,6 @@ public class MechTools {
         var block = state.getBlock();
         if (block instanceof Arc arc) {
             return Optional.of(arc);
-        } else if (block instanceof ArcProvider arcProvider) {
-            var arc = arcProvider.getArc();
-            return Optional.ofNullable(arc);
         }
         return Optional.empty();
     }
@@ -59,7 +51,7 @@ public class MechTools {
     }
 
     @NotNull
-    public static List<Direction> getReceivingPowerFromArcOrSourceDirections(World world, BlockState state, BlockPos blockPos, @NotNull  List<Direction> inputFaces) {
+    public static List<Direction> getReceivingPowerFromArcOrSourceDirections(World world, BlockState state, BlockPos blockPos, @NotNull List<Direction> inputFaces) {
 
         return Streams.of(inputFaces).filter(direction -> {
             var inputPos = blockPos.offset(direction);

@@ -1,9 +1,9 @@
 package com.bwt.blocks;
 
 import com.bwt.items.BwtItems;
-import com.bwt.mechanical.api.ArcProvider;
 import com.bwt.mechanical.api.digraph.Arc;
-import com.bwt.mechanical.impl.Axle;
+import com.bwt.mechanical.api.digraph.Node;
+import com.bwt.mechanical.impl.MechTools;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,6 +16,7 @@ import net.minecraft.item.Items;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
@@ -26,24 +27,20 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AxleBlock extends PillarBlock implements ArcProvider {
+import java.util.Optional;
 
+public class AxleBlock extends PillarBlock implements Arc {
 
+    public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 4);
     protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
     protected static final VoxelShape Y_SHAPE = Block.createCuboidShape(6f, 0f, 6f, 10f, 16f, 10f);
     protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6f, 6f, 0f, 10f, 10f, 16f);
 
-    private final Axle arc;
 
     public AxleBlock(Settings settings) {
         super(settings);
-        this.arc = new Axle() {
-            @Override
-            public Direction.Axis getAxis(World world, BlockPos pos, BlockState blockState) {
-                return blockState.get(AXIS);
-            }
-        };
-        this.setDefaultState(this.getDefaultState().with(AXIS, Direction.Axis.Z).with(Axle.MECH_POWER, 0));
+
+        this.setDefaultState(this.getDefaultState().with(AXIS, Direction.Axis.Z).with(MECH_POWER, 0));
     }
 
     @Override
@@ -59,7 +56,7 @@ public class AxleBlock extends PillarBlock implements ArcProvider {
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
-        Axle.appendProperties(builder);
+        builder.add(MECH_POWER);
     }
 
     @Override
@@ -111,12 +108,12 @@ public class AxleBlock extends PillarBlock implements ArcProvider {
 
     public void updatePowerStates(BlockState state, World world, BlockPos pos) {
 
-        var response = this.arc.calculatePowerLevel(world, state, pos);
+        var response = this.calculatePowerLevel(world, state, pos);
         var powerState = response.state();
         var newPowerLevel = response.power();
-        if (powerState == Axle.PowerState.UNPOWERED || powerState == Axle.PowerState.POWERED) {
-            world.setBlockState(pos, state.with(Axle.MECH_POWER, newPowerLevel));
-        } else if (powerState == Axle.PowerState.OVERPOWERED) {
+        if (powerState == PowerState.UNPOWERED || powerState == PowerState.POWERED) {
+            world.setBlockState(pos, state.with(MECH_POWER, newPowerLevel));
+        } else if (powerState == PowerState.OVERPOWERED) {
             breakAxle(world, pos);
         }
     }
@@ -131,12 +128,100 @@ public class AxleBlock extends PillarBlock implements ArcProvider {
     }
 
 
-    public Direction.Axis getAxis(BlockState state) {
-        return state.get(AXIS);
+
+    @Override
+    public Direction.Axis getAxis(World world, BlockPos pos, BlockState blockState) {
+        return blockState.get(AXIS);
     }
 
     @Override
-    public Arc getArc() {
-        return this.arc;
+    public int getPowerLevel(BlockState state) {
+        if (state.contains(MECH_POWER)) {
+            return state.get(MECH_POWER);
+        }
+        return 0;
     }
+
+    boolean isPowered(BlockState state) {
+        return getPowerLevel(state) > 0;
+    }
+
+
+    public enum PowerState {
+        UNPOWERED,
+        POWERED,
+        UNCHANGED,
+        OVERPOWERED
+    }
+
+    public CalcPowerResult calculatePowerLevel(World world, BlockState state, BlockPos pos) {
+
+        int currentPower = getPowerLevel(state);
+
+        var axis = getAxis(world, pos, state);
+
+
+        int maxPowerNeighbor = 0;
+        int greaterPowerNeighbors = 0;
+        for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
+            Direction direction = Direction.from(axis, axisDirection);
+            BlockPos neighborPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(neighborPos);
+
+            int neighborPower = 0;
+
+            Optional<Node> nodeOpt = MechTools.getNode(neighborState);
+            if (nodeOpt.isPresent()) {
+                var node = nodeOpt.get();
+                if (node.isSendingOutput(world, neighborState, neighborPos, direction.getOpposite())) {
+                    neighborPower = 4;
+                }
+            } else {
+                Optional<Arc> arc = MechTools.getArc(neighborState);
+                if (arc.isPresent()) {
+                    neighborPower = arc.get().getPowerLevel(neighborState);
+                }
+            }
+
+
+            if (neighborPower > maxPowerNeighbor) {
+                maxPowerNeighbor = neighborPower;
+            }
+
+            if (neighborPower > currentPower) {
+                greaterPowerNeighbors++;
+            }
+
+        }
+        if (greaterPowerNeighbors >= 2) {
+            // We're getting power from multiple directions at once
+            return new CalcPowerResult(PowerState.OVERPOWERED, 0);
+        }
+
+        int newPower;
+
+        if (maxPowerNeighbor > currentPower) {
+            if (maxPowerNeighbor == 1) {
+                //  Power has overextended
+                return new CalcPowerResult(PowerState.OVERPOWERED, 0);
+            }
+
+            newPower = maxPowerNeighbor - 1;
+        } else {
+            newPower = 0;
+        }
+
+        if (newPower != currentPower) {
+            return new CalcPowerResult(newPower == 0 ? PowerState.UNPOWERED : PowerState.POWERED, newPower);
+        } else {
+            return new CalcPowerResult(PowerState.UNCHANGED, newPower);
+        }
+    }
+
+    @Override
+    public boolean isSendingOutput(World world, BlockState state, BlockPos blockPos, Direction direction) {
+        return direction.getAxis() == getAxis(world, blockPos, state) && isPowered(state);
+    }
+
+    public record CalcPowerResult(PowerState state, int power) {}
 }

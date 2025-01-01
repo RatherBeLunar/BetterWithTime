@@ -1,8 +1,6 @@
 package com.bwt.mechanical.impl;
 
-import com.bwt.mechanical.api.IMechPoweredBlock;
-import com.bwt.mechanical.api.NodeProvider;
-import com.bwt.mechanical.api.digraph.Node;
+import com.bwt.mechanical.api.MechPowered;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.BlockWithEntity;
@@ -31,7 +29,7 @@ public abstract class MachineBlockWithEntity extends BlockWithEntity implements 
         super(settings);
         this.turnOnTickRate = turnOnTickRate;
         this.turnOffTickRate = turnOffTickRate;
-        setDefaultState(getStateManager().getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false));
+        setDefaultState(getStateManager().getDefaultState().with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
@@ -52,7 +50,7 @@ public abstract class MachineBlockWithEntity extends BlockWithEntity implements 
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
     }
 
     @Override

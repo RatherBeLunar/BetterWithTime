@@ -2,7 +2,7 @@ package com.bwt.blocks.turntable;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mixin.MovableBlockEntityMixin;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.turntable.TurntableRecipe;
@@ -60,7 +60,7 @@ public class TurntableBlockEntity extends BlockEntity {
         if (world.isClient) {
             return;
         }
-        if (!state.isOf(BwtBlocks.turntableBlock) || !state.get(IMechPoweredBlock.MECH_POWERED)) {
+        if (!state.isOf(BwtBlocks.turntableBlock) || !state.get(MechPowered.MECH_POWERED)) {
             blockEntity.rotationTickCounter = 0;
             return;
         }

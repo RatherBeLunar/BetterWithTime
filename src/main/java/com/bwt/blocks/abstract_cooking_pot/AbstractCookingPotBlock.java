@@ -1,6 +1,6 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.PowerState;
 import com.bwt.mechanical.impl.DirectionTools;
 import com.bwt.mechanical.impl.MachineBlockWithEntity;
@@ -38,12 +38,12 @@ public abstract class AbstractCookingPotBlock extends MachineBlockWithEntity {
 
     public AbstractCookingPotBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(TIP_DIRECTION, Direction.UP).with(IMechPoweredBlock.MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(TIP_DIRECTION, Direction.UP).with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(TIP_DIRECTION);
     }
 

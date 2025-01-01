@@ -2,7 +2,7 @@ package com.bwt.blocks.pulley;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.mechanical.api.ControlledPowerState;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import com.bwt.mechanical.api.PowerState;
 import com.bwt.mechanical.impl.DirectionTools;
 import com.bwt.mechanical.impl.MachineBlockWithEntity;
@@ -18,7 +18,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -41,19 +40,19 @@ public class PulleyBlock extends MachineBlockWithEntity {
 
     public PulleyBlock(Settings settings) {
         super(settings, pulleyTickRate);
-        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false).with(POWERED, false));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false).with(POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(POWERED);
     }
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         super.randomDisplayTick(state, world, pos, random);
-        if (!isStatePowered(state) || state.get(POWERED)) {
+        if (!isPowered(state) || state.get(POWERED)) {
             return;
         }
         emitParticles(world, pos, random);

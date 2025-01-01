@@ -42,7 +42,7 @@ public class MillStoneBlock extends MachineBlockWithEntity {
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
          super.randomDisplayTick(state, world, pos, random);
-         if (!isStatePowered(state)) {
+         if (!isPowered(state)) {
              return;
          }
          emitGearBoxParticles(world, pos, random);

@@ -1,7 +1,7 @@
 package com.bwt.mechanical.impl;
 
 import com.bwt.blocks.SimpleFacingBlock;
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.LivingEntity;
@@ -15,22 +15,34 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class MachineSimpleFacingBlock extends SimpleFacingBlock implements MachineBlock {
 
-    private final int powerChangeTickRate;
+    private final int turnOnTickRate;
+    private final int turnOffTickRate;
 
-    protected MachineSimpleFacingBlock(Settings settings, int powerChangeTickRate) {
-        super(settings);
-        this.powerChangeTickRate = powerChangeTickRate;
+    public MachineSimpleFacingBlock(Settings settings) {
+        this(settings, MachineBlock.turnOnTickRate, MachineBlock.turnOffTickRate);
     }
+
+    public MachineSimpleFacingBlock(Settings settings, int tickRate) {
+        this(settings, tickRate, tickRate);
+    }
+
+    public MachineSimpleFacingBlock(Settings settings, int turnOnTickRate, int turnOffTickRate) {
+        super(settings);
+        this.turnOnTickRate = turnOnTickRate;
+        this.turnOffTickRate = turnOffTickRate;
+        setDefaultState(getStateManager().getDefaultState().with(MechPowered.MECH_POWERED, false));
+    }
+
 
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        world.scheduleBlockTick(pos, this, powerChangeTickRate);
+        world.scheduleBlockTick(pos, this, turnOnTickRate);
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
         builder.add(FACING);
     }
 

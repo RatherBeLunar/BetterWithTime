@@ -1,6 +1,9 @@
 package com.bwt.blocks;
 
-import com.bwt.mechanical.api.IMechPoweredBlock;
+import com.bwt.mechanical.api.MechPowered;
+import com.bwt.mechanical.api.PowerState;
+import com.bwt.mechanical.impl.MachineBlock;
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -10,6 +13,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.util.math.BlockPos;
@@ -21,7 +25,9 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class BellowsBlock extends Block {
+import java.util.List;
+
+public class BellowsBlock extends Block implements MachineBlock {
     public static DirectionProperty FACING = HorizontalFacingBlock.FACING;
     public static final float compressedHeight = 11;
     protected static final int tickRate = 37;
@@ -30,19 +36,18 @@ public class BellowsBlock extends Block {
 
     public BellowsBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(IMechPoweredBlock.MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(MechPowered.MECH_POWERED, false));
     }
 
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        //TODO        return state.get(MECH_POWERED) ? COMPRESSED_SHAPE : VoxelShapes.fullCube();
-        return VoxelShapes.fullCube();
+        return isPowered(state) ? COMPRESSED_SHAPE : VoxelShapes.fullCube();
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         builder.add(FACING);
-        IMechPoweredBlock.appendProperties(builder);
+        MechPowered.appendProperties(builder);
     }
 
     @Override
@@ -50,47 +55,15 @@ public class BellowsBlock extends Block {
         return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
     }
 
-//    @Override
-//    public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> direction != blockState.get(FACING) && direction != Direction.UP;
-//    }
-//
-//    @Override
-//    public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
-//        return direction -> direction.getAxis().isHorizontal();
-//    }
-
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        schedulePowerUpdate(state, world, pos);
-    }
-
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-//        if (isReceivingMechPower(world, state, pos) != isMechPowered(state)) {
-//TODO             world.scheduleBlockTick(pos, this, tickRate);
-//TODO         }
-    }
-
-    @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
-            return;
+    public void onPowerChanged(PowerState powerState) {
+        var world = powerState.world();
+        var pos = powerState.pos();
+        var random = powerState.random();
+        world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
+        if (powerState.isPowered()) {
+            stokeFire(world, pos, powerState.state());
         }
-        schedulePowerUpdate(state, world, pos);
-    }
-
-    @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-//        boolean isReceivingMechPower = isReceivingMechPower(world, state, pos);
-//TODO         if (isReceivingMechPower == isMechPowered(state)) {
-//TODO             return;
-//TODO         }
-//TODO         world.setBlockState(pos, state.with(MECH_POWERED, isReceivingMechPower));
-//TODO         world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
-//TODO         if (isReceivingMechPower) {
-//TODO             stokeFire(world, pos, state);
-//TODO         }
     }
 
     public void stokeFire(World world, BlockPos pos, BlockState state) {
@@ -110,5 +83,29 @@ public class BellowsBlock extends Block {
                 world.setBlockState(firePos, BwtBlocks.stokedFireBlock.getPlacementState(world, firePos), Block.NOTIFY_ALL);
             }
         }
+    }
+
+    @Override
+    public List<Direction> getInputFaces(World world, BlockPos pos, BlockState blockState) {
+        return List.of(Direction.DOWN);
+    }
+
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.onPlaced(world, pos, state, placer, itemStack);
+        world.scheduleBlockTick(pos, this, tickRate);
+    }
+
+    @Override
+    protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.scheduledTick(state, world, pos, random);
+        this.onUpdate(state, world, pos, random);
+    }
+
+
+    @Override
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
+        schedulePowerUpdate(state, world, pos);
     }
 }
