@@ -77,12 +77,10 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                 .criterion("placed_windmill", SummonedEntityCriterion.Conditions.create(EntityPredicate.Builder.create().type(BwtEntities.windmillEntity)))
                 .build(consumer, "bwt/placed_windmill");
 
-        AdvancementEntry cauldronAdvancement = neighborStateAdvancement(
+        AdvancementEntry cauldronAdvancement = blockPlacedAdvancement(
                 BwtBlocks.cauldronBlock,
                 "Perpetual Stew",
-                "Place a cauldron over some fire. Baby, you got a stew going!",
-                Direction.DOWN,
-                LocationPredicate.Builder.create().block(BlockPredicate.Builder.create().tag(BlockTags.FIRE))
+                "Place a cauldron over some fire. Baby, you got a stew going!"
         ).parent(rootAdvancement).build(consumer, "bwt/placed_cauldron");
         AdvancementEntry lightBlockAdvancement = itemAdvancement(BwtBlocks.lightBlockBlock, "Underground Grow Operation", "Create a light block. To hemp, it might as well be the sun").parent(cauldronAdvancement).build(consumer, "bwt/got_light_block");
         AdvancementEntry dungAdvancement = itemAdvancement(BwtItems.dungItem, "The Stench of Progress", "Feed your pet wolf, and let nature take its course").parent(cauldronAdvancement).build(consumer, "bwt/got_dung");
