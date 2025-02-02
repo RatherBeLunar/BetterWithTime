@@ -148,6 +148,8 @@ public class BwtItems implements ModInitializer {
             content.add(sailItem);
             content.add(groundNetherrackItem);
             content.add(soulDustItem);
+            content.add(hellfireDustItem);
+            content.add(concentratedHellfireItem);
             content.add(potashItem);
             content.add(coalDustItem);
             content.add(broadheadItem);
