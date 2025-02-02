@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:bwt/placed_turntable",
+  "criteria": {
+    "got_unfired_crucible": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_crucible"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_unfired_mould": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_mould"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_unfired_planter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_planter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_unfired_urn": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_urn"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_unfired_vase": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_vase"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Spin your first piece of pottern on the Turntable. Next, into the Kiln!",
+    "icon": {
+      "count": 1,
+      "id": "bwt:unfired_crucible"
+    },
+    "title": "Potter's Guild"
+  },
+  "requirements": [
+    [
+      "got_unfired_crucible",
+      "got_unfired_planter",
+      "got_unfired_vase",
+      "got_unfired_urn",
+      "got_unfired_mould"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

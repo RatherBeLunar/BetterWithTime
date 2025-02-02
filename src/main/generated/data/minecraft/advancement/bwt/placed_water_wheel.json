@@ -1,0 +1,34 @@
+{
+  "parent": "minecraft:bwt/got_glue_or_tallow",
+  "criteria": {
+    "placed_water_wheel": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "bwt:water_wheel"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:summoned_entity"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Harness more reliable mechanical power from a Water Wheel",
+    "icon": {
+      "count": 1,
+      "id": "bwt:water_wheel"
+    },
+    "title": "Mechanical Age 2"
+  },
+  "requirements": [
+    [
+      "placed_water_wheel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

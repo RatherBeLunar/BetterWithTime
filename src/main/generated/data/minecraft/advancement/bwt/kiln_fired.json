@@ -1,0 +1,74 @@
+{
+  "parent": "minecraft:bwt/got_pottery",
+  "criteria": {
+    "got_crucible": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:crucible"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_mould": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:mould"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_planter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:planter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_urn": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:urn"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_vase_white": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:vase_white"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Surround your pottery with enough brick blocks above a stoked fire, and it will harden into its final form! The kiln can cook other things, too.",
+    "icon": {
+      "count": 1,
+      "id": "minecraft:bricks"
+    },
+    "title": "Fired and Glazed"
+  },
+  "requirements": [
+    [
+      "got_crucible",
+      "got_planter",
+      "got_vase_white",
+      "got_urn",
+      "got_mould"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

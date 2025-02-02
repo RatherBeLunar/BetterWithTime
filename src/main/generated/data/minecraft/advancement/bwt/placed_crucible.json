@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/kiln_fired",
+  "criteria": {
+    "place_crucible": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:crucible",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Place a Crucible over stoked fire. It heats up hot enough to melt most metals",
+    "icon": {
+      "count": 1,
+      "id": "bwt:crucible"
+    },
+    "title": "Melt and Smelt"
+  },
+  "requirements": [
+    [
+      "place_crucible"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

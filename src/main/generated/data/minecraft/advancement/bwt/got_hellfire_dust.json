@@ -1,11 +1,11 @@
 {
-  "parent": "minecraft:bwt/got_hemp_seeds",
+  "parent": "minecraft:bwt/placed_hopper",
   "criteria": {
-    "got_hemp_fiber": {
+    "got_hellfire_dust": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:hemp_fiber"
+            "items": "bwt:hellfire_dust"
           }
         ]
       },
@@ -14,16 +14,16 @@
   },
   "display": {
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
-    "description": "Grind your first hemp by hand in a mill stone with a hand crank",
+    "description": "Extract the souls out of ground netherrack using a soul sand filtered hopper. Be sure to power the hopper to let them escape!",
     "icon": {
       "count": 1,
-      "id": "bwt:hemp_fiber"
+      "id": "bwt:hellfire_dust"
     },
-    "title": "Manual Labor"
+    "title": "Soul Extraction"
   },
   "requirements": [
     [
-      "got_hemp_fiber"
+      "got_hellfire_dust"
     ]
   ],
   "sends_telemetry_event": true

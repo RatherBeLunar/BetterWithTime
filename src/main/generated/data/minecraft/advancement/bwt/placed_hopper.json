@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/got_wooden_corner",
+  "criteria": {
+    "place_hopper": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:hopper",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Place your first mechanical hopper. It has a filter slot; what could that be for?",
+    "icon": {
+      "count": 1,
+      "id": "bwt:hopper"
+    },
+    "title": "The Original Hopper"
+  },
+  "requirements": [
+    [
+      "place_hopper"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

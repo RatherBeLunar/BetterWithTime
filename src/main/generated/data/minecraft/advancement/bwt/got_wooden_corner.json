@@ -1,11 +1,11 @@
 {
-  "parent": "minecraft:bwt/got_hemp_seeds",
+  "parent": "minecraft:bwt/placed_saw",
   "criteria": {
-    "got_hemp_fiber": {
+    "got_wooden_corner_blocks": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:hemp_fiber"
+            "items": "#bwt:wooden_corner_blocks"
           }
         ]
       },
@@ -14,16 +14,16 @@
   },
   "display": {
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
-    "description": "Grind your first hemp by hand in a mill stone with a hand crank",
+    "description": "Use the saw to chop a plank down into corners. Maybe these smaller pieces can be used more efficiently!",
     "icon": {
       "count": 1,
-      "id": "bwt:hemp_fiber"
+      "id": "bwt:oak_planks_corner"
     },
-    "title": "Manual Labor"
+    "title": "Cut my Block Into Pieces"
   },
   "requirements": [
     [
-      "got_hemp_fiber"
+      "got_wooden_corner_blocks"
     ]
   ],
   "sends_telemetry_event": true

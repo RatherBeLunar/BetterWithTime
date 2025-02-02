@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/placed_saw",
+  "criteria": {
+    "place_bellows": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:bellows",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Build and power the bellows, to stoke the hibachi's fire even further. There's something about the timing...",
+    "icon": {
+      "count": 1,
+      "id": "bwt:bellows"
+    },
+    "title": "Inhale, Exhale, Repeat"
+  },
+  "requirements": [
+    [
+      "place_bellows"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

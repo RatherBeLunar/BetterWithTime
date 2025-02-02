@@ -1,11 +1,11 @@
 {
-  "parent": "minecraft:bwt/got_hemp_seeds",
+  "parent": "minecraft:bwt/placed_crucible",
   "criteria": {
-    "got_hemp_fiber": {
+    "got_netherite_ingot": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:hemp_fiber"
+            "items": "minecraft:netherite_ingot"
           }
         ]
       },
@@ -14,16 +14,16 @@
   },
   "display": {
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
-    "description": "Grind your first hemp by hand in a mill stone with a hand crank",
+    "description": "Smelt a netherite ingot in the crucible with iron, coal dust, gold, and a soul urn. Or find one in a loot chest, I guess",
     "icon": {
       "count": 1,
-      "id": "bwt:hemp_fiber"
+      "id": "minecraft:netherite_ingot"
     },
-    "title": "Manual Labor"
+    "title": "Soul-Forged Steel"
   },
   "requirements": [
     [
-      "got_hemp_fiber"
+      "got_netherite_ingot"
     ]
   ],
   "sends_telemetry_event": true

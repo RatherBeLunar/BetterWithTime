@@ -35,23 +35,5 @@ public class VanillaRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         CookingRecipeJsonBuilder.createSmelting(Ingredient.ofItems(BwtItems.flourItem), RecipeCategory.FOOD, Items.BREAD, 0.35f, 200).criterion(RecipeProvider.hasItem(BwtItems.flourItem), RecipeProvider.conditionsFromItem(BwtItems.flourItem)).offerTo(exporter);
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteMattockItem)
-                .pattern("sss ")
-                .pattern(" h s")
-                .pattern(" h  ")
-                .pattern(" h  ")
-                .input('s', Items.NETHERITE_INGOT)
-                .input('h', BwtItems.haftItem)
-                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
-                .offerTo(exporter);
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteBattleAxeItem)
-                .pattern("sss")
-                .pattern("shs")
-                .pattern(" h ")
-                .pattern(" h ")
-                .input('s', Items.NETHERITE_INGOT)
-                .input('h', BwtItems.haftItem)
-                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
-                .offerTo(exporter);
     }
 }

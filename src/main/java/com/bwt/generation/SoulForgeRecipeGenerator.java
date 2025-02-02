@@ -195,6 +195,24 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         // Netherite Tools
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteMattockItem)
+                .pattern("sss ")
+                .pattern(" h s")
+                .pattern(" h  ")
+                .pattern(" h  ")
+                .input('s', Items.NETHERITE_INGOT)
+                .input('h', BwtItems.haftItem)
+                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
+                .offerTo(exporter);
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteBattleAxeItem)
+                .pattern("sss")
+                .pattern("shs")
+                .pattern(" h ")
+                .pattern(" h ")
+                .input('s', Items.NETHERITE_INGOT)
+                .input('h', BwtItems.haftItem)
+                .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
+                .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_PICKAXE)
                 .pattern("sss")
                 .pattern(" h ")

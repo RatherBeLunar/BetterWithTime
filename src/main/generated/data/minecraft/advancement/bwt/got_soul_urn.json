@@ -1,11 +1,11 @@
 {
-  "parent": "minecraft:bwt/got_hemp_seeds",
+  "parent": "minecraft:bwt/got_hellfire_dust",
   "criteria": {
-    "got_hemp_fiber": {
+    "got_soul_urn": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:hemp_fiber"
+            "items": "bwt:soul_urn"
           }
         ]
       },
@@ -14,16 +14,16 @@
   },
   "display": {
     "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
-    "description": "Grind your first hemp by hand in a mill stone with a hand crank",
+    "description": "Capture 8 souls released from a hopper in an urn placed below",
     "icon": {
       "count": 1,
-      "id": "bwt:hemp_fiber"
+      "id": "bwt:soul_urn"
     },
-    "title": "Manual Labor"
+    "title": "Soul Containment"
   },
   "requirements": [
     [
-      "got_hemp_fiber"
+      "got_soul_urn"
     ]
   ],
   "sends_telemetry_event": true

@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:bwt/placed_bellows",
+  "criteria": {
+    "got_glue": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:glue"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_tallow": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:tallow"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Render animal products into glue and tallow in a Cauldron above stoked fire",
+    "icon": {
+      "count": 1,
+      "id": "bwt:glue"
+    },
+    "title": "Animal Byproducts"
+  },
+  "requirements": [
+    [
+      "got_glue",
+      "got_tallow"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

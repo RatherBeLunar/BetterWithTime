@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/got_netherite_ingot",
+  "criteria": {
+    "place_soul_forge": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:soul_forge",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Place your first Soul Forge. It's better than an anvil!",
+    "icon": {
+      "count": 1,
+      "id": "bwt:soul_forge"
+    },
+    "title": "A New Age"
+  },
+  "requirements": [
+    [
+      "place_soul_forge"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

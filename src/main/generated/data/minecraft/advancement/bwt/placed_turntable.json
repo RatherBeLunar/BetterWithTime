@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/placed_saw",
+  "criteria": {
+    "place_turntable": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:turntable",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Build and power the Turntable. Throw some clay on it to make pottery!",
+    "icon": {
+      "count": 1,
+      "id": "bwt:turntable"
+    },
+    "title": "The Tables Have Turned"
+  },
+  "requirements": [
+    [
+      "place_turntable"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

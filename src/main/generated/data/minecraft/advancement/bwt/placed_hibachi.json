@@ -1,0 +1,31 @@
+{
+  "parent": "minecraft:bwt/got_hellfire_dust",
+  "criteria": {
+    "place_hibachi": {
+      "conditions": {
+        "location": [
+          {
+            "block": "bwt:hibachi",
+            "condition": "minecraft:block_state_property"
+          }
+        ]
+      },
+      "trigger": "minecraft:placed_block"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "description": "Concentrate hellfire dust in a cauldron, and make a hibachi grill for redstone-toggled fire",
+    "icon": {
+      "count": 1,
+      "id": "bwt:hibachi"
+    },
+    "title": "Fire on Demand"
+  },
+  "requirements": [
+    [
+      "place_hibachi"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
