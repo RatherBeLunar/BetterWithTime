@@ -115,7 +115,7 @@ public class HempCropBlock extends CropBlock {
 
     @Override
     public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
-        return !isMature(state) || world.getBlockState(pos.up()).isIn(BlockTags.AIR);
+        return false;
     }
 
     @Override
