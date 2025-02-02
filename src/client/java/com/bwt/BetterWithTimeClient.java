@@ -22,6 +22,7 @@ import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.item.ModelPredicateProviderRegistry;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
+import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.world.biome.Biome;
@@ -48,6 +49,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BwtEntities.rottedArrowEntity, RottedArrowEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.dynamiteEntity, DynamiteEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.miningChargeEntity, MiningChargeEntityRenderer::new);
+		EntityRendererRegistry.register(BwtEntities.soulUrnProjectileEntity, FlyingItemEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);

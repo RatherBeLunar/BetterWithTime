@@ -153,5 +153,11 @@
     "sounds": [
       "random/fuse"
     ]
+  },
+  "entity.soul_urn.throw": {
+    "subtitle": "bwt.subtitles.entity.soul_urn.throw",
+    "sounds": [
+      "random/bow"
+    ]
   }
 }

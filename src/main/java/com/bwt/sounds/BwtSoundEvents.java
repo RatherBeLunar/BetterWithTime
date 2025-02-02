@@ -29,6 +29,7 @@ public class BwtSoundEvents implements ModInitializer {
     public static SoundEvent WOLF_DUNG_PRODUCTION = register("entity.wolf.dung.production");
     public static SoundEvent WOLF_DUNG_EFFORT = register("entity.wolf.dung.effort");
     public static SoundEvent DYNAMITE_THROW = register("entity.dynamite.throw");
+    public static SoundEvent SOUL_URN_THROW = register("entity.soul_urn.throw");
     public static SoundEvent DYNAMITE_IGNITE = register("entity.dynamite.ignite");
     public static SoundEvent MINING_CHARGE_PRIME = register("entity.mining_charge.prime");
 

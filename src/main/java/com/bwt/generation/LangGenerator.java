@@ -186,6 +186,7 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitle(BwtSoundEvents.DYNAMITE_THROW, "Dynamite thrown", translationBuilder);
         addSubtitle(BwtSoundEvents.DYNAMITE_IGNITE, "Dynamite ignited", translationBuilder);
         addSubtitle(BwtSoundEvents.MINING_CHARGE_PRIME, "Mining charge primed", translationBuilder);
+        addSubtitle(BwtSoundEvents.SOUL_URN_THROW, "Soul Urn thrown", translationBuilder);
     }
 
     protected void addSubtitle(SoundEvent soundEvent, String value, TranslationBuilder translationBuilder) {

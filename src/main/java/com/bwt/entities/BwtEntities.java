@@ -85,6 +85,18 @@ public class BwtEntities implements ModInitializer {
             .trackingTickInterval(10)
             .build()
     );
+    public static final EntityType<SoulUrnProjectileEntity> soulUrnProjectileEntity = Registry.register(
+            Registries.ENTITY_TYPE,
+            Id.of("soul_urn"),
+            EntityType.Builder.create(
+                    (EntityType.EntityFactory<SoulUrnProjectileEntity>) SoulUrnProjectileEntity::new,
+                    SpawnGroup.MISC
+            )
+            .dimensions(0.25f, 0.40f)
+            .maxTrackingRange(6)
+            .trackingTickInterval(20)
+            .build()
+    );
 
     @Override
     public void onInitialize() {
