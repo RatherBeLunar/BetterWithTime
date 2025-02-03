@@ -24,6 +24,7 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -42,8 +43,10 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 27;
@@ -282,6 +285,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     public boolean cookRecipe(AbstractCookingPotRecipe recipe) {
         try (Transaction transaction = Transaction.openOuter()) {
+            List<ItemStack> remaindersAndResults = new ArrayList<>(recipe.getResults());
             // Spend ingredients
             for (IngredientWithCount ingredientWithCount : recipe.getIngredientsWithCount()) {
                 long countToSpend = ingredientWithCount.count();
@@ -289,6 +293,12 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                     ItemVariant itemVariant = StorageUtil.findStoredResource(inventoryWrapper, ingredientWithCount::test);
                     if (itemVariant == null) {
                         continue;
+                    }
+                    if (itemVariant.getItem().hasRecipeRemainder()) {
+                        Item remainder = itemVariant.getItem().getRecipeRemainder();
+                        if (remainder != null) {
+                            remaindersAndResults.add(new ItemStack(remainder, (int) countToSpend));
+                        }
                     }
                     long taken = inventoryWrapper.extract(itemVariant, countToSpend, transaction);
                     countToSpend -= taken;
@@ -299,7 +309,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                 }
             }
             // Add results
-            for (ItemStack result : recipe.getResults()) {
+            for (ItemStack result : remaindersAndResults) {
                 long inserted = StorageUtil.insertStacking(inventoryWrapper.getSlots(), ItemVariant.of(result), result.getCount(), transaction);
                 if (inserted < result.getCount()) {
                     transaction.abort();
