@@ -1,5 +1,6 @@
-package com.bwt.blocks;
+package com.bwt.blocks.blood_wood;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.BloodWoodSaplingItemEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;

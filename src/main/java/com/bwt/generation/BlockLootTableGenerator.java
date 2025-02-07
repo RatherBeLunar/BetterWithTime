@@ -49,10 +49,6 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.bloodWoodBlocks.fenceBlock);
         addDrop(BwtBlocks.bloodWoodBlocks.fenceGateBlock);
         addDrop(BwtBlocks.bloodWoodBlocks.pressurePlateBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.signBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.wallSignBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.hangingSignBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.wallHangingSignBlock);
         addDrop(BwtBlocks.bloodWoodBlocks.slabBlock, this::slabDrops);
         addDrop(BwtBlocks.bloodWoodBlocks.stairsBlock);
         addDrop(BwtBlocks.bloodWoodBlocks.doorBlock);

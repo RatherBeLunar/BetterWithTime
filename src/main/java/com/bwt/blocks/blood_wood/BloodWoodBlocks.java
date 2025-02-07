@@ -1,4 +1,4 @@
-package com.bwt.blocks;
+package com.bwt.blocks.blood_wood;
 
 import com.bwt.features.BwtConfiguredFeatures;
 import com.bwt.utils.Id;
@@ -39,10 +39,6 @@ public class BloodWoodBlocks {
     public Block fenceBlock;
     public Block fenceGateBlock;
     public Block pressurePlateBlock;
-    public Block signBlock;
-    public Block wallSignBlock;
-    public Block hangingSignBlock;
-    public Block wallHangingSignBlock;
     public Block slabBlock;
     public Block stairsBlock;
     public Block doorBlock;
@@ -89,10 +85,6 @@ public class BloodWoodBlocks {
         fenceBlock = new FenceBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_FENCE));
         fenceGateBlock = new FenceGateBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_FENCE_GATE));
         pressurePlateBlock = new PressurePlateBlock(blockSetType, AbstractBlock.Settings.copy(Blocks.CRIMSON_PRESSURE_PLATE));
-        signBlock = new SignBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_SIGN));
-        wallSignBlock = new WallSignBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_WALL_SIGN));
-        hangingSignBlock = new HangingSignBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_HANGING_SIGN));
-        wallHangingSignBlock = new WallHangingSignBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_WALL_HANGING_SIGN));
         slabBlock = new SlabBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_SLAB));
         stairsBlock = new StairsBlock(planksBlock.getDefaultState(), AbstractBlock.Settings.copy(Blocks.CRIMSON_STAIRS));
         doorBlock = new DoorBlock(blockSetType, AbstractBlock.Settings.copy(Blocks.CRIMSON_DOOR));
@@ -103,7 +95,6 @@ public class BloodWoodBlocks {
                 .fence(fenceBlock)
                 .fenceGate(fenceGateBlock)
                 .pressurePlate(pressurePlateBlock)
-                .sign(signBlock, wallSignBlock)
                 .slab(slabBlock)
                 .stairs(stairsBlock)
                 .door(doorBlock)
@@ -138,12 +129,6 @@ public class BloodWoodBlocks {
         Registry.register(Registries.ITEM, Id.of("blood_wood_fence_gate"), new BlockItem(fenceGateBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("blood_wood_pressure_plate"), pressurePlateBlock);
         Registry.register(Registries.ITEM, Id.of("blood_wood_pressure_plate"), new BlockItem(pressurePlateBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_sign"), signBlock);
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_wall_sign"), wallSignBlock);
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_hanging_sign"), hangingSignBlock);
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_wall_hanging_sign"), wallHangingSignBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_sign"), new SignItem(new Item.Settings().maxCount(16), signBlock, wallSignBlock));
-        Registry.register(Registries.ITEM, Id.of("blood_wood_hanging_sign"), new HangingSignItem(hangingSignBlock, wallHangingSignBlock, new Item.Settings().maxCount(16)));
         Registry.register(Registries.BLOCK, Id.of("blood_wood_slab"), slabBlock);
         Registry.register(Registries.ITEM, Id.of("blood_wood_slab"), new BlockItem(slabBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("blood_wood_stairs"), stairsBlock);

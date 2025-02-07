@@ -91,7 +91,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         offerPlanksRecipe2(exporter, BwtBlocks.bloodWoodBlocks.planksBlock, BwtItemTags.BLOOD_WOOD_LOGS, 4);
         offerBarkBlockRecipe(exporter, BwtBlocks.bloodWoodBlocks.woodBlock, BwtBlocks.bloodWoodBlocks.logBlock);
         offerBarkBlockRecipe(exporter, BwtBlocks.bloodWoodBlocks.strippedWoodBlock, BwtBlocks.bloodWoodBlocks.strippedLogBlock);
-        offerHangingSignRecipe(exporter, BwtBlocks.bloodWoodBlocks.hangingSignBlock, BwtBlocks.bloodWoodBlocks.strippedLogBlock);
     }
 
     private void generateCompactingRecipes(RecipeExporter exporter) {

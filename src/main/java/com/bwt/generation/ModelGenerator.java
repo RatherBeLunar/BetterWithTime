@@ -7,7 +7,6 @@ import com.bwt.blocks.lens.LensBeamBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
-import com.google.gson.JsonObject;
 import com.bwt.utils.Id;
 import com.google.common.collect.ImmutableList;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -278,7 +277,6 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerSingleton(BwtBlocks.bloodWoodBlocks.leavesBlock, TexturedModel.LEAVES);
         blockStateModelGenerator.registerFlowerPotPlant(BwtBlocks.bloodWoodBlocks.saplingBlock, BwtBlocks.bloodWoodBlocks.pottedSaplingBlock, BlockStateModelGenerator.TintType.NOT_TINTED);
         blockStateModelGenerator.registerCubeAllModelTexturePool(BwtBlocks.bloodWoodBlocks.blockFamily.getBaseBlock()).family(BwtBlocks.bloodWoodBlocks.blockFamily);
-        blockStateModelGenerator.registerHangingSign(BwtBlocks.bloodWoodBlocks.strippedLogBlock, BwtBlocks.bloodWoodBlocks.hangingSignBlock, BwtBlocks.bloodWoodBlocks.wallHangingSignBlock);
     }
 
     private void generateCompanionBlocks(BlockStateModelGenerator blockStateModelGenerator) {

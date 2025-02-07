@@ -58,8 +58,6 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.fenceBlock, "Blood Wood Fence");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.fenceGateBlock, "Blood Wood Fence Gate");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.pressurePlateBlock, "Blood Wood Pressure Plate");
-        translationBuilder.add(BwtBlocks.bloodWoodBlocks.signBlock, "Blood Wood Sign");
-        translationBuilder.add(BwtBlocks.bloodWoodBlocks.hangingSignBlock, "Blood Wood Hanging Sign");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.slabBlock, "Blood Wood Slab");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.stairsBlock, "Blood Wood Stairs");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.doorBlock, "Blood Wood Door");
