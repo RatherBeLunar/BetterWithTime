@@ -59,21 +59,7 @@ public class DetectorBlock extends SimpleFacingBlock {
         boolean detected = checkForDetection(world, pos, state);
         boolean wasDetected = state.get(POWERED);
         if (detected != wasDetected) {
-            if (wasDetected) {
-                // Turning off takes time
-                world.scheduleBlockTick(pos, this, tickRate);
-            } else {
-                // Turning on is instant
-                world.setBlockState(pos, state.cycle(POWERED), Block.NOTIFY_ALL);
-                world.playSound(
-                        null,
-                        pos,
-                        BwtSoundEvents.DETECTOR_CLICK,
-                        SoundCategory.BLOCKS,
-                        1.0f,
-                        2f
-                );
-            }
+            world.scheduleBlockTick(pos, this, tickRate);
         }
     }
 
