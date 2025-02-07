@@ -71,7 +71,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
     public void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
         if (!this.isBaby() && this.isTamed() && this.isBreedingItem(itemStack) && !isFed()) {
-            if (this.getWorld().isClient) {
+            if (this.getWorld().isClient()) {
                 cir.setReturnValue(ActionResult.CONSUME);
                 return;
             }
@@ -79,7 +79,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
                 itemStack.decrement(1);
             }
             this.feed(itemStack);
-            cir.setReturnValue(ActionResult.SUCCESS);
+            cir.setReturnValue(ActionResult.success(this.getWorld().isClient()));
         }
     }
 
@@ -204,7 +204,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
     @Unique
     public void feed(ItemStack itemStack) {
         int nutrition = itemStack.isOf(BwtItems.kibbleItem) ? 2 : itemStack.getOrDefault(DataComponentTypes.FOOD, new FoodComponent.Builder().build()).nutrition();
-        heal(nutrition);
+        heal(nutrition * 2);
         feed(nutrition);
     }
 
