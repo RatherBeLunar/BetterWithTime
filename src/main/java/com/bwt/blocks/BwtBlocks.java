@@ -92,6 +92,7 @@ public class BwtBlocks implements ModInitializer {
             .replaceable()
             .noCollision()
             .dropsNothing()
+            .pistonBehavior(PistonBehavior.DESTROY)
     );
     public static final Block dungBlock = new Block(AbstractBlock.Settings.create().hardness(2f).mapColor(MapColor.BROWN).sounds(BlockSoundGroup.HONEY));
     public static final Block gearBoxBlock = new GearBoxBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)
@@ -139,6 +140,7 @@ public class BwtBlocks implements ModInitializer {
             .replaceable()
             .noCollision()
             .dropsNothing()
+            .pistonBehavior(PistonBehavior.DESTROY)
             .luminance(state -> state.get(LensBeamBlock.TERMINUS) ? 14 : 0)
             .emissiveLighting(((state, world, pos) -> state.get(LensBeamBlock.TERMINUS)))
     );
