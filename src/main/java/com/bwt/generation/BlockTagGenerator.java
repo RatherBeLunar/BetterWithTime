@@ -31,7 +31,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         );
         getOrCreateTagBuilder(BlockTags.CLIMBABLE).add(BwtBlocks.ropeBlock);
         getOrCreateTagBuilder(BlockTags.RAILS).add(BwtBlocks.stoneDetectorRailBlock, BwtBlocks.obsidianDetectorRailBlock);
-        getOrCreateTagBuilder(BlockTags.PRESSURE_PLATES).add(BwtBlocks.obsidianPressuePlateBlock);
+        getOrCreateTagBuilder(BlockTags.PRESSURE_PLATES).add(BwtBlocks.obsidianPressurePlateBlock);
         getOrCreateTagBuilder(BlockTags.SLABS).add(BwtBlocks.companionSlabBlock).add(BwtBlocks.wickerSlabBlock);
 
         // Make planters behave like their corresponding blocks
@@ -144,7 +144,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.lightBlockBlock)
                 .add(BwtBlocks.millStoneBlock)
                 .add(BwtBlocks.obsidianDetectorRailBlock)
-                .add(BwtBlocks.obsidianPressuePlateBlock)
+                .add(BwtBlocks.obsidianPressurePlateBlock)
 //                .add(BwtBlocks.pedestalBlock)
                 .add(BwtBlocks.planterBlock)
                 .add(BwtBlocks.ropeBlock)

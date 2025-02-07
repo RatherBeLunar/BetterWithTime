@@ -71,9 +71,9 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("ipi")
                 .pattern("iri")
                 .input('i', Items.IRON_INGOT)
-                .input('p', BwtBlocks.obsidianPressuePlateBlock)
+                .input('p', BwtBlocks.obsidianPressurePlateBlock)
                 .input('r', Items.REDSTONE)
-                .criterion(hasItem(BwtBlocks.obsidianPressuePlateBlock), conditionsFromItem(BwtBlocks.obsidianPressuePlateBlock))
+                .criterion(hasItem(BwtBlocks.obsidianPressurePlateBlock), conditionsFromItem(BwtBlocks.obsidianPressurePlateBlock))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, BwtBlocks.vineTrapBlock)
                 .pattern("vvv")

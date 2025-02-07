@@ -1,6 +1,7 @@
 package com.bwt.blocks;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
+import com.bwt.blocks.blood_wood.BloodWoodBlocks;
 import com.bwt.blocks.cauldron.CauldronBlock;
 import com.bwt.blocks.crucible.CrucibleBlock;
 import com.bwt.blocks.detector.DetectorBlock;
@@ -50,7 +51,6 @@ public class BwtBlocks implements ModInitializer {
             .nonOpaque()
     );
     public static final Block axlePowerSourceBlock = new AxlePowerSourceBlock(AbstractBlock.Settings.copy(axleBlock));
-//	public static final Block barrelBlock = new BarrelBlock(AbstractBlock.Settings.create());
 	public static final Block bellowsBlock = new BellowsBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS));
 	public static final BlockDispenserBlock blockDispenserBlock = new BlockDispenserBlock(AbstractBlock.Settings.copy(Blocks.DISPENSER)
             .hardness(3.5f)
@@ -158,8 +158,7 @@ public class BwtBlocks implements ModInitializer {
     );
 	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
 //	public static final Block netherGrothBlock = new NetherGrothBlock(AbstractBlock.Settings.create());
-//	public static final Block obsidianDetectorRailBlock = new ObsidianDetectorRailBlock(AbstractBlock.Settings.create());
-	public static final Block obsidianPressuePlateBlock = new ObsidianPressurePlateBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
+	public static final Block obsidianPressurePlateBlock = new ObsidianPressurePlateBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
             .strength(50.0f, 1200.0f)
     );
 	public static final Block obsidianDetectorRailBlock = new DetectorRailBlock(AbstractBlock.Settings.copy(Blocks.DETECTOR_RAIL)
@@ -286,8 +285,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("cauldron"), cauldronBlock);
         Registry.register(Registries.ITEM, Id.of("cauldron"), new BlockItem(cauldronBlock, new Item.Settings()));
         // Obsidian pressure plate
-        Registry.register(Registries.BLOCK, Id.of("obsidian_pressure_plate"), obsidianPressuePlateBlock);
-        Registry.register(Registries.ITEM, Id.of("obsidian_pressure_plate"), new BlockItem(obsidianPressuePlateBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("obsidian_pressure_plate"), obsidianPressurePlateBlock);
+        Registry.register(Registries.ITEM, Id.of("obsidian_pressure_plate"), new BlockItem(obsidianPressurePlateBlock, new Item.Settings()));
         // Hemp crop
         Registry.register(Registries.BLOCK, Id.of("hemp_crop_block"), hempCropBlock);
         // Detector Block
@@ -458,7 +457,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
-            content.add(obsidianPressuePlateBlock);
+            content.add(obsidianPressurePlateBlock);
             content.add(detectorBlock);
             content.add(buddyBlock);
             content.add(millStoneBlock);
@@ -493,10 +492,6 @@ public class BwtBlocks implements ModInitializer {
             content.add(unfiredUrnBlock);
             content.add(unfiredMouldBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
-            content.addAfter(Items.CHERRY_HANGING_SIGN,
-                    BwtBlocks.bloodWoodBlocks.signBlock,
-                    BwtBlocks.bloodWoodBlocks.hangingSignBlock
-            );
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
         });
 

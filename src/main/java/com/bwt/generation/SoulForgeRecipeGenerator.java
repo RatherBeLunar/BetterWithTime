@@ -303,7 +303,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.armorPlateItem), conditionsFromItem(BwtItems.armorPlateItem))
                 .offerTo(exporter);
 
-        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressuePlateBlock)
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressurePlateBlock)
                 .pattern("oooo")
                 .input('o', Items.OBSIDIAN)
                 .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
