@@ -33,7 +33,7 @@ public class LightBlock extends TransparentBlock {
             return;
         }
         if (state.get(LIT) != world.isReceivingRedstonePower(pos)) {
-            world.scheduleBlockTick(pos, this, 4);
+            world.scheduleBlockTick(pos, this, 2);
         }
     }
 
