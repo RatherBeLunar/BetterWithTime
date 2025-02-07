@@ -313,6 +313,13 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('s', Items.SMOOTH_STONE)
                 .criterion(hasItem(Items.SMOOTH_STONE), conditionsFromItem(Items.SMOOTH_STONE))
                 .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.TORCH, 4)
+                .pattern("X")
+                .pattern("S")
+                .input('X', BwtItems.nethercoalItem)
+                .input('S', Items.STICK)
+                .criterion("has_nether_coal", conditionsFromItem(BwtItems.nethercoalItem))
+                .offerTo(exporter, "bwt:torch_from_nether_coal");
     }
 
     private void generateTier2Recipes(RecipeExporter exporter) {

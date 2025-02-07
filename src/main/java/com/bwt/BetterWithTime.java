@@ -21,6 +21,7 @@ import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.TrackedDataHandlers;
@@ -109,6 +110,7 @@ public class BetterWithTime implements ModInitializer {
 		// Vanilla change to account for the moulding -> stick recipe
 		// If uncorrected, you would gain free fuel time by converting your moulding to sticks
 		FuelRegistry.INSTANCE.add(Items.STICK, 75);
+		FuelRegistry.INSTANCE.add(BwtItems.nethercoalItem, 3200);
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_SIDING_BLOCKS, 150);
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_MOULDING_BLOCKS, 75);
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_CORNER_BLOCKS, 38);
@@ -124,7 +126,7 @@ public class BetterWithTime implements ModInitializer {
 		FuelRegistry.INSTANCE.add(BwtBlocks.sawBlock, 300);
 		FuelRegistry.INSTANCE.add(BwtBlocks.slatsBlock, 300);
 //      FuelRegistry.INSTANCE.add(BwtBlocks.screwPumpBlock)
-//      FuelRegistry.INSTANCE.add(BwtBlocks.tableBlock)
+        FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_TABLE_BLOCKS, 150);
 		FuelRegistry.INSTANCE.add(BwtItems.gearItem, 18);
 		FuelRegistry.INSTANCE.add(BwtItems.sawDustItem, 150);
 		FuelRegistry.INSTANCE.add(BwtItems.soulDustItem, 150);
