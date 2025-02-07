@@ -75,6 +75,12 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ConventionalItemTags.RAW_MEAT_FOODS).add(BwtItems.wolfChopItem);
         getOrCreateTagBuilder(ConventionalItemTags.COOKED_MEAT_FOODS).add(BwtItems.cookedWolfChopItem);
 
+        getOrCreateTagBuilder(ItemTags.PICKAXES).add(BwtItems.netheriteMattockItem);
+        getOrCreateTagBuilder(ItemTags.SHOVELS).add(BwtItems.netheriteMattockItem);
+        getOrCreateTagBuilder(ItemTags.AXES).add(BwtItems.netheriteBattleAxeItem);
+        getOrCreateTagBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
+        getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
+
         addHopperFilters();
     }
 
