@@ -12,11 +12,14 @@ import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScreenHandler> {
     private static final Identifier TEXTURE = Id.of("bwt", "textures/gui/container/infernal_enchanter.png");
 
     private final int BUTTON_WIDTH = 108, BUTTON_HEIGHT = 19;
-    private Button[] buttons = new Button[5];
+    private List<Drawable> components = new ArrayList<>();
 
 
     public InfernalEnchanterScreen(InfernalEnchanterScreenHandler handler, PlayerInventory inventory, Text title) {
@@ -33,18 +36,27 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
         for (int i = 0; i < 5; i++) {
-            buttons[i] = new Button(i, x + 60, y + 17 + (i * 19), BUTTON_WIDTH, BUTTON_HEIGHT, this);
+            components.add(new Button(i, x + 60, y + 17 + (i * 19), BUTTON_WIDTH, BUTTON_HEIGHT, this));
         }
+        components.add(new VerticalBar(x + 50, y + 34, 5, 61, 176, 32, 176 + 5, 32, this) {
+            @Override
+            int getProgress(DrawContext context) {
+                return this.screen.handler.getPropertyDelegate().get(1) + 1;
+            }
+        });
     }
 
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int input) {
 
-        for (Button button : buttons) {
-            if (button.mouseClick(mouseX, mouseY, input)) {
-                if (this.client != null && this.handler.onButtonClick(this.client.player, button.id)) {
-                    this.client.interactionManager.clickButton(this.handler.syncId, button.id);
+        for (Drawable drawable: components) {
+            if(drawable instanceof Button) {
+                Button button = (Button) drawable;
+                if (button.mouseClick(mouseX, mouseY, input)) {
+                    if (this.client != null && this.handler.onButtonClick(this.client.player, button.id)) {
+                        this.client.interactionManager.clickButton(this.handler.syncId, button.id);
+                    }
                 }
             }
         }
@@ -58,7 +70,6 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
 
         context.drawTexture(TEXTURE, x + 50 ,y + 34, 176,32, 5, 61);
         context.drawTexture(TEXTURE, x + 50 ,y + 34, 176+5,32, 5, 1+enchantmentPowerSourceCount);
-//        context.drawTexture(TEXTURE_SIZE_BAR, x + 8, y + 17, 5, 0, 5, enchantmentPowerSourceCount + 1);
     }
 
     @Override
@@ -69,10 +80,10 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         int x = (width - backgroundWidth) / 2;
         int y = (height - backgroundHeight) / 2;
         context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
-        drawSizeBar(context);
+//        drawSizeBar(context);
 
-        for (Button button : buttons) {
-            button.render(context, mouseX, mouseY, delta);
+        for (Drawable component : components) {
+            component.render(context, mouseX, mouseY, delta);
         }
     }
 
@@ -83,6 +94,41 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         this.drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
+
+    private static abstract  class VerticalBar implements Drawable {
+        private final int x, y, w, h;
+        private final int u1;
+        private final int v1;
+        private final int u2;
+        private final int v2;
+        protected final InfernalEnchanterScreen screen;
+
+        private VerticalBar(int x, int y, int w, int h, int u1, int v1, int u2, int v2, InfernalEnchanterScreen screen) {
+            this.x = x;
+            this.y = y;
+            this.w = w;
+            this.h = h;
+            this.u1 = u1;
+            this.v1 = v1;
+            this.u2 = u2;
+            this.v2 = v2;
+            this.screen = screen;
+        }
+
+        abstract  int getProgress(DrawContext context);
+
+        @Override
+        public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+            int progress = this.getProgress(context);
+            context.drawTexture(TEXTURE, x, y, u1, v1, w, h);
+            context.drawTexture(TEXTURE, x, y, u2, v2, w, progress);
+            boolean selected = (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h);
+
+            if(selected) {
+                context.drawTooltip(this.screen.textRenderer, Text.of(String.format("%d", progress)), mouseX, mouseY);
+            }
+        }
+    }
 
     private static class Button implements Drawable {
         private final int id, x, y, w, h;
