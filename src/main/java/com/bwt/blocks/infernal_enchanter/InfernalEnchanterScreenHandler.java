@@ -16,6 +16,8 @@ import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.*;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 
 public class InfernalEnchanterScreenHandler extends ScreenHandler {
@@ -49,7 +51,6 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
         this.inventory = inventory;
         inventory.onOpen(playerInventory.player);
 
-        // Mill Stone inventory
         this.addSlot(new Slot(inventory, 0, 17, 37) {
             @Override
             public boolean canInsert(ItemStack stack) {
@@ -218,6 +219,10 @@ public class InfernalEnchanterScreenHandler extends ScreenHandler {
                 }
                 tool.addEnchantment(enchantment, appliedTier);
                 enchantSource.decrement(1);
+                inventory.markDirty();
+                this.onContentChanged(this.inventory);
+
+                world.playSound(null, blockPos, SoundEvents.BLOCK_ENCHANTMENT_TABLE_USE, SoundCategory.BLOCKS, 1.0F, world.random.nextFloat() * 0.1F + 0.9F);
             });
             return true;
         }

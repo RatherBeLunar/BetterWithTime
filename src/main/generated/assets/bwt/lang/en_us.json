@@ -493,5 +493,9 @@
   "tag.item.bwt.wooden_pedestal_blocks": "Wooden Pedestal Blocks",
   "tag.item.bwt.wooden_siding_blocks": "Wooden Siding Blocks",
   "tag.item.bwt.wooden_table_blocks": "Wooden Table Blocks",
-  "tag.item.bwt.wool_slabs": "Wool Slabs"
+  "tag.item.bwt.wool_slabs": "Wool Slabs",
+  "tooltip.bwt.infernal_enchanter.can_enchant": "Can be Infernally Enchanted",
+  "tooltip.bwt.infernal_enchanter.enchanter_tier_not_high_enough": "Enchanter tier not high enough",
+  "tooltip.bwt.infernal_enchanter.invalid_enchantment": "Invalid Tool or Tome",
+  "tooltip.bwt.infernal_enchanter.not_enough_levels": "Level Requirement: %1$s"
 }

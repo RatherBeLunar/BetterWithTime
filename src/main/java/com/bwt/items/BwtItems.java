@@ -116,7 +116,7 @@ public class BwtItems implements ModInitializer {
             new Item.Settings().food(FoodComponents.PORKCHOP))
     );
 	public static final Item woodBladeItem = Registry.register(Registries.ITEM, Id.of("wood_blade"), new Item(new Item.Settings()));
-    public static final ArcaneTomeItem arcaneTome = Registry.register(Registries.ITEM, Id.of("arcane_tome"), new ArcaneTomeItem(new Item.Settings().maxCount(1).rarity(Rarity.UNCOMMON).component(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, ArcaneEnchantmentComponent.DEFAULT).component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)));
+    public static final ArcaneTomeItem arcaneTome = Registry.register(Registries.ITEM, Id.of("arcane_tome"), new ArcaneTomeItem(new Item.Settings().rarity(Rarity.UNCOMMON).component(BwtDataComponents.ARCANE_ENCHANTMENT_COMPONENT, ArcaneEnchantmentComponent.DEFAULT).component(DataComponentTypes.ENCHANTMENT_GLINT_OVERRIDE, true)));
 
     @Override
     public void onInitialize() {

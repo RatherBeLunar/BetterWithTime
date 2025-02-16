@@ -1,43 +1,15 @@
 {
   "values": [
     {
-      "id": "#bwt:infernal_enchantments/luck_of_the_sea",
+      "id": "#bwt:infernal_enchantments/frost_walker",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/infinity",
+      "id": "#bwt:infernal_enchantments/respiration",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/fire_aspect",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/flame",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/channeling",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/breach",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/efficiency",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/soul_speed",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/protection",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/fire_protection",
+      "id": "#bwt:infernal_enchantments/bane_of_arthropods",
       "required": false
     },
     {
@@ -45,31 +17,11 @@
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/sweeping_edge",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/quick_charge",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/mending",
-      "required": false
-    },
-    {
       "id": "#bwt:infernal_enchantments/wind_burst",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/frost_walker",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/swift_sneak",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/power",
+      "id": "#bwt:infernal_enchantments/projectile_protection",
       "required": false
     },
     {
@@ -77,19 +29,43 @@
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/silk_touch",
+      "id": "#bwt:infernal_enchantments/density",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/lure",
+      "id": "#bwt:infernal_enchantments/sweeping_edge",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/knockback",
+      "id": "#bwt:infernal_enchantments/mending",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/blast_protection",
+      "id": "#bwt:infernal_enchantments/channeling",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/binding_curse",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/multishot",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/protection",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/quick_charge",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/fire_aspect",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/efficiency",
       "required": false
     },
     {
@@ -97,7 +73,83 @@
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/projectile_protection",
+      "id": "#bwt:infernal_enchantments/feather_falling",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/depth_strider",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/unbreaking",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/piercing",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/lure",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/swift_sneak",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/breach",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/infinity",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/sharpness",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/blast_protection",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/vanishing_curse",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/luck_of_the_sea",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/impaling",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/knockback",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/flame",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/silk_touch",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/fire_protection",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/aqua_affinity",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/loyalty",
+      "required": false
+    },
+    {
+      "id": "#bwt:infernal_enchantments/soul_speed",
       "required": false
     },
     {
@@ -109,63 +161,11 @@
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/unbreaking",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/feather_falling",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/aqua_affinity",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/density",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/depth_strider",
-      "required": false
-    },
-    {
       "id": "#bwt:infernal_enchantments/fortune",
       "required": false
     },
     {
-      "id": "#bwt:infernal_enchantments/bane_of_arthropods",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/impaling",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/sharpness",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/loyalty",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/piercing",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/multishot",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/vanishing_curse",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/binding_curse",
-      "required": false
-    },
-    {
-      "id": "#bwt:infernal_enchantments/respiration",
+      "id": "#bwt:infernal_enchantments/power",
       "required": false
     }
   ]

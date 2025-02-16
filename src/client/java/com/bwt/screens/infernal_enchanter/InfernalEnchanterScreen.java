@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.StringVisitable;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -41,7 +42,12 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         components.add(new VerticalBar(x + 50, y + 34, 5, 61, 176, 32, 176 + 5, 32, this) {
             @Override
             int getProgress(DrawContext context) {
-                return this.screen.handler.getPropertyDelegate().get(1) + 1;
+                return this.screen.handler.getPropertyDelegate().get(1);
+            }
+
+            @Override
+            int maxProgress() {
+                return 60;
             }
         });
     }
@@ -50,8 +56,8 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int input) {
 
-        for (Drawable drawable: components) {
-            if(drawable instanceof Button) {
+        for (Drawable drawable : components) {
+            if (drawable instanceof Button) {
                 Button button = (Button) drawable;
                 if (button.mouseClick(mouseX, mouseY, input)) {
                     if (this.client != null && this.handler.onButtonClick(this.client.player, button.id)) {
@@ -61,15 +67,6 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
             }
         }
         return super.mouseClicked(mouseX, mouseY, input);
-    }
-
-    protected void drawSizeBar(DrawContext context) {
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        int enchantmentPowerSourceCount = this.handler.getPropertyDelegate().get(1);
-
-        context.drawTexture(TEXTURE, x + 50 ,y + 34, 176,32, 5, 61);
-        context.drawTexture(TEXTURE, x + 50 ,y + 34, 176+5,32, 5, 1+enchantmentPowerSourceCount);
     }
 
     @Override
@@ -95,7 +92,7 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
     }
 
 
-    private static abstract  class VerticalBar implements Drawable {
+    private static abstract class VerticalBar implements Drawable {
         private final int x, y, w, h;
         private final int u1;
         private final int v1;
@@ -115,16 +112,18 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
             this.screen = screen;
         }
 
-        abstract  int getProgress(DrawContext context);
+        abstract int getProgress(DrawContext context);
+        abstract int maxProgress();
 
         @Override
         public void render(DrawContext context, int mouseX, int mouseY, float delta) {
             int progress = this.getProgress(context);
+            int clampedProgress = Math.min(progress, this.maxProgress());
             context.drawTexture(TEXTURE, x, y, u1, v1, w, h);
-            context.drawTexture(TEXTURE, x, y, u2, v2, w, progress);
+            context.drawTexture(TEXTURE, x, y, u2, v2, w, clampedProgress);
             boolean selected = (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h);
 
-            if(selected) {
+            if (selected) {
                 context.drawTooltip(this.screen.textRenderer, Text.of(String.format("%d", progress)), mouseX, mouseY);
             }
         }
@@ -143,33 +142,41 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
             this.screen = screen;
         }
 
+        private record State(MutableText text, boolean enabled) {
+        }
+
         public boolean mouseClick(double mouseX, double mouseY, int input) {
-            if (this.isDisabled()) {
+            var state = this.getButtonState();
+            if (!state.enabled) {
                 return false;
             }
             return mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h;
         }
 
-        private boolean isDisabled() {
+        private State getButtonState() {
             int enchanterTier = this.screen.handler.getPropertyDelegate().get(0);
+
+            if (!this.screen.handler.canEnchantToolWithEnchantment(this.id)) {
+                return new State(Text.translatable("tooltip.bwt.infernal_enchanter.invalid_enchantment"), false);
+            }
+
             if (this.id + 1 > enchanterTier) {
-                return true;
+                return new State(Text.translatable("tooltip.bwt.infernal_enchanter.enchanter_tier_not_high_enough"), false);
             }
 
             int levelRequired = this.screen.handler.getButtonCost(this.id);
 
             var player = this.screen.client.player;
             int playerLevel = player.experienceLevel;
-            if (!player.isCreative() && playerLevel < levelRequired) {
-                return true;
+
+            if (playerLevel < levelRequired && !player.isCreative()) {
+                return new State(Text.translatable("tooltip.bwt.infernal_enchanter.not_enough_levels", levelRequired), false);
             }
 
 
-            if (!this.screen.handler.canEnchantToolWithEnchantment(this.id)) {
-                return true;
-            }
 
-            return false;
+
+            return new State(null, true);
         }
 
 
@@ -177,19 +184,15 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
         public void render(DrawContext context, int mouseX, int mouseY, float delta) {
             int levelRequired = this.screen.handler.getButtonCost(this.id);
             var enchantment = this.screen.handler.getEnchantment();
+            var state = this.getButtonState();
+            boolean selected = (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h);
+            int textColor = selected ? 16777088 : 6839882;
 
-            if (this.isDisabled()) {
-                RenderSystem.enableBlend();
-                context.drawTexture(TEXTURE, x, y, 0, 230, w, h);
-                RenderSystem.disableBlend();
-            } else {
-
-                boolean selected = (mouseX > x && mouseY > y && mouseX < x + w && mouseY < y + h);
+            if (state.enabled) {
 
                 var levelString = String.format("%d", levelRequired);
                 int levelColor = 8453920;
 
-                int textColor = selected ? 16777088 : 6839882;
 
                 int p = 86 - this.screen.textRenderer.getWidth(levelString);
 
@@ -197,13 +200,19 @@ public class InfernalEnchanterScreen extends HandledScreen<InfernalEnchanterScre
                     RenderSystem.enableBlend();
                     context.drawTexture(TEXTURE, x, y, 108, 211, w, h);
                     RenderSystem.disableBlend();
-                    context.drawTooltip(this.screen.textRenderer, InfernalEnchantingPhrases.tooltipForEnchantment(enchantment,  this.screen.handler.getResultEnchantmentLevel(this.id)), mouseX, mouseY);
+                    context.drawTooltip(this.screen.textRenderer, InfernalEnchantingPhrases.tooltipForEnchantment(enchantment, this.screen.handler.getResultEnchantmentLevel(this.id)), mouseX, mouseY);
                 }
                 StringVisitable stringVisitable = InfernalEnchantingPhrases.getInstance().generatePhrase(this.screen.textRenderer, p, enchantment, this.screen.handler.getResultEnchantmentLevel(id));
                 context.drawTextWrapped(this.screen.textRenderer, stringVisitable, x + 2, y + 2, p, textColor);
                 context.drawTextWithShadow(this.screen.textRenderer, levelString, x + w - 2 - this.screen.textRenderer.getWidth(levelString), y + 9, levelColor);
 
-
+            } else {
+                RenderSystem.enableBlend();
+                context.drawTexture(TEXTURE, x, y, 0, 230, w, h);
+                if(selected && state.text != null) {
+                    context.drawTooltip(this.screen.textRenderer, state.text, mouseX, mouseY);
+                }
+                RenderSystem.disableBlend();
             }
         }
     }

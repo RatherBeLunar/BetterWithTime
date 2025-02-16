@@ -57,6 +57,9 @@ public class InfernalEnchantingPhrases {
     }
 
     public static MutableText tooltipForEnchantment(RegistryEntry<Enchantment> enchantment, int level) {
+        if(enchantment == null) {
+            return Text.empty();
+        }
         return (MutableText) Enchantment.getName(enchantment, level);
     }
 

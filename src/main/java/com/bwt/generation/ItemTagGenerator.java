@@ -475,7 +475,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL)
                 .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE)
-                .add(Items.NETHERITE_SHOVEL, Items.NETHERITE_AXE, Items.NETHERITE_HOE, BwtItems.netheriteMattockItem);
+                .add(Items.NETHERITE_SHOVEL, Items.NETHERITE_AXE, Items.NETHERITE_HOE)
+                .addTag(BwtItemTags.INFERNAL_ENCHANTABLE_PICKAXE);
 
         getOrCreateTagBuilder(BwtItemTags.INFERNAL_ENCHANTABLE_DURABLITY)
                 .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_ARMOR)
@@ -485,10 +486,9 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         addInfernalEnchantable(Enchantments.EFFICIENCY)
                 .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL);
-
-
-        //TODO complete tag membership
         addInfernalEnchantable(Enchantments.FORTUNE)
+                .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL);
+        addInfernalEnchantable(Enchantments.SILK_TOUCH)
                 .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_TOOL);
         addInfernalEnchantable(Enchantments.LOOTING)
                 .addOptionalTag(BwtItemTags.INFERNAL_ENCHANTABLE_MELEE_WEAPON);

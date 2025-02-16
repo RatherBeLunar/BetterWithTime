@@ -39,6 +39,12 @@ public class LangGenerator extends FabricLanguageProvider {
         addEmiNames(translationBuilder);
 
         addArcaneTomeNames(translationBuilder, registryLookup);
+
+        translationBuilder.add("tooltip.bwt.infernal_enchanter.can_enchant", "Can be Infernally Enchanted");
+        translationBuilder.add("tooltip.bwt.infernal_enchanter.enchanter_tier_not_high_enough", "Enchanter tier not high enough");
+        translationBuilder.add("tooltip.bwt.infernal_enchanter.not_enough_levels", "Level Requirement: %1$s");
+        translationBuilder.add("tooltip.bwt.infernal_enchanter.invalid_enchantment", "Invalid Tool or Tome");
+
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
         translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");

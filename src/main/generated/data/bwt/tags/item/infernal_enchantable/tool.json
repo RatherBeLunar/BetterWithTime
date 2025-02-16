@@ -7,6 +7,6 @@
     "minecraft:netherite_shovel",
     "minecraft:netherite_axe",
     "minecraft:netherite_hoe",
-    "bwt:netherite_mattock"
+    "#bwt:infernal_enchantable/pickaxe"
   ]
 }
