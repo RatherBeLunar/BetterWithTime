@@ -320,6 +320,15 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('S', Items.STICK)
                 .criterion("has_nether_coal", conditionsFromItem(BwtItems.nethercoalItem))
                 .offerTo(exporter, "bwt:torch_from_nether_coal");
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, Blocks.SOUL_TORCH, 4)
+                .pattern("X")
+                .pattern("#")
+                .pattern("S")
+                .input('X', BwtItems.nethercoalItem)
+                .input('#', Items.STICK)
+                .input('S', ItemTags.SOUL_FIRE_BASE_BLOCKS)
+                .criterion("has_nether_coal", conditionsFromItem(BwtItems.nethercoalItem))
+                .offerTo(exporter, "bwt:soul_torch_from_nether_coal");
     }
 
     private void generateTier2Recipes(RecipeExporter exporter) {
