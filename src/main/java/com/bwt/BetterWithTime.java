@@ -24,7 +24,6 @@ import com.bwt.items.components.BwtDataComponents;
 import com.bwt.loot_tables.BwtLootTables;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
-import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.TrackedDataHandlers;
@@ -57,7 +56,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +93,7 @@ public class BetterWithTime implements ModInitializer {
 		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("pulley"), pulleyScreenHandler);
 		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("hopper"), mechHopperScreenHandler);
 		soulForgeScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("soul_forge"), soulForgeScreenHandler);
-        infernalEnchanterScreenHandler = Registry.register(Registries.SCREEN_HANDLER, new Identifier("bwt", "infernal_enchanter"), infernalEnchanterScreenHandler);
+        infernalEnchanterScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("infernal_enchanter"), infernalEnchanterScreenHandler);
 	}
 
 	@Override
@@ -151,7 +149,7 @@ public class BetterWithTime implements ModInitializer {
 		HorizontalBlockAttachmentHelper.registerDefaults();
 		VerticalBlockAttachmentHelper.registerDefaults();
 
-		LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
+		LootTableEvents.MODIFY.register((key, tableBuilder, source, registryLookup) -> {
 			if (!source.isBuiltin()) {
 				return;
 			}
@@ -164,7 +162,7 @@ public class BetterWithTime implements ModInitializer {
                                         .conditionally(
                                                 EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true)))
                                         )
-						).apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0.0f, 1.0f)));
+						).apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0.0f, 1.0f)));
 
 				tableBuilder.pool(poolBuilder);
 			}

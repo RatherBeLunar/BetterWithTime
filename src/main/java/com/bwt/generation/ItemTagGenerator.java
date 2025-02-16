@@ -4,8 +4,6 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
-import com.bwt.tags.CompatibilityTags;
-import com.google.common.collect.ObjectArrays;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
@@ -19,7 +17,6 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
@@ -28,7 +25,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup arg) {
+    protected void configure(RegistryWrapper.WrapperLookup registryLookup) {
         copy(BlockTags.RAILS, ItemTags.RAILS);
         copy(BlockTags.SLABS, ItemTags.SLABS);
         copy(BlockTags.DIRT, ItemTags.DIRT);
