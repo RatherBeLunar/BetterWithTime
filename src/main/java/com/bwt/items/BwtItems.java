@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
 import com.bwt.utils.Id;
+import com.bwt.utils.LockableItemSettings;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
@@ -76,7 +77,7 @@ public class BwtItems implements ModInitializer {
     public static final Item rawEggItem = Registry.register(Registries.ITEM, Id.of("raw_egg"), new Item(new Item.Settings().food(new FoodComponent.Builder().nutrition(2).saturationModifier(0.25f).build())));
     public static final Item redstoneEyeItem = Registry.register(Registries.ITEM, Id.of("redstone_eye"), new Item(new Item.Settings()));
     public static final Item netheriteMattockItem = Registry.register(Registries.ITEM, Id.of("netherite_mattock"), new MattockItem(ToolMaterials.NETHERITE, new Item.Settings().fireproof().attributeModifiers(PickaxeItem.createAttributeModifiers(ToolMaterials.NETHERITE, 1, -3.0f))));
-    public static final Item netheriteBattleAxeItem = Registry.register(Registries.ITEM, Id.of("netherite_battle_axe"), new BattleAxeItem(ToolMaterials.NETHERITE, new Item.Settings().fireproof().attributeModifiers(AxeItem.createAttributeModifiers(ToolMaterials.NETHERITE, 3, -2.4f))));
+    public static final Item netheriteBattleAxeItem = Registry.register(Registries.ITEM, Id.of("netherite_battle_axe"), new BattleAxeItem(ToolMaterials.NETHERITE, new LockableItemSettings().attributeModifiers(AxeItem.createAttributeModifiers(ToolMaterials.NETHERITE, 3, -2.4f))));
 	public static final Item ropeItem = Registry.register(Registries.ITEM, Id.of("rope"), new RopeItem(new Item.Settings()));
 	public static final Item rottedArrowItem = Registry.register(Registries.ITEM, Id.of("rotted_arrow"), new RottedArrowItem(new Item.Settings()));
 	public static final Item sailItem = Registry.register(Registries.ITEM, Id.of("sail"), new Item(new Item.Settings().maxCount(1)));
