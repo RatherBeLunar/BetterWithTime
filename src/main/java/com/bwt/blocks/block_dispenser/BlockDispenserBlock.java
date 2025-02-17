@@ -65,7 +65,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
     }
 
-    protected DispenserBehavior invertStackResult(DispenserBehavior behavior) {
+    protected static DispenserBehavior invertStackResult(DispenserBehavior behavior) {
         return (pointer, stack) -> {
             int originalCount = stack.getCount();
             ItemStack overwriteStack = behavior.dispense(pointer, stack);
@@ -121,13 +121,12 @@ public class BlockDispenserBlock extends DispenserBlock {
                 Items.TNT_MINECART
         ).forEach(item -> registerItemDispenseBehavior(item, minecartDispenserBehavior));
 
-        DispenserBehavior dynamiteBehavior = new ProjectileDispenserBehavior(BwtItems.dynamiteItem);
-        registerItemDispenseBehavior(BwtItems.dynamiteItem, invertStackResult(dynamiteBehavior));
-        DispenserBlock.registerBehavior(BwtItems.dynamiteItem, dynamiteBehavior);
-
-        DispenserBehavior broadheadArrowBehavior = new ProjectileDispenserBehavior(BwtItems.broadheadArrowItem);
-        registerItemDispenseBehavior(BwtItems.broadheadArrowItem, invertStackResult(broadheadArrowBehavior));
-        DispenserBlock.registerBehavior(BwtItems.broadheadArrowItem, broadheadArrowBehavior);
+        registerVanillaAndBDProjectileBehaviors(
+                BwtItems.dynamiteItem,
+                BwtItems.broadheadArrowItem,
+                BwtItems.rottedArrowItem,
+                BwtItems.soulUrnItem
+        );
 
         ItemDispenserBehavior miningChargeBehavior = new ItemDispenserBehavior(){
             @Override
@@ -164,6 +163,14 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     public static void registerBlockDispenseBehavior(Class<? extends Block> blockClass, DispenserBehavior behavior) {
         BLOCK_BEHAVIORS.put(blockClass, behavior);
+    }
+
+    public static void registerVanillaAndBDProjectileBehaviors(Item... items) {
+        for (Item item : items) {
+            DispenserBehavior projectileBehavior = new ProjectileDispenserBehavior(item);
+            registerItemDispenseBehavior(item, invertStackResult(projectileBehavior));
+            DispenserBlock.registerBehavior(item, projectileBehavior);
+        }
     }
 
     public void registerBehaviors() {
