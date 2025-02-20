@@ -72,14 +72,6 @@ public class HandCrankBlock extends Block {
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.DOWN && !state.canPlaceAt(world, pos)) {
-            return Blocks.AIR.getDefaultState();
-        }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
-    }
-
-    @Override
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
         if ((hit.getPos().y - pos.getY()) * 16 <= baseHeight) {
             return ActionResult.FAIL;
@@ -178,5 +170,25 @@ public class HandCrankBlock extends Block {
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
+            return;
+        }
+        if (canPlaceAt(state, world, pos)) {
+            return;
+        }
+        dropStacks(state, world, pos);
+        world.removeBlock(pos, notify);
+    }
+
+    @Override
+    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (moved) {
+            return;
+        }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 }

@@ -193,6 +193,7 @@ public class BwtBlocks implements ModInitializer {
 	public static final RopeBlock ropeBlock = new RopeBlock(AbstractBlock.Settings.create()
             .hardness(0.5f)
             .sounds(BlockSoundGroup.GRASS)
+            .pistonBehavior(PistonBehavior.DESTROY)
     );
 	public static final Block sawBlock = new SawBlock(AbstractBlock.Settings.create()
             .hardness(2f)

@@ -30,10 +30,22 @@ public abstract class UnfiredPotteryBlock extends Block {
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canPlaceAt(world, pos)) {
-            return Blocks.AIR.getDefaultState();
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
+            return;
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        if (canPlaceAt(state, world, pos)) {
+            return;
+        }
+        dropStacks(state, world, pos);
+        world.removeBlock(pos, notify);
+    }
+
+    @Override
+    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (moved) {
+            return;
+        }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 }
