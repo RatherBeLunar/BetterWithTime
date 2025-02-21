@@ -43,18 +43,15 @@ public class DetectorLogicBlock extends AirBlock {
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!anyNeighborDetectors(world, pos)) {
-            return Blocks.AIR.getDefaultState();
-        }
-        if (!direction.equals(Direction.DOWN)) {
-            return state;
-        }
-        boolean blockIntersect = anyBlocksIntersecting(neighborState);
-        if (blockIntersect == state.get(BLOCK_INTERSECT)) {
-            return state;
-        }
         world.scheduleBlockTick(pos, this, tickRate);
-        return state.with(BLOCK_INTERSECT, blockIntersect);
+        return state;
+    }
+
+    @Override
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        if (!world.isClient() && !state.isOf(oldState.getBlock())) {
+            world.scheduleBlockTick(pos, this, tickRate);
+        }
     }
 
     @Override
@@ -118,16 +115,16 @@ public class DetectorLogicBlock extends AirBlock {
         if (blockIntersect != null) {
             state = state.with(BLOCK_INTERSECT, blockIntersect);
         }
-        world.setBlockState(pos, state, Block.NOTIFY_LISTENERS);
+        world.setBlockState(pos, state, Block.NOTIFY_ALL, 0);
         int detectorsUpdated = notifyNeighborDetectors(state, world, pos);
         if (detectorsUpdated == 0) {
-            world.removeBlock(pos, false);
+            world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 0);
             return false;
         }
         return true;
     }
 
-    public boolean anyNeighborDetectors(WorldAccess world, BlockPos pos) {
+    public static boolean anyNeighborDetectors(WorldAccess world, BlockPos pos) {
         for (Direction direction : Direction.values()) {
             BlockPos targetPos = pos.offset(direction);
             BlockState neighborState = world.getBlockState(targetPos);
@@ -145,6 +142,7 @@ public class DetectorLogicBlock extends AirBlock {
             BlockState neighborState = world.getBlockState(targetPos);
             if (neighborState.isOf(BwtBlocks.detectorBlock) && neighborState.get(DetectorBlock.FACING).equals(direction.getOpposite())) {
                 numDetectorsUpdated += 1;
+                world.replaceWithStateForNeighborUpdate(direction.getOpposite(), state, targetPos, pos, Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS), 512);
                 world.updateNeighbor(neighborState, targetPos, state.getBlock(), pos, false);
             }
         }

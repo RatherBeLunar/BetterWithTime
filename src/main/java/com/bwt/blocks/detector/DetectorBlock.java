@@ -15,9 +15,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
@@ -48,9 +46,9 @@ public class DetectorBlock extends SimpleFacingBlock {
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        world.scheduleBlockTick(pos, this, tickRate);
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
+        placeDetectorLogicIfNecessary(world, pos, state);
     }
 
     @Override
@@ -133,18 +131,29 @@ public class DetectorBlock extends SimpleFacingBlock {
         BlockState targetState = world.getBlockState(targetPos);
 
         if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.detectorLogicBlock) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
-            world.setBlockState(targetPos, BwtBlocks.detectorLogicBlock.getDefaultState());
+            world.setBlockState(targetPos, BwtBlocks.detectorLogicBlock.getDefaultState(), Block.NOTIFY_ALL, 0);
             return true;
         }
         return false;
     }
+
+    public void removeDetectorLogicIfNecessary(World world, BlockPos pos, BlockState state) {
+        Direction facing = state.get(FACING);
+        BlockPos targetPos = pos.offset(facing);
+        BlockState targetState = world.getBlockState(targetPos);
+
+        if (targetState.isOf(BwtBlocks.detectorLogicBlock) && !DetectorLogicBlock.anyNeighborDetectors(world, pos)) {
+            world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 0);
+        }
+    }
+
 
     public boolean checkForDetection(World world, BlockPos pos, BlockState state) {
         Direction facing = state.get(FACING);
         BlockPos targetPos = pos.offset(facing);
         BlockState targetState = world.getBlockState(targetPos);
 
-        if (targetState.isOf(Blocks.AIR)) {
+        if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.detectorLogicBlock) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
             // We haven't placed the logic block yet, return false for now
             return false;
         }
@@ -173,5 +182,13 @@ public class DetectorBlock extends SimpleFacingBlock {
         double f = axis == Direction.Axis.Y ? 0.5 + 0.5625 * (double)facing.getOffsetY() : (double)random.nextFloat();
         double g = axis == Direction.Axis.Z ? 0.5 + 0.5625 * (double)facing.getOffsetZ() : (double)random.nextFloat();
         world.addParticle(DustParticleEffect.DEFAULT, (double)pos.getX() + e, (double)pos.getY() + f, (double)pos.getZ() + g, 0.0, 0.0, 0.0);
+    }
+
+    @Override
+    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        super.onStateReplaced(state, world, pos, newState, moved);
+        if (!newState.isOf(this)) {
+            removeDetectorLogicIfNecessary(world, pos, state);
+        }
     }
 }
