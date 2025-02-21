@@ -4,6 +4,7 @@ import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.FireBlock;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
@@ -54,7 +55,8 @@ public class HibachiBlock extends Block {
             world.setBlockState(pos, state.cycle(LIT), Block.NOTIFY_ALL);
         }
         if (lit) {
-            if (world.getBlockState(pos.up()).isIn(BlockTags.AIR)) {
+            BlockState aboveState = world.getBlockState(pos.up());
+            if (!aboveState.isIn(BlockTags.FIRE) && (aboveState.isIn(BlockTags.AIR) || BwtBlocks.stokedFireBlock.isFlammable(aboveState))) {
                 world.playSound(null, pos, BwtSoundEvents.HIBACHI_IGNITE,
                         SoundCategory.BLOCKS, 1F, world.random.nextFloat() * 0.4F + 1F);
                 world.setBlockState(pos.up(), Blocks.FIRE.getDefaultState());

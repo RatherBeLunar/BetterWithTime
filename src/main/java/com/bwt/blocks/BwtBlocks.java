@@ -117,7 +117,6 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block hibachiBlock = new HibachiBlock(AbstractBlock.Settings.create()
             .hardness(3.5f)
             .sounds(BlockSoundGroup.STONE)
-            .solidBlock(Blocks::never)
             .requiresTool()
     );
 	public static final Block hopperBlock = new MechHopperBlock(AbstractBlock.Settings.create()
