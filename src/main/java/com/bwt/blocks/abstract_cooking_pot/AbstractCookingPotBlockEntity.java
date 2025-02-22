@@ -207,7 +207,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
         Direction facing = state.get(AbstractCookingPotBlock.TIP_DIRECTION);
         BlockPosAndState dumpPosAndState = BlockPosAndState.of(world, pos.offset(facing));
-        if (!dumpPosAndState.state().isReplaceable()) {
+        if (!dumpPosAndState.state().isReplaceable() && !dumpPosAndState.state().getCollisionShape(world, dumpPosAndState.pos()).isEmpty()) {
             return;
         }
         ejectStack(world, itemStack, facing, dumpPosAndState);
