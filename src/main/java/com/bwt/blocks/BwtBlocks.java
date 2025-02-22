@@ -81,9 +81,13 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block companionSlabBlock = new CompanionSlabBlock(AbstractBlock.Settings.copy(companionCubeBlock));
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
 	public static final Block crucibleBlock = new CrucibleBlock(AbstractBlock.Settings.create()
-            .sounds(BlockSoundGroup.GLASS)
+            .solidBlock(Blocks::never)
+            .nonOpaque()
             .hardness(0.6f)
             .resistance(3f)
+            .sounds(BlockSoundGroup.GLASS)
+            .mapColor(MapColor.WHITE_GRAY)
+            .requiresTool()
     );
 	public static final Block detectorBlock = new DetectorBlock(AbstractBlock.Settings.copy(Blocks.DISPENSER)
             .hardness(3.5f)
@@ -221,27 +225,27 @@ public class BwtBlocks implements ModInitializer {
     );
 	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredPlanterBlock = new UnfiredPlanterBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredVaseBlock = new UnfiredVaseBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
     );
 	public static final Block urnBlock = new UrnBlock(AbstractBlock.Settings.copy(Blocks.TERRACOTTA)
             .nonOpaque()
-            .solid()
+            .solidBlock(Blocks::never)
             .allowsSpawning(Blocks::never)
             .hardness(2f)
     );
