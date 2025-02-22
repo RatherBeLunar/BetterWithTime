@@ -48,7 +48,7 @@ public class DetectorBlock extends SimpleFacingBlock {
     @Override
     protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         super.onBlockAdded(state, world, pos, oldState, notify);
-        placeDetectorLogicIfNecessary(world, pos, state);
+        world.scheduleBlockTick(pos, this, tickRate);
     }
 
     @Override

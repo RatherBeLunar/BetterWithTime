@@ -53,6 +53,7 @@ public class LensBeamBlock extends Block {
         directions.put(Direction.UP, UP);
         directions.put(Direction.DOWN, DOWN);
     }));
+    protected static int cachedMaxDistance = -1;
 
     public LensBeamBlock(Settings settings) {
         super(settings);
@@ -75,7 +76,7 @@ public class LensBeamBlock extends Block {
 
     @Override
     protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.INVISIBLE;
+        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -113,7 +114,9 @@ public class LensBeamBlock extends Block {
             return;
         }
         int distanceFromLens = getDistanceFromLens(world, pos, direction);
-        propagateBeam(world, pos, state, direction, distanceFromLens);
+        if (!anyEntitiesIntersecting(world, pos)) {
+            propagateBeam(world, pos, state, direction, distanceFromLens);
+        }
     }
 
     @Override
@@ -147,6 +150,14 @@ public class LensBeamBlock extends Block {
         }
     }
 
+    public static int getMaxDistance(World world) {
+        if (cachedMaxDistance != -1) {
+            return cachedMaxDistance;
+        }
+        cachedMaxDistance = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
+        return cachedMaxDistance;
+    }
+
     protected boolean anyEntitiesIntersecting(World world, BlockPos pos) {
         ArrayList<Entity> list = Lists.newArrayList();
         world.collectEntitiesByType(
@@ -162,7 +173,7 @@ public class LensBeamBlock extends Block {
     protected int getDistanceFromLens(World world, BlockPos pos, Direction direction) {
         BlockPos.Mutable mutable = pos.mutableCopy();
         int distanceFromLens = 0;
-        int maxRange = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
+        int maxRange = getMaxDistance(world);
         while (distanceFromLens < maxRange) {
             mutable.move(direction.getOpposite());
             distanceFromLens++;
@@ -198,8 +209,8 @@ public class LensBeamBlock extends Block {
     }
 
     public void propagateBeam(World world, BlockPos originBeamPos, BlockState originBeamState, Direction facing, int targetDistanceFromLens) {
-        int maxRange = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
-        if (targetDistanceFromLens > maxRange) {
+        int maxRange = getMaxDistance(world);
+        if (targetDistanceFromLens > maxRange - 1) {
             return;
         }
         if (!originBeamState.isOf(this) && !originBeamState.isOf(BwtBlocks.lensBlock)) {
