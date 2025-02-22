@@ -104,6 +104,22 @@ public class MiningChargeBlock extends WallMountedBlock {
         if (world.isReceivingRedstonePower(pos)) {
             world.scheduleBlockTick(pos, this, 1);
         }
+        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
+            return;
+        }
+        if (canPlaceAt(state, world, pos)) {
+            return;
+        }
+        dropStacks(state, world, pos);
+        world.removeBlock(pos, notify);
+    }
+
+    @Override
+    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+        if (moved) {
+            return;
+        }
+        super.onStateReplaced(state, world, pos, newState, moved);
     }
 
     @Override

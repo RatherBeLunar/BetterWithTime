@@ -57,7 +57,6 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.buddyBlock);
         addDrop(BwtBlocks.cauldronBlock);
 //        addDrop(BwtBlocks.canvasBlock);
-//        addDrop(BwtBlocks.columnBlock);
         addDrop(BwtBlocks.companionCubeBlock);
         addDrop(BwtBlocks.companionSlabBlock);
         addDrop(BwtBlocks.crucibleBlock);
@@ -73,12 +72,11 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.lensBlock);
         addDrop(BwtBlocks.lightBlockBlock);
         addDrop(BwtBlocks.millStoneBlock);
-//        addDrop(BwtBlocks.miningChargeBlock);
+        addDrop(BwtBlocks.miningChargeBlock);
 //        addDrop(BwtBlocks.netherGrothBlock);
         addDrop(BwtBlocks.obsidianDetectorRailBlock);
         addDrop(BwtBlocks.obsidianPressurePlateBlock);
         addDrop(BwtBlocks.obsidianDetectorRailBlock);
-//        addDrop(BwtBlocks.pedestalBlock);
         addDrop(BwtBlocks.planterBlock);
         addDrop(BwtBlocks.soulForgeBlock);
         addDrop(BwtBlocks.soilPlanterBlock);
