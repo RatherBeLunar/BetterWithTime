@@ -150,7 +150,7 @@ public class BwtBlocks implements ModInitializer {
 	public static final Block millStoneBlock = new MillStoneBlock(AbstractBlock.Settings.copy(Blocks.DISPENSER)
             .hardness(3.5f)
     );
-	public static final Block miningChargeBlock = new MiningChargeBlock(AbstractBlock.Settings.create()
+	public static final MiningChargeBlock miningChargeBlock = new MiningChargeBlock(AbstractBlock.Settings.create()
             .mapColor(MapColor.BROWN)
             .breakInstantly()
             .sounds(BlockSoundGroup.GRASS)

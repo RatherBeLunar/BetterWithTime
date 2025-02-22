@@ -134,7 +134,7 @@ public class BlockDispenserBlock extends DispenserBlock {
                 ServerWorld world = pointer.world();
                 BlockPos blockPos = pointer.pos().offset(pointer.state().get(DispenserBlock.FACING));
                 Direction direction = pointer.state().get(DispenserBlock.FACING);
-                BlockState placementState = BwtBlocks.miningChargeBlock.getPlacementState(
+                BlockState placementState = BwtBlocks.miningChargeBlock.getDispenserPlacmentState(
                         new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, stack, direction)
                 );
                 MiningChargeEntity miningChargeEntity = new MiningChargeEntity(world, blockPos.toCenterPos().subtract(0, 0.5, 0), placementState, null);

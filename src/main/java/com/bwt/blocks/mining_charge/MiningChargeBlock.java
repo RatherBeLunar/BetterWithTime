@@ -12,6 +12,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.BlockTags;
@@ -66,9 +67,20 @@ public class MiningChargeBlock extends WallMountedBlock {
         return COLLISION_SHAPES.get(getSurfaceOrientation(state).getId());
     }
 
-    @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return true;
+    public BlockState getDispenserPlacmentState(ItemPlacementContext ctx) {
+        for (Direction direction : ctx.getPlacementDirections()) {
+            BlockState blockState;
+            if (direction.getAxis() == Direction.Axis.Y) {
+                blockState = this.getDefaultState()
+                        .with(FACE, direction == Direction.UP ? BlockFace.CEILING : BlockFace.FLOOR)
+                        .with(FACING, ctx.getHorizontalPlayerFacing());
+            } else {
+                blockState = this.getDefaultState().with(FACE, BlockFace.WALL).with(FACING, direction.getOpposite());
+            }
+            return blockState;
+        }
+
+        return null;
     }
 
     public static boolean isHorizontal(BlockState state) {
