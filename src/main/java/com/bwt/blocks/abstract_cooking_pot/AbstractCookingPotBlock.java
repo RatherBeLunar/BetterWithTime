@@ -1,8 +1,5 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
-import com.bwt.blocks.AxleBlock;
-import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.HandCrankBlock;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
@@ -21,7 +18,6 @@ import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -42,6 +38,7 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> VoxelShapes.union(BlockUtils.rotateCuboidFromUp(direction, box1), BlockUtils.rotateCuboidFromUp(direction, box2)).simplify())
             .toList();
+    protected static final VoxelShape SIDES_SHAPE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 15.0, 15.0);
 
     public AbstractCookingPotBlock(Settings settings) {
         super(settings);
@@ -72,6 +69,11 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return VoxelShapes.fullCube();
+    }
+
+    @Override
+    public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
+        return SIDES_SHAPE;
     }
 
     @Override
