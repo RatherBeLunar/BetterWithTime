@@ -235,7 +235,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             }
         }
         getWorld()
-                .getOtherEntities(this, this.getBoundingBox().expand(0.1f, 0.01f, 0.1f), EntityPredicates.canBePushedBy(this))
+                .getOtherEntities(this, this.getBoundingBox().expand(0.01f, 0.01f, 0.01f), EntityPredicates.canBePushedBy(this))
                 .forEach(this::pushAwayFrom);
     }
 
@@ -244,7 +244,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         if (entity.noClip || this.noClip) {
             return;
         }
-        Box thisBox = this.getBoundingBox().expand(0.1f, 0.01f, 0.1f);
+        Box thisBox = this.getBoundingBox().expand(0.01f, 0.01f, 0.01f);
         Box entityBox = entity.getBoundingBox();
         List<Pair<Direction, Double>> intersections = new ArrayList<>();
         for (Direction.Axis axis : Direction.Axis.values()) {
