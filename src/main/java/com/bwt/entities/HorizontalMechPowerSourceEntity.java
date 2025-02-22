@@ -15,14 +15,15 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.minecraft.util.TypeFilter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.function.Predicate;
 
 public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity {
@@ -236,6 +237,36 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         getWorld()
                 .getOtherEntities(this, this.getBoundingBox().expand(0.1f, 0.01f, 0.1f), EntityPredicates.canBePushedBy(this))
                 .forEach(this::pushAwayFrom);
+    }
+
+    @Override
+    public void pushAwayFrom(Entity entity) {
+        if (entity.noClip || this.noClip) {
+            return;
+        }
+        Box thisBox = this.getBoundingBox().expand(0.1f, 0.01f, 0.1f);
+        Box entityBox = entity.getBoundingBox();
+        List<Pair<Direction, Double>> intersections = new ArrayList<>();
+        for (Direction.Axis axis : Direction.Axis.values()) {
+            double thisMin = thisBox.getMin(axis);
+            double thisMax = thisBox.getMax(axis);
+            double entityMin = entityBox.getMin(axis);
+            double entityMax = entityBox.getMax(axis);
+            if (thisMax - entityMin > 0) {
+                Direction intersectDirection = Direction.from(axis, Direction.AxisDirection.POSITIVE);
+                intersections.add(new Pair<>(intersectDirection, thisMax - entityMin));
+            }
+            if (entityMax - thisMin > 0) {
+                Direction intersectDirection = Direction.from(axis, Direction.AxisDirection.NEGATIVE);
+                intersections.add(new Pair<>(intersectDirection, entityMax - thisMin));
+            }
+        }
+        intersections.stream()
+                .min(Comparator.comparingDouble(pair -> Math.abs(pair.getRight())))
+                .filter(pair -> pair.getRight() > 0.01f)
+                .ifPresent(pair -> entity.addVelocity(
+                        new Vec3d(pair.getLeft().getUnitVector().mul(pair.getRight().floatValue() / 2)))
+                );
     }
 
     protected void updateRotation() {
