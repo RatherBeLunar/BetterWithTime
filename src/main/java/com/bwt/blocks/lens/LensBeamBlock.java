@@ -53,7 +53,6 @@ public class LensBeamBlock extends Block {
         directions.put(Direction.UP, UP);
         directions.put(Direction.DOWN, DOWN);
     }));
-    protected static int cachedMaxDistance = -1;
 
     public LensBeamBlock(Settings settings) {
         super(settings);
@@ -76,7 +75,7 @@ public class LensBeamBlock extends Block {
 
     @Override
     protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.INVISIBLE;
+        return BlockRenderType.MODEL;
     }
 
     @Override
@@ -113,9 +112,9 @@ public class LensBeamBlock extends Block {
         if (!state.get(FACING_PROPERTIES.get(direction))) {
             return;
         }
-        int distanceFromLens = getDistanceFromLens(world, pos, direction);
-        if (!anyEntitiesIntersecting(world, pos)) {
-            propagateBeam(world, pos, state, direction, distanceFromLens);
+        int range = getRemainingRange(world, pos, direction);
+        if (range > 0 && !anyEntitiesIntersecting(world, pos)) {
+            propagateBeam(world, pos, state, direction, range);
         }
     }
 
@@ -144,18 +143,10 @@ public class LensBeamBlock extends Block {
             BlockState finalState = setTerminus(world, pos, state, false);
             streamFacingDirections(finalState)
                     .forEach(entry -> {
-                        int distanceFromLens = getDistanceFromLens(world, pos, entry.getKey());
-                        propagateBeam(world, pos, finalState, entry.getKey(), distanceFromLens);
+                        int range = getRemainingRange(world, pos, entry.getKey());
+                        propagateBeam(world, pos, finalState, entry.getKey(), range);
                     });
         }
-    }
-
-    public static int getMaxDistance(World world) {
-        if (cachedMaxDistance != -1) {
-            return cachedMaxDistance;
-        }
-        cachedMaxDistance = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
-        return cachedMaxDistance;
     }
 
     protected boolean anyEntitiesIntersecting(World world, BlockPos pos) {
@@ -170,10 +161,10 @@ public class LensBeamBlock extends Block {
         return !list.isEmpty();
     }
 
-    protected int getDistanceFromLens(World world, BlockPos pos, Direction direction) {
+    protected int getRemainingRange(World world, BlockPos pos, Direction direction) {
         BlockPos.Mutable mutable = pos.mutableCopy();
         int distanceFromLens = 0;
-        int maxRange = getMaxDistance(world);
+        int maxRange = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
         while (distanceFromLens < maxRange) {
             mutable.move(direction.getOpposite());
             distanceFromLens++;
@@ -188,11 +179,11 @@ public class LensBeamBlock extends Block {
                 break;
             }
         }
-        return distanceFromLens;
+        return maxRange - distanceFromLens;
     }
 
     public void fireBeam(World world, BlockPos lensPos, BlockState lensState) {
-        propagateBeam(world, lensPos, lensState, lensState.get(LensBlock.FACING), 1);
+        propagateBeam(world, lensPos, lensState, lensState.get(LensBlock.FACING), world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE));
     }
 
     public void killBeam(World world, BlockPos originPos, Direction facing) {
@@ -208,9 +199,8 @@ public class LensBeamBlock extends Block {
         }
     }
 
-    public void propagateBeam(World world, BlockPos originBeamPos, BlockState originBeamState, Direction facing, int targetDistanceFromLens) {
-        int maxRange = getMaxDistance(world);
-        if (targetDistanceFromLens > maxRange - 1) {
+    public void propagateBeam(World world, BlockPos originBeamPos, BlockState originBeamState, Direction facing, int range) {
+        if (range <= 0) {
             return;
         }
         if (!originBeamState.isOf(this) && !originBeamState.isOf(BwtBlocks.lensBlock)) {
@@ -237,7 +227,7 @@ public class LensBeamBlock extends Block {
             return;
         }
 
-        propagateBeam(world, targetPos, targetState, facing, targetDistanceFromLens + 1);
+        propagateBeam(world, targetPos, targetState, facing, range - 1);
     }
 
     public BlockState addBeam(World world, BlockPos targetPos, BlockState targetState, Direction facingToAdd, boolean entitiesIntersecting) {
