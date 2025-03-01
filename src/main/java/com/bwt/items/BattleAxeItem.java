@@ -13,7 +13,7 @@ import java.util.List;
 
 public class BattleAxeItem extends SwordItem {
     public BattleAxeItem(ToolMaterial material, LockableItemSettings settings) {
-        super(material, settings.component(DataComponentTypes.TOOL, createToolComponent(material)).lock());
+        super(material, settings.component(DataComponentTypes.TOOL, createToolComponent(material)).maxDamage(material.getDurability()).lock());
     }
 
     private static ToolComponent createToolComponent(ToolMaterial material) {
