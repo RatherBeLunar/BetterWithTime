@@ -73,12 +73,12 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
         if (isLightDetector) {
             BlockPos sourcePos = pos.offset(facing.getOpposite());
 
-            int iSourceLightValue = world.getLightLevel(sourcePos);
+            int sourceLightValue = world.getLightLevel(sourcePos);
 
-            boolean bShouldBeOn =  iSourceLightValue >= 8;
+            boolean shouldBeOn =  sourceLightValue >= 8;
 
-            if (state.get(LIT) != bShouldBeOn ) {
-                world.setBlockState(pos, state.with(LIT, bShouldBeOn));
+            if (state.get(LIT) != shouldBeOn ) {
+                setBlockState(world, pos, state.with(LIT, shouldBeOn));
             }
 
             // schedule another update immediately to check for light changes
@@ -87,7 +87,7 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
         else {
             boolean lightOn = hasEnoughDirectInputLight(world, pos, state);
             if (state.get(LIT) != lightOn) {
-                world.setBlockState(pos, state.with(LIT, lightOn));
+                setBlockState(world, pos, state.with(LIT, lightOn));
             }
             if (lightOn) {
                 BwtBlocks.lensBeamBlock.fireBeam(world, pos, state);
@@ -103,19 +103,19 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
         Direction facing = state.get(FACING);
         Direction targetFacing = facing.getOpposite();
 
-        BlockPosAndState targetPosAndState = BlockPosAndState.of(world, pos.offset(targetFacing));
+        BlockState targetState = world.getBlockState(pos.offset(targetFacing));
 
-        if (targetPosAndState.state().isIn(BlockTags.AIR) && !targetPosAndState.state().isOf(BwtBlocks.lensBeamBlock)) {
+        if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
             return false;
         }
-        if (targetPosAndState.state().isOf(this)) {
+        if (targetState.isOf(this)) {
             // Lenses can feed directly into each other
-            return targetPosAndState.state().get(LIT) && targetPosAndState.state().get(FACING) == facing;
+            return targetState.get(LIT) && targetState.get(FACING) == facing;
         }
-        if (targetPosAndState.state().getLuminance() > minTriggerLightValue) {
+        if (targetState.getLuminance() > minTriggerLightValue) {
             // only power the lens with a terminus lens beam if it is facing directly into it.
-            return !targetPosAndState.state().isOf(BwtBlocks.lensBeamBlock)
-                    || targetPosAndState.state().get(LensBeamBlock.FACING_PROPERTIES.get(facing));
+            return !targetState.isOf(BwtBlocks.lensBeamBlock)
+                    || targetState.get(LensBeamBlock.FACING_PROPERTIES.get(facing));
         }
 
         return false;
@@ -128,5 +128,18 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
             return false;
         }
         return targetPosAndState.state().get(DetectorBlock.FACING) == facing.getOpposite();
+    }
+
+    public static void setBlockState(World world, BlockPos pos, BlockState state) {
+        world.setBlockState(pos, state, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
+        for (Direction direction : Direction.values()) {
+            if (direction.equals(state.get(FACING).getOpposite())) {
+                continue;
+            }
+            BlockPos targetPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(targetPos);
+            world.replaceWithStateForNeighborUpdate(direction.getOpposite(), state, targetPos, pos, Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS), 511);
+            world.updateNeighbor(neighborState, targetPos, state.getBlock(), pos, false);
+        }
     }
 }

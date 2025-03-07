@@ -2,6 +2,7 @@ package com.bwt.blocks.detector;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.SimpleFacingBlock;
+import com.bwt.blocks.lens.LensBlock;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -156,6 +157,9 @@ public class DetectorBlock extends SimpleFacingBlock {
         if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.detectorLogicBlock) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
             // We haven't placed the logic block yet, return false for now
             return false;
+        }
+        if (targetState.isOf(BwtBlocks.lensBlock) && targetState.get(LensBlock.FACING).equals(facing.getOpposite())) {
+            return targetState.get(LensBlock.LIT);
         }
         if (!targetState.isOf(BwtBlocks.detectorLogicBlock)) {
             // Logic block was replaced with something else

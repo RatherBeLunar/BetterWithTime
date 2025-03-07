@@ -135,9 +135,7 @@ public class BwtBlocks implements ModInitializer {
             .hardness(3.5f)
             .sounds(BlockSoundGroup.METAL)
             .solid()
-            .nonOpaque()
             .pistonBehavior(PistonBehavior.BLOCK)
-            .luminance(state -> state.get(LensBlock.LIT) ? 14 : 0)
     );
     public static final LensBeamBlock lensBeamBlock = new LensBeamBlock(AbstractBlock.Settings.create()
             .replaceable()
