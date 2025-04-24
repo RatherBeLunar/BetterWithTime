@@ -1,6 +1,6 @@
 package com.bwt.blocks;
 
-import com.bwt.blocks.mining_charge.MiningChargeBlock;
+import com.bwt.blocks.mining_charge.ICaughtFireBlock;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.*;
@@ -134,8 +134,8 @@ public class StokedFireBlock extends AbstractFireBlock {
             if (block instanceof TntBlock) {
                 TntBlock.primeTnt(world, pos);
             }
-            if (block instanceof MiningChargeBlock) {
-                MiningChargeBlock.prime(world, pos, blockState);
+            if (block instanceof ICaughtFireBlock caught) {
+                caught.onCaughtFire(blockState, world, pos, null, null);
             }
         }
     }

@@ -5,6 +5,7 @@ import com.bwt.entities.MiningChargeEntity;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.BlockFace;
 import net.minecraft.entity.Entity;
@@ -30,7 +31,6 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class MiningChargeBlock extends WallMountedBlock {
+public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBlock {
     protected static final Box BOTTOM_SHAPE = new Box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
@@ -50,6 +50,9 @@ public class MiningChargeBlock extends WallMountedBlock {
     public MiningChargeBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(FACE, BlockFace.WALL));
+        FlammableBlockRegistry.getDefaultInstance().add(
+                this, 15, 100
+        );
     }
 
     public MapCodec<? extends MiningChargeBlock> getCodec() {
@@ -124,7 +127,7 @@ public class MiningChargeBlock extends WallMountedBlock {
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        prime(world, pos, state);
+        prime(world, pos, state, null);
         world.removeBlock(pos, false);
     }
 
@@ -140,10 +143,6 @@ public class MiningChargeBlock extends WallMountedBlock {
         MiningChargeEntity miningChargeEntity = new MiningChargeEntity(world, pos.toCenterPos().subtract(0, 0.5, 0), state, explosion.getCausingEntity());
         miningChargeEntity.setFuse(1);
         world.spawnEntity(miningChargeEntity);
-    }
-
-    public static void prime(World world, BlockPos pos, BlockState state) {
-        prime(world, pos, state, null);
     }
 
     private static void prime(World world, BlockPos pos, BlockState state, @Nullable LivingEntity igniter) {
@@ -210,5 +209,10 @@ public class MiningChargeBlock extends WallMountedBlock {
             case SOUTH -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.NORTH);
             case WEST -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.EAST);
         };
+    }
+    @Override
+    public boolean onCaughtFire(BlockState state, World world, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
+        prime(world, pos, state, igniter);
+        return true;
     }
 }
