@@ -3,8 +3,10 @@ package com.bwt.utils;
 import net.minecraft.util.Identifier;
 
 public class Id {
+    public static final String MOD_ID = "bwt";
+
     public static Identifier of(String id) {
-        return Identifier.of("bwt", id);
+        return Identifier.of(MOD_ID, id);
     }
 
     public static Identifier of(String namespace, String id) {

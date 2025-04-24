@@ -431,8 +431,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("dirt_path_slab"), dirtPathSlabBlock);
         Registry.register(Registries.ITEM, Id.of("dirt_path_slab"), new BlockItem(dirtPathSlabBlock, new Item.Settings()));
         // Grass Slab
-        Registry.register(Registries.BLOCK, Id.of("bwt", "grass_slab"), grassSlabBlock);
-        Registry.register(Registries.ITEM, Id.of("bwt", "grass_slab"), new BlockItem(grassSlabBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("grass_slab"), grassSlabBlock);
+        Registry.register(Registries.ITEM, Id.of("grass_slab"), new BlockItem(grassSlabBlock, new Item.Settings()));
         // Mycelium Slab
         Registry.register(Registries.BLOCK, Id.of("mycelium_slab"), myceliumSlabBlock);
         Registry.register(Registries.ITEM, Id.of("mycelium_slab"), new BlockItem(myceliumSlabBlock, new Item.Settings()));
