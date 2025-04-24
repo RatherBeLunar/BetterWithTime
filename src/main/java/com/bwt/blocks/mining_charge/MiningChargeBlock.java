@@ -42,10 +42,6 @@ import java.util.function.BiConsumer;
 public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBlock {
     protected static final Box BOTTOM_SHAPE = new Box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
-    static {
-
-    }
-
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> BlockUtils.rotateCuboidFromUp(direction, BOTTOM_SHAPE))
             .toList();

@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 
 public class Plugin implements IMixinConfigPlugin  {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger("btw_mixin_plugin");
+    public static final Logger LOGGER = LoggerFactory.getLogger("bwt_mixin_plugin");
 
     private static final Supplier<Boolean> TRUE = () -> true;
 
