@@ -73,7 +73,7 @@ public class StokedFireBlock extends AbstractFireBlock {
 
     @Override
     protected boolean isFlammable(BlockState state) {
-        return true;
+        return FlammableBlockRegistry.getDefaultInstance().get(state.getBlock()).getBurnChance() > 0;
     }
 
 
