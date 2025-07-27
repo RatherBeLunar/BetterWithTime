@@ -24,6 +24,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
 import net.minecraft.block.*;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
@@ -160,7 +161,6 @@ public class BwtBlocks implements ModInitializer {
             .solidBlock(Blocks::never)
     );
 	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
-//	public static final Block netherGrothBlock = new NetherGrothBlock(AbstractBlock.Settings.create());
 	public static final Block obsidianPressurePlateBlock = new ObsidianPressurePlateBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
             .strength(50.0f, 1200.0f)
     );
@@ -267,6 +267,23 @@ public class BwtBlocks implements ModInitializer {
     public static final Block myceliumSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.MYCELIUM), Blocks.MYCELIUM);
     public static final Block podzolSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.PODZOL), Blocks.PODZOL);
 
+    public static final Block netherGroth = new NetherGrothBlock(AbstractBlock.Settings.create()
+                    .mapColor(MapColor.DARK_RED)
+                    .noCollision()
+                    .ticksRandomly()
+                    .strength(0.2f)
+                    .sounds(BlockSoundGroup.FUNGUS)
+                    .pistonBehavior(PistonBehavior.DESTROY)
+                    .velocityMultiplier(0.8f)
+    );
+
+    public static final Block netherrackGrothedBlock = new Block(AbstractBlock.Settings.create()
+                    .mapColor(MapColor.DARK_RED)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresTool()
+                    .strength(0.4F)
+                    .sounds(BlockSoundGroup.NETHERRACK)
+    );
     @Override
     public void onInitialize() {
         // Axle
@@ -448,6 +465,19 @@ public class BwtBlocks implements ModInitializer {
             content.addAfter(Blocks.GRASS_BLOCK, grassSlabBlock);
             content.addAfter(Blocks.MYCELIUM, myceliumSlabBlock);
             content.addAfter(Blocks.PODZOL, podzolSlabBlock);
+        });
+        // Nether Groth
+        Registry.register(Registries.BLOCK, Id.of("nether_groth"), netherGroth);
+        Registry.register(Registries.ITEM, Id.of("nether_groth"), new BlockItem(netherGroth, new Item.Settings()));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
+        });
+
+        // Grothed Netherrack
+        Registry.register(Registries.BLOCK, Id.of("netherrack_grothed"), netherrackGrothedBlock);
+        Registry.register(Registries.ITEM, Id.of("netherrack_grothed"), new BlockItem(netherrackGrothedBlock, new Item.Settings()));
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.NETHERRACK, BwtBlocks.netherrackGrothedBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
