@@ -89,6 +89,8 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.myceliumSlabBlock, "Mycelium Slab");
         translationBuilder.add(BwtBlocks.podzolSlabBlock, "Podzol Slab");
         translationBuilder.add(BwtBlocks.dirtPathSlabBlock, "Dirt Path Slab");
+        translationBuilder.add(BwtBlocks.netherGroth, "Nether Groth Spores");
+        translationBuilder.add(BwtBlocks.netherrackGrothedBlock, "Grothed Netherrack");
         translationBuilder.add(BwtItems.rawEggItem, "Raw Egg");
         translationBuilder.add(BwtItems.friedEggItem, "Fried Egg");
         translationBuilder.add(BwtItems.poachedEggItem, "Poached Egg");
