@@ -10,7 +10,6 @@
     "EntityVoxelShapeCollisionMixin",
     "ExampleMixin",
     "FireBlockMixin",
-    "ItemEntityAccessor",
     "LandPathNodeMakerMixin",
     "MiningChargeExplosionImmunityMixin",
     "MovableBlockEntityMixin",

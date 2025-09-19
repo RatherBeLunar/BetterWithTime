@@ -277,13 +277,14 @@ public class BwtBlocks implements ModInitializer {
                     .velocityMultiplier(0.8f)
     );
 
-    public static final Block netherrackGrothedBlock = new Block(AbstractBlock.Settings.create()
+    public static final Block netherrackGrothedBlock = new NetherrackGrothedBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.DARK_RED)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresTool()
                     .strength(0.4F)
                     .sounds(BlockSoundGroup.NETHERRACK)
     );
+
     @Override
     public void onInitialize() {
         // Axle
@@ -475,10 +476,6 @@ public class BwtBlocks implements ModInitializer {
 
         // Grothed Netherrack
         Registry.register(Registries.BLOCK, Id.of("netherrack_grothed"), netherrackGrothedBlock);
-        Registry.register(Registries.ITEM, Id.of("netherrack_grothed"), new BlockItem(netherrackGrothedBlock, new Item.Settings()));
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.NETHERRACK, BwtBlocks.netherrackGrothedBlock);
-        });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
             content.addAll(DyeUtils.streamColorItemsSorted(vaseBlocks).map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());

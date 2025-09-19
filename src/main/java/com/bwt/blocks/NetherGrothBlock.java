@@ -1,6 +1,6 @@
 package com.bwt.blocks;
 
-import com.bwt.mixin.ItemEntityAccessor;
+import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.*;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
@@ -18,9 +18,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
@@ -38,14 +35,13 @@ import java.util.List;
 //  not sure if we even want that.
 // TODO: Might be better to have a common block tag for blocks the groth can "eat" instead of just red and brown mushroom
 //  that the original code has, considering the nether has new blocks since 1.16 -> in the spreadToBlock() method.
-public class NetherGrothBlock extends Block
-{
+public class NetherGrothBlock extends Block {
     public static final IntProperty AGE = Properties.AGE_7;
     public static final int MAX_AGE = 7;
 
     public NetherGrothBlock(Settings settings) {
         super(settings);
-        this.setDefaultState(this.getStateManager().getDefaultState().with(AGE, 0));
+        this.setDefaultState(this.getDefaultState().with(AGE, 0));
     }
 
     @Override
@@ -67,15 +63,11 @@ public class NetherGrothBlock extends Block
     }
 
     @Override
-    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (!canPlaceAt(state, world, pos)) {
-
-            // Play block destroy sound and particles
-            world.playSound(null, pos, SoundEvents.ENTITY_SLIME_ATTACK, SoundCategory.BLOCKS);
-
-            // Destroy the block if we no longer have a solid base
-            world.breakBlock(pos, false);
+    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canPlaceAt(world, pos)) {
+            return Blocks.AIR.getDefaultState();
         }
+        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
     }
 
     // Set the block below to Grothed Netherrack block when placed
@@ -84,6 +76,19 @@ public class NetherGrothBlock extends Block
         if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
             world.setBlockState(pos.down(), BwtBlocks.netherrackGrothedBlock.getDefaultState());
         }
+    }
+
+    public int getAge(BlockState state) {
+        return state.get(AGE);
+    }
+
+    public final boolean isMature(BlockState state) {
+        return this.getAge(state) >= MAX_AGE;
+    }
+
+    @Override
+    protected boolean hasRandomTicks(BlockState state) {
+        return !this.isMature(state);
     }
 
     @Override
@@ -198,35 +203,32 @@ public class NetherGrothBlock extends Block
 
     @Override
     public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isClient) return;
+        if (world.isClient) {
+            return;
+        }
 
         int age = state.get(AGE);
-        if (age < MAX_AGE) return;
+        if (age < MAX_AGE) {
+            return;
+        }
 
-        if (entity instanceof LivingEntity living) {
-            boolean shouldAttack = true;
-
-            if (entity instanceof PlayerEntity player) {
-                if (wearingPlateBoots(player)) {
-                    shouldAttack = false;
-                }
+        if (entity instanceof LivingEntity livingEntity) {
+            if (entity instanceof PlayerEntity player && wearingPlateBoots(player)) {
+                return;
             }
-
-            if (shouldAttack) {
-                if (living.damage(world.getDamageSources().magic(), 2)) {
-                    entity.setVelocity(entity.getVelocity().x, 0.84, entity.getVelocity().z);
-                    entity.velocityModified = true;
-                    world.playSound(null, pos, SoundEvents.ENTITY_GHAST_SCREAM, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                }
+            if (livingEntity.damage(world.getDamageSources().magic(), 2)) {
+                entity.setVelocity(entity.getVelocity().x, 0.84, entity.getVelocity().z);
+                entity.velocityModified = true;
+                world.playSound(null, pos, SoundEvents.ENTITY_GHAST_SCREAM, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
         } else if (entity instanceof ItemEntity itemEntity) {
-            int pickupDelay = ((ItemEntityAccessor)itemEntity).getPickupDelay();
-            if (pickupDelay <= 0) {
-                ItemStack stack = itemEntity.getStack();
-                if (stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isOf(Items.RED_MUSHROOM) || stack.isOf(Items.BROWN_MUSHROOM)) {
-                    itemEntity.remove(Entity.RemovalReason.DISCARDED);
-                    world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                }
+            if (itemEntity.cannotPickup()) {
+                return;
+            }
+            ItemStack stack = itemEntity.getStack();
+            if (stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isOf(Items.RED_MUSHROOM) || stack.isOf(Items.BROWN_MUSHROOM)) {
+                itemEntity.remove(Entity.RemovalReason.DISCARDED);
+                world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
         }
     }
@@ -234,13 +236,13 @@ public class NetherGrothBlock extends Block
 
     private boolean wearingPlateBoots(PlayerEntity player) {
         ItemStack boots = player.getInventory().getArmorStack(0);
-        return boots.getItem() == Items.NETHERITE_BOOTS;
+        return boots.isOf(Items.NETHERITE_BOOTS);
     }
 
     @Override
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         // Revert Grothed Netherrack back to normal when block is broken
-        if (world.getBlockState(pos.down()) == BwtBlocks.netherrackGrothedBlock.getDefaultState()) {
+        if (world.getBlockState(pos.down()).isOf(BwtBlocks.netherrackGrothedBlock)) {
             world.setBlockState(pos.down(), Blocks.NETHERRACK.getDefaultState(), Block.NOTIFY_ALL);
         }
         return super.onBreak(world, pos, state, player);
@@ -268,15 +270,13 @@ public class NetherGrothBlock extends Block
                 pos.getX(), pos.getY(), pos.getZ(),
                 10, 0.5, 0.5, 0.5, 0.1
         );
-        /**
-        world.addParticle(
-                ParticleTypes.EXPLOSION,
-                pos.getX() + world.getRandom().nextDouble() * 10.0D - 5D,
-                pos.getY() + world.getRandom().nextDouble() * 10.0D - 5D,
-                pos.getZ() + world.getRandom().nextDouble() * 10.0D - 5D,
-                0.0D, 0.0D, 0.0D
-        );
-         **/
+//        world.addParticle(
+//                ParticleTypes.EXPLOSION,
+//                pos.getX() + world.getRandom().nextDouble() * 10.0D - 5D,
+//                pos.getY() + world.getRandom().nextDouble() * 10.0D - 5D,
+//                pos.getZ() + world.getRandom().nextDouble() * 10.0D - 5D,
+//                0.0D, 0.0D, 0.0D
+//        );
 
         // spread growth to nearby blocks
         for (int x = pos.getX() - 3; x <= pos.getX() + 3; x++) {
