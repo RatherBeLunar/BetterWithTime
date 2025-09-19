@@ -1,6 +1,7 @@
 package com.bwt.blocks;
 
-import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.utils.BlockPosAndState;
+import com.bwt.utils.RadiusAroundBlockStream;
 import net.minecraft.block.*;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.Entity;
@@ -9,6 +10,9 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.ArmorItem;
+import net.minecraft.item.ArmorMaterials;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.particle.ParticleTypes;
@@ -29,7 +33,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.stream.IntStream;
 
 // TODO: Does not include logic for nether groth growing to its max age when a soul urn entity collides with it,
 //  not sure if we even want that.
@@ -97,7 +101,7 @@ public class NetherGrothBlock extends Block {
         BlockState stateBelow = world.getBlockState(pos.down());
         // Added a separate block for Grothed Netherrack so we don't add a blockstate to the normal Netherrack
         // Might reconsider
-        boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.netherrackGrothedBlock);
+        boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.netherrackGrothedBlock) || stateBelow.isOf(Blocks.NETHERRACK);
 
         // Attempt to grow
         if (height < MAX_AGE) {
@@ -120,35 +124,36 @@ public class NetherGrothBlock extends Block {
             }
         }
 
+        if (height < 1) {
+            return;
+        }
         // Attempt to spread
-        if (height >= 1) {
-            // Pick a random horizontal direction
-            int facingId = random.nextInt(4) + 2; // 2 to 5 inclusive
-            Direction direction = Direction.byId(facingId);
-            BlockPos targetPos = pos.offset(direction);
+        // Pick a random horizontal direction
+        Direction direction = Direction.Type.HORIZONTAL.random(random);
+        BlockPos targetPos = pos.offset(direction);
+        BlockState targetState = world.getBlockState(targetPos);
 
-            if (isBlockOpenToSpread(world, targetPos)) {
-                // Check solid block below
-                if (world.getBlockState(targetPos.down()).isSideSolidFullSquare(world, targetPos.down(), Direction.UP)) {
-                    spreadToBlock(world, targetPos, this.getDefaultState());
-                } else if (isOnNetherrack) {
-                    // Try below that if we're on netherrack
-                    BlockPos belowTarget = targetPos.down();
-                    if (isBlockOpenToSpread(world, belowTarget) &&
-                            world.getBlockState(belowTarget.down()).isSideSolidFullSquare(world, belowTarget.down(), Direction.UP)) {
-                        spreadToBlock(world, belowTarget, this.getDefaultState());
-                    }
+        if (isBlockOpenToSpread(targetState)) {
+            BlockPos belowTargetPos = targetPos.down();
+            BlockState belowTargetState = world.getBlockState(belowTargetPos);
+            // Check solid block below
+            if (belowTargetState.isSideSolidFullSquare(world, belowTargetPos, Direction.UP)) {
+                spreadToBlock(world, targetPos, targetState);
+            } else if (isOnNetherrack) {
+                // Try below that if we're on netherrack
+                if (isBlockOpenToSpread(belowTargetState) && belowTargetState.isSideSolidFullSquare(world, belowTargetPos.down(), Direction.UP)) {
+                    spreadToBlock(world, belowTargetPos, belowTargetState);
                 }
-            } else {
-                // The moss can only spread upwards onto a netherrack block and if there is empty space above where it's currently at
+            }
+            return;
+        }
+        // The moss can only spread upwards onto a netherrack block and if there is empty space above where it's currently at
+        if (world.isAir(pos.up()) && targetState.isOf(Blocks.NETHERRACK)) {
+            BlockPos targetPosUp = targetPos.up();
+            BlockState targetStateUp = world.getBlockState(targetPosUp);
 
-                if (world.isAir(pos.up()) && world.getBlockState(targetPos) == Blocks.NETHERRACK.getDefaultState()) {
-                    BlockPos targetPosUp = targetPos.up();
-
-                    if (isBlockOpenToSpread(world, targetPosUp)) {
-                        spreadToBlock(world, targetPosUp, this.getDefaultState());
-                    }
-                }
+            if (isBlockOpenToSpread(targetStateUp)) {
+                spreadToBlock(world, targetPosUp, targetStateUp);
             }
         }
 
@@ -177,28 +182,18 @@ public class NetherGrothBlock extends Block {
         }
     }
 
-    private boolean isBlockOpenToSpread(WorldAccess world, BlockPos pos) {
-        BlockState state = world.getBlockState(pos);
-        if (state.isAir()) {
-            return true;
-        } else {
-            return state.isOf(Blocks.FIRE) || state.isOf(Blocks.RED_MUSHROOM) || state.isOf(Blocks.BROWN_MUSHROOM);
-        }
+    private boolean isBlockOpenToSpread(BlockState state) {
+        return state.isAir() || state.isOf(Blocks.FIRE) || state.isOf(Blocks.RED_MUSHROOM) || state.isOf(Blocks.BROWN_MUSHROOM);
     }
 
     private int getMaxHeightOfNeighbors(World world, BlockPos pos) {
-        int maxHeight = -1;
-        for (Direction dir : Direction.Type.HORIZONTAL) {
-            BlockPos neighborPos = pos.offset(dir);
-            BlockState neighborState = world.getBlockState(neighborPos);
-            if (neighborState.isOf(this)) {
-                int neighborHeight = neighborState.get(AGE);
-                if (neighborHeight > maxHeight) {
-                    maxHeight = neighborHeight;
-                }
-            }
-        }
-        return maxHeight;
+        return Direction.Type.HORIZONTAL.stream()
+                .map(pos::offset)
+                .map(world::getBlockState)
+                .filter(neighborState -> neighborState.isOf(this))
+                .mapToInt(neighborState -> neighborState.get(AGE))
+                .max()
+                .orElse(-1);
     }
 
     @Override
@@ -279,54 +274,47 @@ public class NetherGrothBlock extends Block {
 //        );
 
         // spread growth to nearby blocks
-        for (int x = pos.getX() - 3; x <= pos.getX() + 3; x++) {
-            for (int y = pos.getY() - 3; y <= pos.getY() + 3; y++) {
-                for (int z = pos.getZ() - 3; z <= pos.getZ() + 3; z++) {
-                    if (x == pos.getX() && y == pos.getY() && z == pos.getZ()) continue;
-                    if (isBlockOpenToSpread(world, pos)) {
-                        BlockPos below = pos.down();
-                        if (world.getBlockState(below).isSideSolidFullSquare(world, below, net.minecraft.util.math.Direction.UP)) {
-                            if (world.getRandom().nextInt(2) == 0) {
-                                world.setBlockState(pos, this.getDefaultState(), Block.NOTIFY_ALL);
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        RadiusAroundBlockStream
+                // Get all neighbors in range
+                .neighboringBlocksInRadius(pos, 3)
+                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
+                // Filter to blocks open to spread
+                .filter(neighbor -> isBlockOpenToSpread(neighbor.state()))
+                .map(neighbor -> BlockPosAndState.of(world, neighbor.pos().down()))
+                // Filter to blocks whose supporting block can support groth
+                .filter(neighborSupportingBlock -> neighborSupportingBlock.state().isSideSolidFullSquare(world, neighborSupportingBlock.pos(), Direction.UP))
+                // Random chance of spreading
+                .filter(neighborSupportingBlock -> world.getRandom().nextInt(2) == 0)
+                // Perform the spread
+                .forEach(neighborSupportingBlock -> world.setBlockState(neighborSupportingBlock.pos().up(), this.getDefaultState(), Block.NOTIFY_ALL));
 
         // damage living entities nearby
-        if (!world.isClient()) {
-            Box box = new Box(
-                    pos.getX() - 5d, pos.getY() - 5d, pos.getZ() - 5d,
-                    pos.getX() + 5d, pos.getY() + 5d, pos.getZ() + 5d
-            );
-            List<LivingEntity> list = server.getEntitiesByClass(LivingEntity.class, box, e -> true);
-
-            for (LivingEntity target : list) {
-                boolean bDamage = true;
-
-                if (target instanceof PlayerEntity player) {
-
-                    if (wearingFullNetherite(player)) {
-                        bDamage = false;
-                    }
-
-                    if (bDamage) {
-                        player.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 15 * 20, 0));
-                        player.damage(server.getDamageSources().magic(), 15.0f);
-                    }
-                }
-
-            }
+        if (world.isClient()) {
+            return;
         }
+        Box box = new Box(
+                pos.getX() - 5d, pos.getY() - 5d, pos.getZ() - 5d,
+                pos.getX() + 5d, pos.getY() + 5d, pos.getZ() + 5d
+        );
+        server.getEntitiesByClass(LivingEntity.class, box, e -> true)
+                .stream()
+                .filter(target -> !(target instanceof PlayerEntity player) || !wearingFullNetherite(player))
+                .forEach(target -> {
+                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 15 * 20, 0));
+                    target.damage(server.getDamageSources().magic(), 15.0f);
+                });
     }
 
     private boolean wearingFullNetherite(PlayerEntity player) {
-        return player.getInventory().getArmorStack(0).getItem() == Items.NETHERITE_BOOTS &&
-                player.getInventory().getArmorStack(1).getItem() == Items.NETHERITE_LEGGINGS &&
-                player.getInventory().getArmorStack(2).getItem() == Items.NETHERITE_CHESTPLATE &&
-                player.getInventory().getArmorStack(3).getItem() == Items.NETHERITE_HELMET;
+        PlayerInventory inventory = player.getInventory();
+        return IntStream
+                .range(0, 3)
+                .mapToObj(inventory::getArmorStack)
+                .map(ItemStack::getItem)
+                .filter(item -> item instanceof ArmorItem)
+                .map(item -> ((ArmorItem) item))
+                .map(ArmorItem::getMaterial)
+                .allMatch(ArmorMaterials.NETHERITE::matches);
     }
 
 }
