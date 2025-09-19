@@ -1,6 +1,7 @@
 package com.bwt.blocks;
 
 import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.utils.RadiusAroundBlockStream;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
@@ -105,21 +106,18 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
 
     public void stokeFire(World world, BlockPos pos, BlockState state) {
         BlockPos center = pos.offset(state.get(FACING), 2);
-        for (int x = -1; x <= 1; x++) {
-            for (int z = -1; z <= 1; z++) {
-                BlockPos firePos = center.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z);
-                BlockPos hibachiPos = firePos.down();
-                BlockState fireState = world.getBlockState(firePos);
-                if (!fireState.isIn(BlockTags.FIRE)) {
-                    continue;
-                }
-                BlockState hibachiState = world.getBlockState(hibachiPos);
-                if (!hibachiState.isOf(BwtBlocks.hibachiBlock)) {
-                    continue;
-                }
-                world.setBlockState(firePos, BwtBlocks.stokedFireBlock.getPlacementState(world, firePos), Block.NOTIFY_ALL);
+        RadiusAroundBlockStream.allBlocksInHorizontalRadius(center, 1).forEach(firePos -> {
+            BlockPos hibachiPos = firePos.down();
+            BlockState fireState = world.getBlockState(firePos);
+            if (!fireState.isIn(BlockTags.FIRE)) {
+                return;
             }
-        }
+            BlockState hibachiState = world.getBlockState(hibachiPos);
+            if (!hibachiState.isOf(BwtBlocks.hibachiBlock)) {
+                return;
+            }
+            world.setBlockState(firePos, BwtBlocks.stokedFireBlock.getPlacementState(world, firePos), Block.NOTIFY_ALL);
+        });
     }
 
     public void liftEntities(ServerWorld world, BlockPos pos) {

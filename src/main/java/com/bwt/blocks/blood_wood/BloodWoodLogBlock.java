@@ -2,6 +2,8 @@ package com.bwt.blocks.blood_wood;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtBlockTags;
+import com.bwt.utils.BlockPosAndState;
+import com.bwt.utils.RadiusAroundBlockStream;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
@@ -182,15 +184,11 @@ public class BloodWoodLogBlock extends PillarBlock {
     }
 
     public void growLeaves(World world, BlockPos pos) {
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    if (world.getBlockState(pos.add(i, j, k)).isIn(BlockTags.AIR)) {
-                        world.setBlockState(pos.add(i, j, k), BwtBlocks.bloodWoodBlocks.leavesBlock.getDefaultState());
-                    }
-                }
-            }
-        }
+        RadiusAroundBlockStream
+                .neighboringBlocksInRadius(pos, 1)
+                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
+                .filter(neighbor -> neighbor.state().isIn(BlockTags.AIR))
+                .forEach(neighbor -> world.setBlockState(neighbor.pos(), BwtBlocks.bloodWoodBlocks.leavesBlock.getDefaultState()));
     }
 
     public int countBloodWoodNeighboringOnBlockWithSoulSand(World world, BlockPos pos) {

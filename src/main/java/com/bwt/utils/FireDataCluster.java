@@ -20,25 +20,26 @@ public class FireDataCluster {
     public static FireDataCluster fromWorld(World world, BlockPos pos, int radius) {
         FireDataCluster fireDataCluster = new FireDataCluster();
         BlockPos below = pos.down();
-        for (int x = -radius; x <= radius; x++) {
-            for (int z = -radius; z <= radius; z++) {
-                BlockPos posToTest = below.offset(Direction.Axis.X, x).offset(Direction.Axis.Z, z);
-                BlockState testingBlockState = world.getBlockState(posToTest);
-                FireData dataToAdd = FireData.FIRE_AMOUNT_FUNCTIONS.getOrDefault(testingBlockState.getBlock().getClass(), FireData.FireAmountFunction.NONE)
-                        .getFireData(world, posToTest, testingBlockState);
-                // The center block determines whether a fire is active or not
-                if (x == 0 && z == 0) {
-                    if (!dataToAdd.anyFirePresent()) {
-                        return new FireDataCluster();
-                    }
-                    // Stoked fire in the center dominates the resulting type
-                    if (dataToAdd.stokedCount > 0) {
-                        fireDataCluster.centerBlockIsStoked = true;
-                    }
-                }
-                fireDataCluster.fireData.add(dataToAdd);
-            }
+        BlockState centerState = world.getBlockState(below);
+        FireData centerData = FireData.FIRE_AMOUNT_FUNCTIONS.getOrDefault(centerState.getBlock().getClass(), FireData.FireAmountFunction.NONE)
+                .getFireData(world, below, centerState);
+        // The center block determines whether a fire is active or not
+        if (!centerData.anyFirePresent()) {
+            return fireDataCluster;
         }
+        // Stoked fire in the center dominates the resulting type
+        if (centerData.stokedCount > 0) {
+            fireDataCluster.centerBlockIsStoked = true;
+        }
+
+        RadiusAroundBlockStream
+                .neighboringBlocksInHorizontalRadius(below, radius)
+                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
+                .map(neighbor -> FireData.FIRE_AMOUNT_FUNCTIONS
+                        .getOrDefault(neighbor.state().getBlock().getClass(), FireData.FireAmountFunction.NONE)
+                        .getFireData(world, neighbor.pos(), neighbor.state())
+                )
+                .forEach(fireDataCluster.fireData::add);
         return fireDataCluster;
     }
 
