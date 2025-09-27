@@ -457,7 +457,17 @@ public class BwtBlocks implements ModInitializer {
         // Podzol Slab
         Registry.register(Registries.BLOCK, Id.of("podzol_slab"), podzolSlabBlock);
         Registry.register(Registries.ITEM, Id.of("podzol_slab"), new BlockItem(podzolSlabBlock, new Item.Settings()));
+        // Nether Groth
+        Registry.register(Registries.BLOCK, Id.of("nether_groth"), netherGroth);
+        Registry.register(Registries.ITEM, Id.of("nether_groth"), new BlockItem(netherGroth, new Item.Settings()));
+        // Grothed Netherrack
+        Registry.register(Registries.BLOCK, Id.of("netherrack_grothed"), netherrackGrothedBlock);
+        // Aqueduct
+        Registry.register(Registries.BLOCK, Id.of("aqueduct"), aqueductBlock);
+        Registry.register(Registries.ITEM, Id.of("aqueduct"), new BlockItem(aqueductBlock, new Item.Settings()));
+
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
             content.addAfter(Items.CHERRY_LEAVES, BwtBlocks.bloodWoodBlocks.leavesBlock);
             content.addAfter(Items.CHERRY_SAPLING, BwtBlocks.bloodWoodBlocks.saplingBlock);
@@ -467,15 +477,6 @@ public class BwtBlocks implements ModInitializer {
             content.addAfter(Blocks.MYCELIUM, myceliumSlabBlock);
             content.addAfter(Blocks.PODZOL, podzolSlabBlock);
         });
-        // Nether Groth
-        Registry.register(Registries.BLOCK, Id.of("nether_groth"), netherGroth);
-        Registry.register(Registries.ITEM, Id.of("nether_groth"), new BlockItem(netherGroth, new Item.Settings()));
-        ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
-            content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
-        });
-
-        // Grothed Netherrack
-        Registry.register(Registries.BLOCK, Id.of("netherrack_grothed"), netherrackGrothedBlock);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COLORED_BLOCKS).register(content -> {
             content.addAll(DyeUtils.streamColorItemsSorted(vaseBlocks).map(vaseBlock -> vaseBlock.asItem().getDefaultStack()).toList());
