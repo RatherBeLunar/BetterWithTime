@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 public class BwtBlocks implements ModInitializer {
 
+    public static final AqueductBlock aqueductBlock = new AqueductBlock(AbstractBlock.Settings.copy(Blocks.BRICKS));
 	public static final Block anchorBlock = new AnchorBlock(AbstractBlock.Settings.create()
             .hardness(2f)
             .sounds(BlockSoundGroup.STONE)
@@ -543,6 +544,7 @@ public class BwtBlocks implements ModInitializer {
                     BwtBlocks.bloodWoodBlocks.pressurePlateBlock,
                     BwtBlocks.bloodWoodBlocks.buttonBlock
             );
+            content.addAfter(Items.BRICKS, BwtBlocks.aqueductBlock);
             for (int i = 0; i < sidingBlocks.size(); i++) {
                 SidingBlock sidingBlock = sidingBlocks.get(i);
                 MouldingBlock mouldingBlock = mouldingBlocks.get(i);

@@ -5,6 +5,7 @@
   "plugin": "com.bwt.mixin.Plugin",
   "mixins": [
     "AlterGroundTreeDecoratorMixin",
+    "AqueductFlowableFluidMixin",
     "DetectorRailMixin",
     "EggEntityMixin",
     "EntityVoxelShapeCollisionMixin",

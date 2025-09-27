@@ -188,7 +188,21 @@ public class ModelGenerator extends FabricModelProvider {
                 ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
         );
         generateDebugLensBeam(blockStateModelGenerator);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.aqueductBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                Models.CUBE_BOTTOM_TOP.upload(
+                                        BwtBlocks.aqueductBlock,
+                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.aqueductBlock).getTextures(),
+                                        blockStateModelGenerator.modelCollector
+                                )
+                        )
+                )
+        );
 
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.aqueductBlock, ModelIds.getBlockModelId(BwtBlocks.aqueductBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.blockDispenserBlock, ModelIds.getBlockModelId(BwtBlocks.blockDispenserBlock));

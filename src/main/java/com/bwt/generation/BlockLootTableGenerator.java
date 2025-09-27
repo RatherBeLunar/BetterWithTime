@@ -28,6 +28,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
+        addDrop(BwtBlocks.aqueductBlock);
         addDrop(BwtBlocks.anchorBlock);
 //        addDrop(BwtBlocks.anvilBlock);
         addDrop(BwtBlocks.axleBlock);
