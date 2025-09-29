@@ -144,17 +144,17 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
                     .input(sidingBlock, 2)
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(sidingBlock).getPath()));
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
                     .input(mouldingBlock, 2)
                     .group("siding")
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath()));
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
                     .input(cornerBlock, 2)
                     .group("moulding")
                     .criterion(hasItem(cornerBlock), conditionsFromItem(cornerBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(cornerBlock).getPath()));
 
             // Decorative blocks
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, columnBlock)

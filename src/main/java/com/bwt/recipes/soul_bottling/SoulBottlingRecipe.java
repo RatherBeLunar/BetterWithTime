@@ -3,6 +3,7 @@ package com.bwt.recipes.soul_bottling;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -212,7 +213,7 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
         public void offerTo(RecipeExporter exporter) {
             this.offerTo(
                     exporter,
-                    "bwt:" + RecipeProvider.getItemPath(this.result.getItem()) + "_from_soul_bottling"
+                    Id.of(RecipeProvider.getItemPath(this.result.getItem()) + "_from_soul_bottling")
             );
         }
 

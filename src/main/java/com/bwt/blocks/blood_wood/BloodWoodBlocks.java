@@ -70,7 +70,7 @@ public class BloodWoodBlocks {
         );
         saplingBlock = new BloodWoodSaplingBlock(
                 new SaplingGenerator(
-                        "bwt:blood_wood",
+                        Id.of("blood_wood").toString(),
                         Optional.empty(),
                         Optional.of(BwtConfiguredFeatures.BLOOD_WOOD_KEY),
                         Optional.empty()

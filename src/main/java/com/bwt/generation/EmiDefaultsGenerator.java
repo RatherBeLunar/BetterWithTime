@@ -50,7 +50,7 @@ public class EmiDefaultsGenerator implements DataProvider {
         addDefaults();
 
         var recipeDefaults = this.output.getResolver(DataOutput.OutputType.RESOURCE_PACK, "recipe/defaults");
-        var bwtRecipeDefaultsFile = recipeDefaults.resolveJson(Id.of("emi", "bwt"));
+        var bwtRecipeDefaultsFile = recipeDefaults.resolveJson(Id.of("emi", Id.MOD_ID));
 
         JsonObject object = new JsonObject();
         var added = new JsonArray();

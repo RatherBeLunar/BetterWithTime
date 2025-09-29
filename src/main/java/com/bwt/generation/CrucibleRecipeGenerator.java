@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.cooking_pots.AbstractCookingPotRecipe;
 import com.bwt.recipes.cooking_pots.StokedCrucibleRecipe;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeExporter;
@@ -32,13 +33,13 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateStoked(RecipeExporter exporter) {
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_INGOT).ingredient(Items.GOLD_INGOT).ingredient(BwtItems.coalDustItem).ingredient(BwtItems.soulUrnItem).result(Items.NETHERITE_INGOT).markDefault().offerTo(exporter, "bwt:netherite_ingot_smelting");
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_SCRAP, 4).ingredient(Items.GOLD_INGOT, 4).result(Items.NETHERITE_INGOT).offerTo(exporter, "bwt:netherite_ingot_from_scrap");
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_INGOT).ingredient(Items.GOLD_INGOT).ingredient(BwtItems.coalDustItem).ingredient(BwtItems.soulUrnItem).result(Items.NETHERITE_INGOT).markDefault().offerTo(exporter, Id.of("netherite_ingot_smelting"));
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_SCRAP, 4).ingredient(Items.GOLD_INGOT, 4).result(Items.NETHERITE_INGOT).offerTo(exporter, Id.of("netherite_ingot_from_scrap"));
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COBBLESTONE).result(Items.STONE).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SAND).result(Items.GLASS).offerTo(exporter);
 
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_INGOT).ingredient(BwtItems.concentratedHellfireItem, 9).result(Items.REDSTONE, 63).offerTo(exporter, "bwt:redstone_synthesis_from_gold_ingots");
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_NUGGET).ingredient(BwtItems.concentratedHellfireItem, 1).result(Items.REDSTONE, 7).offerTo(exporter, "bwt:redstone_synthesis_from_gold_nuggets");
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_INGOT).ingredient(BwtItems.concentratedHellfireItem, 9).result(Items.REDSTONE, 63).offerTo(exporter, Id.of("redstone_synthesis_from_gold_ingots"));
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_NUGGET).ingredient(BwtItems.concentratedHellfireItem, 1).result(Items.REDSTONE, 7).offerTo(exporter, Id.of("redstone_synthesis_from_gold_nuggets"));
 
         generateResmelting(exporter);
     }

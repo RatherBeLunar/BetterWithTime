@@ -2,6 +2,7 @@ package com.bwt.recipes.hopper_filter;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -254,7 +255,7 @@ public record HopperFilterRecipe(
         public void offerTo(RecipeExporter exporter) {
             this.offerTo(
                     exporter,
-                    "bwt:filter_" + RecipeProvider.getItemPath(this.ingredient.getMatchingStacks()[0].getItem())
+                    Id.of("filter_" + RecipeProvider.getItemPath(this.ingredient.getMatchingStacks()[0].getItem()))
             );
         }
 

@@ -3,6 +3,7 @@ package com.bwt.recipes.saw;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -238,7 +239,7 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
 
         @Override
         public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, "bwt:saw_" + fromBlockName);
+            this.offerTo(exporter, Id.of("saw_") + fromBlockName);
         }
 
         @Override
