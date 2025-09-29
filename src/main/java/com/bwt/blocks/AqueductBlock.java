@@ -1,25 +1,17 @@
 package com.bwt.blocks;
 
-import com.bwt.utils.BlockPosAndState;
+import com.bwt.tags.BwtFluidTags;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.FluidBlock;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.Fluid;
 import net.minecraft.fluid.FluidState;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
 import java.util.Map;
@@ -64,7 +56,7 @@ public class AqueductBlock extends Block {
                 .with(EAST, false)
                 .with(WEST, false);
         FluidState aboveFluidState = neighborState.getFluidState();
-        if (!aboveFluidState.isIn(FluidTags.WATER) || aboveFluidState.isStill()) {
+        if (!aboveFluidState.isIn(BwtFluidTags.AQUEDUCT_FLUIDS) || aboveFluidState.isStill()) {
             return noFlowState;
         }
         for (Direction fluidAdjacentDirection : Direction.Type.HORIZONTAL) {

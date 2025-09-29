@@ -21,7 +21,6 @@ import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
-import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.TrackedDataHandlers;

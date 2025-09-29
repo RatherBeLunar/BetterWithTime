@@ -2,6 +2,7 @@ package com.bwt.mixin;
 
 import com.bwt.blocks.AqueductBlock;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.tags.BwtFluidTags;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -15,10 +16,8 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -28,9 +27,6 @@ import java.util.Collections;
 
 @Mixin(FlowableFluid.class)
 public abstract class AqueductFlowableFluidMixin extends Fluid {
-    @Invoker("getLevelDecreasePerBlock")
-    public abstract int getLevelDecreasePerBlock(WorldView world);
-
     @Unique
     public boolean bwt$isMatchingAndStill(FluidState state) {
         return state.getFluid().matchesType(this) && state.isStill();
@@ -38,6 +34,9 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
 
     @Inject(method = "getVelocity", at = @At(value = "HEAD"), cancellable = true)
     public void bwt$getVelocity(BlockView world, BlockPos pos, FluidState state, CallbackInfoReturnable<Vec3d> cir) {
+        if (!state.isIn(BwtFluidTags.AQUEDUCT_FLUIDS)) {
+            return;
+        }
         BlockState belowState = world.getBlockState(pos.down());
         if (!belowState.isOf(BwtBlocks.aqueductBlock)) {
             return;
@@ -60,6 +59,9 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
 
     @Inject(method = "getUpdatedState", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/fluid/FlowableFluid;getLevelDecreasePerBlock(Lnet/minecraft/world/WorldView;)I"), cancellable = true)
     public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) World world, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int i, @Local int k) {
+        if (!this.isIn(BwtFluidTags.AQUEDUCT_FLUIDS)) {
+            return;
+        }
         if (k <= 0 || !this.matchesType(this)) {
             return;
         }
@@ -114,8 +116,6 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
         }
         // Don't allow level 8 so we don't get fluid sources everywhere
         level = Math.min(level, FlowableFluid.LEVEL.stream().mapToInt(Property.Value::value).max().orElse(8) - 1);
-        // Don't allow level 1 or 2 so water doesn't slosh around
-        level = Math.max(level, 3);
         cir.setReturnValue(((FlowableFluid) (Object) this).getFlowing(level, false));
     }
 }
