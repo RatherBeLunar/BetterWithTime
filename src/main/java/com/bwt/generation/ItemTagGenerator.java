@@ -67,6 +67,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         copy(BwtBlockTags.TABLE_BLOCKS, BwtItemTags.TABLE_BLOCKS);
         copy(BwtBlockTags.VASES, BwtItemTags.VASES);
         copy(BwtBlockTags.WOOL_SLABS, BwtItemTags.WOOL_SLABS);
+        copyIgnoreMissing(BwtBlockTags.NETHER_GROTH_CAN_EAT, BwtItemTags.NETHER_GROTH_CAN_EAT);
 
         getOrCreateTagBuilder(BwtItemTags.SAW_DUSTS).add(BwtItems.sawDustItem, BwtItems.soulDustItem);
         getOrCreateTagBuilder(BwtItemTags.MINING_CHARGE_IMMUNE)

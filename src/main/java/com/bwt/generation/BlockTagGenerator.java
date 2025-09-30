@@ -78,6 +78,20 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.SOUL_SAND)
                 .add(Blocks.MUD)
                 .add(Blocks.HONEY_BLOCK);
+        getOrCreateTagBuilder(BwtBlockTags.NETHER_GROTH_CAN_EAT)
+                .add(
+                        Blocks.RED_MUSHROOM,
+                        Blocks.BROWN_MUSHROOM,
+                        Blocks.CRIMSON_FUNGUS,
+                        Blocks.WARPED_FUNGUS,
+                        Blocks.WEEPING_VINES,
+                        Blocks.WEEPING_VINES_PLANT,
+                        Blocks.TWISTING_VINES,
+                        Blocks.TWISTING_VINES_PLANT,
+                        Blocks.CRIMSON_ROOTS,
+                        Blocks.WARPED_ROOTS,
+                        Blocks.NETHER_SPROUTS
+                );
         getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_NETHER).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_END).add(BwtBlocks.hibachiBlock);

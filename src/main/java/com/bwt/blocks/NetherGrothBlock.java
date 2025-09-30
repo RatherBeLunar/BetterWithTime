@@ -1,5 +1,7 @@
 package com.bwt.blocks;
 
+import com.bwt.tags.BwtBlockTags;
+import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.RadiusAroundBlockStream;
 import net.minecraft.block.*;
@@ -38,8 +40,6 @@ import java.util.stream.IntStream;
 
 // TODO: Does not include logic for nether groth growing to its max age when a soul urn entity collides with it,
 //  not sure if we even want that.
-// TODO: Might be better to have a common block tag for blocks the groth can "eat" instead of just red and brown mushroom
-//  that the original code has, considering the nether has new blocks since 1.16 -> in the spreadToBlock() method.
 public class NetherGrothBlock extends Block {
     public static final IntProperty AGE = Properties.AGE_7;
     public static final int MAX_AGE = 7;
@@ -171,7 +171,7 @@ public class NetherGrothBlock extends Block {
             world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS,
                     0.5F, 2.6F + (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.8F
             );
-        } else if (state.isOf(Blocks.BROWN_MUSHROOM) || state.isOf(Blocks.RED_MUSHROOM)) {
+        } else if (state.isIn(BwtBlockTags.NETHER_GROTH_CAN_EAT)) {
             world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS,
                     1.0F, world.getRandom().nextFloat() * 0.4F + 0.7F
             );
@@ -190,7 +190,7 @@ public class NetherGrothBlock extends Block {
     }
 
     private boolean isBlockOpenToSpread(BlockState state) {
-        return state.isAir() || state.isOf(Blocks.FIRE) || state.isOf(Blocks.RED_MUSHROOM) || state.isOf(Blocks.BROWN_MUSHROOM);
+        return state.isAir() || state.isOf(Blocks.FIRE) || state.isIn(BwtBlockTags.NETHER_GROTH_CAN_EAT);
     }
 
     private int getMaxHeightOfNeighbors(World world, BlockPos pos) {
@@ -228,7 +228,7 @@ public class NetherGrothBlock extends Block {
                 return;
             }
             ItemStack stack = itemEntity.getStack();
-            if (stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isOf(Items.RED_MUSHROOM) || stack.isOf(Items.BROWN_MUSHROOM)) {
+            if (stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isIn(BwtItemTags.NETHER_GROTH_CAN_EAT)) {
                 itemEntity.remove(Entity.RemovalReason.DISCARDED);
                 world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS, 1.0f, 1.0f);
             }
