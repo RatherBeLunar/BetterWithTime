@@ -33,6 +33,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        generateGrothedNetherrack(blockStateModelGenerator);
         generateDirtAndGrassSlab(blockStateModelGenerator);
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
@@ -624,6 +625,28 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
                 .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
+    }
+
+    public void generateGrothedNetherrack(BlockStateModelGenerator blockStateModelGenerator) {
+        TexturedModel netherrackTexturedModel = TexturedModel.CUBE_ALL.get(Blocks.NETHERRACK);
+        Identifier netherrackTexture = netherrackTexturedModel.getTextures().getTexture(TextureKey.ALL);
+        TextureMap grothedNetherrackTextureMap = new TextureMap()
+                .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_side"))
+                .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_top"))
+                .put(TextureKey.BOTTOM, netherrackTexture);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.grothedNetherrackBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                Models.CUBE_BOTTOM_TOP.upload(
+                                        BwtBlocks.grothedNetherrackBlock,
+                                        grothedNetherrackTextureMap,
+                                        blockStateModelGenerator.modelCollector
+                                )
+                        )
+                )
+        );
     }
 
     public void generateDirtAndGrassSlab(BlockStateModelGenerator blockStateModelGenerator) {

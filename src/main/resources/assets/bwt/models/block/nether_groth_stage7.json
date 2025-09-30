@@ -2,7 +2,7 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "bwt:block/nether_groth_top_grown",
+		"0": "bwt:block/nether_groth_top_mature",
 		"2": "bwt:block/nether_groth_side",
 		"3": "bwt:block/nether_groth_bottom",
 		"particle": "bwt:block/nether_groth_top"
