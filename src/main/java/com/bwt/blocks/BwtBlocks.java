@@ -278,7 +278,7 @@ public class BwtBlocks implements ModInitializer {
                     .velocityMultiplier(0.8f)
     );
 
-    public static final Block netherrackGrothedBlock = new NetherrackGrothedBlock(AbstractBlock.Settings.create()
+    public static final Block grothedNetherrackBlock = new GrothedNetherrackBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.DARK_RED)
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresTool()
@@ -462,7 +462,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("nether_groth"), netherGroth);
         Registry.register(Registries.ITEM, Id.of("nether_groth"), new BlockItem(netherGroth, new Item.Settings()));
         // Grothed Netherrack
-        Registry.register(Registries.BLOCK, Id.of("netherrack_grothed"), netherrackGrothedBlock);
+        Registry.register(Registries.BLOCK, Id.of("grothed_netherrack"), grothedNetherrackBlock);
         // Aqueduct
         Registry.register(Registries.BLOCK, Id.of("aqueduct"), aqueductBlock);
         Registry.register(Registries.ITEM, Id.of("aqueduct"), new BlockItem(aqueductBlock, new Item.Settings()));

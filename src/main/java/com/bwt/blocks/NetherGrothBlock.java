@@ -78,7 +78,7 @@ public class NetherGrothBlock extends Block {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
-            world.setBlockState(pos.down(), BwtBlocks.netherrackGrothedBlock.getDefaultState());
+            world.setBlockState(pos.down(), BwtBlocks.grothedNetherrackBlock.getDefaultState());
         }
     }
 
@@ -101,7 +101,7 @@ public class NetherGrothBlock extends Block {
         BlockState stateBelow = world.getBlockState(pos.down());
         // Added a separate block for Grothed Netherrack so we don't add a blockstate to the normal Netherrack
         // Might reconsider
-        boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.netherrackGrothedBlock) || stateBelow.isOf(Blocks.NETHERRACK);
+        boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.grothedNetherrackBlock) || stateBelow.isOf(Blocks.NETHERRACK);
 
         // Attempt to grow
         if (height < MAX_AGE) {
@@ -178,7 +178,7 @@ public class NetherGrothBlock extends Block {
 
         // Set the block that it spreads to Grothed Netherrack
         if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
-            world.setBlockState(pos.down(), BwtBlocks.netherrackGrothedBlock.getDefaultState());
+            world.setBlockState(pos.down(), BwtBlocks.grothedNetherrackBlock.getDefaultState());
         }
     }
 
@@ -237,7 +237,7 @@ public class NetherGrothBlock extends Block {
     @Override
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         // Revert Grothed Netherrack back to normal when block is broken
-        if (world.getBlockState(pos.down()).isOf(BwtBlocks.netherrackGrothedBlock)) {
+        if (world.getBlockState(pos.down()).isOf(BwtBlocks.grothedNetherrackBlock)) {
             world.setBlockState(pos.down(), Blocks.NETHERRACK.getDefaultState(), Block.NOTIFY_ALL);
         }
         return super.onBreak(world, pos, state, player);

@@ -1,18 +1,15 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.StateManager;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.WorldAccess;
 
-public class NetherrackGrothedBlock extends Block {
-    public NetherrackGrothedBlock(Settings settings) {
+public class GrothedNetherrackBlock extends Block {
+    public GrothedNetherrackBlock(Settings settings) {
         super(settings);
     }
 
