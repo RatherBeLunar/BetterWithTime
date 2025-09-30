@@ -33,6 +33,7 @@ import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 // TODO: Does not include logic for nether groth growing to its max age when a soul urn entity collides with it,
@@ -76,7 +77,8 @@ public class NetherGrothBlock extends Block {
 
     // Set the block below to Grothed Netherrack block when placed
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
         if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
             world.setBlockState(pos.down(), BwtBlocks.grothedNetherrackBlock.getDefaultState());
         }
@@ -97,6 +99,11 @@ public class NetherGrothBlock extends Block {
 
     @Override
     protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        // Only grow in the nether
+        if (!world.getDimension().ultrawarm()) {
+            return;
+        }
+
         int height = state.get(AGE);
         BlockState stateBelow = world.getBlockState(pos.down());
         // Added a separate block for Grothed Netherrack so we don't add a blockstate to the normal Netherrack
@@ -229,11 +236,6 @@ public class NetherGrothBlock extends Block {
     }
 
 
-    private boolean wearingPlateBoots(PlayerEntity player) {
-        ItemStack boots = player.getInventory().getArmorStack(0);
-        return boots.isOf(Items.NETHERITE_BOOTS);
-    }
-
     @Override
     public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
         // Revert Grothed Netherrack back to normal when block is broken
@@ -305,16 +307,20 @@ public class NetherGrothBlock extends Block {
                 });
     }
 
+    private boolean wearingPlateBoots(PlayerEntity player) {
+        ItemStack boots = player.getInventory().getArmorStack(0);
+        return boots.isOf(Items.NETHERITE_BOOTS);
+    }
+
     private boolean wearingFullNetherite(PlayerEntity player) {
         PlayerInventory inventory = player.getInventory();
         return IntStream
                 .range(0, 3)
                 .mapToObj(inventory::getArmorStack)
                 .map(ItemStack::getItem)
-                .filter(item -> item instanceof ArmorItem)
-                .map(item -> ((ArmorItem) item))
-                .map(ArmorItem::getMaterial)
-                .allMatch(ArmorMaterials.NETHERITE::matches);
+                .map(item -> Optional.ofNullable(item instanceof ArmorItem armorItem ? armorItem : null))
+                .map(optionalArmor -> optionalArmor.map(ArmorItem::getMaterial))
+                .allMatch(optionalMaterial -> optionalMaterial.isPresent() && ArmorMaterials.NETHERITE.matches(optionalMaterial.get()));
     }
 
 }
