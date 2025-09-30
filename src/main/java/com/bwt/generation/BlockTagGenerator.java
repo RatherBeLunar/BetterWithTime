@@ -6,9 +6,12 @@ import com.bwt.tags.CompatibilityTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagBuilder;
+import net.minecraft.registry.tag.TagKey;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -17,6 +20,10 @@ import java.util.stream.Stream;
 public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
     public BlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
         super(output, completableFuture);
+    }
+
+    public TagBuilder getTagBuilder(TagKey<Block> tag) {
+        return super.getTagBuilder(tag);
     }
 
     @Override

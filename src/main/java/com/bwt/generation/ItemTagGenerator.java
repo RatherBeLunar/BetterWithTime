@@ -8,16 +8,29 @@ import com.bwt.tags.CompatibilityTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.ItemTags;
+import net.minecraft.registry.tag.TagBuilder;
+import net.minecraft.registry.tag.TagKey;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 
 public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
+    @Nullable
+    private final Function<TagKey<Block>, TagBuilder> blockTagBuilderProvider;
+
     public ItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, BlockTagGenerator blockTagGenerator) {
         super(output, completableFuture, blockTagGenerator);
+        this.blockTagBuilderProvider = blockTagGenerator == null ? null : blockTagGenerator::getTagBuilder;
     }
 
     @Override
@@ -82,6 +95,14 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
         addHopperFilters();
+    }
+
+    public void copyIgnoreMissing(TagKey<Block> blockTag, TagKey<Item> itemTag) {
+        TagBuilder blockTagBuilder = Objects.requireNonNull(this.blockTagBuilderProvider, "Pass Block tag provider via constructor to use copy").apply(blockTag);
+        TagBuilder itemTagBuilder = this.getTagBuilder(itemTag);
+        blockTagBuilder.build().stream()
+                .filter(entry -> entry.canAdd(Registries.ITEM::containsId, tagId -> getTagBuilder(TagKey.of(RegistryKeys.ITEM, tagId)) != null))
+                .forEach(itemTagBuilder::add);
     }
 
     protected void addHopperFilters() {
