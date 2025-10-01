@@ -67,21 +67,9 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
                                 .register(BlockHalf.TOP, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)).put(VariantSettings.X, VariantSettings.Rotation.R180))
                 )
         );
-        Identifier bellowsId = TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
-        Identifier bellowsCompressedId = bellowsId.withSuffixedPath("_compressed");
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.bellowsBlock)
-                .coordinate(BlockStateVariantMap.create(BellowsBlock.MECH_POWERED)
-                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsCompressedId))
-                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsId))
-                )
-                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
-        );
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(
-                BwtBlocks.wickerSlabBlock,
-                Models.SLAB.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector),
-                Models.SLAB_TOP.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector),
-                ModelIds.getBlockModelId(BwtBlocks.wickerBlock)
-        ));
+        TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
+        Models.SLAB.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector);
+        Models.SLAB_TOP.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector);
     }
 
     @Override
