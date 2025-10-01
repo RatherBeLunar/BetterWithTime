@@ -18,6 +18,7 @@ import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
 import com.bwt.blocks.soul_forge.SoulForgeBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
+import com.bwt.blocks.unfired_pottery.*;
 import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;

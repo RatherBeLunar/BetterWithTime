@@ -1,19 +1,16 @@
-package com.bwt.blocks;
+package com.bwt.blocks.unfired_pottery;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
-public class UnfiredCrucibleBlock extends UnfiredPotteryBlock {
-    public static VoxelShape outlineShape = VoxelShapes.union(
-            VoxelShapes.cuboid(0.0625, 0, 0.0625, 0.9375, 1, 0.9375),
-            VoxelShapes.cuboid(0, 0.125, 0, 1, 0.875, 1)
-    ).simplify();
+public class UnfiredVaseBlock extends UnfiredPotteryBlock {
+    public static VoxelShape outlineShape = Block.createCuboidShape(3, 0, 3, 13, 16, 13);
 
-    public UnfiredCrucibleBlock(Settings settings) {
+    public UnfiredVaseBlock(Settings settings) {
         super(settings);
     }
 
@@ -24,6 +21,6 @@ public class UnfiredCrucibleBlock extends UnfiredPotteryBlock {
 
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
+        return outlineShape;
     }
 }

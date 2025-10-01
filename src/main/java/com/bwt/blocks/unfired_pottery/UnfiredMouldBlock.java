@@ -1,4 +1,4 @@
-package com.bwt.blocks;
+package com.bwt.blocks.unfired_pottery;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -7,10 +7,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 
-public class UnfiredVaseBlock extends UnfiredPotteryBlock {
-    public static VoxelShape outlineShape = Block.createCuboidShape(3, 0, 3, 13, 16, 13);
+public class UnfiredMouldBlock extends UnfiredPotteryBlock {
+    public static VoxelShape outlineShape = Block.createCuboidShape(5, 0, 5, 11, 2, 11);
 
-    public UnfiredVaseBlock(Settings settings) {
+    public UnfiredMouldBlock(Settings settings) {
         super(settings);
     }
 

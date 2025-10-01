@@ -1,4 +1,4 @@
-package com.bwt.blocks;
+package com.bwt.blocks.unfired_pottery;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;

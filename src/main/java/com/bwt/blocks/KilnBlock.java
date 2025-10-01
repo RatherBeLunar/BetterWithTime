@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.unfired_pottery.UnfiredPotteryBlock;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.recipes.kiln.KilnRecipeInput;

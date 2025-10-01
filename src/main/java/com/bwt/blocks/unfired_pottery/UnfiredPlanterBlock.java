@@ -1,11 +1,10 @@
-package com.bwt.blocks;
+package com.bwt.blocks.unfired_pottery;
 
-import net.minecraft.block.Block;
+import com.bwt.blocks.PlanterBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
 public class UnfiredPlanterBlock extends UnfiredPotteryBlock {
