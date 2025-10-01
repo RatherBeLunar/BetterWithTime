@@ -26,7 +26,7 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 public class AxleBlock extends PillarBlock {
-    public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 4);
+    public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 3);
 
     protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
     protected static final VoxelShape Y_SHAPE = Block.createCuboidShape(6f, 0f, 6f, 10f, 16f, 10f);
