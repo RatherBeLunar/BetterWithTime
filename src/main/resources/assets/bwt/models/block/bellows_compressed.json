@@ -1,11 +1,11 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "bwt:block/bellows_top",
-    "side": "bwt:block/bellows_side",
-    "face": "bwt:block/bellows_front",
-    "bottom": "bwt:block/bellows_bottom",
-    "top": "bwt:block/bellows_top"
+    "particle": "bwt:block/bellows_end",
+    "side": "bwt:block/bellows_side_compressed",
+    "face": "bwt:block/bellows_front_compressed",
+    "bottom": "bwt:block/bellows_end",
+    "top": "bwt:block/bellows_end"
   },
   "elements": [
     {

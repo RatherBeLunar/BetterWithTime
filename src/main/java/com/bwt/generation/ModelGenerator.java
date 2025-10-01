@@ -38,15 +38,7 @@ public class ModelGenerator extends FabricModelProvider {
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
         generateStokedFireBlock(blockStateModelGenerator);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
-                        BwtBlocks.sawBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(BwtBlocks.sawBlock)
-                        )
-                ).coordinate(createUpDefaultRotationStates())
-        );
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.sawBlock, ModelIds.getBlockModelId(BwtBlocks.sawBlock));
         BwtBlocks.sidingBlocks.forEach(sidingBlock -> generateSidingBlock(blockStateModelGenerator, sidingBlock));
         BwtBlocks.mouldingBlocks.forEach(mouldingBlock -> generateMouldingBlock(blockStateModelGenerator, mouldingBlock));
         BwtBlocks.cornerBlocks.forEach(cornerBlock -> generateCornerBlock(blockStateModelGenerator, cornerBlock));
@@ -57,9 +49,9 @@ public class ModelGenerator extends FabricModelProvider {
         BwtBlocks.woolSlabBlocks.forEach((dyeColor, woolSlab) -> generateWoolSlab(blockStateModelGenerator, dyeColor, woolSlab));
         blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
-        generatePaneBlock(blockStateModelGenerator, BwtBlocks.grateBlock);
-        generatePaneBlock(blockStateModelGenerator, BwtBlocks.slatsBlock);
-        generatePaneBlock(blockStateModelGenerator, BwtBlocks.wickerPaneBlock);
+        blockStateModelGenerator.registerItemModel(BwtBlocks.slatsBlock);
+        blockStateModelGenerator.registerItemModel(BwtBlocks.grateBlock);
+        blockStateModelGenerator.registerItemModel(BwtBlocks.wickerPaneBlock);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
                         BwtBlocks.cauldronBlock,
@@ -114,7 +106,7 @@ public class ModelGenerator extends FabricModelProvider {
                         )
                 )
         );
-        Identifier bellowsId = TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
+        Identifier bellowsId = ModelIds.getBlockModelId(BwtBlocks.bellowsBlock);
         Identifier bellowsCompressedId = bellowsId.withSuffixedPath("_compressed");
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.bellowsBlock)
                 .coordinate(BlockStateVariantMap.create(BellowsBlock.MECH_POWERED)
@@ -155,39 +147,22 @@ public class ModelGenerator extends FabricModelProvider {
                         .coordinate(BlockStateModelGenerator.createBooleanModelMap(BuddyBlock.POWERED, buddyBlockPoweredModelId, buddyBlockModelId))
                         .coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
         );
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.soapBlock, BlockStateVariant.create().put(VariantSettings.MODEL, TexturedModel.makeFactory(block -> TextureMap.sideFrontTop(block).put(TextureKey.TOP, TextureMap.getSubId(block, "_side")), Models.ORIENTABLE).upload(BwtBlocks.soapBlock, blockStateModelGenerator.modelCollector)))
-                        .coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
-        );
+        TexturedModel.makeFactory(block -> TextureMap.sideFrontTop(block).put(TextureKey.TOP, TextureMap.getSubId(block, "_side")), Models.ORIENTABLE)
+                .upload(BwtBlocks.soapBlock, blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.soapBlock, ModelIds.getBlockModelId(BwtBlocks.soapBlock));
         blockStateModelGenerator.registerSingleton(BwtBlocks.ropeCoilBlock, TexturedModel.CUBE_COLUMN);
         blockStateModelGenerator.registerSingleton(BwtBlocks.paddingBlock, TexturedModel.CUBE_ALL);
         blockStateModelGenerator.registerSingleton(BwtBlocks.wickerBlock, TexturedModel.CUBE_ALL);
         blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createBlockStateWithRandomHorizontalRotations(BwtBlocks.dungBlock, ModelIds.getBlockModelId(BwtBlocks.dungBlock)));
-        blockStateModelGenerator.registerSingleton(BwtBlocks.concentratedHellfireBlock, TexturedModel.CUBE_ALL);
         blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(
                 BwtBlocks.wickerSlabBlock,
-                Models.SLAB.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector),
-                Models.SLAB_TOP.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector),
+                ModelIds.getBlockModelId(BwtBlocks.wickerSlabBlock),
+                ModelIds.getBlockSubModelId(BwtBlocks.wickerSlabBlock, "_top"),
                 ModelIds.getBlockModelId(BwtBlocks.wickerBlock)
         ));
         generateMiningChargeBlock(blockStateModelGenerator);
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier
-                .create(BwtBlocks.vineTrapBlock)
-                .coordinate(
-                        BlockStateVariantMap.create(VineTrapBlock.HALF)
-                                .register(BlockHalf.BOTTOM, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)))
-                                .register(BlockHalf.TOP, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock)).put(VariantSettings.X, VariantSettings.Rotation.R180))
-                )
-        );
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier
-                .create(BwtBlocks.lensBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                TexturedModel.makeFactory(TextureMap::sideFrontBack, Models.TEMPLATE_COMMAND_BLOCK)
-                                        .upload(BwtBlocks.lensBlock, blockStateModelGenerator.modelCollector)
-                        )
-                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
-        );
+        TexturedModel.makeFactory(TextureMap::sideFrontBack, Models.TEMPLATE_COMMAND_BLOCK)
+                .upload(BwtBlocks.lensBlock, blockStateModelGenerator.modelCollector);
         generateDebugLensBeam(blockStateModelGenerator);
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(

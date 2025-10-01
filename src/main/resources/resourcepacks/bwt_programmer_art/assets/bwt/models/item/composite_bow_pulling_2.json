@@ -1,0 +1,6 @@
+{
+  "parent": "bwt:item/composite_bow",
+  "textures": {
+    "layer0": "bwt:item/composite_bow_pulling_2"
+  }
+}

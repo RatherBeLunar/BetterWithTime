@@ -31,6 +31,10 @@ import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -53,6 +57,8 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -186,5 +192,12 @@ public class BetterWithTime implements ModInitializer {
 		);
 
 		PayloadTypeRegistry.playS2C().register(KilnBlockCookingProgressPayload.ID, KilnBlockCookingProgressPayload.CODEC);
+
+        ResourceManagerHelper.registerBuiltinResourcePack(
+                Id.PROGRAMMER_ART_PACK_ID,
+                FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
+                Text.literal("BWT Programmer Art"),
+                ResourcePackActivationType.NORMAL
+        );
 	}
 }

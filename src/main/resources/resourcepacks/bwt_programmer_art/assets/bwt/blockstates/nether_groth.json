@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "age=0": { "model": "bwt:block/nether_groth_stage0" },
+    "age=1": { "model": "bwt:block/nether_groth_stage1" },
+    "age=2": { "model": "bwt:block/nether_groth_stage2" },
+    "age=3": { "model": "bwt:block/nether_groth_stage3" },
+    "age=4": { "model": "bwt:block/nether_groth_stage4" },
+    "age=5": { "model": "bwt:block/nether_groth_stage5" },
+    "age=6": { "model": "bwt:block/nether_groth_stage6" },
+    "age=7": { "model": "bwt:block/nether_groth_stage7" }
+
+  }
+}

@@ -1,7 +1,16 @@
 {
   "variants": {
-    "axis=x": { "model": "bwt:block/axle", "y": 90 },
-    "axis=y": { "model": "bwt:block/axle", "x": 90 },
-    "axis=z": { "model": "bwt:block/axle"}
+    "axis=x,mech_power=0": { "model": "bwt:block/axle", "y": 90 },
+    "axis=x,mech_power=1": { "model": "bwt:block/axle_powered", "y": 90 },
+    "axis=x,mech_power=2": { "model": "bwt:block/axle_powered", "y": 90 },
+    "axis=x,mech_power=3": { "model": "bwt:block/axle_powered", "y": 90 },
+    "axis=y,mech_power=0": { "model": "bwt:block/axle", "x": 90 },
+    "axis=y,mech_power=1": { "model": "bwt:block/axle_powered", "x": 90 },
+    "axis=y,mech_power=2": { "model": "bwt:block/axle_powered", "x": 90 },
+    "axis=y,mech_power=3": { "model": "bwt:block/axle_powered", "x": 90 },
+    "axis=z,mech_power=0": { "model": "bwt:block/axle"},
+    "axis=z,mech_power=1": { "model": "bwt:block/axle_powered"},
+    "axis=z,mech_power=2": { "model": "bwt:block/axle_powered"},
+    "axis=z,mech_power=3": { "model": "bwt:block/axle_powered"}
   }
 }

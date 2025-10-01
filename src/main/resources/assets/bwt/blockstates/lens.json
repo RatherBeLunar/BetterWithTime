@@ -1,0 +1,50 @@
+{
+  "variants": {
+    "facing=down,lit=false": {
+      "model": "bwt:block/lens",
+      "x": 90
+    },
+    "facing=east,lit=false": {
+      "model": "bwt:block/lens",
+      "y": 90
+    },
+    "facing=north,lit=false": {
+      "model": "bwt:block/lens"
+    },
+    "facing=south,lit=false": {
+      "model": "bwt:block/lens",
+      "y": 180
+    },
+    "facing=up,lit=false": {
+      "model": "bwt:block/lens",
+      "x": 270
+    },
+    "facing=west,lit=false": {
+      "model": "bwt:block/lens",
+      "y": 270
+    },
+    "facing=down,lit=true": {
+      "model": "bwt:block/lens_lit",
+      "x": 90
+    },
+    "facing=east,lit=true": {
+      "model": "bwt:block/lens_lit",
+      "y": 90
+    },
+    "facing=north,lit=true": {
+      "model": "bwt:block/lens_lit"
+    },
+    "facing=south,lit=true": {
+      "model": "bwt:block/lens_lit",
+      "y": 180
+    },
+    "facing=up,lit=true": {
+      "model": "bwt:block/lens_lit",
+      "x": 270
+    },
+    "facing=west,lit=true": {
+      "model": "bwt:block/lens_lit",
+      "y": 270
+    }
+  }
+}

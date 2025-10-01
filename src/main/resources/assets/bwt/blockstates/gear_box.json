@@ -49,27 +49,51 @@
       "apply": { "model": "bwt:block/gear_box_side", "x": 90}
     },
     {
-      "when": { "facing": "north"},
+      "when": { "facing": "north", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered_counter_clockwise"}
+    },
+    {
+      "when": { "facing": "east", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered_counter_clockwise", "y": 90}
+    },
+    {
+      "when": { "facing": "south", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered", "y": 180}
+    },
+    {
+      "when": { "facing": "west", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered", "y": 270}
+    },
+    {
+      "when": { "facing": "up", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered", "x": 270}
+    },
+    {
+      "when": { "facing": "down", "mech_powered": "true"},
+      "apply": { "model": "bwt:block/gear_box_face_powered_counter_clockwise", "x": 90}
+    },
+    {
+      "when": { "facing": "north", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face"}
     },
     {
-      "when": { "facing": "east"},
+      "when": { "facing": "east", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face", "y": 90}
     },
     {
-      "when": { "facing": "south"},
+      "when": { "facing": "south", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face", "y": 180}
     },
     {
-      "when": { "facing": "west"},
+      "when": { "facing": "west", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face", "y": 270}
     },
     {
-      "when": { "facing": "up"},
+      "when": { "facing": "up", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face", "x": 270}
     },
     {
-      "when": { "facing": "down"},
+      "when": { "facing": "down", "mech_powered": "false"},
       "apply": { "model": "bwt:block/gear_box_face", "x": 90}
     }
   ]

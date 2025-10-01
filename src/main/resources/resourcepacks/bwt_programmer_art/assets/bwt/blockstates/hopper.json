@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "mech_powered=false": { "model": "bwt:block/hopper"},
+    "mech_powered=true": { "model": "bwt:block/hopper"}
+  }
+}

@@ -1,0 +1,25 @@
+{
+	"__comment": "Designed by Stohun with Cubik Studio - https://cubik.studio",
+	"parent": "block/block",
+	"textures": {
+		"particle": "bwt:block/concentrated_hellfire_block_0",
+		"0": "bwt:block/concentrated_hellfire_block_0",
+		"1": "bwt:block/concentrated_hellfire_block_1",
+		"2": "bwt:block/concentrated_hellfire_block_2",
+		"3": "bwt:block/concentrated_hellfire_block_3"
+	},
+	"elements": [ 	 
+		{
+			"from": [  0,  0,  0 ],
+			"to":   [ 16, 16, 16 ],
+			"faces": {
+				"down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#3", "cullface": "down" },
+				"up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#3", "cullface": "up" },
+				"north": { "uv": [ 0, 0, 16, 16 ], "texture": "#1", "cullface": "north" },
+				"south": { "uv": [ 0, 0, 16, 16 ], "texture": "#2", "cullface": "south" },
+				"west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#0", "cullface": "west" },
+				"east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#3", "cullface": "east" }
+			}
+		}
+	]
+}

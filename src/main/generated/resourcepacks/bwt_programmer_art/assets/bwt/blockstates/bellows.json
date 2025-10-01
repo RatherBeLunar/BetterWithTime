@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=east,mech_powered=false": {
+      "model": "bwt:block/bellows",
+      "y": 90
+    },
+    "facing=east,mech_powered=true": {
+      "model": "bwt:block/bellows_compressed",
+      "y": 90
+    },
+    "facing=north,mech_powered=false": {
+      "model": "bwt:block/bellows"
+    },
+    "facing=north,mech_powered=true": {
+      "model": "bwt:block/bellows_compressed"
+    },
+    "facing=south,mech_powered=false": {
+      "model": "bwt:block/bellows",
+      "y": 180
+    },
+    "facing=south,mech_powered=true": {
+      "model": "bwt:block/bellows_compressed",
+      "y": 180
+    },
+    "facing=west,mech_powered=false": {
+      "model": "bwt:block/bellows",
+      "y": 270
+    },
+    "facing=west,mech_powered=true": {
+      "model": "bwt:block/bellows_compressed",
+      "y": 270
+    }
+  }
+}

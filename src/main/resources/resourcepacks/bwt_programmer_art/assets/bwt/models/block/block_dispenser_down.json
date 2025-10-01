@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "particle": "bwt:block/block_dispenser_side",
+    "up": "bwt:block/block_dispenser_top",
+    "down": "bwt:block/block_dispenser_front",
+    "north": "bwt:block/block_dispenser_side",
+    "east": "bwt:block/block_dispenser_side",
+    "south": "bwt:block/block_dispenser_side",
+    "west": "bwt:block/block_dispenser_side"
+  }
+}
