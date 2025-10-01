@@ -27,7 +27,7 @@ public class RadiusAroundBlockStream {
                 .mapToObj(idx -> oneDimensionalIndexTo3DCoord(idx, xRadius, yRadius, zRadius))
                 .map(centerPos::add);
         if (!includeSelf) {
-            stream = stream.filter(pos -> pos.equals(centerPos));
+            stream = stream.filter(pos -> !pos.equals(centerPos));
         }
         return stream;
     }

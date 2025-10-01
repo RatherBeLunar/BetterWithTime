@@ -31,6 +31,7 @@ public class FireDataCluster {
         if (centerData.stokedCount > 0) {
             fireDataCluster.centerBlockIsStoked = true;
         }
+        fireDataCluster.fireData.add(centerData);
 
         RadiusAroundBlockStream
                 .neighboringBlocksInHorizontalRadius(below, radius)
