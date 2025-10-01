@@ -69,7 +69,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                         false,
                         false
                 )
-                .criterion("activeImmediately", TickCriterion.Conditions.createTick())
+                .criterion("active_immediately", TickCriterion.Conditions.createTick())
                 .build(consumer, Id.MOD_ID + "/root");
         AdvancementEntry hempSeedsAdvancement = itemAdvancement(
                 BwtItems.hempSeedsItem,
