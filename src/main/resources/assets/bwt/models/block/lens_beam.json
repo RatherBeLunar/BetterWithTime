@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "vase_purple",
-		"particle": "vase_purple"
+		"0": "bwt:block/vase_purple_side",
+		"particle": "bwt:block/vase_purple_side"
 	},
 	"elements": [
 		{
