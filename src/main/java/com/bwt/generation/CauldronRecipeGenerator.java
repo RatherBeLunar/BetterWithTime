@@ -10,9 +10,11 @@ import com.bwt.utils.Id;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
+import net.minecraft.block.Blocks;
 import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.DyeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -146,5 +148,17 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.flourItem).result(BwtItems.donutItem, 4).offerTo(exporter);
         CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.rawEggItem).result(BwtItems.poachedEggItem).offerTo(exporter);
         addNewVanillaCookingRecipe(BwtItems.rawEggItem, BwtItems.friedEggItem, exporter);
+        CauldronRecipe.JsonBuilder.createFood()
+                .ingredient(Items.MILK_BUCKET, 3)
+                .ingredient(Items.SUGAR, 2)
+                .ingredient(BwtItems.flourItem, 3)
+                .ingredient(BwtItems.rawEggItem, 1)
+                .result(Items.CAKE)
+                .offerTo(exporter);
+        CauldronRecipe.JsonBuilder.createFood()
+                .ingredient(BwtItems.flourItem, 2)
+                .ingredient(Items.COCOA_BEANS)
+                .result(Items.COOKIE, 8)
+                .offerTo(exporter);
     }
 }
