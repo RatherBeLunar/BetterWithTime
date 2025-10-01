@@ -6,6 +6,7 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.tags.BwtFluidTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -138,6 +139,8 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.SAW_DUSTS, "Saw Dusts", translationBuilder);
         addTagName(BwtItemTags.MINING_CHARGE_IMMUNE, "Mining Charge Immune", translationBuilder);
         addTagName(BwtItemTags.BLOOD_WOOD_LOGS, "Blood Wood Logs", translationBuilder);
+        addTagName(BwtItemTags.NETHER_GROTH_CAN_EAT, "Nether Groth Can Eat", translationBuilder);
+        addTagName(BwtFluidTags.AQUEDUCT_FLUIDS, "Blood Wood Logs", translationBuilder);
     }
 
     protected void addEmiNames(TranslationBuilder translationBuilder) {
@@ -190,7 +193,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(soundEvent.getId().withPrefixedPath("subtitles."), value);
     }
 
-    protected void addTagName(TagKey<Item> tagKey, String value, TranslationBuilder translationBuilder) {
+    protected void addTagName(TagKey<?> tagKey, String value, TranslationBuilder translationBuilder) {
         translationBuilder.add(tagKey, value);
     }
 
