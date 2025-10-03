@@ -2,6 +2,7 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.KilnBlockCookProgressSetter;
@@ -14,6 +15,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -25,6 +27,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
 import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.GrassColors;
 
@@ -36,12 +39,15 @@ public class BetterWithTimeClient implements ClientModInitializer {
 	public static final EntityModelLayer CAULDRON_FILL_LAYER = new EntityModelLayer(Id.of("cauldron_fill"), "main");
 	public static final EntityModelLayer CRUCIBLE_FILL_LAYER = new EntityModelLayer(Id.of("crucible_fill"), "main");
 
+    private final UnfiredDecoratedPotBlockEntity renderUnfiredDecoratedPot = new UnfiredDecoratedPotBlockEntity(BlockPos.ORIGIN, BwtBlocks.unfiredDecoratedPotBlockWithSherds.getDefaultState());
+
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-		BlockEntityRendererFactories.register(BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntityRenderer::new);
-		BlockEntityRendererFactories.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
-		BlockEntityRendererFactories.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
+        BlockEntityRendererFactories.register(BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(BwtBlockEntities.unfiredDecoratedPotBlockEntity, UnfiredDecoratedPotBlockEntityRenderer::new);
+        BlockEntityRendererFactories.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
+        BlockEntityRendererFactories.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
@@ -55,6 +61,13 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CAULDRON_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CRUCIBLE_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
+        BuiltinItemRendererRegistry.INSTANCE.register(
+                BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
+                (stack, mode, matrices, vertexConsumers, light, overlay) -> {
+                    renderUnfiredDecoratedPot.readFrom(stack);
+                    renderUnfiredDecoratedPot.setWorld(MinecraftClient.getInstance().world);
+                    MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
+                });
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.hempCropBlock,

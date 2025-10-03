@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "function": "minecraft:copy_components",
+              "include": [
+                "minecraft:pot_decorations"
+              ],
+              "source": "block_entity"
+            }
+          ],
+          "name": "bwt:unfired_decorated_pot_with_sherds"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ]
+}

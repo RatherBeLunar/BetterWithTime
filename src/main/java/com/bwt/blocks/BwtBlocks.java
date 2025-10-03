@@ -25,8 +25,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.Sherds;
 import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -223,6 +225,14 @@ public class BwtBlocks implements ModInitializer {
             .sounds(BlockSoundGroup.STONE)
             .mapColor(Blocks.PISTON_HEAD.getDefaultMapColor())
     );
+    public static final UnfiredPotteryBlock unfiredDecoratedPotBlock = new UnfiredDecoratedPotBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
+    );
+    public static final UnfiredPotteryBlock unfiredDecoratedPotBlockWithSherds = new UnfiredDecoratedPotBlockWithSherds(AbstractBlock.Settings.copy(Blocks.CLAY)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
+    );
 	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
             .solidBlock(Blocks::never)
@@ -236,10 +246,6 @@ public class BwtBlocks implements ModInitializer {
             .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredUrnBlock = new UnfiredUrnBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
-            .nonOpaque()
-            .solidBlock(Blocks::never)
-    );
-	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
             .solidBlock(Blocks::never)
     );
@@ -370,6 +376,10 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("bellows"), bellowsBlock);
         Registry.register(Registries.ITEM, Id.of("bellows"), new BlockItem(bellowsBlock, new Item.Settings()));
         // Unfired Pottery
+        Registry.register(Registries.BLOCK, Id.of("unfired_decorated_pot_with_sherds"), unfiredDecoratedPotBlockWithSherds);
+        Registry.register(Registries.ITEM, Id.of("unfired_decorated_pot_with_sherds"), new BlockItem(unfiredDecoratedPotBlockWithSherds, new Item.Settings().component(DataComponentTypes.POT_DECORATIONS, Sherds.DEFAULT)));
+        Registry.register(Registries.BLOCK, Id.of("unfired_decorated_pot"), unfiredDecoratedPotBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_decorated_pot"), new BlockItem(unfiredDecoratedPotBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_crucible"), unfiredCrucibleBlock);
         Registry.register(Registries.ITEM, Id.of("unfired_crucible"), new BlockItem(unfiredCrucibleBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_planter"), unfiredPlanterBlock);
@@ -378,8 +388,6 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, Id.of("unfired_vase"), new BlockItem(unfiredVaseBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_urn"), unfiredUrnBlock);
         Registry.register(Registries.ITEM, Id.of("unfired_urn"), new BlockItem(unfiredUrnBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("unfired_mould"), unfiredMouldBlock);
-        Registry.register(Registries.ITEM, Id.of("unfired_mould"), new BlockItem(unfiredMouldBlock, new Item.Settings()));
         // Kiln
         Registry.register(Registries.BLOCK, Id.of("kiln"), kilnBlock);
         // Blood Wood
@@ -520,11 +528,11 @@ public class BwtBlocks implements ModInitializer {
             content.add(soulSandPlanterBlock);
             content.add(grassPlanterBlock);
             content.add(urnBlock);
+            content.add(unfiredDecoratedPotBlock);
             content.add(unfiredCrucibleBlock);
             content.add(unfiredPlanterBlock);
             content.add(unfiredVaseBlock);
             content.add(unfiredUrnBlock);
-            content.add(unfiredMouldBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
         });

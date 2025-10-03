@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bwt:kiln_cook_unfired_mould"
+        "recipe": "bwt:kiln_cook_unfired_decorated_pot_with_sherds"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "bwt:kiln_cook_unfired_mould"
+      "bwt:kiln_cook_unfired_decorated_pot_with_sherds"
     ]
   }
 }

@@ -1,11 +1,8 @@
 package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.MaterialInheritedBlock;
-import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
-import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -19,35 +16,23 @@ import net.minecraft.block.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
-import net.minecraft.loot.condition.AnyOfLootCondition;
 import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.condition.LocationCheckLootCondition;
 import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.predicate.BlockPredicate;
-import net.minecraft.predicate.NumberRange;
-import net.minecraft.predicate.StatePredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.entity.LocationPredicate;
 import net.minecraft.predicate.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.EnchantmentTags;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
-import net.minecraft.state.property.Property;
 import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 
 public class AdvancementsGenerator extends FabricAdvancementProvider {
     public static final Identifier background = Id.mc("textures/gui/advancements/backgrounds/adventure.png");
@@ -155,7 +140,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                 BwtBlocks.unfiredCrucibleBlock,
                 "Potter's Guild",
                 "Spin your first piece of pottern on the Turntable. Next, into the Kiln!",
-                BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredMouldBlock
+                BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock
         ).parent(turntableAdvancement).build(consumer, Id.MOD_ID + "/got_pottery");
         AdvancementEntry glueAdvancement = itemAdvancement(
                 BwtItems.glueItem,
@@ -180,7 +165,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                 Blocks.BRICKS,
                 "Fired and Glazed",
                 "Surround your pottery with enough brick blocks above a stoked fire, and it will harden into its final form! The kiln can cook other things, too.",
-                BwtBlocks.crucibleBlock, BwtBlocks.planterBlock, BwtBlocks.vaseBlocks.get(DyeColor.WHITE), BwtBlocks.urnBlock, BwtItems.mouldItem
+                Blocks.DECORATED_POT, BwtBlocks.crucibleBlock, BwtBlocks.planterBlock, BwtBlocks.vaseBlocks.get(DyeColor.WHITE), BwtBlocks.urnBlock
         ).parent(potteryAdvancement).build(consumer, Id.MOD_ID + "/kiln_fired");
         AdvancementEntry soulUrnAdvancement = itemAdvancement(
                 BwtItems.soulUrnItem,

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bwt:turntable_unfired_mould"
+        "recipe": "bwt:turntable_unfired_decorated_pot_with_sherds"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "bwt:turntable_unfired_mould"
+      "bwt:turntable_unfired_decorated_pot_with_sherds"
     ]
   }
 }

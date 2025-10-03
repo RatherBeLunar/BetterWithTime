@@ -1,11 +1,12 @@
 {
   "values": [
     "bwt:dung_block",
+    "bwt:unfired_decorated_pot",
+    "bwt:unfired_decorated_pot_with_sherds",
     "bwt:unfired_crucible",
     "bwt:unfired_planter",
     "bwt:unfired_vase",
     "bwt:unfired_urn",
-    "bwt:unfired_mould",
     "bwt:dirt_slab",
     "bwt:dirt_path_slab",
     "bwt:grass_slab",

@@ -180,11 +180,12 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(BlockTags.SHOVEL_MINEABLE)
                 .add(BwtBlocks.dungBlock)
+                .add(BwtBlocks.unfiredDecoratedPotBlock)
+                .add(BwtBlocks.unfiredDecoratedPotBlockWithSherds)
                 .add(BwtBlocks.unfiredCrucibleBlock)
                 .add(BwtBlocks.unfiredPlanterBlock)
                 .add(BwtBlocks.unfiredVaseBlock)
                 .add(BwtBlocks.unfiredUrnBlock)
-                .add(BwtBlocks.unfiredMouldBlock)
                 .add(BwtBlocks.dirtSlabBlock)
                 .add(BwtBlocks.dirtPathSlabBlock)
                 .add(BwtBlocks.grassSlabBlock)

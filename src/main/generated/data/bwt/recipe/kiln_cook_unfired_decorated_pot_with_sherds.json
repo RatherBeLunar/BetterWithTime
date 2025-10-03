@@ -5,10 +5,10 @@
   "drops": [
     {
       "count": 1,
-      "id": "bwt:mould"
+      "id": "minecraft:decorated_pot"
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_mould"
+    "block": "bwt:unfired_decorated_pot_with_sherds"
   }
 }

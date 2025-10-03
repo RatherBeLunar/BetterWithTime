@@ -370,7 +370,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         BwtItems.wolfChopItem,
                         BwtItems.cookedWolfChopItem,
                         Items.MELON_SLICE,
-                        BwtItems.mouldItem,
                         Items.NETHER_BRICK,
                         // Nether Groth Spores
                         Items.QUARTZ,

@@ -193,7 +193,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     private void dumpItems(World world, BlockPos pos, BlockState state) {
         Optional<ItemStack> firstItemToDump = inventory.getHeldStacks().stream()
-                .filter(itemStack -> !itemStack.isOf(BwtItems.mouldItem) && !itemStack.isEmpty())
+                .filter(itemStack -> !itemStack.isEmpty())
                 .findFirst();
         if (firstItemToDump.isEmpty()) {
             return;

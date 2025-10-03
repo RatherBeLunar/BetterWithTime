@@ -1,19 +1,19 @@
 {
   "added": [
     "bwt:filament_from_cauldron",
-    "bwt:kiln_cook_unfired_mould",
     "bwt:coal_dust_from_milling_coal",
     "bwt:flour_from_milling_wheat",
     "bwt:turntable_unfired_vase",
     "bwt:fabric",
     "bwt:nether_sludge_from_cauldron",
-    "bwt:turntable_unfired_urn",
     "bwt:netherite_ingot_smelting",
     "bwt:turntable_unfired_planter",
+    "bwt:kiln_cook_unfired_decorated_pot",
     "bwt:concentrated_hellfire_from_cauldron",
     "bwt:tanned_leather_from_cauldron",
     "bwt:ground_netherrack_from_milling_netherrack",
     "bwt:turntable_unfired_crucible",
+    "bwt:turntable_unfired_decorated_pot",
     "bwt:wood_blade",
     "bwt:kiln_cook_unfired_planter",
     "bwt:hopper_soul_urn",
@@ -23,6 +23,7 @@
     "bwt:rope",
     "bwt:kiln_cook_unfired_vase",
     "bwt:scoured_leather_from_milling_leather",
+    "bwt:kiln_cook_unfired_decorated_pot_with_sherds",
     "bwt:kiln_cook_unfired_crucible",
     "bwt:nethercoal_from_cauldron"
   ]

@@ -8,7 +8,7 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_mould"
+    "block": "bwt:unfired_decorated_pot_with_sherds"
   },
-  "output": "minecraft:air"
+  "output": "bwt:unfired_crucible"
 }

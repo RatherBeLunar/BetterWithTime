@@ -11,11 +11,21 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "got_unfired_mould": {
+    "got_unfired_decorated_pot": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:unfired_mould"
+            "items": "bwt:unfired_decorated_pot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "got_unfired_decorated_pot_with_sherds": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_decorated_pot_with_sherds"
           }
         ]
       },
@@ -63,11 +73,12 @@
   },
   "requirements": [
     [
+      "got_unfired_decorated_pot_with_sherds",
+      "got_unfired_decorated_pot",
       "got_unfired_crucible",
       "got_unfired_planter",
       "got_unfired_vase",
-      "got_unfired_urn",
-      "got_unfired_mould"
+      "got_unfired_urn"
     ]
   ],
   "sends_telemetry_event": true

@@ -8,7 +8,7 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_urn"
+    "block": "bwt:unfired_decorated_pot"
   },
-  "output": "minecraft:air"
+  "output": "bwt:unfired_crucible"
 }

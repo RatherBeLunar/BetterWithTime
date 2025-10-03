@@ -119,7 +119,8 @@ public class ModelGenerator extends FabricModelProvider {
                 .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
         );
 
-        for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredMouldBlock}) {
+        blockStateModelGenerator.excludeFromSimpleItemModelGeneration(BwtBlocks.unfiredDecoratedPotBlockWithSherds);
+        for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock}) {
             blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(unfiredPotteryBlock)
                     .coordinate(BlockStateVariantMap.create(UnfiredPotteryBlock.COOKING)
                             .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(unfiredPotteryBlock)))
@@ -196,6 +197,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_0"));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.bellowsBlock, ModelIds.getBlockModelId(BwtBlocks.bellowsBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredDecoratedPotBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredDecoratedPotBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredCrucibleBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredCrucibleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredPlanterBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
@@ -233,7 +235,6 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.hellfireDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.kibbleItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.mouldItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.nethercoalItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.netherSludgeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
