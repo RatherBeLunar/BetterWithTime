@@ -26,6 +26,7 @@
     "accessors.ArmorStandAccessorMixin",
     "accessors.BoatItemAccessorMixin",
     "accessors.CraftingInventoryAccessorMixin",
+    "accessors.DecoratedPotPatternsAccessorMixin",
     "accessors.DyeItemAccessorMixin",
     "accessors.MinecartItemAccessorMixin",
     "accessors.MobEntityAccessorMixin",

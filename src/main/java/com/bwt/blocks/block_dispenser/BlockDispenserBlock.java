@@ -5,8 +5,10 @@ import com.bwt.blocks.block_dispenser.behavior.dispense.*;
 import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
 import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
+import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.MiningChargeEntity;
 import com.bwt.items.BwtItems;
+import com.bwt.mixin.accessors.DecoratedPotPatternsAccessorMixin;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipeInput;
 import com.bwt.recipes.BwtRecipes;
@@ -15,9 +17,7 @@ import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtEntityTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
@@ -29,7 +29,10 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -147,6 +150,42 @@ public class BlockDispenserBlock extends DispenserBlock {
         };
         registerBlockDispenseBehavior(MiningChargeBlock.class, invertStackResult(miningChargeBehavior));
         DispenserBlock.registerBehavior(BwtBlocks.miningChargeBlock, miningChargeBehavior);
+
+        registerSherdBehaviors();
+    }
+
+    private void registerSherdBehaviors() {
+        ItemDispenserBehavior sherdBehavior = new ItemDispenserBehavior() {
+            @Override
+            protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+                ServerWorld world = pointer.world();
+                Direction direction = pointer.state().get(DispenserBlock.FACING);
+                BlockPos blockPos = pointer.pos().offset(direction);
+                BlockState blockState = world.getBlockState(blockPos);
+                if (!blockState.isOf(BwtBlocks.unfiredDecoratedPotBlock) && !blockState.isOf(BwtBlocks.unfiredDecoratedPotBlockWithSherds)) {
+                    return super.dispenseSilently(pointer, stack);
+                }
+                if (blockState.isOf(BwtBlocks.unfiredDecoratedPotBlock)) {
+                    blockState = BwtBlocks.unfiredDecoratedPotBlockWithSherds.getDefaultState();
+                    world.setBlockState(blockPos, blockState, Block.NOTIFY_LISTENERS, 0);
+                }
+                Direction side = direction.getOpposite();
+                if (side.getAxis().isVertical()) {
+                    return stack;
+                }
+                BlockEntity blockEntity = world.getBlockEntity(blockPos);
+                if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
+                    return stack;
+                }
+                if (!world.isClient && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+                    stack.decrement(1);
+                }
+                return stack;
+            }
+        };
+        ArrayList<Item> sherds = new ArrayList<>(DecoratedPotPatternsAccessorMixin.getSHERD_TO_PATTERN().keySet());
+        sherds.forEach(sherd -> DispenserBlock.registerBehavior(sherd, sherdBehavior));
+        inheritItemBehavior(sherds.toArray(Item[]::new));
     }
 
     public static void registerEntityInhaleBehavior(EntityType<?> entityType, EntityInhaleBehavior behavior) {
