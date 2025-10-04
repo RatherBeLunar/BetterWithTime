@@ -65,7 +65,6 @@ public class BetterWithTimeClient implements ClientModInitializer {
                 BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
                 (stack, mode, matrices, vertexConsumers, light, overlay) -> {
                     renderUnfiredDecoratedPot.readFrom(stack);
-                    renderUnfiredDecoratedPot.setWorld(MinecraftClient.getInstance().world);
                     MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
                 });
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),

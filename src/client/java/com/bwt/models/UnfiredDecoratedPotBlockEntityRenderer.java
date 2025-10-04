@@ -28,6 +28,7 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -48,10 +49,11 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
     ) {
         World world = unfiredDecoratedPotBlockEntity.getWorld();
         BlockState state = unfiredDecoratedPotBlockEntity.getCachedState();
+        BlockPos pos = unfiredDecoratedPotBlockEntity.getPos();
 
         // Render the block itself
         matrixStack.push();
-        this.renderModel(state, matrixStack, vertexConsumerProvider, light, uv);
+        this.renderModel(world, state, pos, matrixStack, vertexConsumerProvider, light, uv);
         matrixStack.pop();
 
         // Decorated pot code
@@ -78,21 +80,39 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         matrixStack.pop();
     }
 
-    private void renderModel(BlockState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int uv) {
+    private void renderModel(@Nullable World world, BlockState state, BlockPos pos, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int uv) {
         BakedModelManager bakedModelManager = manager.getModels().getModelManager();
         matrices.push();
-        manager.getModelRenderer()
-                .render(
-                        matrices.peek(),
-                        vertexConsumers.getBuffer(TexturedRenderLayers.getItemEntityTranslucentCull()),
-                        state,
-                        bakedModelManager.getBlockModels().getModel(state),
-                        1.0F,
-                        1.0F,
-                        1.0F,
-                        light,
-                        uv
-                );
+        if (world == null) {
+            manager.getModelRenderer()
+                    .render(
+                            matrices.peek(),
+                            vertexConsumers.getBuffer(TexturedRenderLayers.getItemEntityTranslucentCull()),
+                            state,
+                            bakedModelManager.getBlockModels().getModel(state),
+                            1.0F,
+                            1.0F,
+                            1.0F,
+                            light,
+                            uv
+                    );
+        }
+        else {
+            RenderLayer renderLayer = RenderLayers.getBlockLayer(state);
+            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
+            manager.getModelRenderer().render(
+                    world,
+                    manager.getModel(state),
+                    state,
+                    pos,
+                    matrices,
+                    vertexConsumer,
+                    true,
+                    world.random,
+                    state.getRenderingSeed(pos),
+                    uv
+            );
+        }
         matrices.pop();
     }
 
@@ -102,7 +122,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
     }
 
     private void renderDecoratedSide(
-            World world, ItemStack itemStack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay
+            @Nullable World world, ItemStack itemStack, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, int overlay
     ) {
         matrices.push();
         matrices.scale(0.9f, 0.9f, 0.9f);
