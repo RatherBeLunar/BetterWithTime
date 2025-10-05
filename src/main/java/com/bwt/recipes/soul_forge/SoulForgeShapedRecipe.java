@@ -119,6 +119,11 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
             recipeId = Id.of(recipeId.getPath());
             ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);

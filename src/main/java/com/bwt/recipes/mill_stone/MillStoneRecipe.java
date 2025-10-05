@@ -5,6 +5,7 @@ import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.bwt.generation.EmiDefaultsGenerator;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -25,6 +26,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.CraftingRecipeCategory;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
@@ -277,6 +279,11 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
                     + "_from_milling_"
                     + RecipeProvider.getItemPath(this.ingredients.get(0).getMatchingStacks().get(0).getItem())
             );
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override

@@ -262,6 +262,11 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
             this.addToDefaults(recipeId);
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);

@@ -218,6 +218,11 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
             SoulBottlingRecipe soulBottlingRecipe = new SoulBottlingRecipe(

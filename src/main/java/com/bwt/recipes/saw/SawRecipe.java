@@ -239,7 +239,12 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
 
         @Override
         public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, Id.of("saw_") + fromBlockName);
+            this.offerTo(exporter, Id.of("saw_" + fromBlockName));
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override

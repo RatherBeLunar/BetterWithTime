@@ -224,6 +224,11 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
             this.addToDefaults(recipeId);
             MobSpawnerConversionRecipe mobSpawnerConversionRecipe = new MobSpawnerConversionRecipe(

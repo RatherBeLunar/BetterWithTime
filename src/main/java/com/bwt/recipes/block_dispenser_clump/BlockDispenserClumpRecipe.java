@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.utils.Id;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.Advancement;
@@ -232,6 +233,11 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
         @Override
         public void offerTo(RecipeExporter exporter) {
             this.offerTo(exporter, RecipeProvider.getItemPath(block.getItem()) + "_clump");
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override
