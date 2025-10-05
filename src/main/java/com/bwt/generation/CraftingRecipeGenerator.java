@@ -180,10 +180,45 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .group("carpet")
                 .criterion(RecipeProvider.hasItem(dung), RecipeProvider.conditionsFromItem(dung))
                 .offerTo(exporter, Id.of("dye_" + RecipeProvider.getItemPath(brownCarpet) + "_from_dung"));
-        offerTerracottaDyeingRecipe(exporter, brownTerracotta, dung);
-        offerConcretePowderDyeingRecipe(exporter, brownConcretePowder, dung);
-        offerStainedGlassDyeingRecipe(exporter, brownStainedGlass, dung);
-        offerStainedGlassPaneDyeingRecipe(exporter, brownStainedGlassPane, dung);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownTerracotta, 8)
+                .input('#', Blocks.TERRACOTTA)
+                .input('X', dung)
+                .pattern("###")
+                .pattern("#X#")
+                .pattern("###")
+                .group("stained_terracotta")
+                .criterion("has_terracotta", conditionsFromItem(Blocks.TERRACOTTA))
+                .criterion(hasItem(dung), conditionsFromItem(dung))
+                .offerTo(exporter, Id.of("dye_" + getItemPath(brownTerracotta) + "_from_dung"));
+        ShapelessRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownConcretePowder, 8)
+                .input(dung)
+                .input(Blocks.SAND, 4)
+                .input(Blocks.GRAVEL, 4)
+                .group("concrete_powder")
+                .criterion("has_sand", conditionsFromItem(Blocks.SAND))
+                .criterion("has_gravel", conditionsFromItem(Blocks.GRAVEL))
+                .criterion(hasItem(dung), conditionsFromItem(dung))
+                .offerTo(exporter, Id.of("dye_" + getItemPath(brownConcretePowder) + "_from_dung"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, brownStainedGlass, 8)
+                .input('#', Blocks.GLASS)
+                .input('X', dung)
+                .pattern("###")
+                .pattern("#X#")
+                .pattern("###")
+                .group("stained_glass")
+                .criterion("has_glass", conditionsFromItem(Blocks.GLASS))
+                .criterion(hasItem(dung), conditionsFromItem(dung))
+                .offerTo(exporter, Id.of("dye_" + getItemPath(brownStainedGlass) + "_from_dung"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, brownStainedGlassPane, 8)
+                .input('#', Blocks.GLASS_PANE)
+                .input('$', dung)
+                .pattern("###")
+                .pattern("#$#")
+                .pattern("###")
+                .group("stained_glass_pane")
+                .criterion("has_glass_pane", conditionsFromItem(Blocks.GLASS_PANE))
+                .criterion(hasItem(dung), conditionsFromItem(dung))
+                .offerTo(exporter, Id.of("dye_" + getItemPath(brownStainedGlassPane) + "_from_dung"));
     }
 
     private void generateVaseDyeingRecipes(RecipeExporter exporter) {
