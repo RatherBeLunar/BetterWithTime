@@ -33,8 +33,8 @@ public class SidingBlock extends MiniBlock {
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(WATERLOGGED, false));
     }
 
-    public static SidingBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new SidingBlock(Settings.copy(slabBlock), fullBlock);
+    public static SidingBlock ofBlock(Block fullBlock) {
+        return new SidingBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     public MapCodec<? extends SidingBlock> getCodec() {

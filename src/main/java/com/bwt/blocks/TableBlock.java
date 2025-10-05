@@ -28,8 +28,8 @@ public class TableBlock extends DecorativeBlock {
         setDefaultState(getDefaultState().with(SUPPORT, true));
     }
 
-    public static TableBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new TableBlock(Settings.copy(slabBlock), fullBlock);
+    public static TableBlock ofBlock(Block fullBlock) {
+        return new TableBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     @Override

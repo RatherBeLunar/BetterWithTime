@@ -50,8 +50,8 @@ public class MouldingBlock extends MiniBlock {
         builder.add(ORIENTATION);
     }
 
-    public static MouldingBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new MouldingBlock(Settings.copy(slabBlock), fullBlock);
+    public static MouldingBlock ofBlock(Block fullBlock) {
+        return new MouldingBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     public MapCodec<? extends MouldingBlock> getCodec() {

@@ -44,8 +44,8 @@ public class CornerBlock extends MiniBlock {
         builder.add(ORIENTATION);
     }
 
-    public static CornerBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new CornerBlock(Settings.copy(slabBlock), fullBlock);
+    public static CornerBlock ofBlock(Block fullBlock) {
+        return new CornerBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     public MapCodec<? extends CornerBlock> getCodec() {

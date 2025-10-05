@@ -34,8 +34,8 @@ public class PedestalBlock extends DecorativeBlock {
         setDefaultState(getDefaultState().with(VERTICAL_DIRECTION, Direction.UP));
     }
 
-    public static PedestalBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new PedestalBlock(Settings.copy(slabBlock), fullBlock);
+    public static PedestalBlock ofBlock(Block fullBlock) {
+        return new PedestalBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     @Override

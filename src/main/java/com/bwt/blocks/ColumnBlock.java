@@ -15,8 +15,8 @@ public class ColumnBlock extends DecorativeBlock {
         super(settings, fullBlock);
     }
 
-    public static ColumnBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new ColumnBlock(Settings.copy(slabBlock), fullBlock);
+    public static ColumnBlock ofBlock(Block fullBlock) {
+        return new ColumnBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     @Override
