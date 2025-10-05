@@ -12,6 +12,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -90,6 +91,6 @@ public class MovingRopeEntityRenderer extends EntityRenderer<MovingRopeEntity> {
 
     @Override
     public Identifier getTexture(MovingRopeEntity entity) {
-        return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        return PlayerScreenHandler.BLOCK_ATLAS_TEXTURE;
     }
 }

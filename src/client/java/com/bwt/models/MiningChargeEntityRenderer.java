@@ -13,6 +13,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.TntMinecartEntityRenderer;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
@@ -47,7 +48,7 @@ public class MiningChargeEntityRenderer extends EntityRenderer<MiningChargeEntit
 
     @Override
     public Identifier getTexture(MiningChargeEntity tntEntity) {
-        return SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
+        return PlayerScreenHandler.BLOCK_ATLAS_TEXTURE;
     }
 }
 
