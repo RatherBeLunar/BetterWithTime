@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:raw_copper_block_clump"
+        "recipe": "bwt:raw_iron_block_clump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:raw_copper_block_clump"
+      "bwt:raw_iron_block_clump"
     ]
   }
 }

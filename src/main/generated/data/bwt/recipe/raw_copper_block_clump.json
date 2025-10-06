@@ -1,6 +1,7 @@
 {
   "type": "bwt:block_dispenser_clump",
   "block": "minecraft:raw_copper_block",
+  "category": "misc",
   "ingredient": {
     "count": 9,
     "ingredient": {

@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:clay_clump"
+        "recipe": "bwt:raw_gold_block_clump"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -15,7 +15,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:clay_clump"
+      "bwt:raw_gold_block_clump"
     ]
   }
 }

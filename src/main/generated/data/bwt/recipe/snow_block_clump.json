@@ -1,6 +1,7 @@
 {
   "type": "bwt:block_dispenser_clump",
   "block": "minecraft:snow_block",
+  "category": "misc",
   "ingredient": {
     "count": 4,
     "ingredient": {
