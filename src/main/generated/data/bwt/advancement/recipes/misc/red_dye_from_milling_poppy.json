@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:red_dye_from_milling_poppy"
+        "recipe": "bwt:red_dye_from_milling_poppy"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:red_dye_from_milling_poppy"
+      "bwt:red_dye_from_milling_poppy"
     ]
   }
 }

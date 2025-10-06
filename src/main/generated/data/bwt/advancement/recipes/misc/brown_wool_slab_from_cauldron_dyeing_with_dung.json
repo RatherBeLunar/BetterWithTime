@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:brown_wool_slab_from_cauldron_dyeing_with_dung"
+        "recipe": "bwt:brown_wool_slab_from_cauldron_dyeing_with_dung"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:brown_wool_slab_from_cauldron_dyeing_with_dung"
+      "bwt:brown_wool_slab_from_cauldron_dyeing_with_dung"
     ]
   }
 }

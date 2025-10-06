@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:padding_block"
+        "recipe": "bwt:padding_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:padding_block"
+      "bwt:padding_block"
     ]
   }
 }

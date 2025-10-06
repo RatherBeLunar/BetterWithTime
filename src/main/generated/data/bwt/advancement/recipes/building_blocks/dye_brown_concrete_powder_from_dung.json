@@ -1,21 +1,31 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_green_wool": {
+    "has_dung": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:green_wool"
+            "items": "bwt:dung"
           }
         ]
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_potash": {
+    "has_gravel": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:potash"
+            "items": "minecraft:gravel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_sand": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:sand"
           }
         ]
       },
@@ -23,7 +33,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bwt:white_wool_from_cauldron_washing_green_wool"
+        "recipe": "bwt:dye_brown_concrete_powder_from_dung"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -31,13 +41,14 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_green_wool",
-      "has_potash"
+      "has_sand",
+      "has_gravel",
+      "has_dung"
     ]
   ],
   "rewards": {
     "recipes": [
-      "bwt:white_wool_from_cauldron_washing_green_wool"
+      "bwt:dye_brown_concrete_powder_from_dung"
     ]
   }
 }

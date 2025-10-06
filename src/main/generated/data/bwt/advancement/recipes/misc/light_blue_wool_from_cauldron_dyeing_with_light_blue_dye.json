@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:light_blue_wool_from_cauldron_dyeing_with_light_blue_dye"
+        "recipe": "bwt:light_blue_wool_from_cauldron_dyeing_with_light_blue_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:light_blue_wool_from_cauldron_dyeing_with_light_blue_dye"
+      "bwt:light_blue_wool_from_cauldron_dyeing_with_light_blue_dye"
     ]
   }
 }

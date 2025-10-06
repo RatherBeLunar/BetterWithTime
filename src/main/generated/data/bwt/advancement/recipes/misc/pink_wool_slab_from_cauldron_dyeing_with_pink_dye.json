@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:pink_wool_slab_from_cauldron_dyeing_with_pink_dye"
+        "recipe": "bwt:pink_wool_slab_from_cauldron_dyeing_with_pink_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:pink_wool_slab_from_cauldron_dyeing_with_pink_dye"
+      "bwt:pink_wool_slab_from_cauldron_dyeing_with_pink_dye"
     ]
   }
 }

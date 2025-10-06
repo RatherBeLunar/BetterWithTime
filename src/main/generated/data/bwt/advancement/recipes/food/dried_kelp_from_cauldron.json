@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:dried_kelp_from_cauldron"
+        "recipe": "bwt:dried_kelp_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:dried_kelp_from_cauldron"
+      "bwt:dried_kelp_from_cauldron"
     ]
   }
 }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:white_wool_from_cauldron_washing_yellow_wool"
+        "recipe": "bwt:white_wool_from_cauldron_washing_yellow_wool"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:white_wool_from_cauldron_washing_yellow_wool"
+      "bwt:white_wool_from_cauldron_washing_yellow_wool"
     ]
   }
 }

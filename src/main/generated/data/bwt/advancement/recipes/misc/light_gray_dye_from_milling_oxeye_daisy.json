@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:light_gray_dye_from_milling_oxeye_daisy"
+        "recipe": "bwt:light_gray_dye_from_milling_oxeye_daisy"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:light_gray_dye_from_milling_oxeye_daisy"
+      "bwt:light_gray_dye_from_milling_oxeye_daisy"
     ]
   }
 }

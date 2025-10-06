@@ -11,11 +11,11 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "has_glass_pane": {
+    "has_terracotta": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:glass_pane"
+            "items": "minecraft:terracotta"
           }
         ]
       },
@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:brown_stained_glass_pane_from_glass_pane"
+        "recipe": "bwt:dye_brown_terracotta_from_dung"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -31,13 +31,13 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_glass_pane",
+      "has_terracotta",
       "has_dung"
     ]
   ],
   "rewards": {
     "recipes": [
-      "minecraft:brown_stained_glass_pane_from_glass_pane"
+      "bwt:dye_brown_terracotta_from_dung"
     ]
   }
 }

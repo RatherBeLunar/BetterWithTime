@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:green_wool_slab_from_cauldron_dyeing_with_green_dye"
+        "recipe": "bwt:green_wool_slab_from_cauldron_dyeing_with_green_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:green_wool_slab_from_cauldron_dyeing_with_green_dye"
+      "bwt:green_wool_slab_from_cauldron_dyeing_with_green_dye"
     ]
   }
 }

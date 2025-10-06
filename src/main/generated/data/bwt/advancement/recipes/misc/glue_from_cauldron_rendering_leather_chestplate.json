@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:glue_from_cauldron_rendering_leather_chestplate"
+        "recipe": "bwt:glue_from_cauldron_rendering_leather_chestplate"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:glue_from_cauldron_rendering_leather_chestplate"
+      "bwt:glue_from_cauldron_rendering_leather_chestplate"
     ]
   }
 }

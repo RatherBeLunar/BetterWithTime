@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:potash_from_cauldron_rendering_moulding"
+        "recipe": "bwt:potash_from_cauldron_rendering_moulding"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:potash_from_cauldron_rendering_moulding"
+      "bwt:potash_from_cauldron_rendering_moulding"
     ]
   }
 }

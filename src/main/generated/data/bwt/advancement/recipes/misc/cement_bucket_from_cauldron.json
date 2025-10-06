@@ -43,7 +43,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:cement_bucket_from_cauldron"
+        "recipe": "bwt:cement_bucket_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -59,7 +59,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:cement_bucket_from_cauldron"
+      "bwt:cement_bucket_from_cauldron"
     ]
   }
 }

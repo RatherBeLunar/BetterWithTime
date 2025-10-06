@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:tnt_from_cauldron"
+        "recipe": "bwt:tnt_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:tnt_from_cauldron"
+      "bwt:tnt_from_cauldron"
     ]
   }
 }

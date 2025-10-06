@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:coal_dust_from_milling_coal"
+        "recipe": "bwt:coal_dust_from_milling_coal"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:coal_dust_from_milling_coal"
+      "bwt:coal_dust_from_milling_coal"
     ]
   }
 }

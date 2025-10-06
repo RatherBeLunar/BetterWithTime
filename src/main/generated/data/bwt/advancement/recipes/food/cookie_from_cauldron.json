@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:cookie_from_cauldron"
+        "recipe": "bwt:cookie_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:cookie_from_cauldron"
+      "bwt:cookie_from_cauldron"
     ]
   }
 }
