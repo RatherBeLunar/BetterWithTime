@@ -1,10 +1,12 @@
 package com.bwt.generation;
 
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.util.Identifier;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -41,23 +43,24 @@ public class RecipeGenerator extends FabricRecipeProvider {
     }
 
     @Override
-    public void generate(RecipeExporter exporter) {
-        blockDispenserClumpRecipeGenerator.generate(exporter);
-        cauldronRecipeGenerator.generate(exporter);
-        crucibleRecipeGenerator.generate(exporter);
-        craftingRecipeGenerator.generate(exporter);
-        vanillaRecipeGenerator.generate(exporter);
-        hopperRecipeGenerator.generate(exporter);
-        millStoneRecipeGenerator.generate(exporter);
-        mobSpawnerConversionRecipeGenerator.generate(exporter);
-        sawRecipeGenerator.generate(exporter);
-        turntableRecipeGenerator.generate(exporter);
-        kilnRecipeGenerator.generate(exporter);
-        soulForgeRecipeGenerator.generate(exporter);
-    }
+    public void generate(RecipeExporter exporter) {}
 
     @Override
     public CompletableFuture<?> run(DataWriter writer, RegistryWrapper.WrapperLookup wrapperLookup) {
-        return CompletableFuture.allOf(super.run(writer, wrapperLookup), disabledVanilaRecipeGenerator.run(writer, wrapperLookup));
+        return CompletableFuture.allOf(
+                disabledVanilaRecipeGenerator.run(writer, wrapperLookup),
+                blockDispenserClumpRecipeGenerator.run(writer, wrapperLookup),
+                cauldronRecipeGenerator.run(writer, wrapperLookup),
+                crucibleRecipeGenerator.run(writer, wrapperLookup),
+                craftingRecipeGenerator.run(writer, wrapperLookup),
+                vanillaRecipeGenerator.run(writer, wrapperLookup),
+                hopperRecipeGenerator.run(writer, wrapperLookup),
+                millStoneRecipeGenerator.run(writer, wrapperLookup),
+                mobSpawnerConversionRecipeGenerator.run(writer, wrapperLookup),
+                sawRecipeGenerator.run(writer, wrapperLookup),
+                turntableRecipeGenerator.run(writer, wrapperLookup),
+                kilnRecipeGenerator.run(writer, wrapperLookup),
+                soulForgeRecipeGenerator.run(writer, wrapperLookup)
+        );
     }
 }
