@@ -75,7 +75,10 @@ dependencies {
 
     modCompileOnly "maven.modrinth:moonlight:${moonlight_version}"
     modCompileOnly "maven.modrinth:moonlight:${moonlight_version}-sources"
-    modCompileOnly("maven.modrinth:every-compat:${every_compat_version}")
+    modCompileOnly "maven.modrinth:every-compat:${every_compat_version}"
+
+    modLocalRuntime "maven.modrinth:moonlight:${moonlight_version}"
+    modLocalRuntime "maven.modrinth:every-compat:${every_compat_version}"
 }
 
 processResources {
