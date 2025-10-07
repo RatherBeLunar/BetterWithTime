@@ -1,4 +1,4 @@
-package com.bwt.integration;
+package com.bwt.integration.wood_good;
 
 import com.bwt.blocks.*;
 import com.bwt.utils.Id;
@@ -10,9 +10,7 @@ import net.mehvahdjukaar.moonlight.api.set.wood.WoodType;
 import net.mehvahdjukaar.moonlight.api.set.wood.WoodTypeRegistry;
 import net.mehvahdjukaar.moonlight.api.util.Utils;
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemGroups;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
 import net.mehvahdjukaar.moonlight.api.resources.pack.ResourceGenTask;
@@ -23,20 +21,20 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class WoodGoodCompatModule extends SimpleModule {
-    public record BlockClassSet<T extends MaterialInheritedBlock>(ClassConstructor<T> constructor, String name, Supplier<List<T>> blockListGetter) {
+    public record BlockClassSet<T extends MaterialInheritedBlock>(ClassConstructor<T> constructor, String name, Supplier<List<T>> blockListGetter, boolean sawOnly) {
         public interface ClassConstructor<T> {
             T construct(Block.Settings settings, Block block);
         }
 
-        public static BlockClassSet<ColumnBlock> COLUMN = new BlockClassSet<>(ColumnBlock::new, "column", () -> BwtBlocks.columnBlocks);
-        public static BlockClassSet<PedestalBlock> PEDESTAL = new BlockClassSet<>(PedestalBlock::new, "pedestal", () -> BwtBlocks.pedestalBlocks);
-        public static BlockClassSet<TableBlock> TABLE = new BlockClassSet<>(TableBlock::new, "table", () -> BwtBlocks.tableBlocks);
-        public static BlockClassSet<CornerBlock> CORNER = new BlockClassSet<>(CornerBlock::new, "corner", () -> BwtBlocks.cornerBlocks);
-        public static BlockClassSet<MouldingBlock> MOULDING = new BlockClassSet<>(MouldingBlock::new, "moulding", () -> BwtBlocks.mouldingBlocks);
-        public static BlockClassSet<SidingBlock> SIDING = new BlockClassSet<>(SidingBlock::new, "siding", () -> BwtBlocks.sidingBlocks);
+        public static BlockClassSet<SidingBlock> SIDING = new BlockClassSet<>(SidingBlock::new, "planks_siding", () -> BwtBlocks.sidingBlocks, true);
+        public static BlockClassSet<MouldingBlock> MOULDING = new BlockClassSet<>(MouldingBlock::new, "planks_moulding", () -> BwtBlocks.mouldingBlocks, true);
+        public static BlockClassSet<CornerBlock> CORNER = new BlockClassSet<>(CornerBlock::new, "planks_corner", () -> BwtBlocks.cornerBlocks, true);
+        public static BlockClassSet<TableBlock> TABLE = new BlockClassSet<>(TableBlock::new, "planks_table", () -> BwtBlocks.tableBlocks, false);
+        public static BlockClassSet<ColumnBlock> COLUMN = new BlockClassSet<>(ColumnBlock::new, "planks_column", () -> BwtBlocks.columnBlocks, false);
+        public static BlockClassSet<PedestalBlock> PEDESTAL = new BlockClassSet<>(PedestalBlock::new, "planks_pedestal", () -> BwtBlocks.pedestalBlocks, false);
 
         public static Stream<SimpleEntrySet.Builder<WoodType, ? extends Block>> streamBuilders(WoodType ecWoodType) {
-            return Stream.of(COLUMN, PEDESTAL, TABLE, CORNER, MOULDING, SIDING).map(entry -> entry.getBuilder(ecWoodType));
+            return Stream.of(SIDING, MOULDING, CORNER, TABLE, COLUMN, PEDESTAL).map(entry -> entry.getBuilder(ecWoodType));
         }
 
         public T construct(WoodType woodType) {
@@ -44,7 +42,9 @@ public class WoodGoodCompatModule extends SimpleModule {
         }
 
         public SimpleEntrySet.Builder<WoodType, T> getBuilder(WoodType ecWoodType) {
-            return SimpleEntrySet.builder(
+            String woodTypeName = ecWoodType.toVanilla().name();
+
+            SimpleEntrySet.Builder<WoodType, T> builder = SimpleEntrySet.builder(
                     WoodType.class,
                     this.name,
                     () -> this.blockListGetter.get().get(0),
@@ -56,13 +56,23 @@ public class WoodGoodCompatModule extends SimpleModule {
                     .addTag(BlockTags.AXE_MINEABLE, RegistryKeys.ITEM)
                     .setTabKey(ItemGroups.BUILDING_BLOCKS)
                     .setTabMode(TabAddMode.AFTER_SAME_WOOD)
-                    .defaultRecipe();
+                    .addRecipe(Id.of("saw_" + woodTypeName + "_" + name));
+
+            // Recombining recipes for the minis
+            if (sawOnly) {
+                builder = builder.addRecipe(Id.of("recombine_" + woodTypeName + "_" + name));
+            }
+            // For items that can be crafted directly
+            else {
+                builder = builder.addRecipe(Id.of(woodTypeName + "_" + name));
+            }
+
+            return builder;
         }
     }
 
     public WoodGoodCompatModule(String modId) {
         super(modId, modId, modId);
-        RegistryKey<ItemGroup> tab = ItemGroups.BUILDING_BLOCKS;
 
         net.minecraft.block.WoodType vanillaWoodType = net.minecraft.block.WoodType.stream().findFirst().orElseThrow();
         WoodType ecWoodType = WoodTypeRegistry.INSTANCE.getFromVanilla(vanillaWoodType);
@@ -76,51 +86,8 @@ public class WoodGoodCompatModule extends SimpleModule {
 
     @Override
     public void onModSetup() {
-
-//        stump.blocks.forEach((w, block) -> {
-//
-//            Block stripped = strippedStump.blocks.get(w);
-//            GWUtils.registerFuel(150, block);
-//            ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(block, 5, 5);
-//            if (stripped != null) {
-//                StumpSeatBlock.STRIPPED_STUMPS.put(block, stripped);
-//                GWUtils.registerFuel(150, stripped);
-//                ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(stripped, 5, 5);
-//            }
-//        });
-//        carvedLog.blocks.forEach((w, block) -> {
-//
-//            Block stripped = strippedCarvedLog.blocks.get(w);
-//            GWUtils.registerFuel(250, block);
-//            ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(block, 5, 5);
-//            if (stripped != null) {
-//                CarvedLogSeatBlock.STRIPPED_CARVED_LOGS.put(block, stripped);
-//                GWUtils.registerFuel(250, stripped);
-//                ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(stripped, 5, 5);
-//            }
-//        });
-//        beam.blocks.forEach((w, block) -> {
-//
-//            Block stripped = strippedBeam.blocks.get(w);
-//            GWUtils.registerFuel(75, block);
-//            ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(block, 5, 5);
-//            if (stripped != null) {
-//                ResizableBeamBlock.STRIPPED_BEAM_BLOCKS.put(block, stripped);
-//                GWUtils.registerFuel(75, stripped);
-//                ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(stripped, 5, 5);
-//            }
-//        });
-//        hollowLog.blocks.forEach((w, block) -> {
-//
-//            Block stripped = strippedHollowLog.blocks.get(w);
-//            GWUtils.registerFuel(150, block);
-//            ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(block, 5, 5);
-//            if (stripped != null) {
-//                HollowLogBlock.STRIPPED_HOLLOW_LOGS.put(block, stripped);
-//                GWUtils.registerFuel(150, stripped);
-//                ((FireBlockAccessor) Blocks.FIRE).gwoodworks$registerFlammableBlock(stripped, 5, 5);
-//            }
-//        });
+        SawRecipeTemplate.register();
+        super.onModSetup();
     }
 
     @Override

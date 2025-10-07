@@ -18,7 +18,7 @@ import com.bwt.blocks.turntable.VerticalBlockAttachmentHelper;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
-import com.bwt.integration.WoodGoodCompatModule;
+import com.bwt.integration.wood_good.WoodGoodCompatModule;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;

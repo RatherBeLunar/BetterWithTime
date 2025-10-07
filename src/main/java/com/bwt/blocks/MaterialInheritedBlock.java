@@ -36,7 +36,6 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<TableBlock> tableBlocks
     ) {
         WoodType.stream()
-//                .filter(woodType -> !woodType.equals(BwtBlocks.bloodWoodBlocks.woodType))
                 .map(woodType -> Registries.BLOCK.get(Id.mc(woodType.name() + "_planks")))
                 .forEach(block -> {
             sidingBlocks.add(SidingBlock.ofBlock(block));

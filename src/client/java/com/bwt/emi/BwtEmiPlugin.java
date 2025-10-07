@@ -34,6 +34,7 @@ import net.minecraft.util.Identifier;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -182,8 +183,11 @@ public class BwtEmiPlugin implements EmiPlugin {
 
     public static EmiIngredient from(BlockIngredient blockIngredient) {
         List<EmiIngredient> ingredientList = new ArrayList<>();
-        blockIngredient.optionalBlock().map(EmiStack::of).ifPresent(ingredientList::add);
-        blockIngredient.optionalBlockTagKey().map(EmiIngredient::of).ifPresent(ingredientList::add);
+        blockIngredient.dualStreamEntries()
+                .map(either -> either
+                        .mapBoth(BlockIngredient.BlockEntry::block, BlockIngredient.TagEntry::tag)
+                        .map(EmiStack::of, EmiIngredient::of)
+                ).forEach(ingredientList::add);
         return EmiIngredient.of(ingredientList);
     }
 

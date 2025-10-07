@@ -6,6 +6,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.block.Block;
@@ -14,12 +16,14 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.RegistryByteBuf;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -86,6 +90,14 @@ public class BlockIngredient implements CustomIngredient {
         return Arrays.stream(entries);
     }
 
+    public Stream<Either<BlockEntry, TagEntry>> dualStreamEntries() {
+        return streamEntries().map(entry ->
+                entry instanceof BlockEntry blockEntry
+                        ? Either.left(blockEntry)
+                        : Either.right((TagEntry) entry)
+        );
+    }
+
     @Override
     public List<ItemStack> getMatchingStacks() {
         return List.of();
@@ -118,10 +130,21 @@ public class BlockIngredient implements CustomIngredient {
         public static final Codec<BlockIngredient> CODEC = createCodec();
         public static final MapCodec<BlockIngredient> MAP_CODEC = CODEC.fieldOf("ingredient");
 
+        public static final PacketCodec<RegistryByteBuf, Block> BLOCK_PACKET_CODEC = new PacketCodec<>() {
+            public Block decode(RegistryByteBuf registryByteBuf) {
+                return Registries.BLOCK.get(registryByteBuf.readIdentifier());
+            }
 
-        public static final PacketCodec<RegistryByteBuf, BlockIngredient> PACKET_CODEC = PacketCodec.ofStatic(
-                Serializer::write, Serializer::read
-        );
+            public void encode(RegistryByteBuf registryByteBuf, Block block) {
+                registryByteBuf.writeIdentifier(Registries.BLOCK.getId(block));
+            }
+        };
+        public static final PacketCodec<RegistryByteBuf, BlockIngredient> PACKET_CODEC = BLOCK_PACKET_CODEC
+                .collect(PacketCodecs.toList())
+                .xmap(
+                        blocks -> BlockIngredient.fromBlocks(blocks.toArray(blocks.toArray(new Block[0]))),
+                        BlockIngredient::getMatchingBlocks
+                );
 
         public static Codec<BlockIngredient> createCodec() {
             Codec<BlockIngredient.Entry[]> codec = Codec.list(BlockIngredient.Entry.CODEC)
