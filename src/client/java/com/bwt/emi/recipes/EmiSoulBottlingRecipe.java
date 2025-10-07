@@ -47,7 +47,7 @@ public class EmiSoulBottlingRecipe implements EmiRecipe {
 
     @Override
     public @Nullable Identifier getId() {
-        return id;
+        return Identifier.of(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

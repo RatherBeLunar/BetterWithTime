@@ -56,11 +56,11 @@ public class BwtEmiPlugin implements EmiPlugin {
     public static EmiRecipeCategory HOPPER_FILTERING = category("hopper_filtering", EmiStack.of(BwtBlocks.hopperBlock));
 
     public static EmiRenderable simplifiedEmiStack(EmiStack stack) {
-        return stack::render;
+        return stack;
     }
 
     public static EmiRecipeCategory category(String id, EmiStack icon) {
-        return new EmiRecipeCategory(Id.of(id), icon, icon::render);
+        return new EmiRecipeCategory(Id.of(id), icon);
     }
 
     public static EmiRecipeCategory category(String id, EmiStack icon, Comparator<EmiRecipe> comp) {

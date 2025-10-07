@@ -15,6 +15,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.ShapelessRecipe;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -45,8 +46,8 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
     }
 
     @Override
-    public Identifier getId() {
-        return id;
+    public @Nullable Identifier getId() {
+        return Identifier.of(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

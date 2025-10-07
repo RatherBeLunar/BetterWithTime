@@ -46,7 +46,7 @@ public class EmiTurntableRecipe implements EmiRecipe {
 
     @Override
     public @Nullable Identifier getId() {
-        return this.id;
+        return Identifier.of(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

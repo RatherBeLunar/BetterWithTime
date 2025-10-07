@@ -48,7 +48,7 @@ public class EmiMillstoneRecipe implements EmiRecipe {
 
     @Override
     public @Nullable Identifier getId() {
-        return id;
+        return Identifier.of(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override
