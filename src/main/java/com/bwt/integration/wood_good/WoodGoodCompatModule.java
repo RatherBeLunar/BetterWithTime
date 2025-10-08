@@ -21,17 +21,17 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class WoodGoodCompatModule extends SimpleModule {
-    public record BlockClassSet<T extends MaterialInheritedBlock>(ClassConstructor<T> constructor, String name, Supplier<List<T>> blockListGetter, boolean sawOnly) {
+    public record BlockClassSet<T extends MaterialInheritedBlock>(ClassConstructor<T> constructor, String name, Supplier<List<T>> blockListGetter, boolean recombinable) {
         public interface ClassConstructor<T> {
             T construct(Block.Settings settings, Block block);
         }
 
-        public static BlockClassSet<SidingBlock> SIDING = new BlockClassSet<>(SidingBlock::new, "planks_siding", () -> BwtBlocks.sidingBlocks, true);
-        public static BlockClassSet<MouldingBlock> MOULDING = new BlockClassSet<>(MouldingBlock::new, "planks_moulding", () -> BwtBlocks.mouldingBlocks, true);
-        public static BlockClassSet<CornerBlock> CORNER = new BlockClassSet<>(CornerBlock::new, "planks_corner", () -> BwtBlocks.cornerBlocks, true);
-        public static BlockClassSet<TableBlock> TABLE = new BlockClassSet<>(TableBlock::new, "planks_table", () -> BwtBlocks.tableBlocks, false);
-        public static BlockClassSet<ColumnBlock> COLUMN = new BlockClassSet<>(ColumnBlock::new, "planks_column", () -> BwtBlocks.columnBlocks, false);
-        public static BlockClassSet<PedestalBlock> PEDESTAL = new BlockClassSet<>(PedestalBlock::new, "planks_pedestal", () -> BwtBlocks.pedestalBlocks, false);
+        public static BlockClassSet<SidingBlock> SIDING = new BlockClassSet<>(SidingBlock::new, "siding", () -> BwtBlocks.sidingBlocks, true);
+        public static BlockClassSet<MouldingBlock> MOULDING = new BlockClassSet<>(MouldingBlock::new, "moulding", () -> BwtBlocks.mouldingBlocks, true);
+        public static BlockClassSet<CornerBlock> CORNER = new BlockClassSet<>(CornerBlock::new, "corner", () -> BwtBlocks.cornerBlocks, true);
+        public static BlockClassSet<TableBlock> TABLE = new BlockClassSet<>(TableBlock::new, "table", () -> BwtBlocks.tableBlocks, false);
+        public static BlockClassSet<ColumnBlock> COLUMN = new BlockClassSet<>(ColumnBlock::new, "column", () -> BwtBlocks.columnBlocks, false);
+        public static BlockClassSet<PedestalBlock> PEDESTAL = new BlockClassSet<>(PedestalBlock::new, "pedestal", () -> BwtBlocks.pedestalBlocks, false);
 
         public static Stream<SimpleEntrySet.Builder<WoodType, ? extends Block>> streamBuilders(WoodType ecWoodType) {
             return Stream.of(SIDING, MOULDING, CORNER, TABLE, COLUMN, PEDESTAL).map(entry -> entry.getBuilder(ecWoodType));
@@ -46,7 +46,7 @@ public class WoodGoodCompatModule extends SimpleModule {
 
             SimpleEntrySet.Builder<WoodType, T> builder = SimpleEntrySet.builder(
                     WoodType.class,
-                    this.name,
+                    "planks_" + this.name,
                     () -> this.blockListGetter.get().get(0),
                     () -> ecWoodType,
                     this::construct
@@ -56,15 +56,15 @@ public class WoodGoodCompatModule extends SimpleModule {
                     .addTag(BlockTags.AXE_MINEABLE, RegistryKeys.ITEM)
                     .setTabKey(ItemGroups.BUILDING_BLOCKS)
                     .setTabMode(TabAddMode.AFTER_SAME_WOOD)
-                    .addRecipe(Id.of("saw_" + woodTypeName + "_" + name));
+                    .addRecipe(Id.of("saw_" + woodTypeName + "_planks_" + name));
 
             // Recombining recipes for the minis
-            if (sawOnly) {
-                builder = builder.addRecipe(Id.of("recombine_" + woodTypeName + "_" + name));
+            if (recombinable) {
+                builder = builder.addRecipe(Id.of("recombine_" + woodTypeName + "_planks_" + name));
             }
             // For items that can be crafted directly
             else {
-                builder = builder.addRecipe(Id.of(woodTypeName + "_" + name));
+                builder = builder.addRecipe(Id.of(woodTypeName + "_planks_" + name));
             }
 
             return builder;
