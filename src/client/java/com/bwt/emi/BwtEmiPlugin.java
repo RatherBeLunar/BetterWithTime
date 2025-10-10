@@ -183,11 +183,8 @@ public class BwtEmiPlugin implements EmiPlugin {
 
     public static EmiIngredient from(BlockIngredient blockIngredient) {
         List<EmiIngredient> ingredientList = new ArrayList<>();
-        blockIngredient.dualStreamEntries()
-                .map(either -> either
-                        .mapBoth(BlockIngredient.BlockEntry::block, BlockIngredient.TagEntry::tag)
-                        .map(EmiStack::of, EmiIngredient::of)
-                ).forEach(ingredientList::add);
+        blockIngredient.optionalBlock().map(EmiStack::of).ifPresent(ingredientList::add);
+        blockIngredient.optionalBlockTagKey().map(EmiIngredient::of).ifPresent(ingredientList::add);
         return EmiIngredient.of(ingredientList);
     }
 
