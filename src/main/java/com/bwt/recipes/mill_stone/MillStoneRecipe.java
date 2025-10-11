@@ -109,7 +109,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
 
     @Override
     public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+        return true;
     }
 
     @Override

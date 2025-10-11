@@ -104,7 +104,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
 
     @Override
     public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+        return true;
     }
 
     @Override

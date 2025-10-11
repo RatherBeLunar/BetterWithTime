@@ -90,7 +90,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
 
     @Override
     public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+        return true;
     }
 
     @Override
