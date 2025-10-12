@@ -14,6 +14,18 @@ public interface HorizontalBlockAttachmentHelper {
     interface IsAttachedPredicate {
         IsAttachedPredicate FALSE = (attachedToPos, attachedToState, thisPos, thisState) -> false;
         boolean test(BlockPos attachedToPos, BlockState attachedToState, BlockPos thisPos, BlockState thisState);
+
+        static IsAttachedPredicate directional(DirectionalIsAttachedPredicate directionalIsAttachedPredicate) {
+            return (attachedToPos, attachedToState, thisPos, thisState) -> {
+                Vec3i directionVector = thisPos.subtract(attachedToPos);
+                Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+                return directionalIsAttachedPredicate.test(attachedToState, thisState, direction);
+            };
+        }
+    }
+
+    interface DirectionalIsAttachedPredicate {
+        boolean test(BlockState attachedToState, BlockState thisState, Direction directionBetween);
     }
 
     HashMap<Class<? extends Block>, IsAttachedPredicate> isAttachedPredicates = new HashMap<>();
@@ -33,42 +45,20 @@ public interface HorizontalBlockAttachmentHelper {
     }
 
     static void registerDefaults() {
-        IsAttachedPredicate facingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return direction == thisState.get(FacingBlock.FACING);
-        };
-        IsAttachedPredicate horizontalFacingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return direction == thisState.get(HorizontalFacingBlock.FACING);
-        };
-        IsAttachedPredicate wallHangingSignPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return Objects.requireNonNull(direction).rotateYClockwise().getAxis() == thisState.get(HorizontalFacingBlock.FACING).getAxis();
-        };
-        IsAttachedPredicate wallMountedBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
+        IsAttachedPredicate facingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.get(FacingBlock.FACING));
+        IsAttachedPredicate horizontalFacingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.get(HorizontalFacingBlock.FACING));
+        IsAttachedPredicate wallHangingSignPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction.rotateYClockwise().getAxis() == thisState.get(HorizontalFacingBlock.FACING).getAxis());
+        IsAttachedPredicate wallMountedBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> {
             if (!thisState.get(WallMountedBlock.FACE).equals(BlockFace.WALL)) {
                 return false;
             }
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
             return direction == thisState.get(WallMountedBlock.FACING);
-        };
-        IsAttachedPredicate connectingBlockPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return thisState.get(ConnectingBlock.FACING_PROPERTIES.get(Objects.requireNonNull(direction).getOpposite()));
-        };
-        IsAttachedPredicate bellPredicate = (attachedToPos, attachedToState, thisPos, thisState) -> {
-            Vec3i directionVector = thisPos.subtract(attachedToPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            return switch (thisState.get(BellBlock.ATTACHMENT)) {
-                case FLOOR, CEILING -> false;
-                case SINGLE_WALL, DOUBLE_WALL -> thisState.get(BellBlock.FACING).getOpposite().equals(direction);
-            };
-        };
+        });
+        IsAttachedPredicate connectingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> thisState.get(ConnectingBlock.FACING_PROPERTIES.get(Objects.requireNonNull(direction).getOpposite())));
+        IsAttachedPredicate bellPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> switch (thisState.get(BellBlock.ATTACHMENT)) {
+            case FLOOR, CEILING -> false;
+            case SINGLE_WALL, DOUBLE_WALL -> thisState.get(BellBlock.FACING).getOpposite().equals(direction);
+        });
 
         register(WallTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallRedstoneTorchBlock.class, horizontalFacingBlockPredicate);
