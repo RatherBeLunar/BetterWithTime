@@ -3,6 +3,8 @@ package com.bwt.emi;
 import com.bwt.BetterWithTime;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
+import com.bwt.emi.recipehandlers.EmiCookingPotRecipeHandler;
+import com.bwt.emi.recipehandlers.EmiMillStoneRecipeHandler;
 import com.bwt.emi.recipehandlers.EmiSoulForgeRecipeHandler;
 import com.bwt.emi.recipes.*;
 import com.bwt.recipes.BlockIngredient;
@@ -95,8 +97,9 @@ public class BwtEmiPlugin implements EmiPlugin {
         reg.addCategory(HOPPER_FILTERING);
 
 
-//        reg.addRecipeHandler(BetterWithTime.cauldronScreenHandler, new EmiCookingPotRecipeHandler<>(CAULDRON));
-//        reg.addRecipeHandler(BetterWithTime.cauldronScreenHandler, new EmiCookingPotRecipeHandler<>(STOKED_CAULDRON));
+        reg.addRecipeHandler(BetterWithTime.cauldronScreenHandler, new EmiCookingPotRecipeHandler<>(CAULDRON, STOKED_CAULDRON));
+        reg.addRecipeHandler(BetterWithTime.crucibleScreenHandler, new EmiCookingPotRecipeHandler<>(CRUCIBLE, STOKED_CRUCIBLE));
+        reg.addRecipeHandler(BetterWithTime.millStoneScreenHandler, new EmiMillStoneRecipeHandler(MILL_STONE));
         reg.addRecipeHandler(BetterWithTime.soulForgeScreenHandler, new EmiSoulForgeRecipeHandler.FourByFour());
         reg.addRecipeHandler(BetterWithTime.soulForgeScreenHandler, new EmiSoulForgeRecipeHandler.ThreeByThree());
 

@@ -46,7 +46,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected static final int INVENTORY_SIZE = 27;
@@ -54,9 +53,10 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     // "Time" is used loosely here, since the rate of change is affected by the amount of fire surrounding the pot
     public static final int timeToCompleteCook = 150 * ( FireDataCluster.primaryFireFactor + ( FireDataCluster.secondaryFireFactor * 8 ) );
     public static final int stackSizeToDrop = 8;
-    protected int cookProgressTime;
     public int slotsOccupied;
 
+    protected int cookProgressTime;
+    protected int isStoked;
 
     public final AbstractCookingPotBlockEntity.Inventory inventory = new AbstractCookingPotBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
@@ -70,6 +70,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         public int get(int index) {
             return switch (index) {
                 case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime;
+                case 1 -> AbstractCookingPotBlockEntity.this.isStoked;
                 default -> 0;
             };
         }
@@ -78,13 +79,14 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         public void set(int index, int value) {
             switch (index) {
                 case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime = value;
+                case 1 -> AbstractCookingPotBlockEntity.this.isStoked = value;
                 default -> {}
             }
         }
 
         @Override
         public int size() {
-            return 1;
+            return 2;
         }
     };
 
@@ -105,6 +107,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         super.readNbt(nbt, registryLookup);
         this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
         this.cookProgressTime = nbt.getInt("cookProgressTicks");
+        this.isStoked = nbt.getBoolean("isStoked") ? 1 : 0;
         this.slotsOccupied = nbt.getInt("slotsOccupied");
     }
 
@@ -113,6 +116,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         super.writeNbt(nbt, registryLookup);
         nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
         nbt.putInt("cookProgressTicks", this.cookProgressTime);
+        nbt.putBoolean("isStoked", isStoked > 0);
         nbt.putInt("slotsOccupied", this.slotsOccupied);
     }
 
@@ -139,6 +143,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     protected void cookItems(World world, BlockPos pos) {
         FireDataCluster fireDataCluster = FireDataCluster.fromWorld(world, pos);
+
+        this.isStoked = fireDataCluster.isStoked() ? 1 : 0;
 
         if (!fireDataCluster.anyFirePresent()) {
             if (cookProgressTime != 0) {
