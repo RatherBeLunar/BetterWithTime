@@ -272,7 +272,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     }
 
     public boolean isReceivingPower(World world, BlockPos pos) {
-        return world.getReceivedStrongRedstonePower(pos) > 0 || world.getReceivedStrongRedstonePower(pos.up()) > 0;
+        return world.isReceivingRedstonePower(pos);
     }
 
     @Override
