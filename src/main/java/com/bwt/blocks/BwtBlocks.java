@@ -194,6 +194,7 @@ public class BwtBlocks implements ModInitializer {
             .mapColor(MapColor.TERRACOTTA_BROWN)
             .pistonBehavior(PistonBehavior.IGNORE)
     );
+    public static final Block redstoneClutchBlock = new RedstoneClutchBlock(AbstractBlock.Settings.copy(gearBoxBlock));
     public static final Block ropeCoilBlock = new Block(AbstractBlock.Settings.create().hardness(1f).mapColor(MapColor.BROWN).sounds(BlockSoundGroup.GRASS));
 	public static final RopeBlock ropeBlock = new RopeBlock(AbstractBlock.Settings.create()
             .hardness(0.5f)
@@ -302,6 +303,9 @@ public class BwtBlocks implements ModInitializer {
         // Gearbox
         Registry.register(Registries.BLOCK, Id.of("gear_box"), gearBoxBlock);
         Registry.register(Registries.ITEM, Id.of("gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));
+        // Redstone Clutch
+        Registry.register(Registries.BLOCK, Id.of("redstone_clutch"), redstoneClutchBlock);
+        Registry.register(Registries.ITEM, Id.of("redstone_clutch"), new BlockItem(redstoneClutchBlock, new Item.Settings()));
         // Hibachi
         Registry.register(Registries.BLOCK, Id.of("hibachi"), hibachiBlock);
         Registry.register(Registries.ITEM, Id.of("hibachi"), new BlockItem(hibachiBlock, new Item.Settings()));
@@ -496,6 +500,7 @@ public class BwtBlocks implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
             content.add(gearBoxBlock);
+            content.add(redstoneClutchBlock);
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);

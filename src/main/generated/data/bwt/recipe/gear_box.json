@@ -7,14 +7,11 @@
     },
     "p": {
       "tag": "minecraft:planks"
-    },
-    "r": {
-      "item": "minecraft:redstone"
     }
   },
   "pattern": [
     "pgp",
-    "grg",
+    "g g",
     "pgp"
   ],
   "result": {

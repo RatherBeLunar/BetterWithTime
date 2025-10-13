@@ -13,11 +13,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -27,7 +23,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.function.Predicate;
 
 public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBase, RotateWithEmptyHand {
@@ -38,19 +33,17 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     public static final BooleanProperty UP = ConnectingBlock.UP;
     public static final BooleanProperty DOWN = ConnectingBlock.DOWN;
 
-    public static final BooleanProperty POWERED = Properties.POWERED;
-
 
     public GearBoxBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(POWERED, false));
+        setDefaultState(getDefaultState().with(MECH_POWERED, false));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         MechPowerBlockBase.super.appendProperties(builder);
-        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN, POWERED);
+        builder.add(NORTH, EAST, SOUTH, WEST, UP, DOWN);
     }
 
     @Override
@@ -65,10 +58,8 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
 
     @Override
     public boolean isMechPowered(BlockState blockState) {
-        return MechPowerBlockBase.super.isMechPowered(blockState) && !blockState.get(POWERED);
+        return MechPowerBlockBase.super.isMechPowered(blockState);
     }
-
-
 
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
@@ -125,36 +116,29 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
 
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        BlockState updatedState = state;
-
         if (pos.north().equals(neighborPos)) {
-            return updatedState.withIfExists(NORTH, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) && neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.Z));
+            return state.withIfExists(NORTH, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) && neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.Z));
         }
         if (pos.east().equals(neighborPos)) {
-            return updatedState.withIfExists(EAST, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) && neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.X));
+            return state.withIfExists(EAST, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) && neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.X));
         }
         if (pos.south().equals(neighborPos)) {
-            return updatedState.withIfExists(SOUTH, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.Z));
+            return state.withIfExists(SOUTH, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.Z));
         }
         if (pos.west().equals(neighborPos)) {
-            return updatedState.withIfExists(WEST, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.X));
+            return state.withIfExists(WEST, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).equals(Direction.Axis.X));
         }
         if (pos.up().equals(neighborPos)) {
-            return updatedState.withIfExists(UP, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).isVertical());
+            return state.withIfExists(UP, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).isVertical());
         }
         if (pos.down().equals(neighborPos)) {
-            return updatedState.withIfExists(DOWN, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).isVertical());
+            return state.withIfExists(DOWN, (neighborState.isOf(BwtBlocks.axleBlock) || neighborState.isOf(BwtBlocks.axlePowerSourceBlock)) &&neighborState.get(AxleBlock.AXIS).isVertical());
         }
-        return updatedState;
+        return state;
     }
 
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        boolean redstonePowered = world.isReceivingRedstonePower(pos);
-        boolean mechPowered = isReceivingMechPower(world, state, pos);
-        BlockState updatedState = state;
-        updatedState = updatedState.with(POWERED, redstonePowered);
-        updatedState = updatedState.with(MECH_POWERED, mechPowered);
-        return updatedState;
+        return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
     }
 
     public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {

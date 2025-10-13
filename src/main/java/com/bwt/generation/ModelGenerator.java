@@ -187,6 +187,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.crucibleBlock, ModelIds.getBlockModelId(BwtBlocks.crucibleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.detectorBlock, ModelIds.getBlockModelId(BwtBlocks.detectorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.gearBoxBlock, ModelIds.getBlockModelId(BwtBlocks.gearBoxBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.redstoneClutchBlock, ModelIds.getBlockModelId(BwtBlocks.redstoneClutchBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.handCrankBlock, ModelIds.getBlockModelId(BwtBlocks.handCrankBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.hibachiBlock, ModelIds.getBlockModelId(BwtBlocks.hibachiBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.hopperBlock, ModelIds.getBlockModelId(BwtBlocks.hopperBlock));

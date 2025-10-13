@@ -5,17 +5,20 @@
     "g": {
       "item": "bwt:gear"
     },
+    "r": {
+      "item": "minecraft:redstone"
+    },
     "s": {
       "tag": "bwt:wooden_siding_blocks"
     }
   },
   "pattern": [
     "sgs",
-    "g g",
+    "grg",
     "sgs"
   ],
   "result": {
     "count": 1,
-    "id": "bwt:gear_box"
+    "id": "bwt:redstone_clutch"
   }
 }

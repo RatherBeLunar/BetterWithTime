@@ -313,6 +313,14 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.gearBoxBlock)
                 .pattern("pgp")
+                .pattern("g g")
+                .pattern("pgp")
+                .input('p', ItemTags.PLANKS)
+                .input('g', BwtItems.gearItem)
+                .criterion(hasItem(BwtItems.gearItem), conditionsFromItem(BwtItems.gearItem))
+                .offerTo(exporter);
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.redstoneClutchBlock)
+                .pattern("pgp")
                 .pattern("grg")
                 .pattern("pgp")
                 .input('p', ItemTags.PLANKS)
@@ -675,13 +683,21 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter, highEfficiencyId(BwtBlocks.sawBlock));
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.gearBoxBlock)
                 .pattern("sgs")
+                .pattern("g g")
+                .pattern("sgs")
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('g', BwtItems.gearItem)
+                .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
+                .offerTo(exporter, highEfficiencyId(BwtBlocks.gearBoxBlock));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.redstoneClutchBlock)
+                .pattern("sgs")
                 .pattern("grg")
                 .pattern("sgs")
                 .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
                 .input('g', BwtItems.gearItem)
                 .input('r', Items.REDSTONE)
                 .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
-                .offerTo(exporter, highEfficiencyId(BwtBlocks.gearBoxBlock));
+                .offerTo(exporter, highEfficiencyId(BwtBlocks.redstoneClutchBlock));
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.PISTON)
                 .pattern("sss")
                 .pattern("cic")

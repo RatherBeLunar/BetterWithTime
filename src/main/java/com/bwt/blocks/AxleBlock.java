@@ -15,7 +15,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -100,23 +99,6 @@ public class AxleBlock extends PillarBlock {
         dropStack(world, pos, BwtItems.hempFiberItem.getDefaultStack());
     }
 
-    public BlockState updatePowerState(BlockState state, BlockState neighborState, BlockPos neighborPos) {
-        BlockState updatedState = state;
-        if (neighborState.isOf(BwtBlocks.gearBoxBlock) && ((GearBoxBlock) neighborState.getBlock()).isMechPowered(neighborState)) {
-            updatedState = updatedState.with(MECH_POWER, 1);
-        }
-        else if (neighborState.isOf(BwtBlocks.axlePowerSourceBlock) && neighborState.get(AXIS).equals(updatedState.get(AXIS))) {
-            updatedState = updatedState.with(MECH_POWER, 1);
-        }
-        else if (neighborState.isOf(BwtBlocks.axleBlock) && neighborState.get(AXIS).equals(updatedState.get(AXIS))) {
-            int neighborPower = neighborState.get(MECH_POWER);
-            if (neighborPower > 0) {
-                updatedState = updatedState.with(MECH_POWER, neighborPower + 1);
-            }
-        }
-        return updatedState;
-    }
-
     public void updatePowerStates(BlockState state, World world, BlockPos pos) {
         int currentPower = state.get(MECH_POWER);
         Direction.Axis axis = state.get(AXIS);
@@ -126,14 +108,13 @@ public class AxleBlock extends PillarBlock {
         for (int i: new int[]{-1, 1}) {
             BlockPos neighborPos = pos.offset(axis, i);
             BlockState neighborState = world.getBlockState(neighborPos);
-            Block neighborBlock = neighborState.getBlock();
 
             int neighborPower = 0;
             if (
                     // Gear Box
-                    neighborState.isOf(BwtBlocks.gearBoxBlock)
+                    neighborState.getBlock() instanceof GearBoxBlock gearBoxBlock
                     // Powered
-                    && ((GearBoxBlock) neighborBlock).isMechPowered(neighborState)
+                    && gearBoxBlock.isMechPowered(neighborState)
                     // Not getting power from this axle
                     && !neighborPos.offset(neighborState.get(GearBoxBlock.FACING)).equals(pos)
             ) {
