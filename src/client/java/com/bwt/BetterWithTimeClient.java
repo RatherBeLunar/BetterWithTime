@@ -69,6 +69,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
                 });
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
 				BwtBlocks.lightBlockBlock,
+				BwtBlocks.lensBeamGlassBlock,
 				BwtBlocks.hempCropBlock,
 				BwtBlocks.stoneDetectorRailBlock,
 				BwtBlocks.obsidianDetectorRailBlock,

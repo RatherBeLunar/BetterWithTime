@@ -4,6 +4,7 @@ import com.bwt.blocks.*;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.lens.LensBeamBlock;
+import com.bwt.blocks.lens.LensBeamGlassBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.blocks.unfired_pottery.UnfiredPotteryBlock;
 import com.bwt.items.BwtItems;
@@ -165,6 +166,7 @@ public class ModelGenerator extends FabricModelProvider {
         TexturedModel.makeFactory(TextureMap::sideFrontBack, Models.TEMPLATE_COMMAND_BLOCK)
                 .upload(BwtBlocks.lensBlock, blockStateModelGenerator.modelCollector);
         generateDebugLensBeam(blockStateModelGenerator);
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.lensBeamGlassBlock, ModelIds.getBlockModelId(Blocks.GLASS)));
         blockStateModelGenerator.blockStateCollector.accept(
                 VariantsBlockStateSupplier.create(
                         BwtBlocks.aqueductBlock,

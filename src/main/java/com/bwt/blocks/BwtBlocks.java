@@ -10,6 +10,7 @@ import com.bwt.blocks.dirt_slab.DirtPathSlabBlock;
 import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.dirt_slab.GrassSlabBlock;
 import com.bwt.blocks.lens.LensBeamBlock;
+import com.bwt.blocks.lens.LensBeamGlassBlock;
 import com.bwt.blocks.lens.LensBlock;
 import com.bwt.blocks.dirt_slab.MyceliumSlabBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
@@ -149,6 +150,13 @@ public class BwtBlocks implements ModInitializer {
             .pistonBehavior(PistonBehavior.DESTROY)
             .luminance(state -> state.get(LensBeamBlock.TERMINUS) ? 14 : 0)
             .emissiveLighting(((state, world, pos) -> state.get(LensBeamBlock.TERMINUS)))
+    );
+    public static final LensBeamGlassBlock lensBeamGlassBlock = new LensBeamGlassBlock(
+            Blocks.GLASS,
+            AbstractBlock.Settings
+                    .copy(Blocks.GLASS)
+                    .luminance(state -> state.get(LensBeamBlock.TERMINUS) ? 14 : 0)
+                    .emissiveLighting(((state, world, pos) -> state.get(LensBeamBlock.TERMINUS)))
     );
 	public static final Block lightBlockBlock = new LightBlock(AbstractBlock.Settings.copy(Blocks.GLASS)
             .strength(0.4f)
@@ -456,6 +464,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("lens"), lensBlock);
         Registry.register(Registries.ITEM, Id.of("lens"), new BlockItem(lensBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("lens_beam"), lensBeamBlock);
+        Registry.register(Registries.BLOCK, Id.of("lens_beam_glass"), lensBeamGlassBlock);
         // Dirt Slab
         Registry.register(Registries.BLOCK, Id.of("dirt_slab"), dirtSlabBlock);
         Registry.register(Registries.ITEM, Id.of("dirt_slab"), new BlockItem(dirtSlabBlock, new Item.Settings()));

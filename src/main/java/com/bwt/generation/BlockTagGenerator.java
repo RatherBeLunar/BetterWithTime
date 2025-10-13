@@ -6,6 +6,7 @@ import com.bwt.tags.CompatibilityTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryWrapper;
@@ -36,6 +37,8 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 BwtBlocks.detectorLogicBlock,
                 BwtBlocks.lensBeamBlock
         );
+        getOrCreateTagBuilder(BlockTags.IMPERMEABLE).add(BwtBlocks.lensBeamGlassBlock);
+        getOrCreateTagBuilder(ConventionalBlockTags.GLASS_BLOCKS).add(BwtBlocks.lensBeamGlassBlock);
         getOrCreateTagBuilder(BlockTags.CLIMBABLE).add(BwtBlocks.ropeBlock);
         getOrCreateTagBuilder(BlockTags.RAILS).add(BwtBlocks.stoneDetectorRailBlock, BwtBlocks.obsidianDetectorRailBlock);
         getOrCreateTagBuilder(BlockTags.PRESSURE_PLATES).add(BwtBlocks.obsidianPressurePlateBlock);
