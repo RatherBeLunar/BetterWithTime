@@ -60,6 +60,8 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
 
         disableVanilla(Items.MOSSY_COBBLESTONE, "_from_moss_block", exporter);
         disableVanilla(Items.MOSSY_COBBLESTONE, "_from_vine", exporter);
+
+        disableVanilla(Items.HOPPER, exporter);
     }
 
     public void disableVanilla(String recipeId, RecipeExporter exporter) {

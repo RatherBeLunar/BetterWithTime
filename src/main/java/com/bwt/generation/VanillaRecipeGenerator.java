@@ -49,6 +49,17 @@ public class VanillaRecipeGenerator extends FabricRecipeProvider {
         )
                 .criterion(RecipeProvider.hasItem(BwtItems.flourItem), RecipeProvider.conditionsFromItem(BwtItems.flourItem))
                 .offerTo(exporter, Id.of(Registries.ITEM.getId(Items.BREAD).getPath()));
+
+        // Hopper recipe is getting overridden here via a disabled recipe + BWT recipe
+        // so a modpack maker could re-enable the vanilla one and still keep the BWT one
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.HOPPER, 2)
+                .input('C', Blocks.CHEST)
+                .input('N', Items.NETHERITE_INGOT)
+                .pattern("N N")
+                .pattern("NCN")
+                .pattern(" N ")
+                .criterion(RecipeProvider.hasItem(Items.NETHERITE_INGOT), RecipeProvider.conditionsFromItem(Items.NETHERITE_INGOT))
+                .offerTo(exporter, Id.of(Registries.ITEM.getId(Items.HOPPER).getPath()));
     }
 
     // Don't enforce the ID into any specific namespace
