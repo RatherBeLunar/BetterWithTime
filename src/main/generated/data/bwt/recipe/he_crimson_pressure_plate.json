@@ -1,14 +1,11 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "minecraft:crafting_shapeless",
   "category": "redstone",
   "group": "wooden_pressure_plate",
-  "key": {
-    "s": {
+  "ingredients": [
+    {
       "item": "bwt:crimson_planks_siding"
     }
-  },
-  "pattern": [
-    "ss"
   ],
   "result": {
     "count": 1,

@@ -818,9 +818,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 trapdoor -> createTrapdoorRecipe(trapdoor, Ingredient.ofItems(sidingBlock))
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.PRESSURE_PLATE,
-                pressurePlate -> ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
-                        .pattern("ss")
-                        .input('s', sidingBlock)
+                pressurePlate -> ShapelessRecipeJsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
+                        .input(sidingBlock)
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.FENCE,
                 fence -> ShapedRecipeJsonBuilder.create(RecipeCategory.DECORATIONS, fence, 3)
