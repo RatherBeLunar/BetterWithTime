@@ -19,6 +19,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.util.ActionResult;
@@ -47,6 +48,18 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
     @Inject(method = "initDataTracker", at = @At("TAIL"))
     public void initDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
         builder.add(IS_FED, false);
+    }
+
+    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
+    public void bwt$writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+        nbt.putBoolean("IsFed", this.bwt$isFed());
+    }
+
+    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
+    public void bwt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+        if (nbt.contains("IsFed")) {
+            this.bwt$setIsFed(nbt.getBoolean("IsFed"));
+        }
     }
 
     @Inject(method = "initGoals", at = @At("TAIL"))
