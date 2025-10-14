@@ -2,6 +2,7 @@ package com.bwt.mixin.animals;
 
 import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.entities.PickUpBreedingItemWhileSittingGoal;
+import com.bwt.entities.WolfIsFedAccess;
 import com.bwt.items.BwtItems;
 import com.bwt.mixin.accessors.MobEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
@@ -36,7 +37,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WolfEntity.class)
-public abstract class WolfEntityMixin extends TameableEntity implements MobEntityAccessorMixin {
+public abstract class WolfEntityMixin extends TameableEntity implements MobEntityAccessorMixin, WolfIsFedAccess {
     protected WolfEntityMixin(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -68,7 +69,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
                 this,
                 1.7,
                 wolf -> !wolf.getDataTracker().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
-                this::feed
+                this::bwt$feed
         ));
         this.getGoalSelector().add(7, new GoToAndPickUpBreedingItemGoal(
                 this,
@@ -76,14 +77,14 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
                 1.8,
                 1,
                 wolf -> !wolf.getDataTracker().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
-                this::feed
+                this::bwt$feed
         ));
     }
 
     @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
     public void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         ItemStack itemStack = player.getStackInHand(hand);
-        if (!this.isBaby() && this.isTamed() && this.isBreedingItem(itemStack) && !isFed()) {
+        if (!this.isBaby() && this.isTamed() && this.isBreedingItem(itemStack) && !bwt$isFed()) {
             if (this.getWorld().isClient()) {
                 cir.setReturnValue(ActionResult.CONSUME);
                 return;
@@ -91,7 +92,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
             if (!player.getAbilities().creativeMode) {
                 itemStack.decrement(1);
             }
-            this.feed(itemStack);
+            this.bwt$feed(itemStack);
             cir.setReturnValue(ActionResult.success(this.getWorld().isClient()));
         }
     }
@@ -114,7 +115,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
         if (world.isClient) {
             return;
         }
-        if (isBaby() || !isFed()) {
+        if (isBaby() || !bwt$isFed()) {
             return;
         }
         // A wolf produces dung on average every 20 minutes if in the light
@@ -122,11 +123,11 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
         if (random.nextInt(24000) >= 2) {
             return;
         }
-        if (!this.isInTheDark() && !random.nextBoolean()) {
+        if (!this.bwt$isInTheDark() && !random.nextBoolean()) {
             return;
         }
         if (attemptProduceDung()) {
-            this.setIsFed(false);
+            this.bwt$setIsFed(false);
         }
     }
 
@@ -173,7 +174,7 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
 
     @Unique
     protected boolean isPathToBlockOpenToDung(BlockPos dungBlockPos) {
-        if (!isBlockOpenToDung(dungBlockPos.getX(), dungBlockPos.getY(), dungBlockPos.getZ())) {
+        if (!bwt$isBlockOpenToDung(dungBlockPos.getX(), dungBlockPos.getY(), dungBlockPos.getZ())) {
             return false;
         }
 
@@ -185,13 +186,13 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
 
         if (deltaX != 0 && deltaZ != 0) {
             // we're producing dung on a diagonal. Test to make sure that we're not warping dung through blocked off corners
-            return isBlockOpenToDung(wolfX, dungBlockPos.getY(), dungBlockPos.getZ()) || isBlockOpenToDung(dungBlockPos.getX(), dungBlockPos.getY(), wolfZ);
+            return bwt$isBlockOpenToDung(wolfX, dungBlockPos.getY(), dungBlockPos.getZ()) || bwt$isBlockOpenToDung(dungBlockPos.getX(), dungBlockPos.getY(), wolfZ);
         }
         return true;
     }
 
     @Unique
-    protected boolean isBlockOpenToDung(int x, int y, int z) {
+    protected boolean bwt$isBlockOpenToDung(int x, int y, int z) {
         World world = getWorld();
         BlockState blockState = world.getBlockState(new BlockPos(x, y, z));
         FluidState fluidState = world.getFluidState(new BlockPos(x, y, z));
@@ -199,30 +200,30 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
         return !fluidState.isEmpty() || blockState.isIn(BlockTags.FIRE) || blockState.isReplaceable();
     }
 
-    @Unique
-    public boolean isFed() {
+    @Override
+    public boolean bwt$isFed() {
         return getDataTracker().get(IS_FED);
     }
 
     @Unique
-    public void setIsFed(boolean value) {
+    public void bwt$setIsFed(boolean value) {
         getDataTracker().set(IS_FED, value);
     }
 
     @Unique
-    public void feed(int hungerValue) {
-        setIsFed(isFed() || hungerValue > 0);
+    public void bwt$feed(int hungerValue) {
+        bwt$setIsFed(bwt$isFed() || hungerValue > 0);
     }
 
     @Unique
-    public void feed(ItemStack itemStack) {
+    public void bwt$feed(ItemStack itemStack) {
         int nutrition = itemStack.isOf(BwtItems.kibbleItem) ? 2 : itemStack.getOrDefault(DataComponentTypes.FOOD, new FoodComponent.Builder().build()).nutrition();
         heal(nutrition * 2);
-        feed(nutrition);
+        bwt$feed(nutrition);
     }
 
     @Unique
-    public boolean isInTheDark() {
+    public boolean bwt$isInTheDark() {
         return getWorld().getLightLevel(getBlockPos()) < 5;
     }
 }

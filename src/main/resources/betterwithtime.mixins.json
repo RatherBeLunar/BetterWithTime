@@ -37,6 +37,7 @@
     "animals.CowEntityMixin",
     "animals.PigEntityMixin",
     "animals.SheepEntityMixin",
+    "animals.WolfBegGoalMixin",
     "animals.WolfEntityMixin",
     "planter_and_vase_functionality.CropPlantOnMixin",
     "planter_and_vase_functionality.FlowerBlockOffsetMixin",
