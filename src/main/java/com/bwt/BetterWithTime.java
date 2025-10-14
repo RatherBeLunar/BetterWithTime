@@ -28,6 +28,7 @@ import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookingProgressPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
@@ -134,6 +135,10 @@ public class BetterWithTime implements ModInitializer {
 		FuelRegistry.INSTANCE.add(BwtItems.gearItem, 18);
 		FuelRegistry.INSTANCE.add(BwtItems.sawDustItem, 150);
 		FuelRegistry.INSTANCE.add(BwtItems.soulDustItem, 150);
+
+        // Composting
+        CompostingChanceRegistry.INSTANCE.add(BwtItems.hempSeedsItem, 0.3F);
+        CompostingChanceRegistry.INSTANCE.add(BwtItems.hempItem, 0.5F);
 
 		// Block Dispenser Behaviors
 		BwtBlocks.blockDispenserBlock.registerItemDispenseBehaviors();
