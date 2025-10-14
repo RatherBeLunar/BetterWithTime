@@ -34,7 +34,6 @@ public class LangGenerator extends FabricLanguageProvider {
         addEmiNames(translationBuilder);
 
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
-        translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey() + ".description", "Impacts performance!");
         translationBuilder.add("container.bwt.soul_forge", "Soul Forge");

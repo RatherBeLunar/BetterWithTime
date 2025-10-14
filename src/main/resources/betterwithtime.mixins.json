@@ -18,7 +18,6 @@
     "SkeletonRottenArrowMixin",
     "SpawnerMossyCobbleMixin",
     "SpreadableBlockMixin",
-    "VanillaHopperDisableMixin",
     "VanillaHopperInvoker",
     "VillagersDropXpMixin",
     "WorldEntityCollisionsMixin",
