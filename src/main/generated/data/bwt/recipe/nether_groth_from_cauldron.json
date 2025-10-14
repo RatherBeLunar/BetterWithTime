@@ -1,0 +1,48 @@
+{
+  "type": "bwt:cauldron",
+  "category": "blocks",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": {
+        "item": "minecraft:nether_wart"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:red_mushroom"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:brown_mushroom"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:mycelium"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:dung"
+      }
+    },
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "bwt:soul_urn"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "bwt:nether_groth"
+    },
+    {
+      "count": 1,
+      "id": "minecraft:dirt"
+    }
+  ]
+}

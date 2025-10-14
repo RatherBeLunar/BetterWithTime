@@ -62,7 +62,16 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .ingredient(Items.WARPED_FUNGUS)
                 .ingredient(BwtItems.soulUrnItem, 8)
                 .result(BwtBlocks.bloodWoodBlocks.saplingItem).offerTo(exporter);
-        // TODO nether groth spores
+        CauldronRecipe.JsonBuilder.create()
+                .ingredient(Items.NETHER_WART)
+                .ingredient(Items.RED_MUSHROOM)
+                .ingredient(Items.BROWN_MUSHROOM)
+                .ingredient(Items.MYCELIUM)
+                .ingredient(BwtItems.dungItem)
+                .ingredient(BwtItems.soulUrnItem, 8)
+                .result(BwtBlocks.netherGroth.asItem())
+                .result(Items.DIRT)
+                .offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.GUNPOWDER, 5).ingredient(Items.SAND, 4).result(Items.TNT).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.CACTUS).result(Items.GREEN_DYE).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.STRING, 4).result(Items.WHITE_WOOL).offerTo(exporter, RecipeProvider.getItemPath(Items.WHITE_WOOL) + "_from_string_in_cauldron");
