@@ -2,10 +2,7 @@ package com.bwt.blocks.lens;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
+import net.minecraft.block.*;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
@@ -137,7 +134,7 @@ public class LensBeamBlock extends Block {
         }
     }
 
-    public BlockState getStateLeftOverWhenEmpty(World world, BlockPos pos) {
+    public BlockState getStateLeftOverWhenEmpty(WorldAccess world, BlockPos pos) {
         return world.getFluidState(pos).getBlockState();
     }
 }

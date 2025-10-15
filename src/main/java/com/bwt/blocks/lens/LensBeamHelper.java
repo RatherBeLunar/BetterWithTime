@@ -174,6 +174,11 @@ public class LensBeamHelper {
         return state;
     }
 
+    public static boolean isValidInputBeamOrLens(BlockState neighborState, Direction directionToThisBlock) {
+        return (neighborState.isOf(BwtBlocks.lensBlock) && neighborState.get(LensBlock.FACING).equals(directionToThisBlock) && neighborState.get(LensBlock.LIT))
+                || (neighborState.getBlock() instanceof LensBeamBlock && neighborState.get(LensBeamBlock.FACING_PROPERTIES.get(directionToThisBlock)));
+    }
+
     public static Stream<Map.Entry<Direction, BooleanProperty>> streamFacingDirections(BlockState state) {
         return LensBeamBlock.FACING_PROPERTIES.entrySet().stream()
                 .filter(entry -> state.get(entry.getValue()));
