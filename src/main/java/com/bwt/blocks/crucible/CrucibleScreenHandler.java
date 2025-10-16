@@ -14,6 +14,6 @@ public class CrucibleScreenHandler extends AbstractCookingPotScreenHandler {
     }
 
     public CrucibleScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
-        super(BetterWithTime.cauldronScreenHandler, syncId, playerInventory, inventory, propertyDelegate);
+        super(BetterWithTime.crucibleScreenHandler, syncId, playerInventory, inventory, propertyDelegate);
     }
 }
