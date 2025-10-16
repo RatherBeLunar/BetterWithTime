@@ -19,12 +19,15 @@ public abstract class AbstractCookingPotScreenHandler extends ScreenHandler {
     protected final Inventory inventory;
     protected final PropertyDelegate propertyDelegate;
 
+    protected boolean isStoked;
+
     public AbstractCookingPotScreenHandler(
             ScreenHandlerType<? extends AbstractCookingPotScreenHandler> screenHandlerType,
             int syncId,
             PlayerInventory playerInventory,
             Inventory inventory,
-            PropertyDelegate propertyDelegate
+            PropertyDelegate propertyDelegate,
+            AbstractCookingPotData cookingPotData
     ) {
         super(screenHandlerType, syncId);
         checkSize(inventory, SIZE);
@@ -32,6 +35,7 @@ public abstract class AbstractCookingPotScreenHandler extends ScreenHandler {
         this.propertyDelegate = propertyDelegate;
         inventory.onOpen(playerInventory.player);
         this.addProperties(propertyDelegate);
+        this.isStoked = cookingPotData.isStoked();
 
         int m;
         int l;
@@ -88,6 +92,6 @@ public abstract class AbstractCookingPotScreenHandler extends ScreenHandler {
     }
 
     public boolean isStoked() {
-        return this.propertyDelegate.get(1) > 0;
+        return this.isStoked;
     }
 }

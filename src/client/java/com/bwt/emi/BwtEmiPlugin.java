@@ -98,7 +98,7 @@ public class BwtEmiPlugin implements EmiPlugin {
 
 
         reg.addRecipeHandler(BetterWithTime.cauldronScreenHandler, new EmiCookingPotRecipeHandler<>(CAULDRON, STOKED_CAULDRON));
-        reg.addRecipeHandler(BetterWithTime.crucibleScreenHandler, new EmiCookingPotRecipeHandler<>(CRUCIBLE, STOKED_CRUCIBLE));
+        reg.addRecipeHandler(BetterWithTime.crucibleScreenHandler, new EmiCookingPotRecipeHandler<>(CRUCIBLE, STOKED_CRUCIBLE, STOKED_CRUCIBLE_RECLAIM));
         reg.addRecipeHandler(BetterWithTime.millStoneScreenHandler, new EmiMillStoneRecipeHandler(MILL_STONE));
         reg.addRecipeHandler(BetterWithTime.soulForgeScreenHandler, new EmiSoulForgeRecipeHandler.FourByFour());
         reg.addRecipeHandler(BetterWithTime.soulForgeScreenHandler, new EmiSoulForgeRecipeHandler.ThreeByThree());

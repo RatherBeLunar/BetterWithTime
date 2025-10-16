@@ -6,23 +6,18 @@ import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.handler.EmiCraftContext;
 import dev.emi.emi.api.recipe.handler.StandardRecipeHandler;
 import dev.emi.emi.api.stack.EmiIngredient;
-import dev.emi.emi.api.stack.EmiStack;
-import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class EmiCookingPotRecipeHandler<T extends AbstractCookingPotScreenHandler> implements StandardRecipeHandler<T> {
 
-    private final EmiRecipeCategory unstokedCategory;
-    private final EmiRecipeCategory stokedCategory;
+    private final List<EmiRecipeCategory> unstokedCategories;
+    private final List<EmiRecipeCategory> stokedCategories;
 
-    public EmiCookingPotRecipeHandler(EmiRecipeCategory unstokedCategory, EmiRecipeCategory stokedCategory) {
-        this.unstokedCategory = unstokedCategory;
-        this.stokedCategory = stokedCategory;
+    public EmiCookingPotRecipeHandler(EmiRecipeCategory unstokedCategory, EmiRecipeCategory... stokedCategories) {
+        this.unstokedCategories = List.of(unstokedCategory);
+        this.stokedCategories = List.of(stokedCategories);
     }
 
     @Override
@@ -38,16 +33,18 @@ public class EmiCookingPotRecipeHandler<T extends AbstractCookingPotScreenHandle
     @Override
     public boolean supportsRecipe(EmiRecipe recipe) {
         EmiRecipeCategory category = recipe.getCategory();
-        return category.equals(this.unstokedCategory) || category.equals(this.stokedCategory);
+        return this.unstokedCategories.contains(category) || this.stokedCategories.contains(category);
     }
 
     @Override
     public boolean canCraft(EmiRecipe recipe, EmiCraftContext<T> context) {
         EmiRecipeCategory category = recipe.getCategory();
-        if (category.equals(this.stokedCategory) != context.getScreenHandler().isStoked()) {
-            return false;
+        boolean isStoked = context.getScreenHandler().isStoked();
+        if ((this.unstokedCategories.contains(category) && !isStoked)
+                || (this.stokedCategories.contains(category) && isStoked)) {
+            return canFit(context.getScreenHandler(), recipe.getInputs());
         }
-        return canFit(context.getScreenHandler(), recipe.getInputs());
+        return false;
     }
 
     public boolean canFit(T handler, List<EmiIngredient> ingredients) {

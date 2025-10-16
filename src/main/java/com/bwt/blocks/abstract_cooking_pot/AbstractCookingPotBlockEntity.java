@@ -9,6 +9,7 @@ import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.FireDataCluster;
 import com.bwt.utils.OrderedRecipeMatcher;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -34,8 +35,8 @@ import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -47,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
+public abstract class AbstractCookingPotBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<AbstractCookingPotData>, Inventory {
     protected static final int INVENTORY_SIZE = 27;
 
     // "Time" is used loosely here, since the rate of change is affected by the amount of fire surrounding the pot
@@ -56,7 +57,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     public int slotsOccupied;
 
     protected int cookProgressTime;
-    protected int isStoked;
+    protected boolean isStoked;
 
     public final AbstractCookingPotBlockEntity.Inventory inventory = new AbstractCookingPotBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
@@ -68,25 +69,22 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
         @Override
         public int get(int index) {
-            return switch (index) {
-                case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime;
-                case 1 -> AbstractCookingPotBlockEntity.this.isStoked;
-                default -> 0;
-            };
+            if (index == 0) {
+                return AbstractCookingPotBlockEntity.this.cookProgressTime;
+            }
+            return 0;
         }
 
         @Override
         public void set(int index, int value) {
-            switch (index) {
-                case 0 -> AbstractCookingPotBlockEntity.this.cookProgressTime = value;
-                case 1 -> AbstractCookingPotBlockEntity.this.isStoked = value;
-                default -> {}
+            if (index == 0) {
+                AbstractCookingPotBlockEntity.this.cookProgressTime = value;
             }
         }
 
         @Override
         public int size() {
-            return 2;
+            return 1;
         }
     };
 
@@ -107,7 +105,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         super.readNbt(nbt, registryLookup);
         this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
         this.cookProgressTime = nbt.getInt("cookProgressTicks");
-        this.isStoked = nbt.getBoolean("isStoked") ? 1 : 0;
+        this.isStoked = nbt.getBoolean("isStoked");
         this.slotsOccupied = nbt.getInt("slotsOccupied");
     }
 
@@ -116,7 +114,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         super.writeNbt(nbt, registryLookup);
         nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
         nbt.putInt("cookProgressTicks", this.cookProgressTime);
-        nbt.putBoolean("isStoked", isStoked > 0);
+        nbt.putBoolean("isStoked", this.isStoked);
         nbt.putInt("slotsOccupied", this.slotsOccupied);
     }
 
@@ -133,19 +131,21 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
+        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(world, pos);
+        boolean isStoked = fireDataCluster.isStoked();
+        if (isStoked != blockEntity.isStoked) {
+            blockEntity.isStoked = isStoked;
+            blockEntity.markDirty();
+        }
         if (state.get(AbstractCookingPotBlock.TIP_DIRECTION) == Direction.UP) {
-            blockEntity.cookItems(world, pos);
+            blockEntity.cookItems(world, pos, fireDataCluster);
         }
         else {
             blockEntity.dumpItems(world, pos, state);
         }
     }
 
-    protected void cookItems(World world, BlockPos pos) {
-        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(world, pos);
-
-        this.isStoked = fireDataCluster.isStoked() ? 1 : 0;
-
+    protected void cookItems(World world, BlockPos pos, FireDataCluster fireDataCluster) {
         if (!fireDataCluster.anyFirePresent()) {
             if (cookProgressTime != 0) {
                 cookProgressTime = 0;
@@ -369,5 +369,10 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     @Override
     public Packet<ClientPlayPacketListener> toUpdatePacket() {
         return BlockEntityUpdateS2CPacket.create(this);
+    }
+
+    @Override
+    public AbstractCookingPotData getScreenOpeningData(ServerPlayerEntity player) {
+        return new AbstractCookingPotData(this.isStoked);
     }
 }
