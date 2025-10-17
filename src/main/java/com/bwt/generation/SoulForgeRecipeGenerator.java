@@ -12,6 +12,7 @@ import net.minecraft.data.family.BlockFamilies;
 import net.minecraft.data.family.BlockFamily;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -68,9 +69,8 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .pattern("###")
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.PRESSURE_PLATE,
-                pressurePlate -> SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
-                        .pattern("ss")
-                        .input('s', sidingBlock)
+                pressurePlate -> SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
+                        .input(sidingBlock)
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.FENCE,
                 fence -> SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.DECORATIONS, fence, 3)

@@ -1,13 +1,10 @@
 {
-  "type": "bwt:soul_forge_shaped",
+  "type": "bwt:soul_forge_shapeless",
   "category": "redstone",
-  "key": {
-    "s": {
+  "ingredients": [
+    {
       "item": "bwt:stone_siding"
     }
-  },
-  "pattern": [
-    "ss"
   ],
   "result": {
     "count": 1,
