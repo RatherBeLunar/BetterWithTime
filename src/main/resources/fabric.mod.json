@@ -7,10 +7,23 @@
 	"authors": [
 		"RatherBeLunar"
 	],
+    "contributors": [
+        "stohun",
+        "primetoxinz",
+        "ivangeevo"
+    ],
 	"contact": {
 		"homepage": "https://modrinth.com/mod/better-with-time",
-		"sources": "https://github.com/RatherBeLunar/BetterWithTime"
+		"sources": "https://github.com/RatherBeLunar/BetterWithTime",
+        "issues": "https://github.com/RatherBeLunar/BetterWithTime/issues"
 	},
+    "custom": {
+      "modmenu": {
+        "links": {
+          "modmenu.discord": "https://discord.gg/WUtwPTws2f"
+        }
+      }
+    },
 	"license": "CC0-1.0",
 	"icon": "assets/bwt/icon.png",
 	"environment": "*",
