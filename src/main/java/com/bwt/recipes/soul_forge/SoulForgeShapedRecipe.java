@@ -43,8 +43,18 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
     }
 
     @Override
+    public int getWidth() {
+        return this.raw.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.raw.getHeight();
+    }
+
+    @Override
     public boolean fits(int width, int height) {
-        return width == 4 && height == 4;
+        return width >= this.raw.getWidth() && height >= this.raw.getHeight();
     }
 
     public RawShapedRecipe getRaw() {

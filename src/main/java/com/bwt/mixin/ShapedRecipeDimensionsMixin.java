@@ -37,7 +37,7 @@ public abstract class ShapedRecipeDimensionsMixin {
 
         Codec<List<String>> PATTERN_CODEC = Codec.STRING.listOf().comapFlatMap(pattern -> {
             if (pattern.size() > 4) {
-                return DataResult.error(() -> "Invalid pattern: too many rows, 3 is maximum");
+                return DataResult.error(() -> "Invalid pattern: too many rows, 4 is maximum");
             }
             if (pattern.isEmpty()) {
                 return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
@@ -45,7 +45,7 @@ public abstract class ShapedRecipeDimensionsMixin {
             int i = pattern.get(0).length();
             for (String string : pattern) {
                 if (string.length() > 4) {
-                    return DataResult.error(() -> "Invalid pattern: too many columns, 3 is maximum");
+                    return DataResult.error(() -> "Invalid pattern: too many columns, 4 is maximum");
                 }
                 if (i == string.length()) continue;
                 return DataResult.error(() -> "Invalid pattern: each row must be the same width");

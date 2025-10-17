@@ -15,7 +15,6 @@ import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -78,13 +77,13 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
         CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack = ItemStack.EMPTY;
-        Optional<RecipeEntry<CraftingRecipe>> optional = OrderedRecipeMatcher.getFirstRecipeOfMultipleTypes(
+        Optional<? extends RecipeEntry<? extends CraftingRecipe>> optional = OrderedRecipeMatcher.getFirstRecipeOfMultipleTypes(
                 world,
                 craftingRecipeInput,
                 List.of(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, RecipeType.CRAFTING)
         );
         if (optional.isPresent()) {
-            RecipeEntry<CraftingRecipe> recipeEntry = optional.get();
+            RecipeEntry<? extends CraftingRecipe> recipeEntry = optional.get();
             CraftingRecipe craftingRecipe = recipeEntry.value();
             if (resultInventory.shouldCraftRecipe(world, serverPlayerEntity, recipeEntry)) {
                 ItemStack itemStack2 = craftingRecipe.craft(craftingRecipeInput, world.getRegistryManager());

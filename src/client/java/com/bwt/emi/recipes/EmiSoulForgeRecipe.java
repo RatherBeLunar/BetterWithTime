@@ -1,8 +1,10 @@
 package com.bwt.emi.recipes;
 
 import com.bwt.emi.BwtEmiPlugin;
+import com.bwt.recipes.soul_forge.SoulForgeRecipe;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import com.bwt.utils.Id;
+import com.google.common.collect.Lists;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiTexture;
@@ -10,10 +12,7 @@ import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.ShapelessRecipe;
+import net.minecraft.recipe.*;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,15 +24,20 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
     protected final List<EmiIngredient> input;
     protected final EmiStack output;
     private final int size;
-    private final CraftingRecipe recipe;
+    private final SoulForgeRecipe recipe;
 
-    public EmiSoulForgeRecipe(RecipeEntry<CraftingRecipe> recipeEntry) {
+    public EmiSoulForgeRecipe(RecipeEntry<SoulForgeRecipe> recipeEntry) {
         this(recipeEntry.value(), recipeEntry.id());
     }
 
-    public EmiSoulForgeRecipe(CraftingRecipe recipe, Identifier id) {
+    public EmiSoulForgeRecipe(SoulForgeRecipe recipe, Identifier id) {
         this.id = Id.of(String.format("%s-%s-%s", "soulforge", id.getNamespace(), id.getPath()));
-        this.input = recipe.getIngredients().stream().map(EmiIngredient::of).toList();
+        if (recipe instanceof SoulForgeShapedRecipe shapedRecipe) {
+            this.input = padIngredients(shapedRecipe);
+        }
+        else {
+            this.input = recipe.getIngredients().stream().map(EmiIngredient::of).toList();
+        }
         this.output = EmiStack.of(recipe.getResult(null));
         this.recipe = recipe;
         this.size = 4;
@@ -103,27 +107,12 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
 
     private void addShapedWidgets(WidgetHolder widgets, SoulForgeShapedRecipe shapedRecipe) {
         int i = 0;
-        int s = 0;
-        int y;
-        for (y = 0; y < shapedRecipe.getHeight(); y++) {
+        for (int y = 0; y < size; y++) {
             int x;
-            for (x = 0; x < shapedRecipe.getWidth(); x++) {
-                widgets.addSlot(input.get(s), i % size * 18, i / size * 18);
-                i++;
-                s++;
-            }
-            while (x < size) {
-                widgets.addSlot(EmiStack.of(ItemStack.EMPTY), i % size * 18, i / size * 18);
-                i++;
-                x++;
-            }
-        }
-        while (y < size) {
-            for (int x = 0; x < size; x++) {
-                widgets.addSlot(EmiStack.of(ItemStack.EMPTY), i % size * 18, i / size * 18);
+            for (x = 0; x < size; x++) {
+                widgets.addSlot(input.get(i), i % size * 18, i / size * 18);
                 i++;
             }
-            y++;
         }
     }
 
@@ -135,5 +124,20 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
                 widgets.addSlot(EmiStack.of(ItemStack.EMPTY), i % size * 18, i / size * 18);
             }
         }
+    }
+
+    private static List<EmiIngredient> padIngredients(SoulForgeShapedRecipe recipe) {
+        List<EmiIngredient> list = Lists.newArrayList();
+        int i = 0;
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 4; x++) {
+                if (x >= recipe.getWidth() || y >= recipe.getHeight() || i >= recipe.getIngredients().size()) {
+                    list.add(EmiStack.EMPTY);
+                } else {
+                    list.add(EmiIngredient.of(recipe.getIngredients().get(i++)));
+                }
+            }
+        }
+        return list;
     }
 }

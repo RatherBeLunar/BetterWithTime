@@ -46,7 +46,7 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
 
     @Override
     public boolean fits(int width, int height) {
-        return width == 4 && height == 4;
+        return width * height >= this.getIngredients().size();
     }
 
     public ItemStack getResult() {
