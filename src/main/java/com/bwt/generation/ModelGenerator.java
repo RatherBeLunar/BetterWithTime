@@ -239,7 +239,6 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.register(BwtItems.hellfireDustItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.kibbleItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.nethercoalItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.netherSludgeItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.poachedEggItem, Models.GENERATED);
         itemModelGenerator.register(BwtItems.potashItem, Models.GENERATED);

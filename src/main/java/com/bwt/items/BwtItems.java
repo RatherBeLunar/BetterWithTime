@@ -67,7 +67,6 @@ public class BwtItems implements ModInitializer {
 	public static final Item hempSeedsItem = Registry.register(Registries.ITEM, Id.of("hemp_seeds"), new HempSeedsItem(BwtBlocks.hempCropBlock, new Item.Settings()));
 	public static final Item kibbleItem = Registry.register(Registries.ITEM, Id.of("kibble"), new Item(new Item.Settings()));
 //	public static final Item netherBrickItem = Registry.register(Registries.ITEM, Id.of("nether_brick"), new NetherBrickItem(new Item.Settings()));
-	public static final Item netherSludgeItem = Registry.register(Registries.ITEM, Id.of("nether_sludge"), new Item(new Item.Settings()));
 	public static final Item nethercoalItem = Registry.register(Registries.ITEM, Id.of("nethercoal"), new Item(new Item.Settings()));
 //	public static final Item nitreItem = Registry.register(Registries.ITEM, Id.of("nitre"), new NitreItem(new Item.Settings()));
 	public static final Item paddingItem = Registry.register(Registries.ITEM, Id.of("padding"), new Item(new Item.Settings()));
@@ -160,7 +159,6 @@ public class BwtItems implements ModInitializer {
             content.add(armorPlateItem);
             content.add(dynamiteItem);
             content.add(glueItem);
-            content.add(netherSludgeItem);
             content.add(paddingItem);
             content.add(screwItem);
             content.add(strapItem);

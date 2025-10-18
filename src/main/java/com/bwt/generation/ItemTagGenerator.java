@@ -373,7 +373,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.NETHER_BRICK,
                         // Nether Groth Spores
                         Items.QUARTZ,
-                        BwtItems.netherSludgeItem,
                         BwtItems.paddingItem,
                         Items.PAINTING,
                         Items.PUMPKIN_PIE,
