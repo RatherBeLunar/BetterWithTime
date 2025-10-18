@@ -20,7 +20,6 @@ public class TurntableRecipeGenerator extends FabricRecipeProvider {
     public void generate(RecipeExporter exporter) {
         TurntableRecipe.JsonBuilder.create(Blocks.CLAY, BwtBlocks.unfiredDecoratedPotBlock).markDefault().offerTo(exporter);
         TurntableRecipe.JsonBuilder.create(BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredCrucibleBlock).drops(Items.CLAY_BALL).markDefault().offerTo(exporter);
-        TurntableRecipe.JsonBuilder.create(BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock).drops(Items.CLAY_BALL).offerTo(exporter);
         TurntableRecipe.JsonBuilder.create(BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock).markDefault().offerTo(exporter);
         TurntableRecipe.JsonBuilder.create(BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock).drops(Items.CLAY_BALL).markDefault().offerTo(exporter);
         TurntableRecipe.JsonBuilder.create(BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock).drops(Items.CLAY_BALL).markDefault().offerTo(exporter);
