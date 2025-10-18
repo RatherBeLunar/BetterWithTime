@@ -1,0 +1,19 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "column",
+  "key": {
+    "#": {
+      "item": "bwt:cobblestone_moulding"
+    }
+  },
+  "pattern": [
+    "#",
+    "#",
+    "#"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:cobblestone_column"
+  }
+}

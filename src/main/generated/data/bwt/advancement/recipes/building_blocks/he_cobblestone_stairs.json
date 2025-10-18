@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_moulding": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:cobblestone_moulding"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:he_cobblestone_stairs"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_moulding"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:he_cobblestone_stairs"
+    ]
+  }
+}

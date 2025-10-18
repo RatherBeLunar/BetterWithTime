@@ -46,6 +46,7 @@ public abstract class MaterialInheritedBlock extends Block {
             tableBlocks.add(TableBlock.ofBlock(block));
         });
         List<BlockFamily> blockFamilies = List.of(
+                BlockFamilies.COBBLESTONE,
                 BlockFamilies.STONE,
                 BlockFamilies.STONE_BRICK,
                 BlockFamilies.MOSSY_STONE_BRICK,

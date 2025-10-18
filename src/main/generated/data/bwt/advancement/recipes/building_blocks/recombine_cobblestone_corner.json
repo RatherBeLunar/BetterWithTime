@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_cobblestone_corner": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:cobblestone_corner"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:recombine_cobblestone_corner"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_cobblestone_corner"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:recombine_cobblestone_corner"
+    ]
+  }
+}

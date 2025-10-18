@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "support=false": {
+      "model": "bwt:block/cobblestone_table_no_support"
+    },
+    "support=true": {
+      "model": "bwt:block/cobblestone_table"
+    }
+  }
+}
