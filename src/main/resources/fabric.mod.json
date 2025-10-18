@@ -5,17 +5,18 @@
 	"name": "BetterWithTime",
 	"description": "A modern adaptation of Better Than Wolves' tech features",
 	"authors": [
-		"RatherBeLunar"
+      "RatherBeLunar"
 	],
     "contributors": [
-        "stohun",
-        "primetoxinz",
-        "ivangeevo"
+      "stohun",
+      "primetoxinz",
+      "ivangeevo",
+      "zero318"
     ],
 	"contact": {
-		"homepage": "https://modrinth.com/mod/better-with-time",
-		"sources": "https://github.com/RatherBeLunar/BetterWithTime",
-        "issues": "https://github.com/RatherBeLunar/BetterWithTime/issues"
+      "homepage": "https://modrinth.com/mod/better-with-time",
+      "sources": "https://github.com/RatherBeLunar/BetterWithTime",
+      "issues": "https://github.com/RatherBeLunar/BetterWithTime/issues"
 	},
     "custom": {
       "modmenu": {
