@@ -147,27 +147,35 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
     public ItemStack quickMove(PlayerEntity player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot2 = this.slots.get(slot);
+        // Vanilla decompiled code has these as magic numbers.
+        // I find it easier to parse these when they're overly verbose.
+        int craftingResultIndex = 0;
+        int craftingGridStart = 1;
+        int craftingGridEnd = HEIGHT * WIDTH; // 4x4 grid = 1-16 inclusive
+        int playerInventoryStart = craftingGridEnd + 1; // 17
+        int playerHotbarStart = playerInventoryStart + (9 * 3); // = 44 = 17 + 27, which the size of the non-hotbar inventory
+        int playerInventoryEnd = playerHotbarStart + 9; // = 53 = 44 + 9, the size of the hotbar
         if (slot2.hasStack()) {
             ItemStack itemStack2 = slot2.getStack();
             itemStack = itemStack2.copy();
-            if (slot == 0) {
+            if (slot == craftingResultIndex) {
                 this.context.run((world, pos) -> itemStack2.getItem().onCraftByPlayer(itemStack2, world, player));
-                if (!this.insertItem(itemStack2, 10, 46, true)) {
+                if (!this.insertItem(itemStack2, playerInventoryStart, playerInventoryEnd, true)) {
                     return ItemStack.EMPTY;
                 }
 
                 slot2.onQuickTransfer(itemStack2, itemStack);
-            } else if (slot >= 17 && slot < 53) {
-                if (!this.insertItem(itemStack2, 1, 17, false)) {
-                    if (slot < 44) {
-                        if (!this.insertItem(itemStack2, 44, 53, false)) {
+            } else if (slot >= playerInventoryStart && slot < playerInventoryEnd) {
+                if (!this.insertItem(itemStack2, craftingGridStart, playerInventoryStart, false)) {
+                    if (slot < playerHotbarStart) {
+                        if (!this.insertItem(itemStack2, playerHotbarStart, playerInventoryEnd, false)) {
                             return ItemStack.EMPTY;
                         }
-                    } else if (!this.insertItem(itemStack2, 17, 44, false)) {
+                    } else if (!this.insertItem(itemStack2, playerInventoryStart, playerHotbarStart, false)) {
                         return ItemStack.EMPTY;
                     }
                 }
-            } else if (!this.insertItem(itemStack2, 17, 53, false)) {
+            } else if (!this.insertItem(itemStack2, playerInventoryStart, playerInventoryEnd, false)) {
                 return ItemStack.EMPTY;
             }
 
@@ -182,7 +190,7 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
             }
 
             slot2.onTakeItem(player, itemStack2);
-            if (slot == 0) {
+            if (slot == craftingResultIndex) {
                 player.dropItem(itemStack2, false);
             }
         }
