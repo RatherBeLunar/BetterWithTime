@@ -264,9 +264,6 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
 
         List<ItemStack> results = recipe.get().getResults();
-        if (targetState.getBlock() instanceof SlabBlock && targetState.get(SlabBlock.TYPE) == SlabType.DOUBLE) {
-            results.forEach(result -> result.setCount(result.getCount() * 2));
-        }
         BlockIngredient blockIngredient = recipe.get().getIngredient();
 
         // The companion slab is the only partial block that doesn't just get cut regardless of collision
@@ -289,9 +286,9 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
         playBangSound(world, pos);
 
-        if (targetState.contains(Properties.SLAB_TYPE) && targetState.get(Properties.SLAB_TYPE).equals(SlabType.DOUBLE)) {
-            results.forEach(stack -> stack.setCount(stack.getCount() * 2));
-        }
+        targetState.getOrEmpty(Properties.SLAB_TYPE).filter(property -> property.equals(SlabType.DOUBLE)).ifPresent((property) ->
+            results.forEach(stack -> stack.setCount(stack.getCount() * 2))
+        );
 
         CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
