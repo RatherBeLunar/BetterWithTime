@@ -1,5 +1,6 @@
 package com.bwt.blocks.block_dispenser;
 
+import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.behavior.dispense.*;
 import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
@@ -29,10 +30,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -260,14 +258,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     protected ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) return ActionResult.SUCCESS;
-        //This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
-        //a namedScreenHandlerFactory. If your block class does not extend BlockWithEntity, it needs to implement createScreenHandlerFactory.
-        NamedScreenHandlerFactory screenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
-
-        if (screenHandlerFactory != null) {
-            player.openHandledScreen(screenHandlerFactory);
-        }
-
+        world.getBlockEntity(blockPos, BwtBlockEntities.blockDispenserBlockEntity).ifPresent(player::openHandledScreen);
         return ActionResult.CONSUME;
     }
 
