@@ -43,10 +43,16 @@ import java.util.stream.IntStream;
 public class NetherGrothBlock extends Block {
     public static final IntProperty AGE = Properties.AGE_7;
     public static final int MAX_AGE = 7;
+    public static final VoxelShape FLAT_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
 
     public NetherGrothBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState().with(AGE, 0));
+    }
+
+    @Override
+    protected boolean hasSidedTransparency(BlockState state) {
+        return true;
     }
 
     @Override
@@ -59,6 +65,11 @@ public class NetherGrothBlock extends Block {
         int age = state.get(AGE);
         int maxY = (age + 1);
         return Block.createCuboidShape(0, 0, 0, 16, maxY, 16);
+    }
+
+    @Override
+    protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return FLAT_SHAPE;
     }
 
     @Override
@@ -106,21 +117,13 @@ public class NetherGrothBlock extends Block {
 
         int height = state.get(AGE);
         BlockState stateBelow = world.getBlockState(pos.down());
-        // Added a separate block for Grothed Netherrack so we don't add a blockstate to the normal Netherrack
-        // Might reconsider
+        // TODO consider if we wanna do other blocks in a block tag
+        // Adding nether quartz, nether gold ore, and then even more questionably: soul sand, magma, basalt, blackstone
         boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.grothedNetherrackBlock) || stateBelow.isOf(Blocks.NETHERRACK);
 
         // Attempt to grow
         if (height < MAX_AGE) {
-            boolean canGrow = false;
-
-            if (isOnNetherrack) {
-                canGrow = true;
-            } else {
-                if (getMaxHeightOfNeighbors(world, pos) > height + 1) {
-                    canGrow = true;
-                }
-            }
+            boolean canGrow = isOnNetherrack || getMaxHeightOfNeighbors(world, pos) > height + 1;
 
             if (canGrow) {
                 height++;
@@ -138,32 +141,24 @@ public class NetherGrothBlock extends Block {
         // Pick a random horizontal direction
         Direction direction = Direction.Type.HORIZONTAL.random(random);
         BlockPos targetPos = pos.offset(direction);
-        BlockState targetState = world.getBlockState(targetPos);
 
-        if (isBlockOpenToSpread(targetState)) {
-            BlockPos belowTargetPos = targetPos.down();
-            BlockState belowTargetState = world.getBlockState(belowTargetPos);
-            // Check solid block below
-            if (belowTargetState.isSideSolidFullSquare(world, belowTargetPos, Direction.UP)) {
-                spreadToBlock(world, targetPos, targetState);
-            } else if (isOnNetherrack) {
-                // Try below that if we're on netherrack
-                if (isBlockOpenToSpread(belowTargetState) && belowTargetState.isSideSolidFullSquare(world, belowTargetPos.down(), Direction.UP)) {
-                    spreadToBlock(world, belowTargetPos, belowTargetState);
+        for (BlockPos potentialOpenSpace : new BlockPos[]{targetPos, targetPos.down(), targetPos.up()}) {
+            BlockState targetState = world.getBlockState(potentialOpenSpace);
+            // Check open air - first next to the source block, then above that, then below that
+            if (isBlockOpenToSpread(targetState)) {
+                BlockPos belowPotentialOpenSpace = potentialOpenSpace.down();
+                BlockState belowTargetState = world.getBlockState(belowPotentialOpenSpace);
+                // Check if the block below can support growth
+                if (belowTargetState.isSideSolidFullSquare(world, belowPotentialOpenSpace, Direction.UP)) {
+                    spreadToBlock(world, potentialOpenSpace, targetState);
                 }
             }
-            return;
-        }
-        // The moss can only spread upwards onto a netherrack block and if there is empty space above where it's currently at
-        if (world.isAir(pos.up()) && targetState.isOf(Blocks.NETHERRACK)) {
-            BlockPos targetPosUp = targetPos.up();
-            BlockState targetStateUp = world.getBlockState(targetPosUp);
 
-            if (isBlockOpenToSpread(targetStateUp)) {
-                spreadToBlock(world, targetPosUp, targetStateUp);
+            // Only spread up or down if originating on netherrack.
+            if (!isOnNetherrack) {
+                break;
             }
         }
-
     }
 
     private void spreadToBlock(World world, BlockPos pos, BlockState state) {
@@ -177,7 +172,7 @@ public class NetherGrothBlock extends Block {
             );
         }
 
-        if (world.setBlockState(pos, state, Block.NOTIFY_ALL)) {
+        if (world.setBlockState(pos, this.getDefaultState(), Block.NOTIFY_ALL)) {
             world.playSound(null, pos, SoundEvents.ENTITY_GHAST_AMBIENT, SoundCategory.BLOCKS,
                     0.5F, 2.6F + (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.8F
             );
