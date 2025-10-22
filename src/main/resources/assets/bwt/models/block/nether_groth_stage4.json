@@ -1,23 +1,23 @@
 {
-	"format_version": "1.9.0",
-	"credit": "Made with Blockbench",
+	"__comment": "Designed by Stohun with Cubik Studio - https://cubik.studio",
+	"parent": "block/block",
 	"textures": {
-		"1": "bwt:block/nether_groth_top",
-		"2": "bwt:block/nether_groth_side",
-		"3": "bwt:block/nether_groth_bottom",
-		"particle": "bwt:block/nether_groth_top"
+		"particle": "bwt:block/nether_groth_top_4",
+		"up": "bwt:block/nether_groth_top_4",
+		"side": "bwt:block/nether_groth_side",
+		"down": "bwt:block/nether_groth_top"
 	},
-	"elements": [
+	"elements": [ 	 
 		{
-			"from": [0, 0, 0],
-			"to": [16, 5, 16],
+			"from": [ 0, 0, 0 ],
+			"to": [ 16, 5, 16 ],
 			"faces": {
-				"north": {"uv": [0, 11, 16, 16], "texture": "#2"},
-				"east": {"uv": [0, 11, 16, 16], "texture": "#2"},
-				"south": {"uv": [0, 11, 16, 16], "texture": "#2"},
-				"west": {"uv": [0, 11, 16, 16], "texture": "#2"},
-				"up": {"uv": [0, 0, 16, 16], "texture": "#1"},
-				"down": {"uv": [0, 0, 16, 16], "texture": "#3"}
+				"down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#down", "cullface": "down" },
+				"up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#up" },
+				"north": { "uv": [ 0, 11, 16, 16 ], "texture": "#side", "cullface": "north" },
+				"south": { "uv": [ 0, 11, 16, 16 ], "texture": "#side", "cullface": "south" },
+				"west":  { "uv": [ 0, 11, 16, 16 ], "texture": "#side", "cullface": "west" },
+				"east":  { "uv": [ 0, 11, 16, 16 ], "texture": "#side", "cullface": "east" }
 			}
 		}
 	]
