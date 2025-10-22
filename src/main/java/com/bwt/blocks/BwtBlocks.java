@@ -286,9 +286,10 @@ public class BwtBlocks implements ModInitializer {
 
     public static final Block netherGroth = new NetherGrothBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.DARK_RED)
-                    .noCollision()
+                    .notSolid()
                     .ticksRandomly()
                     .strength(0.2f)
+                    .velocityMultiplier(0.4F)
                     .sounds(BlockSoundGroup.FUNGUS)
                     .pistonBehavior(PistonBehavior.DESTROY)
                     .velocityMultiplier(0.8f)
