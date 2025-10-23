@@ -31,4 +31,22 @@ public class RedstoneClutchBlock extends GearBoxBlock {
     public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
         return super.getPowerStates(state, world, pos).with(POWERED, world.isReceivingRedstonePower(pos));
     }
+
+    @Override
+    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
+        // Compute new state but don't update yet
+        BlockState newState = getPowerStates(state, world, pos);
+        boolean isRedstonePowered = newState.get(POWERED);
+        boolean wasRedstonePowered = state.get(POWERED);
+        boolean isReceivingMechPower = super.isMechPowered(newState);
+        boolean wasReceivingMechPower = super.isMechPowered(state);
+        // If block just turned on
+        if ((!isRedstonePowered && wasRedstonePowered) || (isReceivingMechPower && !wasReceivingMechPower)) {
+            world.scheduleBlockTick(pos, this, turnOnTickRate);
+        }
+        // If block just turned off
+        else if ((isRedstonePowered && !wasRedstonePowered) || (!isReceivingMechPower && wasReceivingMechPower)) {
+            world.scheduleBlockTick(pos, this, turnOffTickRate);
+        }
+    }
 }

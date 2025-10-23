@@ -73,27 +73,51 @@
       "apply": { "model": "bwt:block/redstone_clutch_face_powered_counter_clockwise", "x": 90}
     },
     {
-      "when": { "facing": "north", "mech_powered": "false"},
+      "when": { "facing": "north", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered"}
+    },
+    {
+      "when": { "facing": "east", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered", "y": 90}
+    },
+    {
+      "when": { "facing": "south", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered", "y": 180}
+    },
+    {
+      "when": { "facing": "west", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered", "y": 270}
+    },
+    {
+      "when": { "facing": "up", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered", "x": 270}
+    },
+    {
+      "when": { "facing": "down", "powered": "true"},
+      "apply": { "model": "bwt:block/redstone_clutch_face_rs_powered", "x": 90}
+    },
+    {
+      "when": { "facing": "north", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face"}
     },
     {
-      "when": { "facing": "east", "mech_powered": "false"},
+      "when": { "facing": "east", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face", "y": 90}
     },
     {
-      "when": { "facing": "south", "mech_powered": "false"},
+      "when": { "facing": "south", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face", "y": 180}
     },
     {
-      "when": { "facing": "west", "mech_powered": "false"},
+      "when": { "facing": "west", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face", "y": 270}
     },
     {
-      "when": { "facing": "up", "mech_powered": "false"},
+      "when": { "facing": "up", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face", "x": 270}
     },
     {
-      "when": { "facing": "down", "mech_powered": "false"},
+      "when": { "facing": "down", "mech_powered": "false", "powered": "false"},
       "apply": { "model": "bwt:block/redstone_clutch_face", "x": 90}
     }
   ]
