@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"id": "bwt",
 	"version": "${version}",
-	"name": "BetterWithTime",
+	"name": "Better With Time",
 	"description": "A modern adaptation of Better Than Wolves' tech features",
 	"authors": [
       "RatherBeLunar"
@@ -12,7 +12,8 @@
       "stohun",
       "primetoxinz",
       "ivangeevo",
-      "zero318"
+      "zero318",
+      "ikabod"
     ],
 	"contact": {
       "homepage": "https://modrinth.com/mod/better-with-time",
