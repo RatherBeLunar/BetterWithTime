@@ -286,6 +286,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         if (VanillaHopperInvoker.isInventoryFull(inventoryBelow, Direction.UP)) {
             return;
         }
+        stackCountToDrop = Math.min(stackCountToDrop, inventoryBelow.getMaxCountPerStack());
         for (int i = 0; i < hopperInventory.size(); ++i) {
             if (getStack(i).isEmpty()) continue;
             ItemStack itemStack = getStack(i).copy();
