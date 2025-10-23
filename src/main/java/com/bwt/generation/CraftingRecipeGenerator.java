@@ -500,7 +500,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
                 .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
                 .criterion("has_wooden_corner", conditionsFromTag(BwtItemTags.WOODEN_CORNER_BLOCKS))
-                .offerTo(exporter);
+                .offerTo(exporter, "mech_hopper");
     }
 
     private void generateTier4Recipes(RecipeExporter exporter) {
