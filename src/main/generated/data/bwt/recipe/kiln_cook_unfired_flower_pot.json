@@ -1,0 +1,14 @@
+{
+  "type": "bwt:kiln",
+  "category": "misc",
+  "cookingTime": 1,
+  "drops": [
+    {
+      "count": 1,
+      "id": "minecraft:flower_pot"
+    }
+  ],
+  "ingredient": {
+    "block": "bwt:unfired_flower_pot"
+  }
+}

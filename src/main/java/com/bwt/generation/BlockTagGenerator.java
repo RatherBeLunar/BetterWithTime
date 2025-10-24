@@ -189,6 +189,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.unfiredPlanterBlock)
                 .add(BwtBlocks.unfiredVaseBlock)
                 .add(BwtBlocks.unfiredUrnBlock)
+                .add(BwtBlocks.unfiredFlowerPotBlock)
                 .add(BwtBlocks.dirtSlabBlock)
                 .add(BwtBlocks.dirtPathSlabBlock)
                 .add(BwtBlocks.grassSlabBlock)

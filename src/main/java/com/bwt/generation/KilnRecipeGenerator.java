@@ -46,6 +46,7 @@ public class KilnRecipeGenerator extends FabricRecipeProvider {
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredPlanterBlock).drops(BwtBlocks.planterBlock).markDefault().offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredVaseBlock).drops(BwtBlocks.vaseBlocks.get(DyeColor.WHITE)).markDefault().offerTo(exporter);
         KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredUrnBlock).drops(BwtBlocks.urnBlock).markDefault().offerTo(exporter);
+        KilnRecipe.JsonBuilder.create(BwtBlocks.unfiredFlowerPotBlock).drops(Items.FLOWER_POT).markDefault().offerTo(exporter);
 
         // Terracotta
         KilnRecipe.JsonBuilder.create(Blocks.CLAY).drops(Blocks.TERRACOTTA).offerTo(exporter);

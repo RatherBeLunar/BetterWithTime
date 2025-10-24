@@ -31,6 +31,16 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
+    "got_unfired_flower_pot": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:unfired_flower_pot"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
     "got_unfired_planter": {
       "conditions": {
         "items": [
@@ -78,7 +88,8 @@
       "got_unfired_crucible",
       "got_unfired_planter",
       "got_unfired_vase",
-      "got_unfired_urn"
+      "got_unfired_urn",
+      "got_unfired_flower_pot"
     ]
   ],
   "sends_telemetry_event": true

@@ -258,6 +258,10 @@ public class BwtBlocks implements ModInitializer {
             .nonOpaque()
             .solidBlock(Blocks::never)
     );
+    public static final UnfiredPotteryBlock unfiredFlowerPotBlock = new UnfiredFlowerPotBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
+    );
 	public static final Block urnBlock = new UrnBlock(AbstractBlock.Settings.copy(Blocks.TERRACOTTA)
             .nonOpaque()
             .solidBlock(Blocks::never)
@@ -286,7 +290,7 @@ public class BwtBlocks implements ModInitializer {
 
     public static final Block netherGroth = new NetherGrothBlock(AbstractBlock.Settings.create()
                     .mapColor(MapColor.DARK_RED)
-                    .notSolid()
+                    .solidBlock(Blocks::never)
                     .ticksRandomly()
                     .strength(0.2f)
                     .velocityMultiplier(0.4F)
@@ -401,6 +405,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, Id.of("unfired_vase"), new BlockItem(unfiredVaseBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_urn"), unfiredUrnBlock);
         Registry.register(Registries.ITEM, Id.of("unfired_urn"), new BlockItem(unfiredUrnBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_flower_pot"), unfiredFlowerPotBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_flower_pot"), new BlockItem(unfiredFlowerPotBlock, new Item.Settings()));
         // Kiln
         Registry.register(Registries.BLOCK, Id.of("kiln"), kilnBlock);
         // Blood Wood
@@ -548,6 +554,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(unfiredPlanterBlock);
             content.add(unfiredVaseBlock);
             content.add(unfiredUrnBlock);
+            content.add(unfiredFlowerPotBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
         });

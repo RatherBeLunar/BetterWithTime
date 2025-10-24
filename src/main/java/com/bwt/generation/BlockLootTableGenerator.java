@@ -103,6 +103,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.unfiredPlanterBlock);
         addDrop(BwtBlocks.unfiredVaseBlock);
         addDrop(BwtBlocks.unfiredUrnBlock);
+        addDrop(BwtBlocks.unfiredFlowerPotBlock);
         addDrop(BwtBlocks.unfiredDecoratedPotBlock);
         addDrop(BwtBlocks.unfiredDecoratedPotBlockWithSherds, this::unfiredDecoratedPotBlockWithSherdsDrops);
         addDrop(BwtBlocks.urnBlock);

@@ -140,7 +140,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                 BwtBlocks.unfiredCrucibleBlock,
                 "Potter's Guild",
                 "Spin your first piece of pottern on the Turntable. Next, into the Kiln!",
-                BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock
+                BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredFlowerPotBlock
         ).parent(turntableAdvancement).build(consumer, Id.MOD_ID + "/got_pottery");
         AdvancementEntry glueAdvancement = itemAdvancement(
                 BwtItems.glueItem,

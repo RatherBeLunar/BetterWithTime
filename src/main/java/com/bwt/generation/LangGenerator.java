@@ -65,6 +65,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.unfiredPlanterBlock, "Unfired Planter");
         translationBuilder.add(BwtBlocks.unfiredVaseBlock, "Unfired Vase");
         translationBuilder.add(BwtBlocks.unfiredUrnBlock, "Unfired Urn");
+        translationBuilder.add(BwtBlocks.unfiredFlowerPotBlock, "Unfired Flower Pot");
         translationBuilder.add(BwtBlocks.wickerBlock, "Wicker Block");
         translationBuilder.add(BwtBlocks.wickerSlabBlock    , "Wicker Slab");
         translationBuilder.add(BwtBlocks.ropeCoilBlock, "Rope Block");
