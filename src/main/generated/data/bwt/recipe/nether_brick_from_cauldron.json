@@ -1,0 +1,24 @@
+{
+  "type": "bwt:cauldron",
+  "category": "misc",
+  "group": "",
+  "ingredients": [
+    {
+      "count": 8,
+      "ingredient": {
+        "item": "bwt:hellfire_dust"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:potash"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 8,
+      "id": "minecraft:nether_brick"
+    }
+  ]
+}
