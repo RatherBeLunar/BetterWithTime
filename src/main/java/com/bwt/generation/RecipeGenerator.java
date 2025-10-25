@@ -22,6 +22,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
     protected TurntableRecipeGenerator turntableRecipeGenerator;
     protected KilnRecipeGenerator kilnRecipeGenerator;
     protected SoulForgeRecipeGenerator soulForgeRecipeGenerator;
+    protected EmiDefaultsGenerator emiDefaultsGenerator;
 
     public RecipeGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
         super(output, registriesFuture);
@@ -38,6 +39,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.turntableRecipeGenerator = new TurntableRecipeGenerator(output, registriesFuture);
         this.kilnRecipeGenerator = new KilnRecipeGenerator(output, registriesFuture);
         this.soulForgeRecipeGenerator = new SoulForgeRecipeGenerator(output, registriesFuture);
+        this.emiDefaultsGenerator = new EmiDefaultsGenerator(output, registriesFuture);
     }
 
     @Override
@@ -58,7 +60,8 @@ public class RecipeGenerator extends FabricRecipeProvider {
                 sawRecipeGenerator.run(writer, wrapperLookup),
                 turntableRecipeGenerator.run(writer, wrapperLookup),
                 kilnRecipeGenerator.run(writer, wrapperLookup),
-                soulForgeRecipeGenerator.run(writer, wrapperLookup)
+                soulForgeRecipeGenerator.run(writer, wrapperLookup),
+                emiDefaultsGenerator.run(writer)
         );
     }
 }

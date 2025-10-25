@@ -6,7 +6,6 @@ import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
-import java.util.stream.Stream;
 
 public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 	@Override
@@ -27,6 +26,5 @@ public class BetterWithTimeDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(EntityLootTableGenerator::new);
 		pack.addProvider(AdvancementsGenerator::new);
 		pack.addProvider(BwtConfiguredFeatures::new);
-		pack.addProvider(EmiDefaultsGenerator::new);
 	}
 }
