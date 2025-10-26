@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "bwt:blood_wood"
+        "recipe": "bwt:blood_wood_wood"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "bwt:blood_wood"
+      "bwt:blood_wood_wood"
     ]
   }
 }

@@ -1,15 +1,15 @@
 {
   "variants": {
     "axis=x": {
-      "model": "bwt:block/blood_wood",
+      "model": "bwt:block/blood_wood_wood",
       "x": 90,
       "y": 90
     },
     "axis=y": {
-      "model": "bwt:block/blood_wood"
+      "model": "bwt:block/blood_wood_wood"
     },
     "axis=z": {
-      "model": "bwt:block/blood_wood",
+      "model": "bwt:block/blood_wood_wood",
       "x": 90
     }
   }
