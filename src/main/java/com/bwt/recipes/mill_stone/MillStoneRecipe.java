@@ -263,7 +263,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         }
         public void addToDefaults(Identifier recipeId) {
             if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 

@@ -29,7 +29,7 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
 
     protected void generateSawRecipes(RecipeExporter exporter) {
         generateWoodFamilyRecipes(exporter);
-        SawRecipe.JsonBuilder.create(BwtBlocks.companionCubeBlock).result(BwtBlocks.companionSlabBlock, 2).offerTo(exporter);
+        SawRecipe.JsonBuilder.create(BwtBlocks.companionCubeBlock).result(BwtBlocks.companionSlabBlock, 2).markDefault().offerTo(exporter);
         SawRecipe.JsonBuilder.create(BwtBlocks.companionSlabBlock).result(BwtBlocks.companionSlabBlock).offerTo(exporter);
         SawRecipe.JsonBuilder.create(BwtBlocks.wickerBlock).result(BwtBlocks.wickerSlabBlock, 2).offerTo(exporter);
         SawRecipe.JsonBuilder.dropsSelf(Blocks.VINE, exporter);
@@ -70,10 +70,10 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
                 }
             }
             // Planks -> siding -> moulding -> corner -> gear
-            SawRecipe.JsonBuilder.create(planksBlock).result(sidingBlock, 2).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(sidingBlock).result(mouldingBlock, 2).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(mouldingBlock).result(cornerBlock, 2).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(cornerBlock).result(BwtItems.gearItem, 2).offerTo(exporter);
+            SawRecipe.JsonBuilder.create(planksBlock).result(sidingBlock, 2).markDefault().offerTo(exporter);
+            SawRecipe.JsonBuilder.create(sidingBlock).result(mouldingBlock, 2).markDefault().offerTo(exporter);
+            SawRecipe.JsonBuilder.create(mouldingBlock).result(cornerBlock, 2).markDefault().offerTo(exporter);
+            SawRecipe.JsonBuilder.create(cornerBlock).result(BwtItems.gearItem, 2).markDefault().offerTo(exporter);
             // Recycling recipes
             Identifier fenceId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
             Identifier fenceGateId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence_gate"));

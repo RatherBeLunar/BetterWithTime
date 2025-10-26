@@ -255,7 +255,7 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         }
         public void addToDefaults(Identifier recipeId) {
             if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 

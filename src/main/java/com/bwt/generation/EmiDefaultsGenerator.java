@@ -1,9 +1,7 @@
 package com.bwt.generation;
 
 import com.bwt.utils.Id;
-import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.data.DataOutput;
@@ -11,13 +9,11 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.CompletableFuture;
 
 
@@ -25,10 +21,9 @@ import java.util.concurrent.CompletableFuture;
 //https://github.com/emilyploszaj/emi/wiki/Recipe-Defaults
 //This is necessary for building Recipe Trees.
 public class EmiDefaultsGenerator implements DataProvider {
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture;
     private final FabricDataOutput output;
 
-    private static final ArrayList<Identifier> defaultRecipeIdentifiers = new ArrayList<>();
+    private static final HashSet<Identifier> defaultRecipeIdentifiers = new HashSet<>();
     public static void addDefaultRecipe(Identifier identifier) {
         if (defaultRecipeIdentifiers.contains(identifier)) {
             throw new KeyAlreadyExistsException("duplicate defaulted recipe " + identifier.toString());
@@ -53,9 +48,8 @@ public class EmiDefaultsGenerator implements DataProvider {
     }
 
 
-    public EmiDefaultsGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public EmiDefaultsGenerator(FabricDataOutput output) {
         this.output = output;
-        this.registriesFuture = registriesFuture;
     }
 
     public void addDefaults() {
@@ -70,10 +64,8 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "blood_wood_stairs",
                 "grass_planter",
                 "belt",
-                "soulforge-bwt-detector_block",
                 "pulley",
                 "hibachi",
-                "soulforge-bwt-buddy_block",
                 "composite_bow",
                 "blood_wood_fence_gate",
                 "wicker",
@@ -88,7 +80,6 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "axle",
                 "blood_wood_fence",
                 "gear",
-                "oak_planks_table",
                 "haft",
                 "light_blue_wool_slab",
                 "white_wool_slab",
@@ -96,31 +87,22 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "blood_wood_pressure_plate",
                 "hand_crank",
                 "rope_coil_block",
-                "soulforge-bwt-netherite_mattock",
                 "padding",
                 "dye_vase_cyan",
-                "soulforge-bwt-armor_plate",
                 "red_wool_slab",
                 "dirt_slab_from_block",
-                "oak_planks_pedestal",
                 "blood_wood_button",
                 "dynamite",
-                "saw_companion_cube",
                 "mill_stone",
-                "soulforge-bwt-broadhead",
                 "green_wool_slab",
                 "strap",
                 "pink_wool_slab",
                 "soul_sand_planter",
-                "soulforge-bwt-lens",
                 "potash_from_cauldron_rendering_saw_dust",
                 "dye_vase_green",
                 "podzol_slab_from_block",
-                "soulforge-bwt-obsidian_pressure_plate",
                 "broadhead_arrow",
                 "grass_slab_from_block",
-                "soulforge-bwt-netherite_battle_axe",
-                "recombine_oak_planks_corner",
                 "dye_vase_magenta",
                 "purple_wool_slab",
                 "dye_vase_light_gray",
@@ -156,18 +138,13 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "soil_planter",
                 "blue_wool_slab",
                 "wicker_slab_from_block",
-                "oak_planks_column",
                 "obsidian_detector_rail",
                 "anchor",
-                "soulforge-bwt-block_dispenser",
                 "dye_vase_yellow",
                 "slats",
-                "recombine_oak_planks_moulding",
                 "light_gray_wool_slab",
-                "soulforge-bwt-redstone_eye",
                 "dye_vase_lime",
                 "soul_forge",
-                "glue_from_cauldron_rendering_leather",
                 "orange_wool_slab",
                 "lime_wool_slab",
                 "soap_from_stoked_cauldron",
@@ -175,13 +152,12 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "mech_hopper",
                 "cooked_wolf_chop",
                 "donut_from_cauldron",
-                "soul_urn_from_soul_bottling",
                 "dye_vase_black",
                 "dye_vase_red",
                 "gear_box",
-                "saw_oak_planks_moulding",
                 "dung_block",
-                "concentrated_hellfire_block"
+                "concentrated_hellfire_block",
+                "blood_wood_wood"
         );
     }
 
@@ -194,7 +170,7 @@ public class EmiDefaultsGenerator implements DataProvider {
 
         JsonObject object = new JsonObject();
         JsonArray added = new JsonArray();
-        defaultRecipeIdentifiers.forEach(id -> added.add(id.toString()));
+        defaultRecipeIdentifiers.stream().sorted().forEach(id -> added.add(id.toString()));
         object.add("added", added);
         return DataProvider.writeToPath(writer, object, bwtRecipeDefaultsFile);
     }

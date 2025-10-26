@@ -25,11 +25,11 @@ public class HopperRecipeGenerator extends FabricRecipeProvider {
 
     protected void generateHopperFilterRecipes(RecipeExporter exporter) {
         HopperFilterRecipe.JsonBuilder.create().filter(BwtBlocks.wickerPaneBlock.asItem()).ingredient(Items.GRAVEL).result(Items.SAND).byproduct(Items.FLINT).offerTo(exporter);
-        HopperFilterRecipe.JsonBuilder.create().filter(Items.SOUL_SAND).ingredient(BwtItems.groundNetherrackItem).byproduct(BwtItems.hellfireDustItem).soulCount(1).offerTo(exporter);
+        HopperFilterRecipe.JsonBuilder.create().filter(Items.SOUL_SAND).ingredient(BwtItems.groundNetherrackItem).byproduct(BwtItems.hellfireDustItem).soulCount(1).markDefault().offerTo(exporter);
         HopperFilterRecipe.JsonBuilder.create().filter(Items.SOUL_SAND).ingredient(BwtItems.soulDustItem).byproduct(BwtItems.sawDustItem).soulCount(1).offerTo(exporter);
     }
 
     protected void generateSoulBottlingRecipes(RecipeExporter exporter) {
-        SoulBottlingRecipe.JsonBuilder.create().bottle(BwtBlocks.urnBlock).soulCount(8).result(BwtItems.soulUrnItem).offerTo(exporter);
+        SoulBottlingRecipe.JsonBuilder.create().bottle(BwtBlocks.urnBlock).soulCount(8).result(BwtItems.soulUrnItem).markDefault().offerTo(exporter);
     }
 }

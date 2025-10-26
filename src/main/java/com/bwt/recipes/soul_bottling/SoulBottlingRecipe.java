@@ -1,5 +1,6 @@
 package com.bwt.recipes.soul_bottling;
 
+import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
@@ -161,6 +162,17 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
             return new SoulBottlingRecipe.JsonBuilder();
         }
 
+        protected boolean isDefaultRecipe;
+        public JsonBuilder markDefault() {
+            this.isDefaultRecipe = true;
+            return this;
+        }
+        public void addToDefaults(Identifier recipeId) {
+            if (this.isDefaultRecipe) {
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+            }
+        }
+
         public SoulBottlingRecipe.JsonBuilder category(CraftingRecipeCategory category) {
             this.category = category;
             return this;
@@ -224,6 +236,8 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
 
         @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            addToDefaults(recipeId);
+
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
             SoulBottlingRecipe soulBottlingRecipe = new SoulBottlingRecipe(
                     Objects.requireNonNullElse(this.group, ""),

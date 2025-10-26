@@ -1,5 +1,6 @@
 package com.bwt.recipes.soul_forge;
 
+import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.mixin.accessors.ShapelessRecipeJsonBuilderAccessorMixin;
 import com.bwt.recipes.BwtRecipes;
 import com.mojang.serialization.Codec;
@@ -127,8 +128,21 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
             return new JsonBuilder(category, output, count);
         }
 
+        protected boolean isDefaultRecipe;
+        public JsonBuilder markDefault() {
+            this.isDefaultRecipe = true;
+            return this;
+        }
+        public void addToDefaults(Identifier recipeId) {
+            if (this.isDefaultRecipe) {
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+            }
+        }
+
         @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            addToDefaults(recipeId);
+
             ShapelessRecipeJsonBuilderAccessorMixin accessor = (ShapelessRecipeJsonBuilderAccessorMixin) this;
 
             accessor.accessValidate(recipeId);

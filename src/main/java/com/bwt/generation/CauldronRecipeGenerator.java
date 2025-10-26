@@ -57,7 +57,8 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem).ingredient(BwtItems.coalDustItem).result(BwtItems.nethercoalItem, 2)
                 .markDefault().offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).ingredient(BwtItems.potashItem).result(Items.NETHER_BRICK, 8).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(Items.SAND).ingredient(Items.GRAVEL).ingredient(BwtItems.soulUrnItem).ingredient(Items.BUCKET).result(BwtItems.cementBucketItem).offerTo(exporter);
+        CauldronRecipe.JsonBuilder.create().ingredient(Items.SAND).ingredient(Items.GRAVEL).ingredient(BwtItems.soulUrnItem).ingredient(Items.BUCKET)
+                .result(BwtItems.cementBucketItem).markDefault().offerTo(exporter);
         CauldronRecipe.JsonBuilder.create()
                 .ingredient(Items.OAK_SAPLING)
                 .ingredient(Items.NETHER_WART)
@@ -66,7 +67,9 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .ingredient(Items.CRIMSON_FUNGUS)
                 .ingredient(Items.WARPED_FUNGUS)
                 .ingredient(BwtItems.soulUrnItem, 8)
-                .result(BwtBlocks.bloodWoodBlocks.saplingItem).offerTo(exporter);
+                .result(BwtBlocks.bloodWoodBlocks.saplingItem)
+                .markDefault()
+                .offerTo(exporter);
         CauldronRecipe.JsonBuilder.create()
                 .ingredient(Items.NETHER_WART)
                 .ingredient(Items.RED_MUSHROOM)
@@ -76,6 +79,7 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .ingredient(BwtItems.soulUrnItem, 8)
                 .result(BwtBlocks.netherGroth.asItem())
                 .result(Items.DIRT)
+                .markDefault()
                 .offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.GUNPOWDER, 5).ingredient(Items.SAND, 4).result(Items.TNT).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.CACTUS).result(Items.GREEN_DYE).offerTo(exporter);
@@ -109,10 +113,14 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
             // TODO tanned leather armor, gimp armor, breeding harness
         });
         GLUE_AMOUNTS.forEach((key, value) -> StokedCauldronRecipe.JsonBuilder.create().ingredient(key).result(BwtItems.glueItem, value).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(key)));
+        EmiDefaultsGenerator.addDefaultRecipe("/" + RecipeProvider.getItemPath(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(Items.LEATHER));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.strapItem, 8).result(BwtItems.glueItem, 1).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(BwtItems.strapItem));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.beltItem, 2).result(BwtItems.glueItem, 1).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(BwtItems.beltItem));
         // Tallow
-        StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.PORKCHOP).result(BwtItems.tallowItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(Items.PORKCHOP));
+        StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.PORKCHOP)
+                .result(BwtItems.tallowItem)
+                .markDefault()
+                .offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(Items.PORKCHOP));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.COOKED_PORKCHOP).result(BwtItems.tallowItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(Items.COOKED_PORKCHOP));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.wolfChopItem, 8).result(BwtItems.tallowItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(BwtItems.wolfChopItem));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.cookedWolfChopItem, 8).result(BwtItems.tallowItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(BwtItems.cookedWolfChopItem));
@@ -122,7 +130,10 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.COOKED_MUTTON, 4).result(BwtItems.tallowItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.tallowItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemPath(Items.COOKED_MUTTON));
         // Potash
         StokedCauldronRecipe.JsonBuilder.create().ingredient(ItemTags.LOGS).result(BwtItems.potashItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_logs");
-        StokedCauldronRecipe.JsonBuilder.create().ingredient(ItemTags.PLANKS, 6).result(BwtItems.potashItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_planks");
+        StokedCauldronRecipe.JsonBuilder.create().ingredient(ItemTags.PLANKS, 6)
+                .result(BwtItems.potashItem)
+                .markDefault()
+                .offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_planks");
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItemTags.WOODEN_SIDING_BLOCKS, 12).result(BwtItems.potashItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_siding");
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItemTags.WOODEN_MOULDING_BLOCKS, 24).result(BwtItems.potashItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_moulding");
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItemTags.WOODEN_CORNER_BLOCKS, 48).result(BwtItems.potashItem).offerTo(exporter, RecipeProvider.getItemPath(BwtItems.potashItem) + "_from_cauldron_rendering_corners");
@@ -131,8 +142,15 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
 
         StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.ARROW, 8).result(Items.FLINT, 2).result(Items.STICK).result(Items.FEATHER).offerTo(exporter, Id.of("cauldron_rendering_arrows"));
         StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.rottedArrowItem, 8).result(Items.FLINT, 2).offerTo(exporter, Id.of("cauldron_rendering_rotted_arrows"));
-        StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.potashItem).ingredient(BwtItems.tallowItem).result(BwtItems.soapItem).group("soap").offerTo(exporter);
-        StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.ROTTEN_FLESH, 4).ingredient(Items.BONE_MEAL, 4).ingredient(Items.SUGAR).result(BwtItems.kibbleItem).offerTo(exporter);
+        StokedCauldronRecipe.JsonBuilder.create().ingredient(BwtItems.potashItem).ingredient(BwtItems.tallowItem)
+                .result(BwtItems.soapItem)
+                .group("soap")
+                .markDefault()
+                .offerTo(exporter);
+        StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.ROTTEN_FLESH, 4).ingredient(Items.BONE_MEAL, 4).ingredient(Items.SUGAR)
+                .result(BwtItems.kibbleItem)
+                .markDefault()
+                .offerTo(exporter);
         StokedCauldronRecipe.JsonBuilder.create().ingredient(Items.BOW).result(Items.STICK, 2).result(Items.STRING, 2).offerTo(exporter, Id.of("cauldron_bow_recycling"));
     }
 
@@ -159,8 +177,14 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         CauldronRecipe.JsonBuilder.createFood().ingredient(Items.POTATO).result(Items.BAKED_POTATO).offerTo(exporter);
         CauldronRecipe.JsonBuilder.createFood().ingredient(Items.RABBIT).result(Items.COOKED_RABBIT).offerTo(exporter);
         addNewGenericFood(BwtItems.wolfChopItem, BwtItems.cookedWolfChopItem, exporter);
-        CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.flourItem).result(BwtItems.donutItem, 4).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.rawEggItem).result(BwtItems.poachedEggItem).offerTo(exporter);
+        CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.flourItem)
+                .result(BwtItems.donutItem, 4)
+                .markDefault()
+                .offerTo(exporter);
+        CauldronRecipe.JsonBuilder.createFood().ingredient(BwtItems.rawEggItem)
+                .result(BwtItems.poachedEggItem)
+                .markDefault()
+                .offerTo(exporter);
         addNewVanillaCookingRecipe(BwtItems.rawEggItem, BwtItems.friedEggItem, exporter);
         CauldronRecipe.JsonBuilder.createFood()
                 .ingredient(Items.MILK_BUCKET, 3)
@@ -168,11 +192,13 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .ingredient(BwtItems.flourItem, 3)
                 .ingredient(BwtItems.rawEggItem, 1)
                 .result(Items.CAKE)
+                .markDefault()
                 .offerTo(exporter);
         CauldronRecipe.JsonBuilder.createFood()
                 .ingredient(BwtItems.flourItem, 2)
                 .ingredient(Items.COCOA_BEANS)
                 .result(Items.COOKIE, 8)
+                .markDefault()
                 .offerTo(exporter);
     }
 }

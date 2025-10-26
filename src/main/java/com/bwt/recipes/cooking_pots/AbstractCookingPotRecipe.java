@@ -268,7 +268,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         }
         public void addToDefaults(Identifier recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 

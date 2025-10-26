@@ -471,6 +471,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("column")
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter);
+            EmiDefaultsGenerator.addDefaultRecipe(columnBlock);
+
             ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, pedestalBlock, 6)
                     .pattern(" s ")
                     .pattern("###")
@@ -480,6 +482,8 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("pedestal")
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
                     .offerTo(exporter);
+            EmiDefaultsGenerator.addDefaultRecipe(pedestalBlock);
+
             ShapedRecipeJsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, tableBlock, 4)
                     .pattern("sss")
                     .pattern(" m ")
@@ -489,6 +493,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("table")
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter);
+            EmiDefaultsGenerator.addDefaultRecipe(tableBlock);
         }
 
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.hopperBlock)
@@ -501,6 +506,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
                 .criterion("has_wooden_corner", conditionsFromTag(BwtItemTags.WOODEN_CORNER_BLOCKS))
                 .offerTo(exporter, "mech_hopper");
+        EmiDefaultsGenerator.addDefaultRecipe(BwtBlocks.hopperBlock);
     }
 
     private void generateTier4Recipes(RecipeExporter exporter) {

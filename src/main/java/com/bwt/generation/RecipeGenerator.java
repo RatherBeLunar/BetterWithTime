@@ -39,7 +39,7 @@ public class RecipeGenerator extends FabricRecipeProvider {
         this.turntableRecipeGenerator = new TurntableRecipeGenerator(output, registriesFuture);
         this.kilnRecipeGenerator = new KilnRecipeGenerator(output, registriesFuture);
         this.soulForgeRecipeGenerator = new SoulForgeRecipeGenerator(output, registriesFuture);
-        this.emiDefaultsGenerator = new EmiDefaultsGenerator(output, registriesFuture);
+        this.emiDefaultsGenerator = new EmiDefaultsGenerator(output);
     }
 
     @Override

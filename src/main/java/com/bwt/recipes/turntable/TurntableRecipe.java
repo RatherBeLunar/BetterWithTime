@@ -247,7 +247,7 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
         }
         public void addToDefaults(Identifier recipeId) {
             if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 
