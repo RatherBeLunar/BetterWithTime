@@ -177,7 +177,7 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
                         // Receiving power from this axle
                         && connectedState.get(GearBoxBlock.FACING).equals(direction.getOpposite())
                         // Not switched off
-                        && !gearBoxBlock.isMechPowered(connectedState)
+                        && gearBoxBlock.isMechPowered(connectedState)
                 ) {
                     GearBoxBlock.breakGearBox(getWorld(), connectedPos);
                     break;
