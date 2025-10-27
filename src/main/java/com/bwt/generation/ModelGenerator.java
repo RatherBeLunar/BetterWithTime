@@ -189,6 +189,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.crucibleBlock, ModelIds.getBlockModelId(BwtBlocks.crucibleBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.detectorBlock, ModelIds.getBlockModelId(BwtBlocks.detectorBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.gearBoxBlock, ModelIds.getBlockModelId(BwtBlocks.gearBoxBlock));
+        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.screwPumpBlock, ModelIds.getBlockModelId(BwtBlocks.screwPumpBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.redstoneClutchBlock, ModelIds.getBlockModelId(BwtBlocks.redstoneClutchBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.handCrankBlock, ModelIds.getBlockModelId(BwtBlocks.handCrankBlock));
         blockStateModelGenerator.registerParentedItemModel(BwtBlocks.hibachiBlock, ModelIds.getBlockModelId(BwtBlocks.hibachiBlock));
@@ -390,6 +391,34 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.blockStateCollector.accept(
                 MultipartBlockStateSupplier
                         .create(beam)
+                        .with(
+                                When.create().set(LensBeamBlock.NORTH, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier)
+                        ).with(
+                                When.create().set(LensBeamBlock.EAST, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                        ).with(
+                                When.create().set(LensBeamBlock.SOUTH, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R180)
+                        ).with(
+                                When.create().set(LensBeamBlock.WEST, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R270)
+                        ).with(
+                                When.create().set(LensBeamBlock.DOWN, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R90)
+                        ).with(
+                                When.create().set(LensBeamBlock.UP, true),
+                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R270)
+                        )
+        );
+    }
+
+    public static void generateScrewPump(BlockStateModelGenerator blockStateModelGenerator) {
+        ScrewPumpBlock screwPump = BwtBlocks.screwPumpBlock;
+        Identifier identifier = ModelIds.getBlockModelId(screwPump);
+        blockStateModelGenerator.blockStateCollector.accept(
+                MultipartBlockStateSupplier
+                        .create(screwPump)
                         .with(
                                 When.create().set(LensBeamBlock.NORTH, true),
                                 BlockStateVariant.create().put(VariantSettings.MODEL, identifier)

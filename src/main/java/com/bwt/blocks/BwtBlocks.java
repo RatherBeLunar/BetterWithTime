@@ -215,7 +215,10 @@ public class BwtBlocks implements ModInitializer {
             .sounds(BlockSoundGroup.WOOD)
             .nonOpaque()
     );
-//	public static final Block screwPumpBlock = new ScrewPumpBlock(AbstractBlock.Settings.create());
+	public static final ScrewPumpBlock screwPumpBlock = new ScrewPumpBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)
+            .hardness(2f)
+            .resistance(5f)
+    );
     public static final ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 	public static final Block slatsBlock = new PaneBlock(AbstractBlock.Settings.create()
             .strength(0.5f)
@@ -495,6 +498,9 @@ public class BwtBlocks implements ModInitializer {
         // Aqueduct
         Registry.register(Registries.BLOCK, Id.of("aqueduct"), aqueductBlock);
         Registry.register(Registries.ITEM, Id.of("aqueduct"), new BlockItem(aqueductBlock, new Item.Settings()));
+        // Screw pump
+        Registry.register(Registries.BLOCK, Id.of("screw_pump"), screwPumpBlock);
+        Registry.register(Registries.ITEM, Id.of("screw_pump"), new BlockItem(screwPumpBlock, new Item.Settings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
@@ -538,6 +544,8 @@ public class BwtBlocks implements ModInitializer {
             content.add(crucibleBlock);
             content.add(soulForgeBlock);
             content.add(lensBlock);
+            content.add(BwtBlocks.aqueductBlock);
+            content.add(BwtBlocks.screwPumpBlock);
             content.addAfter(Items.TNT, miningChargeBlock);
         });
 
@@ -575,7 +583,6 @@ public class BwtBlocks implements ModInitializer {
                     BwtBlocks.bloodWoodBlocks.pressurePlateBlock,
                     BwtBlocks.bloodWoodBlocks.buttonBlock
             );
-            content.addAfter(Items.BRICKS, BwtBlocks.aqueductBlock);
             for (int i = 0; i < sidingBlocks.size(); i++) {
                 SidingBlock sidingBlock = sidingBlocks.get(i);
                 MouldingBlock mouldingBlock = mouldingBlocks.get(i);

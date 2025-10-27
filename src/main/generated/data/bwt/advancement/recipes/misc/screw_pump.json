@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_screw": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:screw"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:screw_pump"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_screw"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:screw_pump"
+    ]
+  }
+}

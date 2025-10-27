@@ -1,0 +1,157 @@
+{
+  "multipart": [
+    {
+      "when": { "facing": "north" },
+      "apply": { "model": "bwt:block/screw_pump_face_and_top"}
+    },
+    {
+      "when": { "facing": "east" },
+      "apply": { "model": "bwt:block/screw_pump_face_and_top", "y": 90}
+    },
+    {
+      "when": { "facing": "south" },
+      "apply": { "model": "bwt:block/screw_pump_face_and_top", "y": 180}
+    },
+    {
+      "when": { "facing": "west" },
+      "apply": { "model": "bwt:block/screw_pump_face_and_top", "y": 270}
+    },
+
+
+    {
+      "when": { "facing": "north", "left_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 90}
+    },
+    {
+      "when": { "facing": "east", "left_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 180}
+    },
+    {
+      "when": { "facing": "south", "left_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 270}
+    },
+    {
+      "when": { "facing": "west", "left_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in"}
+    },
+    {
+      "when": { "facing": "north", "left_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 90}
+    },
+    {
+      "when": { "facing": "east", "left_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 180}
+    },
+    {
+      "when": { "facing": "south", "left_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 270}
+    },
+    {
+      "when": { "facing": "west", "left_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side"}
+    },
+
+
+    {
+      "when": { "facing": "north", "back_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 180}
+    },
+    {
+      "when": { "facing": "east", "back_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 270}
+    },
+    {
+      "when": { "facing": "south", "back_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in"}
+    },
+    {
+      "when": { "facing": "west", "back_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 90}
+    },
+    {
+      "when": { "facing": "north", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 180}
+    },
+    {
+      "when": { "facing": "east", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 270}
+    },
+    {
+      "when": { "facing": "south", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side"}
+    },
+    {
+      "when": { "facing": "west", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 90}
+    },
+
+
+    {
+      "when": { "facing": "north", "right_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 270}
+    },
+    {
+      "when": { "facing": "east", "right_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in"}
+    },
+    {
+      "when": { "facing": "south", "right_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 90}
+    },
+    {
+      "when": { "facing": "west", "right_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_side_axle_in", "y": 180}
+    },
+    {
+      "when": { "facing": "north", "right_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 270}
+    },
+    {
+      "when": { "facing": "east", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side"}
+    },
+    {
+      "when": { "facing": "south", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 90}
+    },
+    {
+      "when": { "facing": "west", "back_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_side", "y": 180}
+    },
+
+
+    {
+      "when": { "facing": "north", "bottom_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_bottom_axle_in", "y": 270}
+    },
+    {
+      "when": { "facing": "east", "bottom_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_bottom_axle_in"}
+    },
+    {
+      "when": { "facing": "south", "bottom_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_bottom_axle_in", "y": 90}
+    },
+    {
+      "when": { "facing": "west", "bottom_connected": "true" },
+      "apply": { "model": "bwt:block/screw_pump_bottom_axle_in", "y": 180}
+    },
+    {
+      "when": { "facing": "north", "bottom_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_bottom", "y": 270}
+    },
+    {
+      "when": { "facing": "east", "bottom_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_bottom"}
+    },
+    {
+      "when": { "facing": "south", "bottom_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_bottom", "y": 90}
+    },
+    {
+      "when": { "facing": "west", "bottom_connected": "false" },
+      "apply": { "model": "bwt:block/screw_pump_bottom", "y": 180}
+    }
+  ]
+}
+

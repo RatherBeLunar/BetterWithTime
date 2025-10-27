@@ -1,0 +1,19 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "misc",
+  "key": {
+    "i": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "ii  ",
+    " ii ",
+    "ii  ",
+    " ii "
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:screw"
+  }
+}

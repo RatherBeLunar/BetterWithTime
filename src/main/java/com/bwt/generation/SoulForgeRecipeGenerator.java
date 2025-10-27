@@ -12,6 +12,7 @@ import net.minecraft.data.family.BlockFamilies;
 import net.minecraft.data.family.BlockFamily;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -396,6 +397,16 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .input('d', Items.DIAMOND)
                 .input('p', Items.GLASS_PANE)
                 .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
+                .offerTo(exporter);
+
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.MISC, BwtItems.screwItem)
+                .markDefault()
+                .pattern("ii  ")
+                .pattern(" ii ")
+                .pattern("ii  ")
+                .pattern(" ii ")
+                .input('i', Items.IRON_INGOT)
+                .criterion(hasItem(Items.IRON_NUGGET), conditionsFromItem(Items.IRON_NUGGET))
                 .offerTo(exporter);
     }
 }

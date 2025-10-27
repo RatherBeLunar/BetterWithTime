@@ -586,6 +586,17 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('d', BwtItems.dynamiteItem)
                 .criterion("has_dynamite", conditionsFromItem(BwtItems.dynamiteItem))
                 .offerTo(exporter, Id.of("mining_charge_with_slime"));
+        ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtBlocks.screwPumpBlock)
+                .pattern("gGg")
+                .pattern("sSs")
+                .pattern("sXs")
+                .input('g', BwtItems.glueItem)
+                .input('G', BwtBlocks.grateBlock)
+                .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
+                .input('S', BwtItems.screwItem)
+                .input('X', BwtItems.gearItem)
+                .criterion(hasItem(BwtItems.screwItem), conditionsFromItem(BwtItems.screwItem))
+                .offerTo(exporter);
     }
 
     private void generateTier6Recipes(RecipeExporter exporter) {

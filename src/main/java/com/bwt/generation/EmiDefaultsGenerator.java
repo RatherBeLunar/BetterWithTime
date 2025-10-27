@@ -157,7 +157,8 @@ public class EmiDefaultsGenerator implements DataProvider {
                 "gear_box",
                 "dung_block",
                 "concentrated_hellfire_block",
-                "blood_wood_wood"
+                "blood_wood_wood",
+                "screw_pump"
         );
     }
 

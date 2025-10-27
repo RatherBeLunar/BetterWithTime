@@ -224,7 +224,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.sawBlock)
                 .add(BwtBlocks.slatsBlock)
                 .add(BwtBlocks.soapBlock)
-//                .add(BwtBlocks.screwPumpBlock)
+                .add(BwtBlocks.screwPumpBlock)
 //                .add(BwtBlocks.tableBlock)
                 .add(BwtBlocks.wickerBlock)
                 .add(BwtBlocks.wickerSlabBlock)

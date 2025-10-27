@@ -1,0 +1,18 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "bwt:block/screw_pump_face",
+    "face": "bwt:block/screw_pump_face",
+    "top": "bwt:block/screw_pump_top"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#face", "cullface": "north" },
+        "up": { "uv": [ 0, 0, 16, 16 ], "texture": "#top", "cullface": "up" }
+      }
+    }
+  ]
+}
