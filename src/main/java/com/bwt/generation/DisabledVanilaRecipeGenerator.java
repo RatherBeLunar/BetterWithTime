@@ -45,6 +45,7 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
         disableVanilla(Items.FLOWER_POT, exporter);
         disableVanilla(Items.BONE_MEAL, exporter);
         disableVanilla(Items.BREAD, exporter);
+        disableVanilla(Items.SUGAR, exporter);
         disableVanilla(Items.CAKE, exporter);
         disableVanilla(Items.COOKIE, exporter);
 
