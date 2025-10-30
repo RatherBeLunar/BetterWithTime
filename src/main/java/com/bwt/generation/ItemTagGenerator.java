@@ -110,7 +110,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(BwtItemTags.STOKED_EXPLOSIVES)
                 .add(
                         BwtItems.hellfireDustItem,
-                        BwtItems.concentratedHellfireItem,
                         Items.GUNPOWDER,
                         Items.TNT
                 );
