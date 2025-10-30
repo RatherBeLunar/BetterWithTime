@@ -119,6 +119,9 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soulForgeBlock, ModelIds.getBlockModelId(BwtBlocks.soulForgeBlock))
                 .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
         );
+        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.screwPumpBlock, ModelIds.getBlockModelId(BwtBlocks.screwPumpBlock))
+                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+        );
 
         blockStateModelGenerator.excludeFromSimpleItemModelGeneration(BwtBlocks.unfiredDecoratedPotBlockWithSherds);
         for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredFlowerPotBlock}) {
