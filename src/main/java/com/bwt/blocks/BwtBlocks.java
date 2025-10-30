@@ -544,8 +544,8 @@ public class BwtBlocks implements ModInitializer {
             content.add(crucibleBlock);
             content.add(soulForgeBlock);
             content.add(lensBlock);
-            content.add(BwtBlocks.aqueductBlock);
-            content.add(BwtBlocks.screwPumpBlock);
+//            content.add(BwtBlocks.aqueductBlock);
+//            content.add(BwtBlocks.screwPumpBlock);
             content.addAfter(Items.TNT, miningChargeBlock);
         });
 
