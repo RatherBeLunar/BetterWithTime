@@ -1,13 +1,11 @@
 package com.bwt.entities;
 
+import com.bwt.entities.canvas.CanvasEntity;
 import com.bwt.utils.Id;
-import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
 
 public class BwtEntities implements ModInitializer {
     public static final EntityType<WindmillEntity> windmillEntity = Registry.register(
@@ -95,6 +93,18 @@ public class BwtEntities implements ModInitializer {
             .dimensions(0.25f, 0.40f)
             .maxTrackingRange(6)
             .trackingTickInterval(20)
+            .build()
+    );
+    public static final EntityType<CanvasEntity> canvasEntity = Registry.register(
+            Registries.ENTITY_TYPE,
+            "canvas",
+            EntityType.Builder.create(
+                    (EntityType.EntityFactory<CanvasEntity>) CanvasEntity::new,
+                    SpawnGroup.MISC
+            )
+            .dimensions(0.5F, 0.5F)
+            .maxTrackingRange(10)
+            .trackingTickInterval(Integer.MAX_VALUE)
             .build()
     );
 

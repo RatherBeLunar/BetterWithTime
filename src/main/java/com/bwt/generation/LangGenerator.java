@@ -11,7 +11,6 @@ import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvent;
@@ -32,6 +31,7 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitles(translationBuilder);
         addTagNames(translationBuilder);
         addEmiNames(translationBuilder);
+        addCanvasDetails(translationBuilder);
 
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");
@@ -98,6 +98,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");
         translationBuilder.add(BwtItems.netheriteMattockItem, "Netherite Mattock");
         translationBuilder.add(BwtItems.netheriteBattleAxeItem, "Netherite Battle Axe");
+        translationBuilder.add(BwtItems.canvasItem, "Canvas");
 
         translationBuilder.add(BwtEntities.broadheadArrowEntity, "Broadhead Arrow");
         translationBuilder.add(BwtEntities.dynamiteEntity, "Dynamite");
@@ -106,6 +107,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtEntities.rottedArrowEntity, "Rotted Arrow");
         translationBuilder.add(BwtEntities.waterWheelEntity, "Water Wheel");
         translationBuilder.add(BwtEntities.windmillEntity, "Windmill");
+        translationBuilder.add(BwtEntities.canvasEntity, "Canvas");
 
         // Load an existing language file.
         try {
@@ -114,6 +116,13 @@ public class LangGenerator extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    protected void addCanvasDetails(TranslationBuilder translationBuilder) {
+        translationBuilder.add("canvas.random", "Random variant");
+        translationBuilder.add("canvas.dimensions", "%sx%s");
+        translationBuilder.add("canvas.bwt.wanderer.title", "Wanderer");
+        translationBuilder.add("canvas.bwt.wanderer.author", "Stohun");
     }
 
     protected void addTagNames(TranslationBuilder translationBuilder) {
