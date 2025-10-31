@@ -33,6 +33,7 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+        generateGrothedNetherrack(blockStateModelGenerator);
         blockStateModelGenerator.registerSingleton(BwtBlocks.concentratedHellfireBlock, TexturedModel.CUBE_ALL);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.grateBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.slatsBlock);
@@ -70,6 +71,29 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
         TexturedModel.ORIENTABLE_WITH_BOTTOM.upload(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelCollector);
         Models.SLAB.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector);
         Models.SLAB_TOP.upload(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE_ALL.get(BwtBlocks.wickerBlock).getTextures(), blockStateModelGenerator.modelCollector);
+        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.kilnBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(Blocks.BRICKS))));
+    }
+
+    public void generateGrothedNetherrack(BlockStateModelGenerator blockStateModelGenerator) {
+        TexturedModel netherrackTexturedModel = TexturedModel.CUBE_ALL.get(Blocks.NETHERRACK);
+        Identifier netherrackTexture = netherrackTexturedModel.getTextures().getTexture(TextureKey.ALL);
+        TextureMap grothedNetherrackTextureMap = new TextureMap()
+                .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_side"))
+                .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_top"))
+                .put(TextureKey.BOTTOM, netherrackTexture);
+        blockStateModelGenerator.blockStateCollector.accept(
+                VariantsBlockStateSupplier.create(
+                        BwtBlocks.grothedNetherrackBlock,
+                        BlockStateVariant.create().put(
+                                VariantSettings.MODEL,
+                                Models.CUBE_BOTTOM_TOP.upload(
+                                        BwtBlocks.grothedNetherrackBlock,
+                                        grothedNetherrackTextureMap,
+                                        blockStateModelGenerator.modelCollector
+                                )
+                        )
+                )
+        );
     }
 
     @Override

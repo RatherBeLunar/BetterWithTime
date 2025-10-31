@@ -4,7 +4,6 @@ import com.bwt.blocks.*;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.lens.LensBeamBlock;
-import com.bwt.blocks.lens.LensBeamGlassBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.blocks.unfired_pottery.UnfiredPotteryBlock;
 import com.bwt.items.BwtItems;
@@ -34,7 +33,6 @@ public class ModelGenerator extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        generateGrothedNetherrack(blockStateModelGenerator);
         generateDirtAndGrassSlab(blockStateModelGenerator);
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
@@ -132,7 +130,6 @@ public class ModelGenerator extends FabricModelProvider {
                     )
             );
         }
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.kilnBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(Blocks.BRICKS))));
         blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.urnBlock)
                 .coordinate(BlockStateVariantMap.create(UrnBlock.CONNECTED_UP)
                         .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock)))
@@ -636,28 +633,6 @@ public class ModelGenerator extends FabricModelProvider {
                 .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
                 .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
                 .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
-    }
-
-    public void generateGrothedNetherrack(BlockStateModelGenerator blockStateModelGenerator) {
-        TexturedModel netherrackTexturedModel = TexturedModel.CUBE_ALL.get(Blocks.NETHERRACK);
-        Identifier netherrackTexture = netherrackTexturedModel.getTextures().getTexture(TextureKey.ALL);
-        TextureMap grothedNetherrackTextureMap = new TextureMap()
-                .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_side"))
-                .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.grothedNetherrackBlock, "_top"))
-                .put(TextureKey.BOTTOM, netherrackTexture);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
-                        BwtBlocks.grothedNetherrackBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                Models.CUBE_BOTTOM_TOP.upload(
-                                        BwtBlocks.grothedNetherrackBlock,
-                                        grothedNetherrackTextureMap,
-                                        blockStateModelGenerator.modelCollector
-                                )
-                        )
-                )
-        );
     }
 
     public void generateDirtAndGrassSlab(BlockStateModelGenerator blockStateModelGenerator) {
