@@ -1,6 +1,5 @@
-package com.bwt.entities.canvas;
+package com.bwt.entities;
 
-import com.bwt.entities.BwtEntities;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtPaintingVariantTags;
 
@@ -8,16 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.decoration.painting.PaintingVariant;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class CanvasEntity extends PaintingEntity {
     public CanvasEntity(EntityType<? extends CanvasEntity> entityType, World world) {
@@ -33,6 +38,16 @@ public class CanvasEntity extends PaintingEntity {
         this(world, pos);
         this.setVariant(variant);
         this.setFacing(direction);
+    }
+
+    @Override
+    public void onBreak(@Nullable Entity breaker) {
+        if (this.getWorld().getGameRules().getBoolean(GameRules.DO_ENTITY_DROPS)) {
+            this.playSound(SoundEvents.ENTITY_PAINTING_BREAK, 1.0F, 1.0F);
+            if (!(breaker instanceof PlayerEntity playerEntity && playerEntity.isInCreativeMode())) {
+                this.dropItem(BwtItems.canvasItem);
+            }
+        }
     }
 
     public static Optional<CanvasEntity> placeCanvas(World world, BlockPos pos, Direction facing) {

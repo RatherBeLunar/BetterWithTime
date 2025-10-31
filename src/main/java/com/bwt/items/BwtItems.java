@@ -3,7 +3,7 @@ package com.bwt.items;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
-import com.bwt.entities.canvas.CanvasEntity;
+import com.bwt.entities.CanvasEntity;
 import com.bwt.tags.BwtPaintingVariantTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.LockableItemSettings;

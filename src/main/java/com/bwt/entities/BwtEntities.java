@@ -1,6 +1,5 @@
 package com.bwt.entities;
 
-import com.bwt.entities.canvas.CanvasEntity;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.entity.*;

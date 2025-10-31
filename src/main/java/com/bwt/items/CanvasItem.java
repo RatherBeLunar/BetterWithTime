@@ -1,7 +1,7 @@
 package com.bwt.items;
 
 import com.bwt.entities.BwtEntities;
-import com.bwt.entities.canvas.CanvasEntity;
+import com.bwt.entities.CanvasEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.EntityType;
