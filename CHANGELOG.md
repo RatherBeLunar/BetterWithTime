@@ -1,9 +1,76 @@
+# Release 2.0 for MC 1.21.1
+
+### Major Changes
+
+- BWT has a whole new look! Stohun's textures are now the default.
+- The previous textures (mostly FC originals) remain available as a built-in resource pack
+- Added the **Canvas** item, with a gorgeous set of new paintings made by Stohun!
+- Added **Nether Groth**
+  - Thanks to ivangeevo for the initial bits of code on this. I rewrote most of it, but having the initial code got me through the mental block to work on this
+- Added the **Redstone Clutch**
+  - All existing gear boxes will no longer respond to redstone. Any blocks in existing worlds that used redstone breaking will need to be replaced with redstone clutches
+- Made decorated pots a pottery item
+  - Unfired decorated pots come before crucibles in the turntable chain, and do not drop a clay ball when formed (making their cost 4 clay balls / 1 clay block)
+  - Pottery sherds can be applied to the sides of the unfired pot by right clicking on a side, or using a Dispenser or Block Dispenser
+  - When cooked in the kiln, the result will be a decorated pot with the same set of sherds
+  - Unfired pots with sherds cannot be pushed by pistons because they're "too fragile" (block entities), but unfired pots without sherds can still be pushed by pistons
+  - Disabled vanilla recipes for decorated pots
+- Made flower pots a pottery item
+  - Unfired flower pots come after urns in the turntable chain, replacing the mould item (RIP moulds)
+  - Disabled vanilla recipe for flower pots
+- Rebalanced vanilla hoppers
+  - Vanilla hoppers still work as normal, but they're now made from netherite/steel instead of iron.
+  - The new recipe now also yields 2 hoppers instead of 1
+  - The intent behind this change is to make BWT hoppers more enticing for certain use cases, and further incentivize netherite automation
+  - The gamerule to tweak vanilla hopper behavior has been removed
+- Block Dispensers can now be powered under normal conditions
+  - This in contrast to the previous behavior of requiring strong power to it or to the block above it
+  - BDs, unlike normal dispensers, do not have quasiconnectivity after this change
+  - This will break existing builds that rely on BDs previously ignoring "weak" redstone power signals
+- Lenses can now fire and propagate their beams through glass just as they fire through air
+
+
+### Minor Changes
+
+- Added Mod Menu compatible links, credits, and attributions.
+- Added cauldron recipe for cake using flour in place of wheat, raw egg in place1of egg. Disabled vanilla cake recipe ([#14](https://github.com/RatherBeLunar/BetterWithTime/issues/14))
+- Added cauldron recipe for cookies using flour in place of wheat. Disabled vanilla cookie recipe ([#15](https://github.com/RatherBeLunar/BetterWithTime/issues/15))
+- Disabled the vanilla recipe for sugar to incentivize use of the millstone
+- Made baby animals jump height shorter - they cannot clear a full block, but can barely clear half a block
+- Added some "better than nothing" support for EMI interaction with the cauldron and crucible.
+  - Recipes shown by EMI will take the current stoked/unstoked state of the cooking pots into account
+  - Clicking a recipe in EMI to fill the crafting area will add the relevant items into the pot.
+Clicking multiple times will not stack the items, but rather will add items as a separate stack.
+This was the best I could do in terms of making this work
+- Added a ton of "default recipe" configurations so EMI can better construct recipe trees for BWT items
+- Added composting values for hemp and hemp seeds
+- Tweaked the high efficiency recipes for pressure plates, since they were colliding with the recombining recipes for siding
+- When the player holds up food in front of pet wolves, wolves will now only tilt their head if they're unfed, i.e. wolves that don't tilt their head are waiting to produce dung
+- Removed useless nether sludge item
+- Added recipe for nether bricks that skips the nether sludge step, as a sink for hellfire dust and potash
+- Added mini-blocks (siding, moulding, corner, column, pedestal, table) for cobblestone. No idea how I missed doing this earlier
+- Renamed some IDs relating to blood wood "wood" blocks (the block with bark on all sides). This will remove all existing "Blood Wood Wood" blocks in worlds.
+This was necessary for some issues with recipes and compatibility
+
+
+### Bugfixes
+- Fixed incompatibility with AdvancementInfo Reloaded ([#11](https://github.com/RatherBeLunar/BetterWithTime/issues/11))
+- Fixed a bunch of compatibility issues with EMI
+- Fixed wolves forgetting that they had been fed and should produce dung when reloading the world
+- Fixed some EMI interactions with the soul forge. Still not perfect, but less entirely broken.
+- Fixed tiny behavior where shift clicking results out of a soul forge wouldn't try to merge with a matching stack in the player's hotbar
+- Fixed double slabs placed in front of a saw dropping 4x the results of a single slab instead of 2x
+- Fixed issues with the Block Dispenser when Lithium was installed
+- Fixed the mechanical hopper over-inserting items into composters
+- Fixed windmills not breaking their connected gearbox/clutch in thunderstorms (again)
+- Fixed some issues with pulley platforms breaking into pieces when not fully supported. This doesn't mean platforms are a fully working feature yet, sadly.
+
 # Beta 1.9.4 for MC 1.21.1
 
-- Fix some issues with the lens and beam updating logic
-- Fix Battle Axe not behaving properly as a tool item
-- Add unverified russian language translation from Zeykehasnt
-- Add some tweaks from Primetoxinz to make BWT more compatible (less incompatible) with Sinyatra Connector
+- Fixed some issues with the lens and beam updating logic
+- Fixed Battle Axe not behaving properly as a tool item
+- Added unverified russian language translation from Zeykehasnt
+- Added some tweaks from Primetoxinz to make BWT more compatible (less incompatible) with Sinyatra Connector
 
 # Beta 1.9.3 for MC 1.21.1
 
