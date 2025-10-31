@@ -4,6 +4,7 @@ import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import com.bwt.recipes.soul_forge.SoulForgeShapelessRecipe;
+import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -190,6 +191,16 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter);
         }
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.DECORATIONS, BwtItems.canvasItem)
+                .markDefault()
+                .pattern("mmmm")
+                .pattern("mffm")
+                .pattern("mffm")
+                .pattern("mmmm")
+                .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
+                .input('f', BwtItems.fabricItem)
+                .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS))
+                .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_BLOCK)
                 .markDefault()
