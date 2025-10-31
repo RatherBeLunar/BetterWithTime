@@ -1,8 +1,8 @@
 {
   "parent": "block/block",
   "textures": {
-    "particle": "bwt:block/redstone_clutch_side",
-    "axle_side": "bwt:block/redstone_clutch_side"
+    "particle": "bwt:block/redstone_clutch_axle_out_end",
+    "axle_side": "bwt:block/redstone_clutch_axle_out_end"
   },
   "elements": [
     {
