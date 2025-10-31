@@ -151,7 +151,7 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.MINING_CHARGE_IMMUNE, "Mining Charge Immune", translationBuilder);
         addTagName(BwtItemTags.BLOOD_WOOD_LOGS, "Blood Wood Logs", translationBuilder);
         addTagName(BwtItemTags.NETHER_GROTH_CAN_EAT, "Nether Groth Can Eat", translationBuilder);
-        addTagName(BwtFluidTags.AQUEDUCT_FLUIDS, "Blood Wood Logs", translationBuilder);
+        addTagName(BwtFluidTags.AQUEDUCT_FLUIDS, "Aqueduct Fluids", translationBuilder);
     }
 
     protected void addEmiNames(TranslationBuilder translationBuilder) {
