@@ -3,6 +3,7 @@
   "package": "com.bwt.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "CanvasEntityCustomBackMixin",
     "WorldRendererMixin"
   ],
   "injectors": {
