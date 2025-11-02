@@ -31,7 +31,6 @@ import net.minecraft.item.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
@@ -44,6 +43,7 @@ import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -234,7 +234,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        if (isReceivingPower(world, pos)) {
+        if (isReceivingPower(world, pos, state.get(FACING))) {
             world.scheduleBlockTick(pos, this, tickRate);
         }
     }
@@ -250,7 +250,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (world.isClient) {
             return;
         }
-        if (state.get(TRIGGERED) != isReceivingPower(world, pos)) {
+        if (state.get(TRIGGERED) != isReceivingPower(world, pos, state.get(FACING))) {
             world.scheduleBlockTick(pos, this, tickRate);
         }
     }
@@ -262,13 +262,15 @@ public class BlockDispenserBlock extends DispenserBlock {
         return ActionResult.CONSUME;
     }
 
-    public boolean isReceivingPower(World world, BlockPos pos) {
-        return world.isReceivingRedstonePower(pos);
+    public boolean isReceivingPower(World world, BlockPos pos, Direction facing) {
+        return Arrays.stream(Direction.values())
+                .filter(direction -> direction != facing)
+                .anyMatch(direction -> world.isEmittingRedstonePower(pos.offset(direction), direction));
     }
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        boolean powered = isReceivingPower(world, pos);
+        boolean powered = isReceivingPower(world, pos, state.get(FACING));
         if (powered) {
             world.setBlockState(pos, state.with(TRIGGERED, true));
             dispenseBlockOrItem(world, state, pos);
