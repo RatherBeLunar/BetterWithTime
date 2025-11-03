@@ -533,6 +533,13 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateTier5Recipes(RecipeExporter exporter) {
+        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.STICKY_PISTON)
+                .pattern("G")
+                .pattern("P")
+                .input('G', BwtItems.glueItem)
+                .input('P', Blocks.PISTON)
+                .criterion(hasItem(BwtItems.glueItem), conditionsFromItem(BwtItems.glueItem))
+                .offerTo(exporter, "glued_sticky_piston");
         ShapedRecipeJsonBuilder.create(RecipeCategory.MISC, BwtItems.woodBladeItem)
                 .pattern("s  ")
                 .pattern("sgs")

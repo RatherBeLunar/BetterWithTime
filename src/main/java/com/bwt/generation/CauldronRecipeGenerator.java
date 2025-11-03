@@ -79,7 +79,6 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .ingredient(BwtItems.soulUrnItem, 8)
                 .result(BwtBlocks.netherGroth.asItem())
                 .result(Items.DIRT)
-                .markDefault()
                 .offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.GUNPOWDER, 5).ingredient(Items.SAND, 4).result(Items.TNT).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.CACTUS).result(Items.GREEN_DYE).offerTo(exporter);
