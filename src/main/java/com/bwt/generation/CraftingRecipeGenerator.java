@@ -317,6 +317,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("pgp")
                 .input('p', ItemTags.PLANKS)
                 .input('g', BwtItems.gearItem)
+                .group("gear_box")
                 .criterion(hasItem(BwtItems.gearItem), conditionsFromItem(BwtItems.gearItem))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.redstoneClutchBlock)
@@ -326,6 +327,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('p', ItemTags.PLANKS)
                 .input('g', BwtItems.gearItem)
                 .input('r', Items.REDSTONE)
+                .group("redstone_clutch")
                 .criterion(hasItem(BwtItems.gearItem), conditionsFromItem(BwtItems.gearItem))
                 .offerTo(exporter);
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtItems.ropeItem)
@@ -711,6 +713,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("sgs")
                 .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
                 .input('g', BwtItems.gearItem)
+                .group("gear_box")
                 .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
                 .offerTo(exporter, highEfficiencyId(BwtBlocks.gearBoxBlock));
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.redstoneClutchBlock)
@@ -720,6 +723,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .input('s', BwtItemTags.WOODEN_SIDING_BLOCKS)
                 .input('g', BwtItems.gearItem)
                 .input('r', Items.REDSTONE)
+                .group("redstone_clutch")
                 .criterion("has_wooden_siding", conditionsFromTag(BwtItemTags.WOODEN_SIDING_BLOCKS))
                 .offerTo(exporter, highEfficiencyId(BwtBlocks.redstoneClutchBlock));
         ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.PISTON)
