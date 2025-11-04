@@ -57,8 +57,8 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem).ingredient(BwtItems.coalDustItem).result(BwtItems.nethercoalItem, 2)
                 .markDefault().offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(BwtItems.hellfireDustItem, 8).ingredient(BwtItems.potashItem).result(Items.NETHER_BRICK, 8).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(Items.SAND).ingredient(Items.GRAVEL).ingredient(BwtItems.soulUrnItem).ingredient(Items.BUCKET)
-                .result(BwtItems.cementBucketItem).markDefault().offerTo(exporter);
+//        CauldronRecipe.JsonBuilder.create().ingredient(Items.SAND).ingredient(Items.GRAVEL).ingredient(BwtItems.soulUrnItem).ingredient(Items.BUCKET)
+//                .result(BwtItems.cementBucketItem).markDefault().offerTo(exporter);
         CauldronRecipe.JsonBuilder.create()
                 .ingredient(Items.OAK_SAPLING)
                 .ingredient(Items.NETHER_WART)
