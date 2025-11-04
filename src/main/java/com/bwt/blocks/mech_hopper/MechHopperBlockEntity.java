@@ -36,7 +36,6 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -289,13 +288,17 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         stackCountToDrop = Math.min(stackCountToDrop, inventoryBelow.getMaxCountPerStack());
         for (int i = 0; i < hopperInventory.size(); ++i) {
             if (getStack(i).isEmpty()) continue;
-            ItemStack itemStack = getStack(i).copy();
+            ItemStack itemStack = getStack(i);
             ItemStack itemStack2 = HopperBlockEntity.transfer(this, inventoryBelow, removeStack(i, stackCountToDrop), Direction.UP);
             if (itemStack2.isEmpty()) {
                 inventoryBelow.markDirty();
                 return;
             }
-            setStack(i, itemStack);
+
+            itemStack.setCount(itemStack.getCount() + itemStack2.getCount());
+            if (itemStack.getCount() == 0) {
+                setStack(i, ItemStack.EMPTY);
+            }
         }
     }
 
