@@ -4,7 +4,7 @@
 
 - BWT has a whole new look! Stohun's textures are now the default.
 - The previous textures (mostly FC originals) remain available as a built-in resource pack
-- Added the **Canvas** item, with 2 gorgeous new paintings made by Stohun, and more on the way!
+- Added the **Canvas** item, with 3 gorgeous new paintings made by Stohun, and more on the way!
 - Added **Nether Groth**
   - Thanks to ivangeevo for the initial bits of code on this. I rewrote most of it, but having the initial code got me through the mental block to work on this
 - Added the **Redstone Clutch**
