@@ -4,7 +4,7 @@
 
 - BWT has a whole new look! Stohun's textures are now the default.
 - The previous textures (mostly FC originals) remain available as a built-in resource pack
-- Added the **Canvas** item, with a gorgeous set of new paintings made by Stohun!
+- Added the **Canvas** item, with 2 gorgeous new paintings made by Stohun, and more on the way!
 - Added **Nether Groth**
   - Thanks to ivangeevo for the initial bits of code on this. I rewrote most of it, but having the initial code got me through the mental block to work on this
 - Added the **Redstone Clutch**
@@ -23,9 +23,10 @@
   - The new recipe now also yields 2 hoppers instead of 1
   - The intent behind this change is to make BWT hoppers more enticing for certain use cases, and further incentivize netherite automation
   - The gamerule to tweak vanilla hopper behavior has been removed
-- Block Dispensers can now be powered under normal conditions
+- Block Dispensers can now be powered via weak redstone power via all sides except its face
   - This in contrast to the previous behavior of requiring strong power to it or to the block above it
   - BDs, unlike normal dispensers, do not have quasiconnectivity after this change
+  - BDs not being powered via their face is similar to how pistons are powered. This keeps most counter/clock functionality of BDs fully functional
   - This will break existing builds that rely on BDs previously ignoring "weak" redstone power signals
 - Lenses can now fire and propagate their beams through glass just as they fire through air
 
@@ -49,6 +50,7 @@ This was the best I could do in terms of making this work
 - Removed useless nether sludge item
 - Added recipe for nether bricks that skips the nether sludge step, as a sink for hellfire dust and potash
 - Added mini-blocks (siding, moulding, corner, column, pedestal, table) for cobblestone. No idea how I missed doing this earlier
+- Added a recipe for sticky pistons using glue in place of slime
 - Renamed some IDs relating to blood wood "wood" blocks (the block with bark on all sides). This will remove all existing "Blood Wood Wood" blocks in worlds.
 This was necessary for some issues with recipes and compatibility
 
@@ -62,6 +64,7 @@ This was necessary for some issues with recipes and compatibility
 - Fixed double slabs placed in front of a saw dropping 4x the results of a single slab instead of 2x
 - Fixed issues with the Block Dispenser when Lithium was installed
 - Fixed the mechanical hopper over-inserting items into composters
+- Fixed the mechanical hopper sometimes duplicating items in specific inventory transfer circumstances
 - Fixed windmills not breaking their connected gearbox/clutch in thunderstorms (again)
 - Fixed some issues with pulley platforms breaking into pieces when not fully supported. This doesn't mean platforms are a fully working feature yet, sadly.
 
