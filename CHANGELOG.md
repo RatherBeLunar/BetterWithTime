@@ -34,6 +34,7 @@
 ### Minor Changes
 
 - Added Mod Menu compatible links, credits, and attributions.
+- Made Observers pulse when placed by a Block Dispenser. This is intended to make BD contraptions able to generate timed pulses more easily while phasing out the original Buddy Block
 - Added cauldron recipe for cake using flour in place of wheat, raw egg in place1of egg. Disabled vanilla cake recipe ([#14](https://github.com/RatherBeLunar/BetterWithTime/issues/14))
 - Added cauldron recipe for cookies using flour in place of wheat. Disabled vanilla cookie recipe ([#15](https://github.com/RatherBeLunar/BetterWithTime/issues/15))
 - Disabled the vanilla recipe for sugar to incentivize use of the millstone

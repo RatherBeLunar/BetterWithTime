@@ -149,6 +149,26 @@ public class BlockDispenserBlock extends DispenserBlock {
         registerBlockDispenseBehavior(MiningChargeBlock.class, invertStackResult(miningChargeBehavior));
         DispenserBlock.registerBehavior(BwtBlocks.miningChargeBlock, miningChargeBehavior);
 
+        registerBlockDispenseBehavior(ObserverBlock.class, new BlockDispenserBehavior() {
+            @Override
+            protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+                ItemStack result = super.dispenseSilently(pointer, stack);
+                if (isSuccess()) {
+                    Direction direction = pointer.state().get(DispenserBlock.FACING);
+                    BlockPos blockPos = pointer.pos().offset(direction);
+                    pointer.world().replaceWithStateForNeighborUpdate(
+                            direction.getOpposite(),
+                            pointer.state(),
+                            blockPos,
+                            pointer.pos(),
+                            Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS),
+                            511
+                    );
+                }
+                return result;
+            }
+        });
+
         registerSherdBehaviors();
     }
 
