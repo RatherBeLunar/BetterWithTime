@@ -54,6 +54,7 @@ public interface RotationProcessHelper {
             Block.dropStacks(originalState, world, pos, rotatingBlockEntity, null, ItemStack.EMPTY);
             return;
         }
+        world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
         world.setBlockState(pos, rotatedState, Block.NOTIFY_ALL);
         rotatedState.getBlock().onPlaced(world, pos, rotatedState, null, rotatedState.getBlock().getPickStack(world, pos, rotatedState));
         if (rotatingBlockEntity != null) {
