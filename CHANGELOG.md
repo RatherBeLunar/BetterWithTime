@@ -68,6 +68,7 @@ This was necessary for some issues with recipes and compatibility
 - Fixed the mechanical hopper sometimes duplicating items in specific inventory transfer circumstances
 - Fixed windmills not breaking their connected gearbox/clutch in thunderstorms (again)
 - Fixed some issues with pulley platforms breaking into pieces when not fully supported. This doesn't mean platforms are a fully working feature yet, sadly.
+- Fixed some ghost block situations that could occur on the client for unfired pottery, mining charges, and the hand crank
 
 # Beta 1.9.4 for MC 1.21.1
 

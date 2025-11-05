@@ -107,7 +107,7 @@ public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBl
         if (world.isReceivingRedstonePower(pos)) {
             world.scheduleBlockTick(pos, this, 1);
         }
-        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
+        if (!world.getBlockState(pos).isOf(this)) {
             return;
         }
         if (canPlaceAt(state, world, pos)) {
