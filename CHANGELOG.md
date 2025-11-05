@@ -18,6 +18,7 @@
 - Made flower pots a pottery item
   - Unfired flower pots come after urns in the turntable chain, replacing the mould item (RIP moulds)
   - Disabled vanilla recipe for flower pots
+- Lenses can now fire and propagate their beams through glass just as they fire through air
 - Rebalanced vanilla hoppers
   - Vanilla hoppers still work as normal, but they're now made from netherite/steel instead of iron.
   - The new recipe now also yields 2 hoppers instead of 1
@@ -26,16 +27,15 @@
 - Block Dispensers can now be powered via weak redstone power via all sides except its face
   - This in contrast to the previous behavior of requiring strong power to it or to the block above it
   - BDs, unlike normal dispensers, do not have quasiconnectivity after this change
-  - BDs not being powered via their face is similar to how pistons are powered. This keeps most counter/clock functionality of BDs fully functional
+  - BDs not being powered via their face is similar to how pistons are powered. This keeps most counter/clock functionality of BDs fully intact
   - This will break existing builds that rely on BDs previously ignoring "weak" redstone power signals
-- Lenses can now fire and propagate their beams through glass just as they fire through air
 
 
 ### Minor Changes
 
 - Added Mod Menu compatible links, credits, and attributions.
 - Made Observers pulse when placed by a Block Dispenser. This is intended to make BD contraptions able to generate timed pulses more easily while phasing out the original Buddy Block
-- Added cauldron recipe for cake using flour in place of wheat, raw egg in place1of egg. Disabled vanilla cake recipe ([#14](https://github.com/RatherBeLunar/BetterWithTime/issues/14))
+- Added cauldron recipe for cake using flour in place of wheat, raw egg in place of egg. Disabled vanilla cake recipe ([#14](https://github.com/RatherBeLunar/BetterWithTime/issues/14))
 - Added cauldron recipe for cookies using flour in place of wheat. Disabled vanilla cookie recipe ([#15](https://github.com/RatherBeLunar/BetterWithTime/issues/15))
 - Disabled the vanilla recipe for sugar to incentivize use of the millstone
 - Made baby animals jump height shorter - they cannot clear a full block, but can barely clear half a block
