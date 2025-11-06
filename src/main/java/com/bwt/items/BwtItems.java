@@ -119,7 +119,7 @@ public class BwtItems implements ModInitializer {
             content.addAfter(Items.NETHERITE_PICKAXE, BwtItems.netheriteMattockItem);
             content.addAfter(Items.NETHERITE_AXE, BwtItems.netheriteBattleAxeItem);
 //            content.addAfter(Items.WATER_BUCKET, cementBucketItem);
-            content.add(breedingHarnessItem);
+//            content.add(breedingHarnessItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> {
             content.addAfter(Items.NETHERITE_AXE, BwtItems.netheriteBattleAxeItem);
