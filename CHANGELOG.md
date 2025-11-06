@@ -1,3 +1,12 @@
+# Future Work
+
+- Screw pump implementation
+- Aqueduct integration and testing
+- Cement functionality
+- Breeding harness
+- Buddy Block rework
+- Windmill blade dyeing rework
+
 # Release 2.0 for MC 1.21.1
 
 ### Major Changes
