@@ -29,7 +29,7 @@ public abstract class UnfiredPotteryBlock extends Block {
 
     @Override
     protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (!world.getBlockState(pos).isOf(this)) {
+        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
             return;
         }
         if (canPlaceAt(state, world, pos)) {
