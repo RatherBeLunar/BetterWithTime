@@ -194,10 +194,14 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
     @Unique
     protected boolean bwt$isBlockOpenToDung(int x, int y, int z) {
         World world = getWorld();
-        BlockState blockState = world.getBlockState(new BlockPos(x, y, z));
-        FluidState fluidState = world.getFluidState(new BlockPos(x, y, z));
+        BlockPos blockPos = new BlockPos(x, y, z);
+        BlockState blockState = world.getBlockState(blockPos);
+        FluidState fluidState = world.getFluidState(blockPos);
 
-        return !fluidState.isEmpty() || blockState.isIn(BlockTags.FIRE) || blockState.isReplaceable();
+        return !fluidState.isEmpty()
+                || blockState.isIn(BlockTags.FIRE)
+                || blockState.isReplaceable()
+                || blockState.getCollisionShape(world, blockPos).getBoundingBox().maxY + blockPos.getY() - 0.1 <= getY();
     }
 
     @Override
