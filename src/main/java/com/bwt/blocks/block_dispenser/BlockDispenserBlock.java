@@ -426,4 +426,9 @@ public class BlockDispenserBlock extends DispenserBlock {
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
     }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.with(FACING, mirror.apply(state.get(FACING)));
+    }
 }

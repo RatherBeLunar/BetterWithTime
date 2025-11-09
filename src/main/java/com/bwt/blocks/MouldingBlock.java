@@ -2,15 +2,21 @@ package com.bwt.blocks;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
+import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -20,17 +26,17 @@ public class MouldingBlock extends MiniBlock {
 
 
     private final List<VoxelShape> COLLISION_SHAPES = List.of(
-            // horizontal, bottom - west, north, east, south
+            // horizontal, bottom, long side facing: - north, east, south, west
             Block.createCuboidShape(0, 0, 0, 16, 8, 8),
             Block.createCuboidShape(8, 0, 0, 16, 8, 16),
             Block.createCuboidShape(0, 0, 8, 16, 8, 16),
             Block.createCuboidShape(0, 0, 0, 8, 8, 16),
-            // vertical - west, north, east, south
+            // vertical, long side facing: north-west, north-east, south-east, south-west
             Block.createCuboidShape(0, 0, 0, 8, 16, 8),
             Block.createCuboidShape(8, 0, 0, 16, 16, 8),
             Block.createCuboidShape(8, 0, 8, 16, 16, 16),
             Block.createCuboidShape(0, 0, 8, 8, 16, 16),
-            // horizontal, top - west, north, east, south
+            // horizontal, top, long side facing: north, east, south, west
             Block.createCuboidShape(0, 8, 0, 16, 16, 8),
             Block.createCuboidShape(8, 8, 0, 16, 16, 16),
             Block.createCuboidShape(0, 8, 8, 16, 16, 16),
@@ -109,6 +115,39 @@ public class MouldingBlock extends MiniBlock {
         int orientation = state.get(ORIENTATION);
         int category = orientation / 4;
         int newOrientation = (orientation + 1) % 4 + (4 * category);
+        return state.with(ORIENTATION, newOrientation);
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+        int orientation = state.get(ORIENTATION);
+        int newOrientation = switch (mirror) {
+            // Invert Z
+            case LEFT_RIGHT -> switch (orientation) {
+                case 0 -> 2;
+                case 2 -> 0;
+                case 4 -> 7;
+                case 5 -> 6;
+                case 6 -> 5;
+                case 7 -> 4;
+                case 8 -> 10;
+                case 10 -> 8;
+                default -> orientation;
+            };
+            // Invert X
+            case FRONT_BACK -> switch (orientation) {
+                case 1 -> 3;
+                case 3 -> 1;
+                case 4 -> 5;
+                case 5 -> 4;
+                case 6 -> 7;
+                case 7 -> 6;
+                case 9 -> 11;
+                case 11 -> 9;
+                default -> orientation;
+            };
+            default -> orientation;
+        };
         return state.with(ORIENTATION, newOrientation);
     }
 
