@@ -50,14 +50,20 @@ public class MouldingBlock extends MiniBlock {
         this.setDefaultState(this.getDefaultState().with(ORIENTATION, 0));
     }
 
+    public static MouldingBlock ofBlock(Block fullBlock) {
+        return new MouldingBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static MouldingBlock ofWoodBlock(Block woodBlock) {
+        MouldingBlock mouldingBlock = ofBlock(woodBlock);
+        mouldingBlock.isWood = true;
+        return mouldingBlock;
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(ORIENTATION);
-    }
-
-    public static MouldingBlock ofBlock(Block fullBlock) {
-        return new MouldingBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     public MapCodec<? extends MouldingBlock> getCodec() {

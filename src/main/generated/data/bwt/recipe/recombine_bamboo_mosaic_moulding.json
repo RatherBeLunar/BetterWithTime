@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "siding",
+  "ingredients": [
+    {
+      "item": "bwt:bamboo_mosaic_moulding"
+    },
+    {
+      "item": "bwt:bamboo_mosaic_moulding"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:bamboo_mosaic_siding"
+  }
+}

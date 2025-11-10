@@ -39,14 +39,20 @@ public class CornerBlock extends MiniBlock {
         this.setDefaultState(this.getDefaultState().with(ORIENTATION, 0));
     }
 
+    public static CornerBlock ofBlock(Block fullBlock) {
+        return new CornerBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static CornerBlock ofWoodBlock(Block woodBlock) {
+        CornerBlock cornerBlock = ofBlock(woodBlock);
+        cornerBlock.isWood = true;
+        return cornerBlock;
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(ORIENTATION);
-    }
-
-    public static CornerBlock ofBlock(Block fullBlock) {
-        return new CornerBlock(Settings.copy(fullBlock), fullBlock);
     }
 
     public MapCodec<? extends CornerBlock> getCodec() {

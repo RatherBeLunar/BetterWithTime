@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 4,
+      "id": "minecraft:bamboo_planks"
+    }
+  ],
+  "ingredient": {
+    "block": "minecraft:bamboo_block"
+  }
+}

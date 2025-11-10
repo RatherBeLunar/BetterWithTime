@@ -1,6 +1,5 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -30,6 +29,12 @@ public class TableBlock extends DecorativeBlock {
 
     public static TableBlock ofBlock(Block fullBlock) {
         return new TableBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static TableBlock ofWoodBlock(Block woodBlock) {
+        TableBlock tableBlock = ofBlock(woodBlock);
+        tableBlock.isWood = true;
+        return tableBlock;
     }
 
     @Override

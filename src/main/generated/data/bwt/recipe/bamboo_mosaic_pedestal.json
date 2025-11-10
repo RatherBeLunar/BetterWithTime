@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "pedestal",
+  "key": {
+    "#": {
+      "item": "minecraft:bamboo_mosaic"
+    },
+    "s": {
+      "item": "bwt:bamboo_mosaic_siding"
+    }
+  },
+  "pattern": [
+    " s ",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 6,
+    "id": "bwt:bamboo_mosaic_pedestal"
+  }
+}

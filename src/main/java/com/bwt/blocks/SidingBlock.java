@@ -38,6 +38,12 @@ public class SidingBlock extends MiniBlock {
         return new SidingBlock(Settings.copy(fullBlock), fullBlock);
     }
 
+    public static SidingBlock ofWoodBlock(Block woodBlock) {
+        SidingBlock sidingBlock = ofBlock(woodBlock);
+        sidingBlock.isWood = true;
+        return sidingBlock;
+    }
+
     public MapCodec<? extends SidingBlock> getCodec() {
         return CODEC;
     }

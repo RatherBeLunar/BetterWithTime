@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "": {
+      "model": "bwt:block/bamboo_mosaic_column",
+      "uvlock": true
+    }
+  }
+}

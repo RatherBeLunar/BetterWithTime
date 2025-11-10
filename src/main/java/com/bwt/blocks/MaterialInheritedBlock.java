@@ -14,9 +14,12 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public abstract class MaterialInheritedBlock extends Block {
     public Block fullBlock;
+    public boolean isWood = false;
 
     public MaterialInheritedBlock(Settings settings, Block fullBlock) {
         super(settings);
@@ -24,7 +27,7 @@ public abstract class MaterialInheritedBlock extends Block {
     }
 
     public boolean isWood() {
-        return Registries.BLOCK.getId(fullBlock).getPath().contains("planks");
+        return isWood;
     }
 
     public static void registerMaterialBlocks(
@@ -35,15 +38,20 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<PedestalBlock> pedestalBlocks,
             ArrayList<TableBlock> tableBlocks
     ) {
-        WoodType.stream()
-                .map(woodType -> Registries.BLOCK.get(Id.mc(woodType.name() + "_planks")))
+        Stream.concat(
+            WoodType.stream()
+                    .map(woodType -> Registries.BLOCK.getOrEmpty(Id.mc(woodType.name() + "_planks")))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get),
+            Stream.of(Blocks.BAMBOO_MOSAIC)
+        )
                 .forEach(block -> {
-            sidingBlocks.add(SidingBlock.ofBlock(block));
-            mouldingBlocks.add(MouldingBlock.ofBlock(block));
-            cornerBlocks.add(CornerBlock.ofBlock(block));
-            columnBlocks.add(ColumnBlock.ofBlock(block));
-            pedestalBlocks.add(PedestalBlock.ofBlock(block));
-            tableBlocks.add(TableBlock.ofBlock(block));
+            sidingBlocks.add(SidingBlock.ofWoodBlock(block));
+            mouldingBlocks.add(MouldingBlock.ofWoodBlock(block));
+            cornerBlocks.add(CornerBlock.ofWoodBlock(block));
+            columnBlocks.add(ColumnBlock.ofWoodBlock(block));
+            pedestalBlocks.add(PedestalBlock.ofWoodBlock(block));
+            tableBlocks.add(TableBlock.ofWoodBlock(block));
         });
         List<BlockFamily> blockFamilies = List.of(
                 BlockFamilies.COBBLESTONE,

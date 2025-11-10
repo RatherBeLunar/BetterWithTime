@@ -52,10 +52,11 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             }
             Block planksBlock = sidingBlock.fullBlock;
             Identifier planksId = Registries.BLOCK.getId(planksBlock);
-            Identifier logId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_log"));
-            Identifier woodId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_wood"));
-            Identifier hyphaeId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_hyphae"));
-            Identifier stemId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stem"));
+            Identifier baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
+            Identifier logId = baseId.withSuffixedPath("_log");
+            Identifier woodId = baseId.withSuffixedPath("_wood");
+            Identifier hyphaeId = baseId.withSuffixedPath("_hyphae");
+            Identifier stemId = baseId.withSuffixedPath("_stem");
 
             Item dustItem = planksBlock == BwtBlocks.bloodWoodBlocks.planksBlock ? BwtItems.soulDustItem : BwtItems.sawDustItem;
             // Logs/Stems/Hyphae -> planks
@@ -75,17 +76,22 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
             SawRecipe.JsonBuilder.create(mouldingBlock).result(cornerBlock, 2).markDefault().offerTo(exporter);
             SawRecipe.JsonBuilder.create(cornerBlock).result(BwtItems.gearItem, 2).markDefault().offerTo(exporter);
             // Recycling recipes
-            Identifier fenceId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence"));
-            Identifier fenceGateId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_fence_gate"));
-            Identifier stairsId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_stairs"));
-            Identifier slabId = Id.of(planksId.getNamespace(), planksId.getPath().replace("_planks", "_slab"));
-            SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceId)).result(cornerBlock, 2).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(Registries.BLOCK.get(fenceGateId)).result(cornerBlock).result(Items.STICK).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(Registries.BLOCK.get(stairsId)).result(sidingBlock).result(mouldingBlock).offerTo(exporter);
-            SawRecipe.JsonBuilder.create(Registries.BLOCK.get(slabId)).result(mouldingBlock, 2).offerTo(exporter);
+            Registries.BLOCK.getOrEmpty(baseId.withSuffixedPath("_fence"))
+                    .ifPresent(fence -> SawRecipe.JsonBuilder.create(fence).result(cornerBlock, 2).offerTo(exporter));
+            Registries.BLOCK.getOrEmpty(baseId.withSuffixedPath("_fence_gate"))
+                    .ifPresent(fenceGate -> SawRecipe.JsonBuilder.create(fenceGate).result(cornerBlock).result(Items.STICK).offerTo(exporter));
+            Registries.BLOCK.getOrEmpty(baseId.withSuffixedPath("_stairs"))
+                    .ifPresent(stairs -> SawRecipe.JsonBuilder.create(stairs).result(sidingBlock).result(mouldingBlock).offerTo(exporter));
+            Registries.BLOCK.getOrEmpty(baseId.withSuffixedPath("_slab"))
+                    .ifPresent(slab -> SawRecipe.JsonBuilder.create(slab).result(mouldingBlock, 2).offerTo(exporter));
             SawRecipe.JsonBuilder.create(columnBlock).result(sidingBlock).result(mouldingBlock).offerTo(exporter);
             SawRecipe.JsonBuilder.create(pedestalBlock).result(mouldingBlock, 2).offerTo(exporter);
             SawRecipe.JsonBuilder.create(tableBlock).result(mouldingBlock).offerTo(exporter);
         }
+
+        // special case bamboo
+        // no sawdust
+        SawRecipe.JsonBuilder.create(Blocks.BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 4).offerTo(exporter);
+        SawRecipe.JsonBuilder.create(Blocks.STRIPPED_BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 4).offerTo(exporter);
     }
 }
