@@ -90,8 +90,8 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
         }
 
         // special case bamboo
-        // no sawdust
-        SawRecipe.JsonBuilder.create(Blocks.BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 4).offerTo(exporter);
-        SawRecipe.JsonBuilder.create(Blocks.STRIPPED_BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 4).offerTo(exporter);
+        // no sawdust, only 2 planks
+        SawRecipe.JsonBuilder.create(Blocks.BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 2).offerTo(exporter);
+        SawRecipe.JsonBuilder.create(Blocks.STRIPPED_BAMBOO_BLOCK).result(Blocks.BAMBOO_PLANKS, 2).offerTo(exporter);
     }
 }
