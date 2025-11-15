@@ -82,7 +82,6 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.GUNPOWDER, 5).ingredient(Items.SAND, 4).result(Items.TNT).offerTo(exporter);
         CauldronRecipe.JsonBuilder.create().ingredient(Items.CACTUS).result(Items.GREEN_DYE).offerTo(exporter);
-        CauldronRecipe.JsonBuilder.create().ingredient(Items.STRING, 4).result(Items.WHITE_WOOL).offerTo(exporter, RecipeProvider.getItemPath(Items.WHITE_WOOL) + "_from_string_in_cauldron");
         Registries.ITEM.stream().filter(item -> item instanceof DyeItem).forEach(dyeItem -> {
             Item dyedWool = DyeUtils.WOOL_COLORS.get(((DyeItem) dyeItem).getColor()).asItem();
             Item dyedWoolSlab = BwtBlocks.woolSlabBlocks.get(((DyeItem) dyeItem).getColor()).asItem();
