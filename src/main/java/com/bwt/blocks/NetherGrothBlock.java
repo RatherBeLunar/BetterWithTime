@@ -105,7 +105,7 @@ public class NetherGrothBlock extends Block {
 
     @Override
     protected boolean hasRandomTicks(BlockState state) {
-        return !this.isMature(state);
+        return true;
     }
 
     @Override

@@ -4,9 +4,11 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.WorldAccess;
+import net.minecraft.world.WorldView;
 
 public class GrothedNetherrackBlock extends Block {
     public GrothedNetherrackBlock(Settings settings) {
@@ -27,5 +29,10 @@ public class GrothedNetherrackBlock extends Block {
             return this.getDefaultState();
         }
         return Blocks.NETHERRACK.getDefaultState();
+    }
+
+    @Override
+    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
+        return Blocks.NETHERRACK.getPickStack(world, pos, state);
     }
 }
