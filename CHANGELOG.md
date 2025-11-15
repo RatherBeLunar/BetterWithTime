@@ -7,6 +7,26 @@
 - Buddy Block rework
 - Windmill blade dyeing rework
 
+# Release 2.0.1 for MC 1.21.1
+
+### Minor changes
+
+- Tweak Buddy Block behavior to use different neighbor update logic than the vanilla observer. Still doesn't reach BTW parity, but it's somewhat closer
+- Buddy blocks and observers now once again trigger when a block is rotated on a turntable, even if the rotated state is identical
+- Added better mini block support for bamboo and bamboo mosaic
+- Remove the string -> wool recipe in a cauldron since it doesn't add much, and causes annoyances with other recipes using string
+
+### Bugfixes
+
+- Fixed wolves not producing dung while sitting on and next to carpet (and probably other flat, non-full blocks)
+- Disallowed vines from being rotated as a horizontal attachment on the turntable
+- Nether groth fixes ([#23](https://github.com/RatherBeLunar/BetterWithTime/issues/23)) - not spreading when fully grown, missing pick block stack
+- Added missing mirror and rotate definitions for some orientable blocks. This would cause issues when trying to rotate a Litematica schematic of some blocks
+- Added better saw block support for bamboo and bamboo mosaic
+- Renamed BWT's "Hopper" to "Mechanical Hopper" in the lang file
+- Actually disable the vanilla sugar recipe (it wasn't working before)
+
+
 # Release 2.0 for MC 1.21.1
 
 ### Major Changes
