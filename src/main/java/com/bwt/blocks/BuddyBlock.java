@@ -53,10 +53,10 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    protected void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
         if (!world.isClient()
                 && !state.get(POWERED)
-                && !neighborState.isIn(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
+                && !world.getBlockState(sourcePos).isIn(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
                 && !world.getBlockTickScheduler().isTicking(pos, this)
         ) {
             // minimal delay when triggered to avoid notfying neighbors of change in same tick
@@ -65,7 +65,7 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
             // on placement when they send out the notification
             world.scheduleBlockTick(pos, this, 1);
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
     }
 
     @Override
