@@ -5,6 +5,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.behavior.dispense.*;
 import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
 import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
+import com.bwt.blocks.block_dispenser.behavior.inhale.VoidInhaleBehavior;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.MiningChargeEntity;
@@ -414,6 +415,9 @@ public class BlockDispenserBlock extends DispenserBlock {
     protected BlockInhaleBehavior getInhaleBehaviorForItem(BlockState targetState) {
         if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)) {
             return BlockInhaleBehavior.NOOP;
+        }
+        if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_VOID)) {
+            return BlockInhaleBehavior.VOID;
         }
         return BLOCK_INHALE_BEHAVIORS.entrySet().stream()
                 .filter(entry -> entry.getKey().isInstance(targetState.getBlock()))
