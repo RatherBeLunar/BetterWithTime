@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "mech_powered=false,facing=up": { "model": "bwt:block/arcane_vessel" },
+    "mech_powered=true,facing=up": { "model": "bwt:block/arcane_vessel" },
+    "mech_powered=true,facing=north": { "model": "bwt:block/arcane_vessel", "x": 90 },
+    "mech_powered=true,facing=east":  { "model": "bwt:block/arcane_vessel", "x": 90, "y": 90 },
+    "mech_powered=true,facing=south": { "model": "bwt:block/arcane_vessel", "x": 90, "y": 180 },
+    "mech_powered=true,facing=west":  { "model": "bwt:block/arcane_vessel", "x": 90, "y": 270 }
+  }
+}

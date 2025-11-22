@@ -4,8 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.mixin.VanillaHopperInvoker;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
-import com.bwt.recipes.hopper_filter.HopperFilterRecipeInput;
+import com.bwt.recipes.hopper_filter.*;
 import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
 import com.bwt.recipes.soul_bottling.SoulBottlingRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
@@ -21,6 +20,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -58,6 +58,7 @@ import java.util.stream.IntStream;
 
 public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     public static final int INVENTORY_SIZE = 19;
+    private static final int XP_INVENTORY_SPACE = 100;
     protected static final int STACK_SIZE_TO_EJECT = 8;
     protected static final int SOUL_STORAGE_LIMIT = 8;
     protected static final int PICKUP_COOLDOWN = 3;
@@ -254,6 +255,36 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         }
     }
 
+    /*
+     * returns true if the *entire* XP orb is swallowed, false otherwise
+     */
+    public boolean attemptToSwallowXPOrb(World world, BlockPos pos, ExperienceOrbEntity orbEntity) {
+        int remainingSpace = XP_INVENTORY_SPACE - xpCount;
+
+        if (remainingSpace > 0) {
+            if (orbEntity.getExperienceAmount() <= remainingSpace) {
+                xpCount += orbEntity.getExperienceAmount();
+
+                orbEntity.discard();
+
+                return true;
+            }
+            else {
+                //orbEntity.amount -= remainingSpace;
+                int newAmount = orbEntity.getExperienceAmount() - remainingSpace;
+
+                orbEntity.discard();
+                ExperienceOrbEntity newOrbEntity = new ExperienceOrbEntity(world, pos.getX(), pos.getY(), pos.getZ(), newAmount);
+                newOrbEntity.setYaw(orbEntity.getYaw());
+                newOrbEntity.setVelocity(orbEntity.getVelocity());
+
+                xpCount = XP_INVENTORY_SPACE;
+            }
+        }
+
+        return false;
+    }
+
     public void attemptToEjectStack(World world, BlockPos pos) {
         List<Integer> occupiedIndices = IntStream.range(0, hopperInventory.size())
                 .filter(i -> !getStack(i).isEmpty())
@@ -319,13 +350,15 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         return new MechHopperScreenHandler(syncId, playerInventory, filterInventory, hopperInventory, propertyDelegate);
     }
 
-    // Pick up items from above
+    // Pick up items & xp from above
     public static void onEntityCollided(World world, Entity entity, MechHopperBlockEntity blockEntity) {
-        if (blockEntity.itemPickupCooldown > 0) {
-            return;
-        }
+        if (blockEntity.itemPickupCooldown > 0) return;
+        if (blockEntity.xpPickupCooldown > 0) return;
+
         if (entity instanceof ItemEntity itemEntity) {
             pickupItemEntity(world, itemEntity, blockEntity);
+        } else if (entity instanceof ExperienceOrbEntity orbEntity) {
+            //pickupExperienceEntity(world, orbEntity, blockEntity);
         }
     }
 
@@ -418,7 +451,6 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
             world.playSound(null, blockEntity.pos, BwtSoundEvents.SOUL_CONVERSION, SoundCategory.BLOCKS, 1f, 1.5f);
         }
     }
-
     protected void spawnNewItemOnTop(World world, Vec3d inputPos, ItemStack newItem) {
         ItemScatterer.spawn(world, inputPos.getX(), inputPos.getY(), inputPos.getZ(), newItem);
     }
@@ -512,7 +544,5 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         public void markDirty() {
             MechHopperBlockEntity.this.markDirty();
         }
-
-
     }
 }

@@ -17,6 +17,7 @@ import com.bwt.blocks.turntable.HorizontalBlockAttachmentHelper;
 import com.bwt.blocks.turntable.RotationProcessHelper;
 import com.bwt.blocks.turntable.VerticalBlockAttachmentHelper;
 import com.bwt.damage_types.BwtDamageTypes;
+import com.bwt.data.BwtDataAttachments;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
@@ -77,6 +78,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtDamageTypes damageTypes = new BwtDamageTypes();
 	public static final BwtGameRules gameRules = new BwtGameRules();
 	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
+	public static final BwtDataAttachments dataAttachments = new BwtDataAttachments();
 	public static final TrackedDataHandlers dataHandlers = new TrackedDataHandlers();
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ExtendedScreenHandlerType<CauldronScreenHandler, AbstractCookingPotData> cauldronScreenHandler = new ExtendedScreenHandlerType<>(CauldronScreenHandler::new, AbstractCookingPotData.PACKET_CODEC);
@@ -110,8 +112,8 @@ public class BetterWithTime implements ModInitializer {
 		damageTypes.onInitialize();
 		gameRules.onInitialize();
 		soundEvents.onInitialize();
+		dataAttachments.onInitialize();
 		dataHandlers.onInitialize();
-
 		// Fuel maps
 		// Vanilla change to account for the moulding -> stick recipe
 		// If uncorrected, you would gain free fuel time by converting your moulding to sticks

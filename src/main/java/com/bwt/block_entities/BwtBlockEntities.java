@@ -1,6 +1,7 @@
 package com.bwt.block_entities;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.arcane_vessel.ArcaneVesselBlockEntity;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.blocks.cauldron.CauldronBlockEntity;
 import com.bwt.blocks.crucible.CrucibleBlockEntity;
@@ -56,6 +57,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             Id.of("unfired_decorated_pot_block_entity"),
             BlockEntityType.Builder.create(UnfiredDecoratedPotBlockEntity::new, BwtBlocks.unfiredDecoratedPotBlockWithSherds).build()
+    );
+    public static final BlockEntityType<ArcaneVesselBlockEntity> arcaneVesselBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            Id.of("arcane_vessel_block_entity"),
+            BlockEntityType.Builder.create(ArcaneVesselBlockEntity::new, BwtBlocks.arcaneVesselBlock).build()
     );
 
     @Override

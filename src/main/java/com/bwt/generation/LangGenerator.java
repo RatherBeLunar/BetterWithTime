@@ -92,6 +92,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.netherGroth, "Nether Groth Spores");
         translationBuilder.add(BwtBlocks.grothedNetherrackBlock, "Grothed Netherrack");
         translationBuilder.add(BwtBlocks.redstoneClutchBlock, "Redstone Clutch");
+        translationBuilder.add(BwtBlocks.arcaneVesselBlock, "Vessel of the Dragon");
         translationBuilder.add(BwtItems.rawEggItem, "Raw Egg");
         translationBuilder.add(BwtItems.friedEggItem, "Fried Egg");
         translationBuilder.add(BwtItems.poachedEggItem, "Poached Egg");

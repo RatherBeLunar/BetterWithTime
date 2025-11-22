@@ -90,6 +90,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);
+		BlockRenderLayerMap.INSTANCE.putBlock(BwtBlocks.arcaneVesselBlock, RenderLayer.getCutout());
 		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
 		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
 		HandledScreens.register(BetterWithTime.crucibleScreenHandler, CrucibleScreen::new);

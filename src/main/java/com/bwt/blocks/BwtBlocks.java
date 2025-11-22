@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.arcane_vessel.ArcaneVesselBlock;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.blood_wood.BloodWoodBlocks;
 import com.bwt.blocks.cauldron.CauldronBlock;
@@ -310,6 +311,9 @@ public class BwtBlocks implements ModInitializer {
                     .sounds(BlockSoundGroup.NETHERRACK)
     );
 
+    // TODO: Check if these settings are correct
+    public static final Block arcaneVesselBlock = new ArcaneVesselBlock(AbstractBlock.Settings.copy(Blocks.IRON_BARS));
+
     @Override
     public void onInitialize() {
         // Axle
@@ -501,6 +505,9 @@ public class BwtBlocks implements ModInitializer {
         // Screw pump
         Registry.register(Registries.BLOCK, Id.of("screw_pump"), screwPumpBlock);
         Registry.register(Registries.ITEM, Id.of("screw_pump"), new BlockItem(screwPumpBlock, new Item.Settings()));
+        // Arcane Vessel
+        Registry.register(Registries.BLOCK, Id.of("arcane_vessel"), arcaneVesselBlock);
+        Registry.register(Registries.ITEM, Id.of("arcane_vessel"), new BlockItem(arcaneVesselBlock, new Item.Settings()));
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
             content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
@@ -565,6 +572,7 @@ public class BwtBlocks implements ModInitializer {
             content.add(unfiredFlowerPotBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
+            content.add(arcaneVesselBlock);
         });
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(content -> {
