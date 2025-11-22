@@ -1,6 +1,8 @@
 package com.bwt.utils;
 
+import com.bwt.tags.BwtBlockTags;
 import net.minecraft.block.BlockState;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -21,7 +23,7 @@ public class FireDataCluster {
         FireDataCluster fireDataCluster = new FireDataCluster();
         BlockPos below = pos.down();
         BlockState centerState = world.getBlockState(below);
-        FireData centerData = FireData.FIRE_AMOUNT_FUNCTIONS.getOrDefault(centerState.getBlock().getClass(), FireData.FireAmountFunction.NONE)
+        FireData centerData = FireData.FIRE_AMOUNT_FUNCTIONS.getOrDefault(centerState.getBlock().getClass(), FireData.FireAmountFunction.DEFAULT)
                 .getFireData(world, below, centerState);
         // The center block determines whether a fire is active or not
         if (!centerData.anyFirePresent()) {
@@ -37,7 +39,7 @@ public class FireDataCluster {
                 .neighboringBlocksInHorizontalRadius(below, radius)
                 .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
                 .map(neighbor -> FireData.FIRE_AMOUNT_FUNCTIONS
-                        .getOrDefault(neighbor.state().getBlock().getClass(), FireData.FireAmountFunction.NONE)
+                        .getOrDefault(neighbor.state().getBlock().getClass(), FireData.FireAmountFunction.DEFAULT)
                         .getFireData(world, neighbor.pos(), neighbor.state())
                 )
                 .forEach(fireDataCluster.fireData::add);

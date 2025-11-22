@@ -102,6 +102,9 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
         getOrCreateTagBuilder(BlockTags.WOOL).add(BwtBlocks.companionCubeBlock);
         getOrCreateTagBuilder(BwtBlockTags.WOOL_SLABS).add(BwtBlocks.companionSlabBlock);
 
+        getOrCreateTagBuilder(BwtBlockTags.HEATS_COOKING_STATIONS).add(Blocks.FIRE);
+        getOrCreateTagBuilder(BwtBlockTags.STOKES_COOKING_STATIONS).add(BwtBlocks.stokedFireBlock);
+
         addTools();
         addMaterialInheritedBlockTags();
         addVases();

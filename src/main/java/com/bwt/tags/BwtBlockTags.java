@@ -63,4 +63,9 @@ public class BwtBlockTags {
     public static final TagKey<Block> CAN_CONVERT_TO_PODZOL_SLAB = TagKey.of(RegistryKeys.BLOCK, Id.of("can_convert_to_podzol_slab"));
     // Nether Groth will consume some small plants (fungi, weeping vines)
     public static final TagKey<Block> NETHER_GROTH_CAN_EAT = TagKey.of(RegistryKeys.BLOCK, Id.of("nether_groth_can_eat"));
+
+    public static final TagKey<Block> HEATS_COOKING_STATIONS = TagKey.of(RegistryKeys.BLOCK, Id.of("heats_cooking_stations"));
+    public static final TagKey<Block> STOKES_COOKING_STATIONS = TagKey.of(RegistryKeys.BLOCK, Id.of("stokes_cooking_stations"));
+    public static final TagKey<Block> HEATS_COOKING_STATIONS_WHEN_LIT = TagKey.of(RegistryKeys.BLOCK, Id.of("heats_cooking_stations_when_lit"));
+    public static final TagKey<Block> STOKES_COOKING_STATIONS_WHEN_LIT = TagKey.of(RegistryKeys.BLOCK, Id.of("stokes_cooking_stations_when_lit"));
 }

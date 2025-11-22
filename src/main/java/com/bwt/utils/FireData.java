@@ -1,28 +1,40 @@
 package com.bwt.utils;
 
 import com.bwt.blocks.StokedFireBlock;
+import com.bwt.tags.BwtBlockTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FireBlock;
+import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.HashMap;
 
 public class FireData {
     public interface FireAmountFunction {
-        FireAmountFunction NONE = (world, pos, state) -> new FireData();
+        FireAmountFunction DEFAULT = (world, pos, state) -> {
+            FireData data = new FireData();
+            if (state.isIn(BwtBlockTags.HEATS_COOKING_STATIONS)) {
+                data.unstokedCount += 1;
+            }
+            else if (state.isIn(BwtBlockTags.HEATS_COOKING_STATIONS_WHEN_LIT) && state.getOrEmpty(Properties.LIT).orElse(false)) {
+                data.unstokedCount += 1;
+            }
+
+            if (state.isIn(BwtBlockTags.STOKES_COOKING_STATIONS)) {
+                data.stokedCount += 1;
+            }
+            else if (state.isIn(BwtBlockTags.STOKES_COOKING_STATIONS_WHEN_LIT) && state.getOrEmpty(Properties.LIT).orElse(false)) {
+                data.stokedCount += 1;
+            }
+            return data;
+        };
 
         FireData getFireData(World world, BlockPos pos, BlockState state);
     }
 
     public static final HashMap<Class<? extends Block>, FireAmountFunction> FIRE_AMOUNT_FUNCTIONS = new HashMap<>();
-
-    static {
-        FIRE_AMOUNT_FUNCTIONS.put(FireBlock.class, (world, pos, state) -> new FireData(1, 0));
-        FIRE_AMOUNT_FUNCTIONS.put(StokedFireBlock.class, (world, pos, state) -> new FireData(0, 1));
-    }
 
     int unstokedCount;
     int stokedCount;
