@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;

@@ -1,5 +1,8 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.axles.AxleBlock;
+import com.bwt.blocks.axles.AxlePowerSourceBlock;
+import com.bwt.blocks.axles.CreativePowerSourceBlock;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.blood_wood.BloodWoodBlocks;
 import com.bwt.blocks.cauldron.CauldronBlock;
@@ -78,7 +81,6 @@ public class BwtBlocks implements ModInitializer {
             .mapColor(MapColor.BLACK)
             .requiresTool()
     );
-//	public static final Block canvasBlock = new CanvasBlock(AbstractBlock.Settings.create());
     public static final ArrayList<ColumnBlock> columnBlocks = new ArrayList<>();
 	public static final Block concentratedHellfireBlock = new Block(AbstractBlock.Settings.create().hardness(2f).requiresTool().mapColor(MapColor.BRIGHT_RED).sounds(BlockSoundGroup.METAL));
 	public static final Block companionCubeBlock = new CompanionCubeBlock(AbstractBlock.Settings.copy(Blocks.WHITE_WOOL)
@@ -86,6 +88,12 @@ public class BwtBlocks implements ModInitializer {
     );
 	public static final Block companionSlabBlock = new CompanionSlabBlock(AbstractBlock.Settings.copy(companionCubeBlock));
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
+    public static final CreativePowerSourceBlock creativePowerSouceBlock = new CreativePowerSourceBlock(AbstractBlock.Settings.create()
+            .hardness(2F)
+            .sounds(BlockSoundGroup.WOOD)
+            .solid()
+            .nonOpaque()
+    );
 	public static final Block crucibleBlock = new CrucibleBlock(AbstractBlock.Settings.create()
             .solidBlock(Blocks::never)
             .nonOpaque()
@@ -312,10 +320,12 @@ public class BwtBlocks implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        // Axle
+        // Axles
         Registry.register(Registries.BLOCK, Id.of("axle"), axleBlock);
         Registry.register(Registries.ITEM, Id.of("axle"), new BlockItem(axleBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("axle_power_source"), axlePowerSourceBlock);
+        Registry.register(Registries.BLOCK, Id.of("creative_power_source"), creativePowerSouceBlock);
+        Registry.register(Registries.ITEM, Id.of("creative_power_source"), new BlockItem(creativePowerSouceBlock, new Item.Settings()));
         // Gearbox
         Registry.register(Registries.BLOCK, Id.of("gear_box"), gearBoxBlock);
         Registry.register(Registries.ITEM, Id.of("gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));
@@ -521,6 +531,7 @@ public class BwtBlocks implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
+            content.add(creativePowerSouceBlock);
             content.add(gearBoxBlock);
             content.add(redstoneClutchBlock);
             content.add(hibachiBlock);

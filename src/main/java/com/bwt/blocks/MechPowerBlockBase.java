@@ -1,20 +1,18 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.axles.AxlePowerLevelGetter;
+import com.bwt.blocks.axles.AxlePowerSourceBlock;
 import com.bwt.sounds.BwtSoundEvents;
-import com.bwt.utils.BlockPosAndState;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -49,7 +47,7 @@ public interface MechPowerBlockBase {
         return Arrays.stream(Direction.values())
                 .filter(direction -> {
                     BlockState inputBlockState = world.getBlockState(pos.offset(direction));
-                    return (axlePredicate.test(direction) && inputBlockState.getBlock() instanceof AxleBlock && AxleBlock.isPowered(inputBlockState) && inputBlockState.get(AxleBlock.AXIS).test(direction))
+                    return (axlePredicate.test(direction) && inputBlockState.getBlock() instanceof AxlePowerLevelGetter axlePowerLevelGetter && axlePowerLevelGetter.getMechPowerForNeighbor(inputBlockState, direction.getAxis()) > 0)
                             || (handCrankPredicate.test(direction) && inputBlockState.getBlock() instanceof HandCrankBlock && HandCrankBlock.isPowered(inputBlockState));
                 });
     }

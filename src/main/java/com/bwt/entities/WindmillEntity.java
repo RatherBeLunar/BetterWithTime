@@ -1,13 +1,11 @@
 package com.bwt.entities;
 
-import com.bwt.blocks.AxleBlock;
+import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
-import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;

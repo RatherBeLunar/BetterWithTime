@@ -1,5 +1,7 @@
-package com.bwt.blocks;
+package com.bwt.blocks.axles;
 
+import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.block.Block;
@@ -24,7 +26,7 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class AxleBlock extends PillarBlock {
+public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter {
     public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 3);
 
     protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
@@ -65,10 +67,6 @@ public class AxleBlock extends PillarBlock {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         return super.getCollisionShape(state, world, pos, context);
-    }
-
-    public static boolean isPowered(BlockState blockState) {
-        return blockState.get(MECH_POWER) > 0;
     }
 
     public BlockState getNextOrientation(BlockState blockState) {
@@ -120,16 +118,8 @@ public class AxleBlock extends PillarBlock {
             ) {
                 neighborPower = 4;
             }
-            else if (
-                    neighborState.isOf(BwtBlocks.axlePowerSourceBlock)
-                    && neighborState.get(AXIS).equals(axis)
-            ) {
-                neighborPower = 4;
-            }
-            else if (
-                    neighborState.isOf(BwtBlocks.axleBlock)
-                    && neighborState.get(AXIS).equals(axis)) {
-                neighborPower = neighborState.get(MECH_POWER);
+            else if (neighborState.getBlock() instanceof AxlePowerLevelGetter axlePowerLevelGetter) {
+                neighborPower = axlePowerLevelGetter.getMechPowerForNeighbor(neighborState, axis);
             }
 
             if (neighborPower > maxPowerNeighbor) {
@@ -164,26 +154,11 @@ public class AxleBlock extends PillarBlock {
         if (newPower != currentPower) {
             world.setBlockState(pos, state.with(MECH_POWER, newPower));
         }
+    }
 
-
-
-//        BlockState updatedState = state;
-//        for (int i : new int[]{-1, 1}) {
-//            BlockPos neighborPos = pos.offset(state.get(AXIS), i);
-//            updatedState = updatePowerState(updatedState, world, neighborPos);
-//        }
-//
-//        if (updatedState.get(MECH_POWER) >= 4) {
-//            updatedState = breakAxle(world, pos);
-//            return updatedState;
-//        }
-//
-//        // If no change, we don't need to update
-//        if (!updatedState.getEntries().equals(state.getEntries())) {
-//            world.setBlockState(pos, updatedState);
-//        }
-//
-//        return updatedState;
+    @Override
+    public int getMechPowerForNeighbor(BlockState state, Direction.Axis axis) {
+        return state.get(AXIS).equals(axis) ? state.get(MECH_POWER) : 0;
     }
 
 
