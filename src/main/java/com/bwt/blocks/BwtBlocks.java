@@ -236,7 +236,15 @@ public class BwtBlocks implements ModInitializer {
     );
     public static final Block soapBlock = new SimpleFacingBlock(AbstractBlock.Settings.create().hardness(2f).mapColor(MapColor.PINK).sounds(BlockSoundGroup.SLIME));
 //	public static final Block stakeBlock = new StakeBlock(AbstractBlock.Settings.create());
-    public static final StokedFireBlock stokedFireBlock = new StokedFireBlock(AbstractBlock.Settings.copy(Blocks.SOUL_FIRE));
+    public static final StokedFireBlock stokedFireBlock = new StokedFireBlock(AbstractBlock.Settings.create()
+            .mapColor(MapColor.BRIGHT_RED)
+            .replaceable()
+            .noCollision()
+            .breakInstantly()
+            .luminance(state -> 15)
+            .sounds(BlockSoundGroup.WOOL)
+            .pistonBehavior(PistonBehavior.DESTROY)
+    );
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(AbstractBlock.Settings.copy(Blocks.DETECTOR_RAIL));
 	public static final Block soulForgeBlock = new SoulForgeBlock(AbstractBlock.Settings.copy(Blocks.ANVIL));
     public static final ArrayList<TableBlock> tableBlocks = new ArrayList<>();
