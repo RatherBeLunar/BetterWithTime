@@ -111,6 +111,7 @@ public class BwtBlocks implements ModInitializer {
             .noCollision()
             .dropsNothing()
             .pistonBehavior(PistonBehavior.DESTROY)
+            .air()
     );
     public static final Block dungBlock = new Block(AbstractBlock.Settings.create().hardness(2f).mapColor(MapColor.BROWN).sounds(BlockSoundGroup.HONEY));
     public static final Block gearBoxBlock = new GearBoxBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)
