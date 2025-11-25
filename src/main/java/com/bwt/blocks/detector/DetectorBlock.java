@@ -143,7 +143,7 @@ public class DetectorBlock extends SimpleFacingBlock {
         BlockPos targetPos = pos.offset(facing);
         BlockState targetState = world.getBlockState(targetPos);
 
-        if (targetState.isOf(BwtBlocks.detectorLogicBlock) && !DetectorLogicBlock.anyNeighborDetectors(world, pos)) {
+        if (targetState.isOf(BwtBlocks.detectorLogicBlock) && !DetectorLogicBlock.anyNeighborDetectors(world, targetPos)) {
             world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 0);
         }
     }
