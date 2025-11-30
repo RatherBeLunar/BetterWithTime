@@ -18,15 +18,20 @@ public interface CanRotateHelper {
         boolean test(World world, BlockPos pos, BlockState state);
     }
 
-    HashMap<Class<? extends Block>, CanRotatePredicate> canRotatePredicates = new HashMap<>();
+    HashMap<Class<? extends Block>, CanRotatePredicate> canRotateClassPredicates = new HashMap<>();
+    HashMap<Block, CanRotatePredicate> canRotateBlockPredicates = new HashMap<>();
 
     static void register(Class<? extends Block> blockClass, CanRotatePredicate canRotatePredicate) {
-        canRotatePredicates.put(blockClass, canRotatePredicate);
+        canRotateClassPredicates.put(blockClass, canRotatePredicate);
+    }
+
+    static void register(Block block, CanRotatePredicate canRotatePredicate) {
+        canRotateBlockPredicates.put(block, canRotatePredicate);
     }
 
     static boolean canRotate(World world, BlockPos pos, BlockState state) {
         Block block = state.getBlock();
-        return canRotatePredicates.entrySet().stream()
+        return canRotateClassPredicates.entrySet().stream()
                 .filter(entry -> entry.getKey().isInstance(block))
                 .findAny()
                 .map(Map.Entry::getValue)
@@ -50,5 +55,8 @@ public interface CanRotateHelper {
         register(BellBlock.class, (world, pos, state) -> state.get(BellBlock.ATTACHMENT).equals(Attachment.FLOOR));
         register(BedBlock.class, CanRotatePredicate.FALSE);
         register(ChestBlock.class, (world, pos, state) -> state.get(ChestBlock.CHEST_TYPE).equals(ChestType.SINGLE));
+        register(Blocks.OBSIDIAN, CanRotatePredicate.FALSE);
+        register(Blocks.CRYING_OBSIDIAN, CanRotatePredicate.FALSE);
+        register(Blocks.BEDROCK, CanRotatePredicate.FALSE);
     }
 }
