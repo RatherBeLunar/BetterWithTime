@@ -28,6 +28,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -197,11 +198,13 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
         BlockPos blockPos = new BlockPos(x, y, z);
         BlockState blockState = world.getBlockState(blockPos);
         FluidState fluidState = world.getFluidState(blockPos);
+        VoxelShape collisionShape = blockState.getCollisionShape(world, blockPos);
 
         return !fluidState.isEmpty()
                 || blockState.isIn(BlockTags.FIRE)
                 || blockState.isReplaceable()
-                || blockState.getCollisionShape(world, blockPos).getBoundingBox().maxY + blockPos.getY() - 0.1 <= getY();
+                || collisionShape.isEmpty()
+                || collisionShape.getBoundingBox().maxY + blockPos.getY() - 0.1 <= getY();
     }
 
     @Override
