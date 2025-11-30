@@ -5,6 +5,7 @@ import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.server.world.ChunkLevelType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -38,12 +39,11 @@ public interface RotationProcessHelper {
         register(RailBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> world.setBlockState(pos, rotatedState));
         register(AbstractRedstoneGateBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> {
             rotatedState = Block.postProcessState(rotatedState, world, pos);
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
-            world.setBlockState(pos, rotatedState);
+            setBlockStateWithForcedUpdates(world, pos, rotatedState);
             rotatedState.neighborUpdate(world, pos, BwtBlocks.turntableBlock, pos.down(), true);
         });
         register(DoorBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> {
-            world.setBlockState(pos, rotatedState);
+            setBlockStateWithForcedUpdates();
             rotatedState.neighborUpdate(world, pos, BwtBlocks.turntableBlock, pos.down(), true);
         });
     }
@@ -54,12 +54,45 @@ public interface RotationProcessHelper {
             Block.dropStacks(originalState, world, pos, rotatingBlockEntity, null, ItemStack.EMPTY);
             return;
         }
-        world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_LISTENERS);
-        world.setBlockState(pos, rotatedState, Block.NOTIFY_ALL);
+        setBlockStateWithForcedUpdates(world, pos, rotatedState);
         rotatedState.getBlock().onPlaced(world, pos, rotatedState, null, rotatedState.getBlock().getPickStack(world, pos, rotatedState));
         if (rotatingBlockEntity != null) {
             world.addBlockEntity(rotatingBlockEntity);
         }
         rotatedState.neighborUpdate(world, pos, BwtBlocks.turntableBlock, pos.down(), true);
+    }
+
+    static void setBlockStateWithForcedUpdates(World world, BlockPos pos, BlockState state) {
+        setBlockStateWithForcedUpdates(world, pos, state, Block.NOTIFY_ALL);
+    }
+
+    static void setBlockStateWithForcedUpdates(World world, BlockPos pos, BlockState state, int flags) {
+        setBlockStateWithForcedUpdates(world, pos, state, flags, 512);
+    }
+
+    static void setBlockStateWithForcedUpdates(World world, BlockPos pos, BlockState state, int flags, int maxUpdateDepth) {
+        boolean stateWasChanged = world.setBlockState(pos, state);
+        if (stateWasChanged) {
+            return;
+        }
+        forceUpdates(world, pos, state, flags, maxUpdateDepth);
+    }
+
+    static void forceUpdates(World world, BlockPos pos, BlockState state, int flags, int maxUpdateDepth) {
+        Block block = state.getBlock();
+
+        if ((flags & Block.NOTIFY_NEIGHBORS) != 0) {
+            world.updateNeighbors(pos, block);
+            if (!world.isClient && state.hasComparatorOutput()) {
+                world.updateComparators(pos, block);
+            }
+        }
+
+        if ((flags & Block.FORCE_STATE) == 0 && maxUpdateDepth > 0) {
+            int i = flags & ~(Block.SKIP_DROPS | Block.NOTIFY_NEIGHBORS);
+            state.prepare(world, pos, i, maxUpdateDepth - 1);
+            state.updateNeighbors(world, pos, i, maxUpdateDepth - 1);
+            state.prepare(world, pos, i, maxUpdateDepth - 1);
+        }
     }
 }
