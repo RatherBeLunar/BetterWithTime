@@ -36,14 +36,14 @@ public interface RotationProcessHelper {
     }
 
     static void registerDefaults() {
-        register(RailBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> world.setBlockState(pos, rotatedState));
+        register(RailBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> setBlockStateWithForcedUpdates(world, pos, rotatedState));
         register(AbstractRedstoneGateBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> {
             rotatedState = Block.postProcessState(rotatedState, world, pos);
             setBlockStateWithForcedUpdates(world, pos, rotatedState);
             rotatedState.neighborUpdate(world, pos, BwtBlocks.turntableBlock, pos.down(), true);
         });
         register(DoorBlock.class, (world, pos, originalState, rotatedState, rotatingBlockEntity) -> {
-            setBlockStateWithForcedUpdates();
+            setBlockStateWithForcedUpdates(world, pos, rotatedState);
             rotatedState.neighborUpdate(world, pos, BwtBlocks.turntableBlock, pos.down(), true);
         });
     }
