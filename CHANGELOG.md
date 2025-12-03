@@ -7,6 +7,23 @@
 - Buddy Block rework
 - Windmill blade dyeing rework
 
+# Release 2.0.2 for MC 1.21.1
+
+### Minor changes
+- Disabled the rotation of obsidian, crying obsidian, and bedrock on the turntable. 
+These blocks don't actually "rotate", but this disables observers and buddy blocks 
+being able to detect the rotation of these blocks 
+
+### Bugfixes
+
+- Gave stoked fire the correct luminance value
+- Fixed the invisible detector "logic" block not being treated as air in some situations
+- Fixed some deletion logic for the detector logic block.
+Shouldn't have impacted gameplay too bad, but it's a fix nonetheless
+- Fixed a crash when wolves try to produce dung inside of a block with no collision
+- Fix turntable issues introduced in 2.0.1 while preserving the block update functionality
+
+
 # Release 2.0.1 for MC 1.21.1
 
 ### Minor changes
