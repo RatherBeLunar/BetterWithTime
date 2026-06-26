@@ -135,7 +135,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         BlockPos targetPos = pos.offset(state.get(FACING));
         BlockState targetState = world.getBlockState(targetPos);
 
-        if (!targetState.isIn(BlockTags.AIR)) {
+        if (!targetState.isIn(BlockTags.AIR) && targetPos.equals(sourcePos)) {
             world.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundCategory.BLOCKS, 1f, 1f);
         }
     }
