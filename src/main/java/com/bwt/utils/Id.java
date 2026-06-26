@@ -6,6 +6,7 @@ public class Id {
     public static final String MOD_ID = "bwt";
 
     public static final Identifier PROGRAMMER_ART_PACK_ID = Id.of("bwt_programmer_art");
+    public static final Identifier MODERNIZED_SOUNDS_PACK_ID = Id.of("modern_bwt_sounds");
 
     public static Identifier of(String id) {
         return Identifier.of(MOD_ID, id);
