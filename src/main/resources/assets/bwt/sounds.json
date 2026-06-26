@@ -134,13 +134,13 @@
   "block.saw.cut": {
     "subtitle": "bwt.subtitles.block.saw.cut",
     "sounds": [
-      {"name": "bwt:mechanical/bang", "pitch": 1.5}
+      {"name": "bwt:mechanical/bang", "pitch": 1}
     ]
   },
   "block.saw.init": {
     "subtitle": "bwt.subtitles.block.saw.init",
     "sounds": [
-      {"name": "bwt:mechanical/bang", "pitch": 1.5}
+      {"name": "bwt:mechanical/bang", "pitch": 1}
     ]
   },
   "block.saw.depowered": {
