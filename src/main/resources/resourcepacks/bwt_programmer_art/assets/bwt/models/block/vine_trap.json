@@ -1,0 +1,21 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "side": "bwt:block/vine_trap",
+    "particle": "bwt:block/vine_trap"
+  },
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 2, 16],
+      "faces": {
+        "north": {"uv": [0, 0, 16, 2], "texture": "#side", "cullface": "north"},
+        "east": {"uv": [13, 0, 15, 16], "rotation": 90, "texture": "#side", "cullface": "east"},
+        "south": {"uv": [0, 13, 16, 15], "texture": "#side", "cullface": "south"},
+        "west": {"uv": [0, 0, 2, 16], "rotation": 90, "texture": "#side", "cullface": "west"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#side"},
+        "down": {"uv": [0, 0, 16, 16], "texture": "#side", "cullface": "down"}
+      }
+    }
+  ]
+}

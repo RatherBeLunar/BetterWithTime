@@ -1,6 +1,5 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -15,8 +14,14 @@ public class ColumnBlock extends DecorativeBlock {
         super(settings, fullBlock);
     }
 
-    public static ColumnBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new ColumnBlock(Settings.copy(slabBlock), fullBlock);
+    public static ColumnBlock ofBlock(Block fullBlock) {
+        return new ColumnBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static ColumnBlock ofWoodBlock(Block woodBlock) {
+        ColumnBlock columnBlock = ofBlock(woodBlock);
+        columnBlock.isWood = true;
+        return columnBlock;
     }
 
     @Override

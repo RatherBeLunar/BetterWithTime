@@ -1,6 +1,7 @@
 {
   "type": "bwt:block_dispenser_clump",
   "block": "minecraft:clay",
+  "category": "misc",
   "ingredient": {
     "count": 4,
     "ingredient": {

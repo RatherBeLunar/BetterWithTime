@@ -1,0 +1,9 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "particle": "bwt:block/mill_stone_top_powered",
+    "side": "bwt:block/mill_stone_side_powered",
+    "bottom": "bwt:block/mill_stone_bottom",
+    "top": "bwt:block/mill_stone_top_powered"
+  }
+}

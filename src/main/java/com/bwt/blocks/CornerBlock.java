@@ -6,6 +6,7 @@ import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -38,14 +39,20 @@ public class CornerBlock extends MiniBlock {
         this.setDefaultState(this.getDefaultState().with(ORIENTATION, 0));
     }
 
+    public static CornerBlock ofBlock(Block fullBlock) {
+        return new CornerBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static CornerBlock ofWoodBlock(Block woodBlock) {
+        CornerBlock cornerBlock = ofBlock(woodBlock);
+        cornerBlock.isWood = true;
+        return cornerBlock;
+    }
+
     @Override
     protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         super.appendProperties(builder);
         builder.add(ORIENTATION);
-    }
-
-    public static CornerBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new CornerBlock(Settings.copy(slabBlock), fullBlock);
     }
 
     public MapCodec<? extends CornerBlock> getCodec() {
@@ -85,6 +92,39 @@ public class CornerBlock extends MiniBlock {
         int orientation = state.get(ORIENTATION);
         int category = orientation / 4;
         int newOrientation = (orientation + 1) % 4 + (4 * category);
+        return state.with(ORIENTATION, newOrientation);
+    }
+
+    @Override
+    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+        int orientation = state.get(ORIENTATION);
+        int newOrientation = switch (mirror) {
+            // Invert Z
+            case LEFT_RIGHT -> switch (orientation) {
+                case 0 -> 1;
+                case 1 -> 0;
+                case 2 -> 3;
+                case 3 -> 2;
+                case 4 -> 5;
+                case 5 -> 4;
+                case 6 -> 7;
+                case 7 -> 6;
+                default -> orientation;
+            };
+            // Invert X
+            case FRONT_BACK -> switch (orientation) {
+                case 0 -> 3;
+                case 1 -> 2;
+                case 2 -> 1;
+                case 3 -> 0;
+                case 4 -> 7;
+                case 5 -> 6;
+                case 6 -> 5;
+                case 7 -> 4;
+                default -> orientation;
+            };
+            default -> orientation;
+        };
         return state.with(ORIENTATION, newOrientation);
     }
 }

@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "bwt:block/grothed_netherrack"
+      },
+      {
+        "model": "bwt:block/grothed_netherrack",
+        "y": 90
+      }
+    ]
+  }
+}

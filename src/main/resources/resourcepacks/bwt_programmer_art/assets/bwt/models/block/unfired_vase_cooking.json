@@ -1,0 +1,7 @@
+{
+	"parent": "bwt:block/unfired_vase",
+	"textures": {
+		"texture": "minecraft:block/gravel",
+		"particle": "minecraft:block/gravel"
+	}
+}

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:potash_from_cauldron_rendering_planks"
+        "recipe": "bwt:potash_from_cauldron_rendering_planks"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:potash_from_cauldron_rendering_planks"
+      "bwt:potash_from_cauldron_rendering_planks"
     ]
   }
 }

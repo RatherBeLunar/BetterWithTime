@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/orientable_with_bottom",
+  "textures": {
+    "front": "bwt:block/block_dispenser_front",
+    "side": "bwt:block/block_dispenser_side",
+    "top": "bwt:block/block_dispenser_top",
+    "bottom": "bwt:block/block_dispenser_bottom"
+  }
+}

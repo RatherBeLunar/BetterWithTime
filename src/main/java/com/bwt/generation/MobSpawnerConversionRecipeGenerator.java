@@ -27,5 +27,9 @@ public class MobSpawnerConversionRecipeGenerator extends FabricRecipeProvider {
         MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.COBBLESTONE_SLAB).convertsTo(Blocks.MOSSY_COBBLESTONE_SLAB).offerTo(exporter);
         MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.COBBLESTONE_STAIRS).convertsTo(Blocks.MOSSY_COBBLESTONE_STAIRS).offerTo(exporter);
         MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.COBBLESTONE_WALL).convertsTo(Blocks.MOSSY_COBBLESTONE_WALL).offerTo(exporter);
+        MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.STONE_BRICKS).convertsTo(Blocks.MOSSY_STONE_BRICKS).offerTo(exporter);
+        MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.STONE_BRICK_SLAB).convertsTo(Blocks.MOSSY_STONE_BRICK_SLAB).offerTo(exporter);
+        MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.STONE_BRICK_STAIRS).convertsTo(Blocks.MOSSY_STONE_BRICK_STAIRS).offerTo(exporter);
+        MobSpawnerConversionRecipe.JsonBuilder.create(Blocks.STONE_BRICK_WALL).convertsTo(Blocks.MOSSY_STONE_BRICK_WALL).offerTo(exporter);
     }
 }

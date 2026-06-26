@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:ground_netherrack_from_milling_netherrack"
+        "recipe": "bwt:ground_netherrack_from_milling_netherrack"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:ground_netherrack_from_milling_netherrack"
+      "bwt:ground_netherrack_from_milling_netherrack"
     ]
   }
 }

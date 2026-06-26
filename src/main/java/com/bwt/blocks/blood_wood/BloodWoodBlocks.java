@@ -70,7 +70,7 @@ public class BloodWoodBlocks {
         );
         saplingBlock = new BloodWoodSaplingBlock(
                 new SaplingGenerator(
-                        "bwt:blood_wood",
+                        Id.of("blood_wood").toString(),
                         Optional.empty(),
                         Optional.of(BwtConfiguredFeatures.BLOOD_WOOD_KEY),
                         Optional.empty()
@@ -110,8 +110,8 @@ public class BloodWoodBlocks {
         Registry.register(Registries.ITEM, Id.of("blood_wood_log"), new BlockItem(logBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood_log"), strippedLogBlock);
         Registry.register(Registries.ITEM, Id.of("stripped_blood_wood_log"), new BlockItem(strippedLogBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood"), woodBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood"), new BlockItem(woodBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("blood_wood_wood"), woodBlock);
+        Registry.register(Registries.ITEM, Id.of("blood_wood_wood"), new BlockItem(woodBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood"), strippedWoodBlock);
         Registry.register(Registries.ITEM, Id.of("stripped_blood_wood"), new BlockItem(strippedWoodBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("blood_wood_leaves"), leavesBlock);

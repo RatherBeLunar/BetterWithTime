@@ -1,0 +1,7 @@
+{
+	"parent": "bwt:block/unfired_mould",
+	"textures": {
+		"texture": "minecraft:block/gravel",
+		"particle": "minecraft:block/gravel"
+	}
+}

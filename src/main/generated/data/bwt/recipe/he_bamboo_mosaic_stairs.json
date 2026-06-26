@@ -1,0 +1,17 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "key": {
+    "m": {
+      "item": "bwt:bamboo_mosaic_moulding"
+    }
+  },
+  "pattern": [
+    "m ",
+    "mm"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:bamboo_mosaic_stairs"
+  }
+}

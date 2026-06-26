@@ -11,11 +11,11 @@
       },
       "trigger": "minecraft:inventory_changed"
     },
-    "got_mould": {
+    "got_decorated_pot": {
       "conditions": {
         "items": [
           {
-            "items": "bwt:mould"
+            "items": "minecraft:decorated_pot"
           }
         ]
       },
@@ -63,11 +63,11 @@
   },
   "requirements": [
     [
+      "got_decorated_pot",
       "got_crucible",
       "got_planter",
       "got_vase_white",
-      "got_urn",
-      "got_mould"
+      "got_urn"
     ]
   ],
   "sends_telemetry_event": true

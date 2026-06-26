@@ -72,9 +72,9 @@ public class EmiHopperFilterRecipe implements EmiRecipe {
     @Override
     public @Nullable Identifier getId() {
         if(this.soulBottlingRecipe != null) {
-            return Id.of(String.format("%s-%s", this.id.getPath(), this.soulBottlingRecipe.getId().getPath()));
+            return Id.of(String.format("/%s-%s", this.id.getPath(), this.soulBottlingRecipe.getId().getPath()));
         }
-        return this.id;
+        return Identifier.of(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

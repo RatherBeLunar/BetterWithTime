@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:red_wool_slab_from_cauldron_dyeing_with_red_dye"
+        "recipe": "bwt:red_wool_slab_from_cauldron_dyeing_with_red_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:red_wool_slab_from_cauldron_dyeing_with_red_dye"
+      "bwt:red_wool_slab_from_cauldron_dyeing_with_red_dye"
     ]
   }
 }

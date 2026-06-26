@@ -3,7 +3,7 @@
   "criteria": {
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:yellow_wool_slab_from_cauldron_dyeing_with_yellow_dye"
+        "recipe": "bwt:yellow_wool_slab_from_cauldron_dyeing_with_yellow_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:yellow_wool_slab_from_cauldron_dyeing_with_yellow_dye"
+      "bwt:yellow_wool_slab_from_cauldron_dyeing_with_yellow_dye"
     ]
   }
 }

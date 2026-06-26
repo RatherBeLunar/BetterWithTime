@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:orange_wool_slab_from_cauldron_dyeing_with_orange_dye"
+        "recipe": "bwt:orange_wool_slab_from_cauldron_dyeing_with_orange_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:orange_wool_slab_from_cauldron_dyeing_with_orange_dye"
+      "bwt:orange_wool_slab_from_cauldron_dyeing_with_orange_dye"
     ]
   }
 }

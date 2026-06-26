@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:soap_from_stoked_cauldron"
+        "recipe": "bwt:soap_from_stoked_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:soap_from_stoked_cauldron"
+      "bwt:soap_from_stoked_cauldron"
     ]
   }
 }

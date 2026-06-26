@@ -39,16 +39,31 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
             modelPartData.addChild("shaft" + i,
                 ModelPartBuilder.create()
                     .uv(0, 0)
-                    .cuboid(shaftOffsetFromCenter, -(float) shaftWidth / 2.0f, -(float) shaftWidth / 2.0f,
-                            shaftLength, shaftWidth, shaftWidth),
-                ModelTransform.rotation(0F, 0F, 2 * localPi * (float)i / (float)WindmillEntity.NUM_SAILS));
+                    .cuboid(
+                            shaftOffsetFromCenter,
+                            -(float) shaftWidth / 2.0f,
+                            -(float) shaftWidth / 2.0f,
+                            shaftLength,
+                            shaftWidth,
+                            shaftWidth
+                    ),
+                ModelTransform.rotation(0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+            );
         }
-        for (int i = WindmillEntity.NUM_SAILS; i < WindmillEntity.NUM_SAILS * 2; i++ ) {
-            modelPartData.addChild("sail" + (i - WindmillEntity.NUM_SAILS),
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
+            modelPartData.addChild("sail" + i,
                 ModelPartBuilder.create()
                     .uv(0, 15)
-                    .cuboid(bladeOffsetFromCenter, 1.75f/*-(float)iBladeWidth / 2.0f*/, 1.0F, bladeLength, bladeWidth, 1 ),
-                ModelTransform.rotation(-localPi / 12.0F, 0F, 2 * localPi * (float)(i - 4) / (float)WindmillEntity.NUM_SAILS));
+                    .cuboid(
+                            bladeOffsetFromCenter,
+                            1.75f,
+                            1.0F,
+                            bladeLength,
+                            bladeWidth,
+                            1
+                    ),
+                ModelTransform.rotation(-localPi / 12.0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+            );
         }
         return TexturedModelData.of(modelData, 64, 32);
     }

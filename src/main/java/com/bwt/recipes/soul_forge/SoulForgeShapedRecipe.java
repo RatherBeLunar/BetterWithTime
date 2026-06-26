@@ -1,5 +1,6 @@
 package com.bwt.recipes.soul_forge;
 
+import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.mixin.accessors.ShapedRecipeJsonBuilderAccessorMixin;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.utils.Id;
@@ -43,8 +44,18 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
     }
 
     @Override
+    public int getWidth() {
+        return this.raw.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.raw.getHeight();
+    }
+
+    @Override
     public boolean fits(int width, int height) {
-        return width == 4 && height == 4;
+        return width >= this.raw.getWidth() && height >= this.raw.getHeight();
     }
 
     public RawShapedRecipe getRaw() {
@@ -110,6 +121,17 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
             return new JsonBuilder(category, output, count);
         }
 
+        protected boolean isDefaultRecipe;
+        public JsonBuilder markDefault() {
+            this.isDefaultRecipe = true;
+            return this;
+        }
+        public void addToDefaults(Identifier recipeId) {
+            if (this.isDefaultRecipe) {
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/soulforge-bwt-"));
+            }
+        }
+
         private RawShapedRecipe validate(Identifier recipeId) {
             ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
             if (accessor.getCriteria().isEmpty()) {
@@ -119,7 +141,14 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            this.addToDefaults(recipeId);
+
             recipeId = Id.of(recipeId.getPath());
             ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
             RawShapedRecipe rawShapedRecipe = validate(recipeId);

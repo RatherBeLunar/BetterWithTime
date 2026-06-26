@@ -1,5 +1,8 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.axles.AxleBlock;
+import com.bwt.blocks.axles.AxlePowerSourceBlock;
+import com.bwt.blocks.axles.CreativePowerSourceBlock;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.blood_wood.BloodWoodBlocks;
 import com.bwt.blocks.cauldron.CauldronBlock;
@@ -10,6 +13,7 @@ import com.bwt.blocks.dirt_slab.DirtPathSlabBlock;
 import com.bwt.blocks.dirt_slab.DirtSlabBlock;
 import com.bwt.blocks.dirt_slab.GrassSlabBlock;
 import com.bwt.blocks.lens.LensBeamBlock;
+import com.bwt.blocks.lens.LensBeamGlassBlock;
 import com.bwt.blocks.lens.LensBlock;
 import com.bwt.blocks.dirt_slab.MyceliumSlabBlock;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
@@ -18,13 +22,17 @@ import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.blocks.pulley.PulleyBlock;
 import com.bwt.blocks.soul_forge.SoulForgeBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
+import com.bwt.blocks.unfired_pottery.*;
 import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.registry.FlattenableBlockRegistry;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.Sherds;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.block.piston.PistonBehavior;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -36,6 +44,7 @@ import java.util.HashMap;
 
 public class BwtBlocks implements ModInitializer {
 
+    public static final AqueductBlock aqueductBlock = new AqueductBlock(AbstractBlock.Settings.copy(Blocks.BRICKS));
 	public static final Block anchorBlock = new AnchorBlock(AbstractBlock.Settings.create()
             .hardness(2f)
             .sounds(BlockSoundGroup.STONE)
@@ -72,7 +81,6 @@ public class BwtBlocks implements ModInitializer {
             .mapColor(MapColor.BLACK)
             .requiresTool()
     );
-//	public static final Block canvasBlock = new CanvasBlock(AbstractBlock.Settings.create());
     public static final ArrayList<ColumnBlock> columnBlocks = new ArrayList<>();
 	public static final Block concentratedHellfireBlock = new Block(AbstractBlock.Settings.create().hardness(2f).requiresTool().mapColor(MapColor.BRIGHT_RED).sounds(BlockSoundGroup.METAL));
 	public static final Block companionCubeBlock = new CompanionCubeBlock(AbstractBlock.Settings.copy(Blocks.WHITE_WOOL)
@@ -80,6 +88,12 @@ public class BwtBlocks implements ModInitializer {
     );
 	public static final Block companionSlabBlock = new CompanionSlabBlock(AbstractBlock.Settings.copy(companionCubeBlock));
 	public static final ArrayList<CornerBlock> cornerBlocks = new ArrayList<>();
+    public static final CreativePowerSourceBlock creativePowerSouceBlock = new CreativePowerSourceBlock(AbstractBlock.Settings.create()
+            .hardness(2F)
+            .sounds(BlockSoundGroup.WOOD)
+            .solid()
+            .nonOpaque()
+    );
 	public static final Block crucibleBlock = new CrucibleBlock(AbstractBlock.Settings.create()
             .solidBlock(Blocks::never)
             .nonOpaque()
@@ -97,6 +111,7 @@ public class BwtBlocks implements ModInitializer {
             .noCollision()
             .dropsNothing()
             .pistonBehavior(PistonBehavior.DESTROY)
+            .air()
     );
     public static final Block dungBlock = new Block(AbstractBlock.Settings.create().hardness(2f).mapColor(MapColor.BROWN).sounds(BlockSoundGroup.HONEY));
     public static final Block gearBoxBlock = new GearBoxBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)
@@ -145,6 +160,13 @@ public class BwtBlocks implements ModInitializer {
             .luminance(state -> state.get(LensBeamBlock.TERMINUS) ? 14 : 0)
             .emissiveLighting(((state, world, pos) -> state.get(LensBeamBlock.TERMINUS)))
     );
+    public static final LensBeamGlassBlock lensBeamGlassBlock = new LensBeamGlassBlock(
+            Blocks.GLASS,
+            AbstractBlock.Settings
+                    .copy(Blocks.GLASS)
+                    .luminance(state -> state.get(LensBeamBlock.TERMINUS) ? 14 : 0)
+                    .emissiveLighting(((state, world, pos) -> state.get(LensBeamBlock.TERMINUS)))
+    );
 	public static final Block lightBlockBlock = new LightBlock(AbstractBlock.Settings.copy(Blocks.GLASS)
             .strength(0.4f)
             .luminance(Blocks.createLightLevelFromLitBlockState(15))
@@ -160,7 +182,6 @@ public class BwtBlocks implements ModInitializer {
             .solidBlock(Blocks::never)
     );
 	public static final ArrayList<MouldingBlock> mouldingBlocks = new ArrayList<>();
-//	public static final Block netherGrothBlock = new NetherGrothBlock(AbstractBlock.Settings.create());
 	public static final Block obsidianPressurePlateBlock = new ObsidianPressurePlateBlock(AbstractBlock.Settings.copy(Blocks.STONE_PRESSURE_PLATE)
             .strength(50.0f, 1200.0f)
     );
@@ -190,6 +211,7 @@ public class BwtBlocks implements ModInitializer {
             .mapColor(MapColor.TERRACOTTA_BROWN)
             .pistonBehavior(PistonBehavior.IGNORE)
     );
+    public static final Block redstoneClutchBlock = new RedstoneClutchBlock(AbstractBlock.Settings.copy(gearBoxBlock));
     public static final Block ropeCoilBlock = new Block(AbstractBlock.Settings.create().hardness(1f).mapColor(MapColor.BROWN).sounds(BlockSoundGroup.GRASS));
 	public static final RopeBlock ropeBlock = new RopeBlock(AbstractBlock.Settings.create()
             .hardness(0.5f)
@@ -202,7 +224,10 @@ public class BwtBlocks implements ModInitializer {
             .sounds(BlockSoundGroup.WOOD)
             .nonOpaque()
     );
-//	public static final Block screwPumpBlock = new ScrewPumpBlock(AbstractBlock.Settings.create());
+	public static final ScrewPumpBlock screwPumpBlock = new ScrewPumpBlock(AbstractBlock.Settings.copy(Blocks.OAK_PLANKS)
+            .hardness(2f)
+            .resistance(5f)
+    );
     public static final ArrayList<SidingBlock> sidingBlocks = new ArrayList<>();
 	public static final Block slatsBlock = new PaneBlock(AbstractBlock.Settings.create()
             .strength(0.5f)
@@ -212,7 +237,15 @@ public class BwtBlocks implements ModInitializer {
     );
     public static final Block soapBlock = new SimpleFacingBlock(AbstractBlock.Settings.create().hardness(2f).mapColor(MapColor.PINK).sounds(BlockSoundGroup.SLIME));
 //	public static final Block stakeBlock = new StakeBlock(AbstractBlock.Settings.create());
-    public static final StokedFireBlock stokedFireBlock = new StokedFireBlock(AbstractBlock.Settings.copy(Blocks.SOUL_FIRE));
+    public static final StokedFireBlock stokedFireBlock = new StokedFireBlock(AbstractBlock.Settings.create()
+            .mapColor(MapColor.BRIGHT_RED)
+            .replaceable()
+            .noCollision()
+            .breakInstantly()
+            .luminance(state -> 15)
+            .sounds(BlockSoundGroup.WOOL)
+            .pistonBehavior(PistonBehavior.DESTROY)
+    );
     public static final Block stoneDetectorRailBlock = new DetectorRailBlock(AbstractBlock.Settings.copy(Blocks.DETECTOR_RAIL));
 	public static final Block soulForgeBlock = new SoulForgeBlock(AbstractBlock.Settings.copy(Blocks.ANVIL));
     public static final ArrayList<TableBlock> tableBlocks = new ArrayList<>();
@@ -220,6 +253,14 @@ public class BwtBlocks implements ModInitializer {
             .strength(2f)
             .sounds(BlockSoundGroup.STONE)
             .mapColor(Blocks.PISTON_HEAD.getDefaultMapColor())
+    );
+    public static final UnfiredPotteryBlock unfiredDecoratedPotBlock = new UnfiredDecoratedPotBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
+    );
+    public static final UnfiredPotteryBlock unfiredDecoratedPotBlockWithSherds = new UnfiredDecoratedPotBlockWithSherds(AbstractBlock.Settings.copy(Blocks.CLAY)
+            .nonOpaque()
+            .solidBlock(Blocks::never)
     );
 	public static final UnfiredPotteryBlock unfiredCrucibleBlock = new UnfiredCrucibleBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
@@ -237,7 +278,7 @@ public class BwtBlocks implements ModInitializer {
             .nonOpaque()
             .solidBlock(Blocks::never)
     );
-	public static final UnfiredPotteryBlock unfiredMouldBlock = new UnfiredMouldBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
+    public static final UnfiredPotteryBlock unfiredFlowerPotBlock = new UnfiredFlowerPotBlock(AbstractBlock.Settings.copy(Blocks.CLAY)
             .nonOpaque()
             .solidBlock(Blocks::never)
     );
@@ -267,15 +308,39 @@ public class BwtBlocks implements ModInitializer {
     public static final Block myceliumSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.MYCELIUM), Blocks.MYCELIUM);
     public static final Block podzolSlabBlock = new MyceliumSlabBlock(AbstractBlock.Settings.copy(Blocks.PODZOL), Blocks.PODZOL);
 
+    public static final Block netherGroth = new NetherGrothBlock(AbstractBlock.Settings.create()
+                    .mapColor(MapColor.DARK_RED)
+                    .solidBlock(Blocks::never)
+                    .ticksRandomly()
+                    .strength(0.2f)
+                    .velocityMultiplier(0.4F)
+                    .sounds(BlockSoundGroup.FUNGUS)
+                    .pistonBehavior(PistonBehavior.DESTROY)
+                    .velocityMultiplier(0.8f)
+    );
+
+    public static final Block grothedNetherrackBlock = new GrothedNetherrackBlock(AbstractBlock.Settings.create()
+                    .mapColor(MapColor.DARK_RED)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresTool()
+                    .strength(0.4F)
+                    .sounds(BlockSoundGroup.NETHERRACK)
+    );
+
     @Override
     public void onInitialize() {
-        // Axle
+        // Axles
         Registry.register(Registries.BLOCK, Id.of("axle"), axleBlock);
         Registry.register(Registries.ITEM, Id.of("axle"), new BlockItem(axleBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("axle_power_source"), axlePowerSourceBlock);
+        Registry.register(Registries.BLOCK, Id.of("creative_power_source"), creativePowerSouceBlock);
+        Registry.register(Registries.ITEM, Id.of("creative_power_source"), new BlockItem(creativePowerSouceBlock, new Item.Settings()));
         // Gearbox
         Registry.register(Registries.BLOCK, Id.of("gear_box"), gearBoxBlock);
         Registry.register(Registries.ITEM, Id.of("gear_box"), new BlockItem(gearBoxBlock, new Item.Settings()));
+        // Redstone Clutch
+        Registry.register(Registries.BLOCK, Id.of("redstone_clutch"), redstoneClutchBlock);
+        Registry.register(Registries.ITEM, Id.of("redstone_clutch"), new BlockItem(redstoneClutchBlock, new Item.Settings()));
         // Hibachi
         Registry.register(Registries.BLOCK, Id.of("hibachi"), hibachiBlock);
         Registry.register(Registries.ITEM, Id.of("hibachi"), new BlockItem(hibachiBlock, new Item.Settings()));
@@ -350,6 +415,10 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("bellows"), bellowsBlock);
         Registry.register(Registries.ITEM, Id.of("bellows"), new BlockItem(bellowsBlock, new Item.Settings()));
         // Unfired Pottery
+        Registry.register(Registries.BLOCK, Id.of("unfired_decorated_pot_with_sherds"), unfiredDecoratedPotBlockWithSherds);
+        Registry.register(Registries.ITEM, Id.of("unfired_decorated_pot_with_sherds"), new BlockItem(unfiredDecoratedPotBlockWithSherds, new Item.Settings().component(DataComponentTypes.POT_DECORATIONS, Sherds.DEFAULT)));
+        Registry.register(Registries.BLOCK, Id.of("unfired_decorated_pot"), unfiredDecoratedPotBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_decorated_pot"), new BlockItem(unfiredDecoratedPotBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_crucible"), unfiredCrucibleBlock);
         Registry.register(Registries.ITEM, Id.of("unfired_crucible"), new BlockItem(unfiredCrucibleBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_planter"), unfiredPlanterBlock);
@@ -358,8 +427,8 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.ITEM, Id.of("unfired_vase"), new BlockItem(unfiredVaseBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("unfired_urn"), unfiredUrnBlock);
         Registry.register(Registries.ITEM, Id.of("unfired_urn"), new BlockItem(unfiredUrnBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("unfired_mould"), unfiredMouldBlock);
-        Registry.register(Registries.ITEM, Id.of("unfired_mould"), new BlockItem(unfiredMouldBlock, new Item.Settings()));
+        Registry.register(Registries.BLOCK, Id.of("unfired_flower_pot"), unfiredFlowerPotBlock);
+        Registry.register(Registries.ITEM, Id.of("unfired_flower_pot"), new BlockItem(unfiredFlowerPotBlock, new Item.Settings()));
         // Kiln
         Registry.register(Registries.BLOCK, Id.of("kiln"), kilnBlock);
         // Blood Wood
@@ -424,6 +493,7 @@ public class BwtBlocks implements ModInitializer {
         Registry.register(Registries.BLOCK, Id.of("lens"), lensBlock);
         Registry.register(Registries.ITEM, Id.of("lens"), new BlockItem(lensBlock, new Item.Settings()));
         Registry.register(Registries.BLOCK, Id.of("lens_beam"), lensBeamBlock);
+        Registry.register(Registries.BLOCK, Id.of("lens_beam_glass"), lensBeamGlassBlock);
         // Dirt Slab
         Registry.register(Registries.BLOCK, Id.of("dirt_slab"), dirtSlabBlock);
         Registry.register(Registries.ITEM, Id.of("dirt_slab"), new BlockItem(dirtSlabBlock, new Item.Settings()));
@@ -439,7 +509,20 @@ public class BwtBlocks implements ModInitializer {
         // Podzol Slab
         Registry.register(Registries.BLOCK, Id.of("podzol_slab"), podzolSlabBlock);
         Registry.register(Registries.ITEM, Id.of("podzol_slab"), new BlockItem(podzolSlabBlock, new Item.Settings()));
+        // Nether Groth
+        Registry.register(Registries.BLOCK, Id.of("nether_groth"), netherGroth);
+        Registry.register(Registries.ITEM, Id.of("nether_groth"), new BlockItem(netherGroth, new Item.Settings()));
+        // Grothed Netherrack
+        Registry.register(Registries.BLOCK, Id.of("grothed_netherrack"), grothedNetherrackBlock);
+        // Aqueduct
+        Registry.register(Registries.BLOCK, Id.of("aqueduct"), aqueductBlock);
+        Registry.register(Registries.ITEM, Id.of("aqueduct"), new BlockItem(aqueductBlock, new Item.Settings()));
+        // Screw pump
+        Registry.register(Registries.BLOCK, Id.of("screw_pump"), screwPumpBlock);
+        Registry.register(Registries.ITEM, Id.of("screw_pump"), new BlockItem(screwPumpBlock, new Item.Settings()));
+
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+            content.addAfter(Items.NETHER_WART, BwtBlocks.netherGroth);
             content.addAfter(Items.CHERRY_LOG, BwtBlocks.bloodWoodBlocks.logBlock);
             content.addAfter(Items.CHERRY_LEAVES, BwtBlocks.bloodWoodBlocks.leavesBlock);
             content.addAfter(Items.CHERRY_SAPLING, BwtBlocks.bloodWoodBlocks.saplingBlock);
@@ -457,7 +540,9 @@ public class BwtBlocks implements ModInitializer {
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE).register(content -> {
             content.add(axleBlock);
+            content.add(creativePowerSouceBlock);
             content.add(gearBoxBlock);
+            content.add(redstoneClutchBlock);
             content.add(hibachiBlock);
             content.add(lightBlockBlock);
             content.add(blockDispenserBlock);
@@ -479,6 +564,8 @@ public class BwtBlocks implements ModInitializer {
             content.add(crucibleBlock);
             content.add(soulForgeBlock);
             content.add(lensBlock);
+//            content.add(BwtBlocks.aqueductBlock);
+//            content.add(BwtBlocks.screwPumpBlock);
             content.addAfter(Items.TNT, miningChargeBlock);
         });
 
@@ -490,11 +577,12 @@ public class BwtBlocks implements ModInitializer {
             content.add(soulSandPlanterBlock);
             content.add(grassPlanterBlock);
             content.add(urnBlock);
+            content.add(unfiredDecoratedPotBlock);
             content.add(unfiredCrucibleBlock);
             content.add(unfiredPlanterBlock);
             content.add(unfiredVaseBlock);
             content.add(unfiredUrnBlock);
-            content.add(unfiredMouldBlock);
+            content.add(unfiredFlowerPotBlock);
             content.addAfter(Items.CRAFTING_TABLE, soulForgeBlock);
             content.addAfter(Items.SCAFFOLDING, BwtBlocks.vineTrapBlock);
         });

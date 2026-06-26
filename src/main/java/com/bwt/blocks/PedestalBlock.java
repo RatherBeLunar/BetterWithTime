@@ -1,6 +1,5 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ShapeContext;
@@ -34,8 +33,14 @@ public class PedestalBlock extends DecorativeBlock {
         setDefaultState(getDefaultState().with(VERTICAL_DIRECTION, Direction.UP));
     }
 
-    public static PedestalBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new PedestalBlock(Settings.copy(slabBlock), fullBlock);
+    public static PedestalBlock ofBlock(Block fullBlock) {
+        return new PedestalBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static PedestalBlock ofWoodBlock(Block woodBlock) {
+        PedestalBlock pedestalBlock = ofBlock(woodBlock);
+        pedestalBlock.isWood = true;
+        return pedestalBlock;
     }
 
     @Override

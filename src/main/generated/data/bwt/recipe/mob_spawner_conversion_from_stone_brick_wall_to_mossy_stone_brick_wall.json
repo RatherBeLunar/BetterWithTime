@@ -1,0 +1,8 @@
+{
+  "type": "bwt:mob_spawner_conversion",
+  "category": "misc",
+  "ingredient": {
+    "block": "minecraft:stone_brick_wall"
+  },
+  "result": "minecraft:mossy_stone_brick_wall"
+}

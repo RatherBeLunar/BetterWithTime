@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:light_blue_dye_from_milling_blue_orchid"
+        "recipe": "bwt:light_blue_dye_from_milling_blue_orchid"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:light_blue_dye_from_milling_blue_orchid"
+      "bwt:light_blue_dye_from_milling_blue_orchid"
     ]
   }
 }

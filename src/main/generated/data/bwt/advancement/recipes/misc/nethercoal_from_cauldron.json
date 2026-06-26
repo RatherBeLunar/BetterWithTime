@@ -23,7 +23,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:nethercoal_from_cauldron"
+        "recipe": "bwt:nethercoal_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:nethercoal_from_cauldron"
+      "bwt:nethercoal_from_cauldron"
     ]
   }
 }

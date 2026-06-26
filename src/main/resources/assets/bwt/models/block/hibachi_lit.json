@@ -1,0 +1,9 @@
+{
+  "parent": "block/cube_bottom_top",
+  "textures": {
+    "particle": "bwt:block/hibachi_lit_top",
+    "side": "bwt:block/hibachi_lit_side",
+    "bottom": "bwt:block/hibachi_bottom",
+    "top": "bwt:block/hibachi_lit_top"
+  }
+}

@@ -1,12 +1,16 @@
 package com.bwt.blocks.block_dispenser;
 
+import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.behavior.dispense.*;
 import com.bwt.blocks.block_dispenser.behavior.inhale.BlockInhaleBehavior;
 import com.bwt.blocks.block_dispenser.behavior.inhale.EntityInhaleBehavior;
+import com.bwt.blocks.block_dispenser.behavior.inhale.VoidInhaleBehavior;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
+import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.MiningChargeEntity;
 import com.bwt.items.BwtItems;
+import com.bwt.mixin.accessors.DecoratedPotPatternsAccessorMixin;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipeInput;
 import com.bwt.recipes.BwtRecipes;
@@ -15,9 +19,7 @@ import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtEntityTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.DispenserBlock;
+import net.minecraft.block.*;
 import net.minecraft.block.dispenser.DispenserBehavior;
 import net.minecraft.block.dispenser.ItemDispenserBehavior;
 import net.minecraft.block.dispenser.ProjectileDispenserBehavior;
@@ -30,7 +32,6 @@ import net.minecraft.item.*;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
@@ -43,6 +44,7 @@ import net.minecraft.world.event.GameEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -147,6 +149,62 @@ public class BlockDispenserBlock extends DispenserBlock {
         };
         registerBlockDispenseBehavior(MiningChargeBlock.class, invertStackResult(miningChargeBehavior));
         DispenserBlock.registerBehavior(BwtBlocks.miningChargeBlock, miningChargeBehavior);
+
+        registerBlockDispenseBehavior(ObserverBlock.class, new BlockDispenserBehavior() {
+            @Override
+            protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+                ItemStack result = super.dispenseSilently(pointer, stack);
+                if (isSuccess()) {
+                    Direction direction = pointer.state().get(DispenserBlock.FACING);
+                    BlockPos blockPos = pointer.pos().offset(direction);
+                    pointer.world().replaceWithStateForNeighborUpdate(
+                            direction.getOpposite(),
+                            pointer.state(),
+                            blockPos,
+                            pointer.pos(),
+                            Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS),
+                            511
+                    );
+                }
+                return result;
+            }
+        });
+
+        registerSherdBehaviors();
+    }
+
+    private void registerSherdBehaviors() {
+        ItemDispenserBehavior sherdBehavior = new ItemDispenserBehavior() {
+            @Override
+            protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+                ServerWorld world = pointer.world();
+                Direction direction = pointer.state().get(DispenserBlock.FACING);
+                BlockPos blockPos = pointer.pos().offset(direction);
+                BlockState blockState = world.getBlockState(blockPos);
+                if (!blockState.isOf(BwtBlocks.unfiredDecoratedPotBlock) && !blockState.isOf(BwtBlocks.unfiredDecoratedPotBlockWithSherds)) {
+                    return super.dispenseSilently(pointer, stack);
+                }
+                if (blockState.isOf(BwtBlocks.unfiredDecoratedPotBlock)) {
+                    blockState = BwtBlocks.unfiredDecoratedPotBlockWithSherds.getDefaultState();
+                    world.setBlockState(blockPos, blockState, Block.NOTIFY_LISTENERS, 0);
+                }
+                Direction side = direction.getOpposite();
+                if (side.getAxis().isVertical()) {
+                    return stack;
+                }
+                BlockEntity blockEntity = world.getBlockEntity(blockPos);
+                if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
+                    return stack;
+                }
+                if (!world.isClient && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+                    stack.decrement(1);
+                }
+                return stack;
+            }
+        };
+        ArrayList<Item> sherds = new ArrayList<>(DecoratedPotPatternsAccessorMixin.getSHERD_TO_PATTERN().keySet());
+        sherds.forEach(sherd -> DispenserBlock.registerBehavior(sherd, sherdBehavior));
+        inheritItemBehavior(sherds.toArray(Item[]::new));
     }
 
     public static void registerEntityInhaleBehavior(EntityType<?> entityType, EntityInhaleBehavior behavior) {
@@ -197,7 +255,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        if (isReceivingPower(world, pos)) {
+        if (isReceivingPower(world, pos, state.get(FACING))) {
             world.scheduleBlockTick(pos, this, tickRate);
         }
     }
@@ -213,7 +271,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (world.isClient) {
             return;
         }
-        if (state.get(TRIGGERED) != isReceivingPower(world, pos)) {
+        if (state.get(TRIGGERED) != isReceivingPower(world, pos, state.get(FACING))) {
             world.scheduleBlockTick(pos, this, tickRate);
         }
     }
@@ -221,24 +279,19 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     protected ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult hit) {
         if (world.isClient) return ActionResult.SUCCESS;
-        //This will call the createScreenHandlerFactory method from BlockWithEntity, which will return our blockEntity casted to
-        //a namedScreenHandlerFactory. If your block class does not extend BlockWithEntity, it needs to implement createScreenHandlerFactory.
-        NamedScreenHandlerFactory screenHandlerFactory = blockState.createScreenHandlerFactory(world, blockPos);
-
-        if (screenHandlerFactory != null) {
-            player.openHandledScreen(screenHandlerFactory);
-        }
-
+        world.getBlockEntity(blockPos, BwtBlockEntities.blockDispenserBlockEntity).ifPresent(player::openHandledScreen);
         return ActionResult.CONSUME;
     }
 
-    public boolean isReceivingPower(World world, BlockPos pos) {
-        return world.getReceivedStrongRedstonePower(pos) > 0 || world.getReceivedStrongRedstonePower(pos.up()) > 0;
+    public boolean isReceivingPower(World world, BlockPos pos, Direction facing) {
+        return Arrays.stream(Direction.values())
+                .filter(direction -> direction != facing)
+                .anyMatch(direction -> world.isEmittingRedstonePower(pos.offset(direction), direction));
     }
 
     @Override
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        boolean powered = isReceivingPower(world, pos);
+        boolean powered = isReceivingPower(world, pos, state.get(FACING));
         if (powered) {
             world.setBlockState(pos, state.with(TRIGGERED, true));
             dispenseBlockOrItem(world, state, pos);
@@ -363,6 +416,9 @@ public class BlockDispenserBlock extends DispenserBlock {
         if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_NOOP)) {
             return BlockInhaleBehavior.NOOP;
         }
+        if (targetState.isIn(BwtBlockTags.BLOCK_DISPENSER_INHALE_VOID)) {
+            return BlockInhaleBehavior.VOID;
+        }
         return BLOCK_INHALE_BEHAVIORS.entrySet().stream()
                 .filter(entry -> entry.getKey().isInstance(targetState.getBlock()))
                 .findAny()
@@ -373,5 +429,10 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.with(FACING, mirror.apply(state.get(FACING)));
     }
 }

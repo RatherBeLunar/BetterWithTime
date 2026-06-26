@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:gray_wool_from_cauldron_dyeing_with_gray_dye"
+        "recipe": "bwt:gray_wool_from_cauldron_dyeing_with_gray_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:gray_wool_from_cauldron_dyeing_with_gray_dye"
+      "bwt:gray_wool_from_cauldron_dyeing_with_gray_dye"
     ]
   }
 }

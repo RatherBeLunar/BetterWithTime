@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:fried_egg_from_campfire_cooking"
+        "recipe": "bwt:fried_egg_from_campfire_cooking"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:fried_egg_from_campfire_cooking"
+      "bwt:fried_egg_from_campfire_cooking"
     ]
   }
 }

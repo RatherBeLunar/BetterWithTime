@@ -63,7 +63,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:blood_wood_sapling_from_cauldron"
+        "recipe": "bwt:blood_wood_sapling_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -92,7 +92,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:blood_wood_sapling_from_cauldron"
+      "bwt:blood_wood_sapling_from_cauldron"
     ]
   }
 }

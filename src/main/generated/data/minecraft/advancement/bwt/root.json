@@ -1,6 +1,6 @@
 {
   "criteria": {
-    "activeImmediately": {
+    "active_immediately": {
       "trigger": "minecraft:tick"
     }
   },
@@ -17,7 +17,7 @@
   },
   "requirements": [
     [
-      "activeImmediately"
+      "active_immediately"
     ]
   ],
   "sends_telemetry_event": true

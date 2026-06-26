@@ -1,20 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
+  "group": "gear_box",
   "key": {
     "g": {
       "item": "bwt:gear"
     },
     "p": {
       "tag": "minecraft:planks"
-    },
-    "r": {
-      "item": "minecraft:redstone"
     }
   },
   "pattern": [
     "pgp",
-    "grg",
+    "g g",
     "pgp"
   ],
   "result": {

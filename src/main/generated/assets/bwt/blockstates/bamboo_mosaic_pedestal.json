@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "vertical_direction=down": {
+      "model": "bwt:block/bamboo_mosaic_pedestal",
+      "uvlock": true,
+      "x": 180
+    },
+    "vertical_direction=up": {
+      "model": "bwt:block/bamboo_mosaic_pedestal",
+      "uvlock": true
+    }
+  }
+}

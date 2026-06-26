@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "lit=false": { "model": "bwt:block/light_block" },
+    "lit=true": { "model": "bwt:block/light_block_lit" }
+  }
+}

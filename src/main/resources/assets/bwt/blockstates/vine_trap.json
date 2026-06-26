@@ -1,0 +1,42 @@
+{
+  "variants": {
+    "half=bottom": [
+      {
+        "model": "bwt:block/vine_trap"
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "y": 90
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "y": 270
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "y": 180
+      }
+    ],
+    "half=top": [
+      {
+        "model": "bwt:block/vine_trap",
+        "x": 180
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "x": 180,
+        "y": 90
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "x": 180,
+        "y": 270
+      },
+      {
+        "model": "bwt:block/vine_trap",
+        "x": 180,
+        "y": 180
+      }
+    ]
+  }
+}

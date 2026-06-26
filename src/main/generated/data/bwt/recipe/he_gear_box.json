@@ -1,12 +1,10 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
+  "group": "gear_box",
   "key": {
     "g": {
       "item": "bwt:gear"
-    },
-    "r": {
-      "item": "minecraft:redstone"
     },
     "s": {
       "tag": "bwt:wooden_siding_blocks"
@@ -14,7 +12,7 @@
   },
   "pattern": [
     "sgs",
-    "grg",
+    "g g",
     "sgs"
   ],
   "result": {

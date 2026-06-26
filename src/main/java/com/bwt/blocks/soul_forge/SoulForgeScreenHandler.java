@@ -15,7 +15,6 @@ import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.slot.CraftingResultSlot;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
@@ -78,13 +77,13 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
         CraftingRecipeInput craftingRecipeInput = craftingInventory.createRecipeInput();
         ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity)player;
         ItemStack itemStack = ItemStack.EMPTY;
-        Optional<RecipeEntry<CraftingRecipe>> optional = OrderedRecipeMatcher.getFirstRecipeOfMultipleTypes(
+        Optional<? extends RecipeEntry<? extends CraftingRecipe>> optional = OrderedRecipeMatcher.getFirstRecipeOfMultipleTypes(
                 world,
                 craftingRecipeInput,
                 List.of(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, RecipeType.CRAFTING)
         );
         if (optional.isPresent()) {
-            RecipeEntry<CraftingRecipe> recipeEntry = optional.get();
+            RecipeEntry<? extends CraftingRecipe> recipeEntry = optional.get();
             CraftingRecipe craftingRecipe = recipeEntry.value();
             if (resultInventory.shouldCraftRecipe(world, serverPlayerEntity, recipeEntry)) {
                 ItemStack itemStack2 = craftingRecipe.craft(craftingRecipeInput, world.getRegistryManager());
@@ -148,27 +147,35 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
     public ItemStack quickMove(PlayerEntity player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot2 = this.slots.get(slot);
+        // Vanilla decompiled code has these as magic numbers.
+        // I find it easier to parse these when they're overly verbose.
+        int craftingResultIndex = 0;
+        int craftingGridStart = 1;
+        int craftingGridEnd = HEIGHT * WIDTH; // 4x4 grid = 1-16 inclusive
+        int playerInventoryStart = craftingGridEnd + 1; // 17
+        int playerHotbarStart = playerInventoryStart + (9 * 3); // = 44 = 17 + 27, which the size of the non-hotbar inventory
+        int playerInventoryEnd = playerHotbarStart + 9; // = 53 = 44 + 9, the size of the hotbar
         if (slot2.hasStack()) {
             ItemStack itemStack2 = slot2.getStack();
             itemStack = itemStack2.copy();
-            if (slot == 0) {
+            if (slot == craftingResultIndex) {
                 this.context.run((world, pos) -> itemStack2.getItem().onCraftByPlayer(itemStack2, world, player));
-                if (!this.insertItem(itemStack2, 10, 46, true)) {
+                if (!this.insertItem(itemStack2, playerInventoryStart, playerInventoryEnd, true)) {
                     return ItemStack.EMPTY;
                 }
 
                 slot2.onQuickTransfer(itemStack2, itemStack);
-            } else if (slot >= 17 && slot < 53) {
-                if (!this.insertItem(itemStack2, 1, 17, false)) {
-                    if (slot < 44) {
-                        if (!this.insertItem(itemStack2, 44, 53, false)) {
+            } else if (slot >= playerInventoryStart && slot < playerInventoryEnd) {
+                if (!this.insertItem(itemStack2, craftingGridStart, playerInventoryStart, false)) {
+                    if (slot < playerHotbarStart) {
+                        if (!this.insertItem(itemStack2, playerHotbarStart, playerInventoryEnd, false)) {
                             return ItemStack.EMPTY;
                         }
-                    } else if (!this.insertItem(itemStack2, 17, 44, false)) {
+                    } else if (!this.insertItem(itemStack2, playerInventoryStart, playerHotbarStart, false)) {
                         return ItemStack.EMPTY;
                     }
                 }
-            } else if (!this.insertItem(itemStack2, 17, 53, false)) {
+            } else if (!this.insertItem(itemStack2, playerInventoryStart, playerInventoryEnd, false)) {
                 return ItemStack.EMPTY;
             }
 
@@ -183,7 +190,7 @@ public class SoulForgeScreenHandler extends AbstractRecipeScreenHandler<Crafting
             }
 
             slot2.onTakeItem(player, itemStack2);
-            if (slot == 0) {
+            if (slot == craftingResultIndex) {
                 player.dropItem(itemStack2, false);
             }
         }

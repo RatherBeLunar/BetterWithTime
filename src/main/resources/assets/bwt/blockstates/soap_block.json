@@ -1,0 +1,33 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "bwt:block/soap_block",
+      "x": 90,
+      "uvlock": true
+    },
+    "facing=east": {
+      "model": "bwt:block/soap_block",
+      "y": 90,
+      "uvlock": true
+    },
+    "facing=north": {
+      "model": "bwt:block/soap_block",
+      "uvlock": true
+    },
+    "facing=south": {
+      "model": "bwt:block/soap_block",
+      "y": 180,
+      "uvlock": true
+    },
+    "facing=up": {
+      "model": "bwt:block/soap_block",
+      "x": 270,
+      "uvlock": true
+    },
+    "facing=west": {
+      "model": "bwt:block/soap_block",
+      "y": 270,
+      "uvlock": true
+    }
+  }
+}

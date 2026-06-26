@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 4,
+      "id": "bwt:blood_wood_planks"
+    },
+    {
+      "count": 2,
+      "id": "bwt:soul_dust"
+    }
+  ],
+  "ingredient": {
+    "block": "bwt:blood_wood_wood"
+  }
+}

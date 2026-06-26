@@ -1,0 +1,17 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "corners",
+  "key": {
+    "X": {
+      "item": "bwt:cobblestone_moulding"
+    }
+  },
+  "pattern": [
+    "XXXX"
+  ],
+  "result": {
+    "count": 8,
+    "id": "bwt:cobblestone_corner"
+  }
+}

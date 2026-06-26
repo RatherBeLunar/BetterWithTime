@@ -8,6 +8,7 @@ import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
 import com.bwt.blocks.mill_stone.MillStoneBlockEntity;
 import com.bwt.blocks.pulley.PulleyBlockEntity;
 import com.bwt.blocks.turntable.TurntableBlockEntity;
+import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.entity.BlockEntityType;
@@ -50,6 +51,11 @@ public class BwtBlockEntities implements ModInitializer {
             Registries.BLOCK_ENTITY_TYPE,
             Id.of("turntable_block_entity"),
             BlockEntityType.Builder.create(TurntableBlockEntity::new, BwtBlocks.turntableBlock).build()
+    );
+    public static final BlockEntityType<UnfiredDecoratedPotBlockEntity> unfiredDecoratedPotBlockEntity = Registry.register(
+            Registries.BLOCK_ENTITY_TYPE,
+            Id.of("unfired_decorated_pot_block_entity"),
+            BlockEntityType.Builder.create(UnfiredDecoratedPotBlockEntity::new, BwtBlocks.unfiredDecoratedPotBlockWithSherds).build()
     );
 
     @Override

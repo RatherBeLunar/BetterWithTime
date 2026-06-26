@@ -3,21 +3,29 @@ package com.bwt.items;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
+import com.bwt.entities.CanvasEntity;
+import com.bwt.tags.BwtPaintingVariantTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.LockableItemSettings;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.FoodComponent;
 import net.minecraft.component.type.FoodComponents;
+import net.minecraft.component.type.NbtComponent;
+import net.minecraft.entity.decoration.painting.PaintingVariant;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.registry.*;
+import net.minecraft.registry.entry.RegistryEntry;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class BwtItems implements ModInitializer {
     public static final Item cementBucketItem = Registry.register(Registries.ITEM, Id.of("cement_bucket"), new CementBucketItem(new Item.Settings()));
@@ -27,7 +35,7 @@ public class BwtItems implements ModInitializer {
 	public static final Item broadheadItem = Registry.register(Registries.ITEM, Id.of("broadhead"), new Item(new Item.Settings()));
 	public static final Item broadheadArrowItem = Registry.register(Registries.ITEM, Id.of("broadhead_arrow"), new BroadheadArrowItem(new Item.Settings()));
 //	public static final Item candleItem = Registry.register(Registries.ITEM, Id.of("candle"), new CandleItem(new Item.Settings()));
-	public static final Item canvasItem = Registry.register(Registries.ITEM, Id.of("canvas"), new Item(new Item.Settings()));
+	public static final Item canvasItem = Registry.register(Registries.ITEM, Id.of("canvas"), new CanvasItem(new Item.Settings()));
 	public static final Item coalDustItem = Registry.register(Registries.ITEM, Id.of("coal_dust"), new Item(new Item.Settings()));
 	public static final Item compositeBowItem = Registry.register(Registries.ITEM, Id.of("composite_bow"), new CompositeBowItem(new Item.Settings().maxDamage(576)));
 	public static final Item concentratedHellfireItem = Registry.register(Registries.ITEM, Id.of("concentrated_hellfire"), new Item(new Item.Settings()));
@@ -66,9 +74,7 @@ public class BwtItems implements ModInitializer {
 	public static final Item hempItem = Registry.register(Registries.ITEM, Id.of("hemp"), new Item(new Item.Settings()));
 	public static final Item hempSeedsItem = Registry.register(Registries.ITEM, Id.of("hemp_seeds"), new HempSeedsItem(BwtBlocks.hempCropBlock, new Item.Settings()));
 	public static final Item kibbleItem = Registry.register(Registries.ITEM, Id.of("kibble"), new Item(new Item.Settings()));
-	public static final Item mouldItem = Registry.register(Registries.ITEM, Id.of("mould"), new Item(new Item.Settings()));
 //	public static final Item netherBrickItem = Registry.register(Registries.ITEM, Id.of("nether_brick"), new NetherBrickItem(new Item.Settings()));
-	public static final Item netherSludgeItem = Registry.register(Registries.ITEM, Id.of("nether_sludge"), new Item(new Item.Settings()));
 	public static final Item nethercoalItem = Registry.register(Registries.ITEM, Id.of("nethercoal"), new Item(new Item.Settings()));
 //	public static final Item nitreItem = Registry.register(Registries.ITEM, Id.of("nitre"), new NitreItem(new Item.Settings()));
 	public static final Item paddingItem = Registry.register(Registries.ITEM, Id.of("padding"), new Item(new Item.Settings()));
@@ -112,8 +118,8 @@ public class BwtItems implements ModInitializer {
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(content -> {
             content.addAfter(Items.NETHERITE_PICKAXE, BwtItems.netheriteMattockItem);
             content.addAfter(Items.NETHERITE_AXE, BwtItems.netheriteBattleAxeItem);
-            content.addAfter(Items.WATER_BUCKET, cementBucketItem);
-            content.add(breedingHarnessItem);
+//            content.addAfter(Items.WATER_BUCKET, cementBucketItem);
+//            content.add(breedingHarnessItem);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT).register(content -> {
             content.addAfter(Items.NETHERITE_AXE, BwtItems.netheriteBattleAxeItem);
@@ -161,8 +167,6 @@ public class BwtItems implements ModInitializer {
             content.add(armorPlateItem);
             content.add(dynamiteItem);
             content.add(glueItem);
-            content.add(mouldItem);
-            content.add(netherSludgeItem);
             content.add(paddingItem);
             content.add(screwItem);
             content.add(strapItem);
@@ -171,6 +175,31 @@ public class BwtItems implements ModInitializer {
             content.add(soapItem);
             content.add(tallowItem);
             content.add(woodBladeItem);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(content -> {
+            content.addAfter(Items.GLOW_ITEM_FRAME, canvasItem);
+            content.getContext().lookup()
+                    .getOptionalWrapper(RegistryKeys.PAINTING_VARIANT)
+                    .ifPresent(
+                            registryWrapper -> addCanvases(
+                                    content,
+                                    content.getContext().lookup(),
+                                    registryWrapper,
+                                    registryEntry -> registryEntry.isIn(BwtPaintingVariantTags.CANVAS_PLACEABLE)
+                            )
+                    );
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.OPERATOR).register(content -> {
+            content.getContext().lookup()
+                    .getOptionalWrapper(RegistryKeys.PAINTING_VARIANT)
+                    .ifPresent(
+                            registryWrapper -> addCanvases(
+                                    content,
+                                    content.getContext().lookup(),
+                                    registryWrapper,
+                                    registryEntry -> !registryEntry.isIn(BwtPaintingVariantTags.CANVAS_PLACEABLE)
+                            )
+                    );
         });
     }
 
@@ -186,5 +215,31 @@ public class BwtItems implements ModInitializer {
         }
 
         content.add(newItem);
+    }
+
+    private static void addCanvases(
+            FabricItemGroupEntries entries,
+            RegistryWrapper.WrapperLookup registryLookup,
+            RegistryWrapper.Impl<PaintingVariant> registryWrapper,
+            Predicate<RegistryEntry<PaintingVariant>> filter
+    ) {
+        RegistryOps<NbtElement> registryOps = registryLookup.getOps(NbtOps.INSTANCE);
+        registryWrapper.streamEntries()
+                .filter(filter)
+                .sorted(Comparator.comparing(
+                        RegistryEntry::value,
+                        Comparator.comparingInt(PaintingVariant::getArea).thenComparing(PaintingVariant::width)
+                ))
+                .forEach(
+                        canvasVariantEntry -> {
+                            NbtComponent nbtComponent = NbtComponent.DEFAULT
+                                    .with(registryOps, CanvasEntity.VARIANT_MAP_CODEC, canvasVariantEntry)
+                                    .getOrThrow()
+                                    .apply(nbt -> nbt.putString("id", "bwt:canvas"));
+                            ItemStack itemStack = new ItemStack(canvasItem);
+                            itemStack.set(DataComponentTypes.ENTITY_DATA, nbtComponent);
+                            entries.addAfter(canvasItem, itemStack);
+                        }
+                );
     }
 }

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "redstone_clutch",
+  "key": {
+    "g": {
+      "item": "bwt:gear"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    },
+    "s": {
+      "tag": "bwt:wooden_siding_blocks"
+    }
+  },
+  "pattern": [
+    "sgs",
+    "grg",
+    "sgs"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:redstone_clutch"
+  }
+}

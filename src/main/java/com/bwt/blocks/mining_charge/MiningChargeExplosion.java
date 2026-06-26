@@ -2,6 +2,7 @@ package com.bwt.blocks.mining_charge;
 
 import com.bwt.entities.BwtEntities;
 import com.bwt.entities.MiningChargeEntity;
+import com.bwt.utils.RadiusAroundBlockStream;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -77,17 +78,11 @@ public class MiningChargeExplosion extends Explosion {
             targetPos = BlockPos.ofFloored(getPosition());
         }
 
-
-        for (int i = -1; i <= 1; i++) {
-            for (int j = -1; j <= 1; j++) {
-                for (int k = -1; k <= 1; k++) {
-                    BlockPos tempPos = targetPos.add(i, j, k);
-                    if (canDestroyBlock(tempPos)) {
-                        getAffectedBlocks().add(tempPos);
-                    }
-                }
-            }
-        }
+        List<BlockPos> affectedBlocks = getAffectedBlocks();
+        RadiusAroundBlockStream
+                .allBlocksInRadius(targetPos, 1)
+                .filter(this::canDestroyBlock)
+                .forEach(affectedBlocks::add);
 
         // resolve the extra block of penetration towards our facing.
 

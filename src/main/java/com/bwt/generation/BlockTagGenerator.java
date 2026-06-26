@@ -6,9 +6,13 @@ import com.bwt.tags.CompatibilityTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.registry.tag.TagBuilder;
+import net.minecraft.registry.tag.TagKey;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
@@ -17,6 +21,10 @@ import java.util.stream.Stream;
 public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
     public BlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
         super(output, completableFuture);
+    }
+
+    public TagBuilder getTagBuilder(TagKey<Block> tag) {
+        return super.getTagBuilder(tag);
     }
 
     @Override
@@ -29,6 +37,8 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 BwtBlocks.detectorLogicBlock,
                 BwtBlocks.lensBeamBlock
         );
+        getOrCreateTagBuilder(BlockTags.IMPERMEABLE).add(BwtBlocks.lensBeamGlassBlock);
+        getOrCreateTagBuilder(ConventionalBlockTags.GLASS_BLOCKS).add(BwtBlocks.lensBeamGlassBlock);
         getOrCreateTagBuilder(BlockTags.CLIMBABLE).add(BwtBlocks.ropeBlock);
         getOrCreateTagBuilder(BlockTags.RAILS).add(BwtBlocks.stoneDetectorRailBlock, BwtBlocks.obsidianDetectorRailBlock);
         getOrCreateTagBuilder(BlockTags.PRESSURE_PLATES).add(BwtBlocks.obsidianPressurePlateBlock);
@@ -71,12 +81,29 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.SOUL_SAND)
                 .add(Blocks.MUD)
                 .add(Blocks.HONEY_BLOCK);
+        getOrCreateTagBuilder(BwtBlockTags.NETHER_GROTH_CAN_EAT)
+                .add(
+                        Blocks.RED_MUSHROOM,
+                        Blocks.BROWN_MUSHROOM,
+                        Blocks.CRIMSON_FUNGUS,
+                        Blocks.WARPED_FUNGUS,
+                        Blocks.WEEPING_VINES,
+                        Blocks.WEEPING_VINES_PLANT,
+                        Blocks.TWISTING_VINES,
+                        Blocks.TWISTING_VINES_PLANT,
+                        Blocks.CRIMSON_ROOTS,
+                        Blocks.WARPED_ROOTS,
+                        Blocks.NETHER_SPROUTS
+                );
         getOrCreateTagBuilder(BlockTags.INFINIBURN_OVERWORLD).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_NETHER).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.INFINIBURN_END).add(BwtBlocks.hibachiBlock);
         getOrCreateTagBuilder(BlockTags.FIRE).add(BwtBlocks.stokedFireBlock);
         getOrCreateTagBuilder(BlockTags.WOOL).add(BwtBlocks.companionCubeBlock);
         getOrCreateTagBuilder(BwtBlockTags.WOOL_SLABS).add(BwtBlocks.companionSlabBlock);
+
+        getOrCreateTagBuilder(BwtBlockTags.HEATS_COOKING_STATIONS).add(Blocks.FIRE);
+        getOrCreateTagBuilder(BwtBlockTags.STOKES_COOKING_STATIONS).add(BwtBlocks.stokedFireBlock);
 
         addTools();
         addMaterialInheritedBlockTags();
@@ -159,11 +186,13 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
 
         getOrCreateTagBuilder(BlockTags.SHOVEL_MINEABLE)
                 .add(BwtBlocks.dungBlock)
+                .add(BwtBlocks.unfiredDecoratedPotBlock)
+                .add(BwtBlocks.unfiredDecoratedPotBlockWithSherds)
                 .add(BwtBlocks.unfiredCrucibleBlock)
                 .add(BwtBlocks.unfiredPlanterBlock)
                 .add(BwtBlocks.unfiredVaseBlock)
                 .add(BwtBlocks.unfiredUrnBlock)
-                .add(BwtBlocks.unfiredMouldBlock)
+                .add(BwtBlocks.unfiredFlowerPotBlock)
                 .add(BwtBlocks.dirtSlabBlock)
                 .add(BwtBlocks.dirtPathSlabBlock)
                 .add(BwtBlocks.grassSlabBlock)
@@ -188,6 +217,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.bloodWoodBlocks.doorBlock)
                 .add(BwtBlocks.bloodWoodBlocks.trapdoorBlock)
                 .add(BwtBlocks.gearBoxBlock)
+                .add(BwtBlocks.redstoneClutchBlock)
                 .add(BwtBlocks.grateBlock)
                 .add(BwtBlocks.hopperBlock)
                 .add(BwtBlocks.platformBlock)
@@ -197,7 +227,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.sawBlock)
                 .add(BwtBlocks.slatsBlock)
                 .add(BwtBlocks.soapBlock)
-//                .add(BwtBlocks.screwPumpBlock)
+                .add(BwtBlocks.screwPumpBlock)
 //                .add(BwtBlocks.tableBlock)
                 .add(BwtBlocks.wickerBlock)
                 .add(BwtBlocks.wickerSlabBlock)
@@ -349,6 +379,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.WHEAT)
                 .add(BwtBlocks.axleBlock)
                 .add(BwtBlocks.gearBoxBlock)
+                .add(BwtBlocks.redstoneClutchBlock)
                 .add(BwtBlocks.sawBlock)
                 .add(BwtBlocks.grateBlock)
                 .add(BwtBlocks.slatsBlock)

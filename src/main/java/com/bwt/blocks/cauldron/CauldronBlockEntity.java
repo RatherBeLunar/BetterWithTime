@@ -2,6 +2,7 @@ package com.bwt.blocks.cauldron;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
+import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotData;
 import com.bwt.recipes.BwtRecipes;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +17,6 @@ public class CauldronBlockEntity extends AbstractCookingPotBlockEntity {
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
-        return new CauldronScreenHandler(syncId, playerInventory, this.inventory, propertyDelegate);
+        return new CauldronScreenHandler(syncId, playerInventory, this.inventory, propertyDelegate, new AbstractCookingPotData(this.isStoked));
     }
 }

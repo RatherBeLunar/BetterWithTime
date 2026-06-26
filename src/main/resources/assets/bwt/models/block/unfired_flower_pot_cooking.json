@@ -1,0 +1,7 @@
+{
+  "parent": "bwt:block/unfired_flower_pot",
+  "textures": {
+    "particle": "bwt:block/cooking_clay",
+    "all": "bwt:block/cooking_clay"
+  }
+}

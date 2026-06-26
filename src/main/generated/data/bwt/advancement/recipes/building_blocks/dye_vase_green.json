@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:dye_vase_green"
+        "recipe": "bwt:dye_vase_green"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:dye_vase_green"
+      "bwt:dye_vase_green"
     ]
   }
 }

@@ -1,10 +1,8 @@
 package com.bwt.utils;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.*;
+import net.minecraft.recipe.input.CraftingRecipeInput;
 import net.minecraft.recipe.input.RecipeInput;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
@@ -17,14 +15,14 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public class OrderedRecipeMatcher {
-    public static <I extends RecipeInput, T extends Recipe<I>> Optional<RecipeEntry<T>> getFirstRecipeOfMultipleTypes(
+    public static Optional<? extends RecipeEntry<? extends CraftingRecipe>> getFirstRecipeOfMultipleTypes(
             World world,
-            I input,
-            List<RecipeType<T>> recipeTypes
+            CraftingRecipeInput input,
+            List<RecipeType<? extends CraftingRecipe>> recipeTypes
     ) {
         RecipeManager recipeManager = world.getRecipeManager();
-        for (RecipeType<T> recipeType: recipeTypes) {
-            Optional<RecipeEntry<T>> optionalResult = recipeManager.getFirstMatch(recipeType, input, world);
+        for (RecipeType<? extends CraftingRecipe> recipeType: recipeTypes) {
+            Optional<? extends RecipeEntry<? extends CraftingRecipe>> optionalResult = recipeManager.getFirstMatch(recipeType, input, world);
             if (optionalResult.isPresent()) {
                 return optionalResult;
             }
@@ -32,12 +30,12 @@ public class OrderedRecipeMatcher {
         return Optional.empty();
     }
 
-    public static <I extends RecipeInput, T extends Recipe<I>> DefaultedList<ItemStack> getRemainingStacks(
+    public static DefaultedList<ItemStack> getRemainingStacks(
             World world,
-            I input,
-            List<RecipeType<T>> recipeTypes
+            CraftingRecipeInput input,
+            List<RecipeType<? extends CraftingRecipe>> recipeTypes
     ) {
-        Optional<RecipeEntry<T>> optional = getFirstRecipeOfMultipleTypes(world, input, recipeTypes);
+        Optional<? extends RecipeEntry<? extends CraftingRecipe>> optional = getFirstRecipeOfMultipleTypes(world, input, recipeTypes);
         if (optional.isPresent()) {
             return optional.get().value().getRemainder(input);
         } else {

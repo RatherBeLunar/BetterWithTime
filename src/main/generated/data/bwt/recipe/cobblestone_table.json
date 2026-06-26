@@ -1,0 +1,22 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "table",
+  "key": {
+    "m": {
+      "item": "bwt:cobblestone_moulding"
+    },
+    "s": {
+      "item": "bwt:cobblestone_siding"
+    }
+  },
+  "pattern": [
+    "sss",
+    " m ",
+    " m "
+  ],
+  "result": {
+    "count": 4,
+    "id": "bwt:cobblestone_table"
+  }
+}

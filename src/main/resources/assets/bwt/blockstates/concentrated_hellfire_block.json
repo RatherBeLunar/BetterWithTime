@@ -1,0 +1,18 @@
+{
+  "variants": {
+    "": [
+      {
+        "model": "bwt:block/concentrated_hellfire_block_0"
+      },
+      {
+        "model": "bwt:block/concentrated_hellfire_block_1"
+      },
+      {
+        "model": "bwt:block/concentrated_hellfire_block_2"
+      },
+      {
+        "model": "bwt:block/concentrated_hellfire_block_3"
+      }
+    ]
+  }
+}

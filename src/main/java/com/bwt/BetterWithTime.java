@@ -2,6 +2,7 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotData;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.blocks.crucible.CrucibleScreenHandler;
@@ -21,7 +22,6 @@ import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.sounds.BwtSoundEvents;
-import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import com.bwt.utils.TrackedDataHandlers;
@@ -29,9 +29,14 @@ import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookingProgressPayload;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.loot.v3.LootTableEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -54,6 +59,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,8 +79,8 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
 	public static final TrackedDataHandlers dataHandlers = new TrackedDataHandlers();
 	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static ScreenHandlerType<CauldronScreenHandler> cauldronScreenHandler = new ScreenHandlerType<>(CauldronScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static ScreenHandlerType<CrucibleScreenHandler> crucibleScreenHandler = new ScreenHandlerType<>(CrucibleScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static ExtendedScreenHandlerType<CauldronScreenHandler, AbstractCookingPotData> cauldronScreenHandler = new ExtendedScreenHandlerType<>(CauldronScreenHandler::new, AbstractCookingPotData.PACKET_CODEC);
+	public static ExtendedScreenHandlerType<CrucibleScreenHandler, AbstractCookingPotData> crucibleScreenHandler = new ExtendedScreenHandlerType<>(CrucibleScreenHandler::new, AbstractCookingPotData.PACKET_CODEC);
 	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
 	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
@@ -119,6 +125,7 @@ public class BetterWithTime implements ModInitializer {
 		FuelRegistry.INSTANCE.add(BwtBlocks.bellowsBlock, 450);
 //      FuelRegistry.INSTANCE.add(BwtBlocks.bloodWoodBlock)
 		FuelRegistry.INSTANCE.add(BwtBlocks.gearBoxBlock, 600);
+		FuelRegistry.INSTANCE.add(BwtBlocks.redstoneClutchBlock, 600);
 		FuelRegistry.INSTANCE.add(BwtBlocks.grateBlock, 300);
 		FuelRegistry.INSTANCE.add(BwtBlocks.hopperBlock, 300);
 		FuelRegistry.INSTANCE.add(BwtBlocks.platformBlock, 375);
@@ -130,6 +137,10 @@ public class BetterWithTime implements ModInitializer {
 		FuelRegistry.INSTANCE.add(BwtItems.gearItem, 18);
 		FuelRegistry.INSTANCE.add(BwtItems.sawDustItem, 150);
 		FuelRegistry.INSTANCE.add(BwtItems.soulDustItem, 150);
+
+        // Composting
+        CompostingChanceRegistry.INSTANCE.add(BwtItems.hempSeedsItem, 0.3F);
+        CompostingChanceRegistry.INSTANCE.add(BwtItems.hempItem, 0.5F);
 
 		// Block Dispenser Behaviors
 		BwtBlocks.blockDispenserBlock.registerItemDispenseBehaviors();
@@ -187,5 +198,12 @@ public class BetterWithTime implements ModInitializer {
 		);
 
 		PayloadTypeRegistry.playS2C().register(KilnBlockCookingProgressPayload.ID, KilnBlockCookingProgressPayload.CODEC);
+
+        ResourceManagerHelper.registerBuiltinResourcePack(
+                Id.PROGRAMMER_ART_PACK_ID,
+                FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
+                Text.literal("BWT Programmer Art"),
+                ResourcePackActivationType.NORMAL
+        );
 	}
 }

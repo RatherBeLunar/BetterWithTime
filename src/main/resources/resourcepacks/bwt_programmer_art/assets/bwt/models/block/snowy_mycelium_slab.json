@@ -1,0 +1,36 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "#snow",
+    "bottom": "minecraft:block/dirt",
+    "top": "minecraft:block/mycelium_top",
+    "side": "minecraft:block/grass_block_snow",
+    "snow": "block/snow"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 8, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#bottom", "cullface": "down" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#top"},
+        "north": { "uv": [ 0, 0, 16, 8 ], "texture": "#side", "cullface": "north" },
+        "south": { "uv": [ 0, 0, 16, 8 ], "texture": "#side", "cullface": "south" },
+        "west":  { "uv": [ 0, 0, 16, 8 ], "texture": "#side", "cullface": "west" },
+        "east":  { "uv": [ 0, 0, 16, 8 ], "texture": "#side", "cullface": "east" }
+      }
+    },
+
+    {   "from": [ 0, 8, 0 ],
+      "to": [ 16, 10, 16 ],
+      "faces": {
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#snow" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#snow" },
+        "north": { "uv": [ 0, 14, 16, 16 ], "texture": "#snow" },
+        "south": { "uv": [ 0, 14, 16, 16 ], "texture": "#snow" },
+        "west":  { "uv": [ 0, 14, 16, 16 ], "texture": "#snow" },
+        "east":  { "uv": [ 0, 14, 16, 16 ], "texture": "#snow" }
+      }
+    }
+  ]
+}

@@ -1,7 +1,9 @@
 package com.bwt.recipes.hopper_filter;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -170,6 +172,17 @@ public record HopperFilterRecipe(
             return new HopperFilterRecipe.JsonBuilder();
         }
 
+        protected boolean isDefaultRecipe;
+        public JsonBuilder markDefault() {
+            this.isDefaultRecipe = true;
+            return this;
+        }
+        public void addToDefaults(Identifier recipeId) {
+            if (this.isDefaultRecipe) {
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+            }
+        }
+
         public HopperFilterRecipe.JsonBuilder category(CraftingRecipeCategory category) {
             this.category = category;
             return this;
@@ -254,12 +267,18 @@ public record HopperFilterRecipe(
         public void offerTo(RecipeExporter exporter) {
             this.offerTo(
                     exporter,
-                    "bwt:filter_" + RecipeProvider.getItemPath(this.ingredient.getMatchingStacks()[0].getItem())
+                    Id.of("filter_" + RecipeProvider.getItemPath(this.ingredient.getMatchingStacks()[0].getItem()))
             );
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            addToDefaults(recipeId);
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
             HopperFilterRecipe hopperFilterRecipe = new HopperFilterRecipe(
                     Objects.requireNonNullElse(this.group, ""),

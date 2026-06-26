@@ -23,6 +23,7 @@ public interface BlockInhaleBehavior {
         @Override
         public void inhale(BlockPointer blockPointer) {}
     };
+    BlockInhaleBehavior VOID = new VoidInhaleBehavior();
 
     BlockInhaleBehavior DEFAULT = new DefaultBlockInhaleBehavior();
 
@@ -54,7 +55,6 @@ public interface BlockInhaleBehavior {
         BlockDispenserBlock.registerBlockInhaleBehavior(CropBlock.class, new CropInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(CocoaBlock.class, new CocoaBeanInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(AmethystClusterBlock.class, new AmethystInhaleBehavior());
-        BlockDispenserBlock.registerBlockInhaleBehavior(NetherPortalBlock.class, new VoidInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(DoorBlock.class, new DoubleTallBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(TallPlantBlock.class, new DoubleTallBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(BedBlock.class, new BedBlockInhaleBehavior());

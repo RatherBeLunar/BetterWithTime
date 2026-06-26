@@ -4,6 +4,7 @@
 		"particle": "minecraft:block/clay",
 		"side": "minecraft:block/clay",
 		"top": "minecraft:block/clay",
-		"bottom": "minecraft:block/clay"
+		"bottom": "minecraft:block/clay",
+		"inside": "minecraft:block/clay"
 	}
 }

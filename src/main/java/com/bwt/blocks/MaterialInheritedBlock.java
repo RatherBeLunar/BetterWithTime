@@ -14,9 +14,12 @@ import net.minecraft.util.Identifier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public abstract class MaterialInheritedBlock extends Block {
     public Block fullBlock;
+    public boolean isWood = false;
 
     public MaterialInheritedBlock(Settings settings, Block fullBlock) {
         super(settings);
@@ -24,7 +27,7 @@ public abstract class MaterialInheritedBlock extends Block {
     }
 
     public boolean isWood() {
-        return Registries.BLOCK.getId(fullBlock).getPath().contains("planks");
+        return isWood;
     }
 
     public static void registerMaterialBlocks(
@@ -35,17 +38,23 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<PedestalBlock> pedestalBlocks,
             ArrayList<TableBlock> tableBlocks
     ) {
-        WoodType.stream().forEach(woodType -> {
-            Block fullBlock = Registries.BLOCK.get(Id.mc(woodType.name() + "_planks"));
-            Block slabBlock = Registries.BLOCK.get(Id.mc(woodType.name() + "_slab"));
-            sidingBlocks.add(SidingBlock.ofBlock(fullBlock, slabBlock));
-            mouldingBlocks.add(MouldingBlock.ofBlock(fullBlock, slabBlock));
-            cornerBlocks.add(CornerBlock.ofBlock(fullBlock, slabBlock));
-            columnBlocks.add(ColumnBlock.ofBlock(fullBlock, slabBlock));
-            pedestalBlocks.add(PedestalBlock.ofBlock(fullBlock, slabBlock));
-            tableBlocks.add(TableBlock.ofBlock(fullBlock, slabBlock));
+        Stream.concat(
+            WoodType.stream()
+                    .map(woodType -> Registries.BLOCK.getOrEmpty(Id.mc(woodType.name() + "_planks")))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get),
+            Stream.of(Blocks.BAMBOO_MOSAIC)
+        )
+                .forEach(block -> {
+            sidingBlocks.add(SidingBlock.ofWoodBlock(block));
+            mouldingBlocks.add(MouldingBlock.ofWoodBlock(block));
+            cornerBlocks.add(CornerBlock.ofWoodBlock(block));
+            columnBlocks.add(ColumnBlock.ofWoodBlock(block));
+            pedestalBlocks.add(PedestalBlock.ofWoodBlock(block));
+            tableBlocks.add(TableBlock.ofWoodBlock(block));
         });
         List<BlockFamily> blockFamilies = List.of(
+                BlockFamilies.COBBLESTONE,
                 BlockFamilies.STONE,
                 BlockFamilies.STONE_BRICK,
                 BlockFamilies.MOSSY_STONE_BRICK,
@@ -66,15 +75,13 @@ public abstract class MaterialInheritedBlock extends Block {
                 BlockFamilies.END_STONE_BRICK,
                 BlockFamilies.PURPUR
         );
-        blockFamilies.forEach(blockFamily -> {
-            Block block = blockFamily.getBaseBlock();
-            Block slabBlock = blockFamily.getVariant(BlockFamily.Variant.SLAB);
-            sidingBlocks.add(SidingBlock.ofBlock(block, slabBlock));
-            mouldingBlocks.add(MouldingBlock.ofBlock(block, slabBlock));
-            cornerBlocks.add(CornerBlock.ofBlock(block, slabBlock));
-            columnBlocks.add(ColumnBlock.ofBlock(block, slabBlock));
-            pedestalBlocks.add(PedestalBlock.ofBlock(block, slabBlock));
-            tableBlocks.add(TableBlock.ofBlock(block, slabBlock));
+        blockFamilies.stream().map(BlockFamily::getBaseBlock).forEach(block -> {
+            sidingBlocks.add(SidingBlock.ofBlock(block));
+            mouldingBlocks.add(MouldingBlock.ofBlock(block));
+            cornerBlocks.add(CornerBlock.ofBlock(block));
+            columnBlocks.add(ColumnBlock.ofBlock(block));
+            pedestalBlocks.add(PedestalBlock.ofBlock(block));
+            tableBlocks.add(TableBlock.ofBlock(block));
         });
         for (int i = 0; i < sidingBlocks.size(); i++) {
             SidingBlock sidingBlock = sidingBlocks.get(i);

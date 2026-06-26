@@ -27,11 +27,11 @@ import java.util.stream.IntStream;
 public class BlockDispenserBlockEntity extends DispenserBlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, SidedInventory {
     public static final int INVENTORY_SIZE = 16;
     private static final int[] AVAILABLE_SLOTS = IntStream.range(0, INVENTORY_SIZE).toArray();
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY);
     private int selectedSlot;
 
     public BlockDispenserBlockEntity(BlockPos pos, BlockState state) {
         super(BwtBlockEntities.blockDispenserBlockEntity, pos, state);
+        setHeldStacks(DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY));
         selectedSlot = 0;
     }
 
@@ -63,7 +63,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
 
     @Override
     public DefaultedList<ItemStack> getItems() {
-        return inventory;
+        return getHeldStacks();
     }
 
     @Override
@@ -72,11 +72,11 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     }
 
     protected int findNextValidSlotIndex() {
-        int invSize = inventory.size();
+        int invSize = getHeldStacks().size();
         // Wrap around inventory, including a return to the selected slot
         for (int currentSlot = selectedSlot + 1; currentSlot <= invSize + selectedSlot; currentSlot++ )
         {
-            if (!inventory.get(currentSlot % invSize).isEmpty())
+            if (!getHeldStacks().get(currentSlot % invSize).isEmpty())
             {
                 return currentSlot % invSize;
             }
@@ -90,7 +90,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     }
 
     public ItemStack getCurrentItemToDispense() {
-        ItemStack itemStack = inventory.get(selectedSlot);
+        ItemStack itemStack = getHeldStacks().get(selectedSlot);
 
         if (!itemStack.isEmpty()) {
             return itemStack;
@@ -99,12 +99,12 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
         int newSlot = findNextValidSlotIndex();
         setSelectedSlot(newSlot);
 
-        return inventory.get(newSlot);
+        return getHeldStacks().get(newSlot);
     }
 
     public boolean hasRoomFor(ItemStack stack) {
         int count = stack.getCount();
-        for (ItemStack invStack : inventory) {
+        for (ItemStack invStack : getHeldStacks()) {
             if (invStack.isEmpty()) {
                 return true;
             }
@@ -124,10 +124,10 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return ItemStack.EMPTY;
         }
 
-        int invSize = inventory.size();
+        int invSize = getHeldStacks().size();
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ )
         {
-            ItemStack invStack = inventory.get(currentSlot);
+            ItemStack invStack = getHeldStacks().get(currentSlot);
             if (ItemStack.areItemsAndComponentsEqual(invStack, stack)) {
                 int space = invStack.getMaxCount() - invStack.getCount();
                 int inserted = Math.min(space, stack.getCount());
@@ -143,7 +143,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return stack;
         }
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ ) {
-            ItemStack invStack = inventory.get(currentSlot);
+            ItemStack invStack = getHeldStacks().get(currentSlot);
             if (invStack.isEmpty()) {
                 invStack = stack.copyAndEmpty();
                 setStack(currentSlot, invStack);
@@ -160,10 +160,10 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return ItemStack.EMPTY;
         }
 
-        int invSize = inventory.size();
+        int invSize = getHeldStacks().size();
         for (int currentSlot = selectedSlot; currentSlot < invSize + selectedSlot; currentSlot++ )
         {
-            ItemStack invStack = inventory.get(currentSlot % invSize);
+            ItemStack invStack = getHeldStacks().get(currentSlot % invSize);
             if (invStack.isEmpty()) {
                 continue;
             }
@@ -193,11 +193,6 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     }
 
     @Override
-    protected DefaultedList<ItemStack> getHeldStacks() {
-        return inventory;
-    }
-
-    @Override
     public Text getDisplayName() {
         return Text.translatable(getCachedState().getBlock().getTranslationKey());
     }
@@ -205,14 +200,14 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     @Override
     public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
         super.readNbt(nbt, lookup);
-        Inventories.readNbt(nbt, this.inventory, lookup);
+        Inventories.readNbt(nbt, this.getHeldStacks(), lookup);
         this.selectedSlot = nbt.getInt("nextSlotToDispense");
     }
 
     @Override
     public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
         super.writeNbt(nbt, lookup);
-        Inventories.writeNbt(nbt, this.inventory, lookup);
+        Inventories.writeNbt(nbt, this.getHeldStacks(), lookup);
         nbt.putInt("nextSlotToDispense", selectedSlot);
     }
 

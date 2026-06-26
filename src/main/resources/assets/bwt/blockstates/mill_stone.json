@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "bwt:block/mill_stone"}
+    "mech_powered=false": {
+      "model": "bwt:block/mill_stone"
+    },
+    "mech_powered=true": {
+      "model": "bwt:block/mill_stone_powered"
+    }
   }
 }

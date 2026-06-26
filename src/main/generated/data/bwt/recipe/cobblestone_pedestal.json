@@ -1,0 +1,22 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "group": "pedestal",
+  "key": {
+    "#": {
+      "item": "minecraft:cobblestone"
+    },
+    "s": {
+      "item": "bwt:cobblestone_siding"
+    }
+  },
+  "pattern": [
+    " s ",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 6,
+    "id": "bwt:cobblestone_pedestal"
+  }
+}

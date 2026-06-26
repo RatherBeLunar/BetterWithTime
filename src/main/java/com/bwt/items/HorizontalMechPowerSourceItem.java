@@ -1,6 +1,6 @@
 package com.bwt.items;
 
-import com.bwt.blocks.AxlePowerSourceBlock;
+import com.bwt.blocks.axles.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
 import net.minecraft.advancement.criterion.Criteria;

@@ -53,7 +53,7 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
     protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
         super.onStateReplaced(state, world, pos, newState, moved);
         if (!newState.isOf(this) || !newState.get(FACING).equals(state.get(FACING))) {
-            BwtBlocks.lensBeamBlock.killBeam(world, pos, state.get(FACING));
+            LensBeamHelper.killBeam(world, pos, state.get(FACING));
         }
     }
 
@@ -90,10 +90,10 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
                 setBlockState(world, pos, state.with(LIT, lightOn));
             }
             if (lightOn) {
-                BwtBlocks.lensBeamBlock.fireBeam(world, pos, state);
+                LensBeamHelper.fireBeam(world, pos, state);
             }
             else {
-                BwtBlocks.lensBeamBlock.killBeam(world, pos, facing);
+                LensBeamHelper.killBeam(world, pos, facing);
             }
         }
     }
@@ -114,7 +114,7 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
         }
         if (targetState.getLuminance() > minTriggerLightValue) {
             // only power the lens with a terminus lens beam if it is facing directly into it.
-            return !targetState.isOf(BwtBlocks.lensBeamBlock)
+            return !(targetState.getBlock() instanceof LensBeamBlock)
                     || targetState.get(LensBeamBlock.FACING_PROPERTIES.get(facing));
         }
 

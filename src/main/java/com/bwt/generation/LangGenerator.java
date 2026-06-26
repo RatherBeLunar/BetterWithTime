@@ -2,18 +2,15 @@ package com.bwt.generation;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.MaterialInheritedBlock;
-import com.bwt.blocks.soul_forge.SoulForgeBlock;
-import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
+import com.bwt.tags.BwtFluidTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
-import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.sound.SoundEvent;
@@ -34,9 +31,9 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitles(translationBuilder);
         addTagNames(translationBuilder);
         addEmiNames(translationBuilder);
+        addCanvasDetails(translationBuilder);
 
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
-        translationBuilder.add(BwtGameRules.VANILLA_HOPPERS_DISABLED.getTranslationKey(), "Disable Vanilla Hopper Transfer");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");
         translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey() + ".description", "Impacts performance!");
         translationBuilder.add("container.bwt.soul_forge", "Soul Forge");
@@ -46,13 +43,15 @@ public class LangGenerator extends FabricLanguageProvider {
         BwtBlocks.columnBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "column"));
         BwtBlocks.pedestalBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "pedestal"));
         BwtBlocks.tableBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "table"));
+        translationBuilder.add(BwtBlocks.aqueductBlock, "Aqueduct");
+        translationBuilder.add(BwtBlocks.creativePowerSouceBlock, "Creative Power Source");
+        translationBuilder.add(BwtBlocks.hopperBlock, "Mechanical Hopper");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.logBlock, "Blood Wood Log");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.strippedLogBlock, "Stripped Blood Wood Log");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.woodBlock, "Blood Wood");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.strippedWoodBlock, "Stripped Blood Wood");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.leavesBlock, "Blood Wood Leaves");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.saplingBlock, "Blood Wood Sapling");
-
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.planksBlock, "Blood Wood Planks");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.buttonBlock, "Blood Wood Button");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.fenceBlock, "Blood Wood Fence");
@@ -62,11 +61,13 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.stairsBlock, "Blood Wood Stairs");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.doorBlock, "Blood Wood Door");
         translationBuilder.add(BwtBlocks.bloodWoodBlocks.trapdoorBlock, "Blood Wood Trapdoor");
+        translationBuilder.add(BwtBlocks.unfiredDecoratedPotBlock, "Unfired Decorated Pot");
+        translationBuilder.add(BwtBlocks.unfiredDecoratedPotBlockWithSherds, "Unfired Decorated Pot");
         translationBuilder.add(BwtBlocks.unfiredCrucibleBlock, "Unfired Crucible");
         translationBuilder.add(BwtBlocks.unfiredPlanterBlock, "Unfired Planter");
         translationBuilder.add(BwtBlocks.unfiredVaseBlock, "Unfired Vase");
         translationBuilder.add(BwtBlocks.unfiredUrnBlock, "Unfired Urn");
-        translationBuilder.add(BwtBlocks.unfiredMouldBlock, "Unfired Mould");
+        translationBuilder.add(BwtBlocks.unfiredFlowerPotBlock, "Unfired Flower Pot");
         translationBuilder.add(BwtBlocks.wickerBlock, "Wicker Block");
         translationBuilder.add(BwtBlocks.wickerSlabBlock    , "Wicker Slab");
         translationBuilder.add(BwtBlocks.ropeCoilBlock, "Rope Block");
@@ -89,6 +90,9 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtBlocks.myceliumSlabBlock, "Mycelium Slab");
         translationBuilder.add(BwtBlocks.podzolSlabBlock, "Podzol Slab");
         translationBuilder.add(BwtBlocks.dirtPathSlabBlock, "Dirt Path Slab");
+        translationBuilder.add(BwtBlocks.netherGroth, "Nether Groth Spores");
+        translationBuilder.add(BwtBlocks.grothedNetherrackBlock, "Grothed Netherrack");
+        translationBuilder.add(BwtBlocks.redstoneClutchBlock, "Redstone Clutch");
         translationBuilder.add(BwtItems.rawEggItem, "Raw Egg");
         translationBuilder.add(BwtItems.friedEggItem, "Fried Egg");
         translationBuilder.add(BwtItems.poachedEggItem, "Poached Egg");
@@ -96,6 +100,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtItems.breedingHarnessItem, "Breeding Harness");
         translationBuilder.add(BwtItems.netheriteMattockItem, "Netherite Mattock");
         translationBuilder.add(BwtItems.netheriteBattleAxeItem, "Netherite Battle Axe");
+        translationBuilder.add(BwtItems.canvasItem, "Canvas");
 
         translationBuilder.add(BwtEntities.broadheadArrowEntity, "Broadhead Arrow");
         translationBuilder.add(BwtEntities.dynamiteEntity, "Dynamite");
@@ -104,6 +109,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(BwtEntities.rottedArrowEntity, "Rotted Arrow");
         translationBuilder.add(BwtEntities.waterWheelEntity, "Water Wheel");
         translationBuilder.add(BwtEntities.windmillEntity, "Windmill");
+        translationBuilder.add(BwtEntities.canvasEntity, "Canvas");
 
         // Load an existing language file.
         try {
@@ -112,6 +118,17 @@ public class LangGenerator extends FabricLanguageProvider {
         } catch (Exception e) {
             throw new RuntimeException("Failed to add existing language file!", e);
         }
+    }
+
+    protected void addCanvasDetails(TranslationBuilder translationBuilder) {
+        translationBuilder.add("canvas.random", "Random variant");
+        translationBuilder.add("canvas.dimensions", "%sx%s");
+        translationBuilder.add("canvas.bwt.wanderer.title", "Wanderer");
+        translationBuilder.add("canvas.bwt.wanderer.author", "Stohun");
+        translationBuilder.add("canvas.bwt.gifts.title", "Gifts");
+        translationBuilder.add("canvas.bwt.gifts.author", "Stohun");
+        translationBuilder.add("canvas.bwt.windmill.title", "Windmill");
+        translationBuilder.add("canvas.bwt.windmill.author", "Stohun");
     }
 
     protected void addTagNames(TranslationBuilder translationBuilder) {
@@ -139,6 +156,8 @@ public class LangGenerator extends FabricLanguageProvider {
         addTagName(BwtItemTags.SAW_DUSTS, "Saw Dusts", translationBuilder);
         addTagName(BwtItemTags.MINING_CHARGE_IMMUNE, "Mining Charge Immune", translationBuilder);
         addTagName(BwtItemTags.BLOOD_WOOD_LOGS, "Blood Wood Logs", translationBuilder);
+        addTagName(BwtItemTags.NETHER_GROTH_CAN_EAT, "Nether Groth Can Eat", translationBuilder);
+        addTagName(BwtFluidTags.AQUEDUCT_FLUIDS, "Aqueduct Fluids", translationBuilder);
     }
 
     protected void addEmiNames(TranslationBuilder translationBuilder) {
@@ -194,7 +213,7 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add(soundEvent.getId().withPrefixedPath("subtitles."), value);
     }
 
-    protected void addTagName(TagKey<Item> tagKey, String value, TranslationBuilder translationBuilder) {
+    protected void addTagName(TagKey<?> tagKey, String value, TranslationBuilder translationBuilder) {
         translationBuilder.add(tagKey, value);
     }
 

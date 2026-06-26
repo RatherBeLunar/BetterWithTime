@@ -73,7 +73,7 @@ public class StokedFireBlock extends AbstractFireBlock {
 
     @Override
     protected boolean isFlammable(BlockState state) {
-        return true;
+        return FlammableBlockRegistry.getDefaultInstance().get(state.getBlock()).getBurnChance() > 0;
     }
 
 
@@ -114,7 +114,7 @@ public class StokedFireBlock extends AbstractFireBlock {
     }
 
     private int getSpreadChance(BlockState state) {
-        if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED).booleanValue()) {
+        if (state.contains(Properties.WATERLOGGED) && state.get(Properties.WATERLOGGED)) {
             return 0;
         }
         return FlammableBlockRegistry.getInstance(Blocks.FIRE).get(state.getBlock()).getSpreadChance();

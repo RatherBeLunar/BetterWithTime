@@ -8,6 +8,7 @@ import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.DirectionProperty;
 import net.minecraft.state.property.Properties;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
@@ -33,8 +34,14 @@ public class SidingBlock extends MiniBlock {
         this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(WATERLOGGED, false));
     }
 
-    public static SidingBlock ofBlock(Block fullBlock, Block slabBlock) {
-        return new SidingBlock(Settings.copy(slabBlock), fullBlock);
+    public static SidingBlock ofBlock(Block fullBlock) {
+        return new SidingBlock(Settings.copy(fullBlock), fullBlock);
+    }
+
+    public static SidingBlock ofWoodBlock(Block woodBlock) {
+        SidingBlock sidingBlock = ofBlock(woodBlock);
+        sidingBlock.isWood = true;
+        return sidingBlock;
     }
 
     public MapCodec<? extends SidingBlock> getCodec() {
@@ -62,6 +69,11 @@ public class SidingBlock extends MiniBlock {
     @Override
     public BlockState rotate(BlockState state, BlockRotation rotation) {
         return state.with(FACING, rotation.rotate(state.get(FACING)));
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, BlockMirror mirror) {
+        return state.with(FACING, mirror.apply(state.get(FACING)));
     }
 
     public static boolean isHorizontal(BlockState state) {

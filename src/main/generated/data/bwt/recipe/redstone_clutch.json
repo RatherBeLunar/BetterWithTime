@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "redstone_clutch",
+  "key": {
+    "g": {
+      "item": "bwt:gear"
+    },
+    "p": {
+      "tag": "minecraft:planks"
+    },
+    "r": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "pgp",
+    "grg",
+    "pgp"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:redstone_clutch"
+  }
+}

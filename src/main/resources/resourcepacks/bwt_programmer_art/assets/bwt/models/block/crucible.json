@@ -1,0 +1,9 @@
+{
+	"parent": "bwt:block/cauldron",
+	"textures": {
+		"particle": "bwt:block/crucible_side",
+		"side": "bwt:block/crucible_side",
+		"top": "bwt:block/crucible_top",
+		"bottom": "bwt:block/crucible_bottom"
+	}
+}

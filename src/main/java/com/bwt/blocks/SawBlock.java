@@ -9,7 +9,6 @@ import com.bwt.recipes.saw.SawRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
-import com.bwt.utils.CustomItemScatterer;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.entity.Entity;
@@ -273,9 +272,6 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
 
         List<ItemStack> results = recipe.get().getResults();
-        if (targetState.getBlock() instanceof SlabBlock && targetState.get(SlabBlock.TYPE) == SlabType.DOUBLE) {
-            results.forEach(result -> result.setCount(result.getCount() * 2));
-        }
         BlockIngredient blockIngredient = recipe.get().getIngredient();
 
         // The companion slab is the only partial block that doesn't just get cut regardless of collision
@@ -297,11 +293,11 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             world.breakBlock(targetPos, false);
         }
 
-        if (targetState.contains(Properties.SLAB_TYPE) && targetState.get(Properties.SLAB_TYPE).equals(SlabType.DOUBLE)) {
-            results.forEach(stack -> stack.setCount(stack.getCount() * 2));
-        }
+        targetState.getOrEmpty(Properties.SLAB_TYPE).filter(property -> property.equals(SlabType.DOUBLE)).ifPresent((property) ->
+            results.forEach(stack -> stack.setCount(stack.getCount() * 2))
+        );
 
-        CustomItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
+        ItemScatterer.spawn(world, targetPos, DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
 
     public void breakSaw(World world, BlockPos pos) {

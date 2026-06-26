@@ -1,38 +1,77 @@
 package com.bwt.emi.recipehandlers;
 
-import com.bwt.blocks.cauldron.CauldronScreenHandler;
+import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotScreenHandler;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
+import dev.emi.emi.api.recipe.handler.EmiCraftContext;
 import dev.emi.emi.api.recipe.handler.StandardRecipeHandler;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
+import dev.emi.emi.api.stack.EmiIngredient;
 import net.minecraft.screen.slot.Slot;
 
 import java.util.List;
 
-public class EmiCookingPotRecipeHandler<T extends ScreenHandler> implements StandardRecipeHandler<T> {
+public class EmiCookingPotRecipeHandler<T extends AbstractCookingPotScreenHandler> implements StandardRecipeHandler<T> {
 
-    private final EmiRecipeCategory category;
-    private final int SIZE = 27;
-    public EmiCookingPotRecipeHandler(EmiRecipeCategory category) {
-        this.category = category;
+    private final List<EmiRecipeCategory> unstokedCategories;
+    private final List<EmiRecipeCategory> stokedCategories;
+
+    public EmiCookingPotRecipeHandler(EmiRecipeCategory unstokedCategory, EmiRecipeCategory... stokedCategories) {
+        this.unstokedCategories = List.of(unstokedCategory);
+        this.stokedCategories = List.of(stokedCategories);
     }
-
-    //FIXME if there are already items in the cooking pot and you use the + to fill the recipe, it crashes.
-    //Will require rewriting some of teh default methods in StandardRecipeHandler
 
     @Override
     public List<Slot> getInputSources(T handler) {
-        return handler.slots.stream().filter(slot -> slot.id >= SIZE).toList();
+        return handler.slots.stream().filter(slot -> slot.id >= AbstractCookingPotScreenHandler.SIZE).toList();
     }
 
     @Override
     public List<Slot> getCraftingSlots(T handler) {
-        return handler.slots.stream().filter(slot -> slot.id < SIZE).toList();
+        return handler.slots.stream().filter(slot -> slot.id < AbstractCookingPotScreenHandler.SIZE).filter(slot -> slot.getStack().isEmpty()).toList();
     }
 
     @Override
     public boolean supportsRecipe(EmiRecipe recipe) {
-        return recipe.getCategory().equals(this.category);
+        EmiRecipeCategory category = recipe.getCategory();
+        return this.unstokedCategories.contains(category) || this.stokedCategories.contains(category);
+    }
+
+    @Override
+    public boolean canCraft(EmiRecipe recipe, EmiCraftContext<T> context) {
+        EmiRecipeCategory category = recipe.getCategory();
+        boolean isStoked = context.getScreenHandler().isStoked();
+        if ((this.unstokedCategories.contains(category) && !isStoked)
+                || (this.stokedCategories.contains(category) && isStoked)) {
+            return canFit(context.getScreenHandler(), recipe.getInputs());
+        }
+        return false;
+    }
+
+    public boolean canFit(T handler, List<EmiIngredient> ingredients) {
+        return this.getCraftingSlots(handler).size() >= ingredients.size();
+//        List<Slot> slots = this.getCraftingSlots(handler);
+//        List<Slot> nonEmptySlots = slots.stream().filter(slot -> !slot.getStack().isEmpty()).toList();
+//        ArrayList<ItemStack> stacksToInsert = ingredients.stream()
+//                .map(EmiIngredient::copy)
+//                .flatMap(emiIngredient -> emiIngredient.getEmiStacks().stream())
+//                .map(EmiStack::getItemStack)
+//                .filter(itemStack -> !itemStack.isEmpty())
+//                .collect(Collectors.toCollection(ArrayList::new));
+//        for (Slot slot : nonEmptySlots) {
+//            ItemStack slotStack = slot.getStack();
+//            ItemVariant itemVariant = ItemVariant.of(slotStack);
+//            for (ItemStack stack : stacksToInsert) {
+//                if (itemVariant.matches(stack)) {
+//                    int spaceAvailable = slotStack.getMaxCount() - slotStack.getCount();
+//                    stack.setCount(stack.getCount() - spaceAvailable);
+//                }
+//            }
+//            stacksToInsert.removeIf(ItemStack::isEmpty);
+//            if (stacksToInsert.isEmpty()) {
+//                return true;
+//            }
+//        }
+//        List<Slot> emptySlots = slots.stream().filter(slot -> slot.getStack().isEmpty()).toList();
+//        return stacksToInsert.size() <= emptySlots.size();
     }
 }

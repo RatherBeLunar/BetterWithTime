@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:tallow_from_cauldron_rendering_mutton"
+        "recipe": "bwt:tallow_from_cauldron_rendering_mutton"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:tallow_from_cauldron_rendering_mutton"
+      "bwt:tallow_from_cauldron_rendering_mutton"
     ]
   }
 }

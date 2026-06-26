@@ -3,6 +3,7 @@ package com.bwt.recipes.cooking_pots;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.utils.Id;
 import net.minecraft.data.server.recipe.RecipeExporter;
 import net.minecraft.data.server.recipe.RecipeProvider;
 import net.minecraft.item.ItemStack;
@@ -39,7 +40,7 @@ public class StokedCrucibleRecipe extends AbstractCookingPotRecipe {
 
         @Override
         public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, "bwt:smelt_" + RecipeProvider.getItemPath(ingredients.get(0).getMatchingStacks().get(0).getItem()) + "_in_crucible");
+            this.offerTo(exporter, Id.of("smelt_" + RecipeProvider.getItemPath(ingredients.get(0).getMatchingStacks().get(0).getItem()) + "_in_crucible"));
         }
     }
 }

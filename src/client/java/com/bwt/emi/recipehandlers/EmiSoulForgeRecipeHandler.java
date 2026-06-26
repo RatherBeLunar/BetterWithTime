@@ -33,9 +33,19 @@ public class EmiSoulForgeRecipeHandler {
         public List<Slot> getCraftingSlots(SoulForgeScreenHandler handler) {
             return handler.slots.subList(1, 17);
         }
+
         @Override
         public boolean supportsRecipe(EmiRecipe recipe) {
-            return CATEGORIES.contains(recipe.getCategory()) && recipe.getInputs().size() > 9;
+            if (!CATEGORIES.contains(recipe.getCategory())) {
+                return false;
+            }
+            if (recipe instanceof EmiSoulForgeRecipe soulForgeRecipe) {
+                return soulForgeRecipe.canFit(4, 4) && !soulForgeRecipe.canFit(3, 3);
+            }
+            if (recipe instanceof EmiCraftingRecipe craftingRecipe) {
+                return craftingRecipe.canFit(4, 4) && !craftingRecipe.canFit(3, 3);
+            }
+            return recipe.getInputs().size() > 9;
         }
     }
 
@@ -47,7 +57,6 @@ public class EmiSoulForgeRecipeHandler {
 
         @Override
         public List<Slot> getInputSources(SoulForgeScreenHandler handler) {
-
             List<Slot> slots = new ArrayList<>();
             slots.addAll(handler.slots.subList(1, 4));
             slots.addAll(handler.slots.subList(5, 8));
@@ -66,7 +75,16 @@ public class EmiSoulForgeRecipeHandler {
         }
         @Override
         public boolean supportsRecipe(EmiRecipe recipe) {
-            return CATEGORIES.contains(recipe.getCategory()) && recipe.getInputs().size() <= 9;
+            if (!CATEGORIES.contains(recipe.getCategory())) {
+                return false;
+            }
+            if (recipe instanceof EmiSoulForgeRecipe soulForgeRecipe) {
+                return soulForgeRecipe.canFit(3, 3);
+            }
+            if (recipe instanceof EmiCraftingRecipe craftingRecipe) {
+                return craftingRecipe.canFit(3, 3);
+            }
+            return recipe.getInputs().size() <= 9;
         }
     }
 

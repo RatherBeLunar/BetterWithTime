@@ -1,0 +1,36 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "group": "",
+  "ingredients": [
+    {
+      "count": 3,
+      "ingredient": {
+        "item": "minecraft:milk_bucket"
+      }
+    },
+    {
+      "count": 2,
+      "ingredient": {
+        "item": "minecraft:sugar"
+      }
+    },
+    {
+      "count": 3,
+      "ingredient": {
+        "item": "bwt:flour"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "bwt:raw_egg"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:cake"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "top": "bwt:block/mining_charge_top",
+    "side": "bwt:block/mining_charge_side",
+    "front": "bwt:block/mining_charge_front",
+    "back": "bwt:block/mining_charge_back",
+    "particle": "#side"
+  },
+  "elements": [
+    {
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 8, 16 ],
+      "faces": {
+        "down":  { "texture": "#top", "cullface": "down" },
+        "up":    { "texture": "#top", "cullface": "up" },
+        "north": { "texture": "#front", "cullface": "north" },
+        "south": { "texture": "#back", "cullface": "south" },
+        "west":  { "texture": "#side", "cullface": "west" },
+        "east":  { "texture": "#side", "cullface": "east" }
+      }
+    }
+  ]
+}

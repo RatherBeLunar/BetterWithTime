@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:brown_candle_from_dung"
+        "recipe": "bwt:brown_candle_from_dung"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:brown_candle_from_dung"
+      "bwt:brown_candle_from_dung"
     ]
   }
 }

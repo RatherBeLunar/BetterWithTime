@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.blocks.unfired_pottery.UnfiredPotteryBlock;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.recipes.kiln.KilnRecipeInput;
@@ -8,6 +9,7 @@ import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookOverlay;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
@@ -17,6 +19,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ItemScatterer;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
@@ -73,7 +76,7 @@ public class KilnBlock extends Block {
         if (recipe.isPresent()) {
             if (checkKilnIntegrity(world, pos)) {
                 if (oldCookCounter >= 15) {
-                    cookBlock(world, pos.up(), recipe.get());
+                    cookBlock(world, pos.up(), cookingBlockState, recipe.get());
                 }
                 else {
                     newCookCounter = oldCookCounter + 1;
@@ -138,9 +141,16 @@ public class KilnBlock extends Block {
         ).map(RecipeEntry::value);
     }
 
-    private void cookBlock(World world, BlockPos cookingBlockPos, KilnRecipe recipe) {
+    private void cookBlock(World world, BlockPos cookingBlockPos, BlockState cookingBlockState, KilnRecipe recipe) {
+        ComponentMap components = cookingBlockState.getBlock().getPickStack(world, cookingBlockPos, cookingBlockState).getComponents();
         world.breakBlock(cookingBlockPos, false);
-        ItemScatterer.spawn(world, cookingBlockPos, recipe.getDrops());
+        DefaultedList<ItemStack> drops = DefaultedList.copyOf(ItemStack.EMPTY, recipe.getDrops().stream().map(ItemStack::copy).toArray(ItemStack[]::new));
+        if (drops.isEmpty()) {
+            return;
+        }
+        ItemStack firstDrop = drops.get(0);
+        firstDrop.applyComponentsFrom(components.filtered(componentType -> firstDrop.getComponents().contains(componentType)));
+        ItemScatterer.spawn(world, cookingBlockPos, drops);
     }
 
     private void resetBlockCookProgress(World world, BlockPos kilnPos) {

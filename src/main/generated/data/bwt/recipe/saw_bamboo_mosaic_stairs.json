@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 1,
+      "id": "bwt:bamboo_mosaic_siding"
+    },
+    {
+      "count": 1,
+      "id": "bwt:bamboo_mosaic_moulding"
+    }
+  ],
+  "ingredient": {
+    "block": "minecraft:bamboo_mosaic_stairs"
+  }
+}

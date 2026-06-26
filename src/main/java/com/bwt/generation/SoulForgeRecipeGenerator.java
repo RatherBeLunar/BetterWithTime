@@ -4,6 +4,7 @@ import com.bwt.blocks.*;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import com.bwt.recipes.soul_forge.SoulForgeShapelessRecipe;
+import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
@@ -12,6 +13,7 @@ import net.minecraft.data.family.BlockFamilies;
 import net.minecraft.data.family.BlockFamily;
 import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
@@ -68,9 +70,8 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .pattern("###")
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.PRESSURE_PLATE,
-                pressurePlate -> SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
-                        .pattern("ss")
-                        .input('s', sidingBlock)
+                pressurePlate -> SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, pressurePlate)
+                        .input(sidingBlock)
                         .criterion("has_siding", conditionsFromItem(sidingBlock)));
         createHighEfficiencyBlockFamilyRecipe(exporter, blockFamily, BlockFamily.Variant.FENCE,
                 fence -> SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.DECORATIONS, fence, 3)
@@ -122,18 +123,21 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 continue;
             }
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock, 8)
+                    .markDefault()
                     .pattern("XXXX")
                     .input('X', sidingBlock.fullBlock)
                     .group("siding")
                     .criterion(hasItem(sidingBlock.fullBlock), conditionsFromItem(sidingBlock.fullBlock))
                     .offerTo(exporter);
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock, 8)
+                    .markDefault()
                     .pattern("XXXX")
                     .input('X', sidingBlock)
                     .group("moulding")
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
                     .offerTo(exporter);
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, cornerBlock, 8)
+                    .markDefault()
                     .pattern("XXXX")
                     .input('X', mouldingBlock)
                     .group("corners")
@@ -144,20 +148,21 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock.fullBlock)
                     .input(sidingBlock, 2)
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(sidingBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(sidingBlock).getPath()));
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, sidingBlock)
                     .input(mouldingBlock, 2)
                     .group("siding")
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(mouldingBlock).getPath()));
             SoulForgeShapelessRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, mouldingBlock)
                     .input(cornerBlock, 2)
                     .group("moulding")
                     .criterion(hasItem(cornerBlock), conditionsFromItem(cornerBlock))
-                    .offerTo(exporter, "bwt:recombine_" + Registries.BLOCK.getId(cornerBlock).getPath());
+                    .offerTo(exporter, Id.of("recombine_" + Registries.BLOCK.getId(cornerBlock).getPath()));
 
             // Decorative blocks
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, columnBlock)
+                    .markDefault()
                     .pattern("#")
                     .pattern("#")
                     .pattern("#")
@@ -166,6 +171,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter);
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, pedestalBlock, 6)
+                    .markDefault()
                     .pattern(" s ")
                     .pattern("###")
                     .pattern("###")
@@ -175,6 +181,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                     .criterion(hasItem(sidingBlock), conditionsFromItem(sidingBlock))
                     .offerTo(exporter);
             SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.BUILDING_BLOCKS, tableBlock, 4)
+                    .markDefault()
                     .pattern("sss")
                     .pattern(" m ")
                     .pattern(" m ")
@@ -184,8 +191,19 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                     .criterion(hasItem(mouldingBlock), conditionsFromItem(mouldingBlock))
                     .offerTo(exporter);
         }
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.DECORATIONS, BwtItems.canvasItem)
+                .markDefault()
+                .pattern("mmmm")
+                .pattern("mffm")
+                .pattern("mffm")
+                .pattern("mmmm")
+                .input('m', BwtItemTags.WOODEN_MOULDING_BLOCKS)
+                .input('f', BwtItems.fabricItem)
+                .criterion("has_wooden_moulding", conditionsFromTag(BwtItemTags.WOODEN_MOULDING_BLOCKS))
+                .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_BLOCK)
+                .markDefault()
                 .pattern("ssss")
                 .pattern("ssss")
                 .pattern("ssss")
@@ -196,6 +214,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
 
         // Netherite Tools
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteMattockItem)
+                .markDefault()
                 .pattern("sss ")
                 .pattern(" h s")
                 .pattern(" h  ")
@@ -205,6 +224,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.netheriteBattleAxeItem)
+                .markDefault()
                 .pattern("sss")
                 .pattern("shs")
                 .pattern(" h ")
@@ -214,6 +234,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_PICKAXE)
+                .markDefault()
                 .pattern("sss")
                 .pattern(" h ")
                 .pattern(" h ")
@@ -223,6 +244,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_SHOVEL)
+                .markDefault()
                 .pattern("s")
                 .pattern("h")
                 .pattern("h")
@@ -232,6 +254,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_AXE)
+                .markDefault()
                 .pattern("ss")
                 .pattern("sh")
                 .pattern(" h")
@@ -241,6 +264,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_HOE)
+                .markDefault()
                 .pattern("ss")
                 .pattern(" h")
                 .pattern(" h")
@@ -250,6 +274,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_SWORD)
+                .markDefault()
                 .pattern("s")
                 .pattern("s")
                 .pattern("s")
@@ -261,6 +286,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
 
         // Netherite armor
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.armorPlateItem)
+                .markDefault()
                 .pattern("SnpS")
                 .input('n', Items.NETHERITE_INGOT)
                 .input('S', BwtItems.strapItem)
@@ -268,6 +294,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_HELMET)
+                .markDefault()
                 .pattern("ssss")
                 .pattern("s  s")
                 .pattern("s  s")
@@ -277,6 +304,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.armorPlateItem), conditionsFromItem(BwtItems.armorPlateItem))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_CHESTPLATE)
+                .markDefault()
                 .pattern("p  p")
                 .pattern("ssss")
                 .pattern("ssss")
@@ -286,6 +314,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.armorPlateItem), conditionsFromItem(BwtItems.armorPlateItem))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_LEGGINGS)
+                .markDefault()
                 .pattern("ssss")
                 .pattern("pssp")
                 .pattern("p  p")
@@ -295,6 +324,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.armorPlateItem), conditionsFromItem(BwtItems.armorPlateItem))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, Items.NETHERITE_BOOTS)
+                .markDefault()
                 .pattern(" ss ")
                 .pattern(" ss ")
                 .pattern("spps")
@@ -304,11 +334,13 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressurePlateBlock)
+                .markDefault()
                 .pattern("oooo")
                 .input('o', Items.OBSIDIAN)
                 .criterion(hasItem(Items.OBSIDIAN), conditionsFromItem(Items.OBSIDIAN))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.broadheadItem, 16)
+                .markDefault()
                 .pattern(" s ")
                 .pattern("sss")
                 .pattern(" s ")
@@ -317,6 +349,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(Items.NETHERITE_INGOT), conditionsFromItem(Items.NETHERITE_INGOT))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.TOOLS, BwtItems.redstoneEyeItem)
+                .markDefault()
                 .pattern("lll")
                 .pattern("ggg")
                 .pattern(" r ")
@@ -327,6 +360,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.detectorBlock)
+                .markDefault()
                 .pattern("cccc")
                 .pattern("ette")
                 .pattern("srrs")
@@ -339,6 +373,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .criterion(hasItem(BwtItems.redstoneEyeItem), conditionsFromItem(BwtItems.redstoneEyeItem))
                 .offerTo(exporter);
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.buddyBlock)
+                .markDefault()
                 .pattern("sses")
                 .pattern("etts")
                 .pattern("stte")
@@ -350,6 +385,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.blockDispenserBlock)
+                .markDefault()
                 .pattern("mmmm")
                 .pattern("muum")
                 .pattern("stts")
@@ -363,6 +399,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .offerTo(exporter);
 
         SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.REDSTONE, BwtBlocks.lensBlock)
+                .markDefault()
                 .pattern("gddg")
                 .pattern("g  g")
                 .pattern("g  g")
@@ -371,6 +408,16 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                 .input('d', Items.DIAMOND)
                 .input('p', Items.GLASS_PANE)
                 .criterion(hasItem(Items.DIAMOND), conditionsFromItem(Items.DIAMOND))
+                .offerTo(exporter);
+
+        SoulForgeShapedRecipe.JsonBuilder.create(RecipeCategory.MISC, BwtItems.screwItem)
+                .markDefault()
+                .pattern("ii  ")
+                .pattern(" ii ")
+                .pattern("ii  ")
+                .pattern(" ii ")
+                .input('i', Items.IRON_INGOT)
+                .criterion(hasItem(Items.IRON_NUGGET), conditionsFromItem(Items.IRON_NUGGET))
                 .offerTo(exporter);
     }
 }

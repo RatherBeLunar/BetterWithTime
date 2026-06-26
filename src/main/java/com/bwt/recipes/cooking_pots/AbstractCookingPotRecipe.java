@@ -3,6 +3,7 @@ package com.bwt.recipes.cooking_pots;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
 import com.bwt.generation.EmiDefaultsGenerator;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -89,7 +90,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
 
     @Override
     public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+        return true;
     }
 
     @Override
@@ -267,13 +268,18 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         }
         public void addToDefaults(Identifier recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 
         @Override
         public Item getOutputItem() {
             return results.get(0).getItem();
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override

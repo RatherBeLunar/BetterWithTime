@@ -1,0 +1,7 @@
+{
+	"parent": "bwt:block/unfired_decorated_pot_with_sherds",
+	"textures": {
+		"particle": "bwt:block/cooking_clay",
+		"all": "bwt:block/cooking_clay"
+	}
+}

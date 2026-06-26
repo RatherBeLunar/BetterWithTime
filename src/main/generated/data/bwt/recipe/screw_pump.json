@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "bwt:grate"
+    },
+    "S": {
+      "item": "bwt:screw"
+    },
+    "X": {
+      "item": "bwt:gear"
+    },
+    "g": {
+      "item": "bwt:glue"
+    },
+    "s": {
+      "tag": "bwt:wooden_siding_blocks"
+    }
+  },
+  "pattern": [
+    "gGg",
+    "sSs",
+    "sXs"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:screw_pump"
+  }
+}

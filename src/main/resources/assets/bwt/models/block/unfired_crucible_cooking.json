@@ -1,9 +1,10 @@
 {
 	"parent": "bwt:block/cauldron",
 	"textures": {
-		"particle": "minecraft:block/gravel",
-		"side": "minecraft:block/gravel",
-		"top": "minecraft:block/gravel",
-		"bottom": "minecraft:block/gravel"
+		"particle": "bwt:block/cooking_clay",
+		"side": "bwt:block/cooking_clay",
+		"top": "bwt:block/cooking_clay",
+		"bottom": "bwt:block/cooking_clay",
+		"inside": "bwt:block/cooking_clay"
 	}
 }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:rope_coil_block"
+        "recipe": "bwt:rope_coil_block"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:rope_coil_block"
+      "bwt:rope_coil_block"
     ]
   }
 }

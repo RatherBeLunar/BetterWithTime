@@ -1,5 +1,10 @@
 {
   "variants": {
-    "": { "model": "bwt:block/hibachi"}
+    "lit=false": {
+      "model": "bwt:block/hibachi"
+    },
+    "lit=true": {
+      "model": "bwt:block/hibachi_lit"
+    }
   }
 }

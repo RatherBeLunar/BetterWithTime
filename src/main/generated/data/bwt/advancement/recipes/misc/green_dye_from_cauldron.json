@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:green_dye_from_cauldron"
+        "recipe": "bwt:green_dye_from_cauldron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:green_dye_from_cauldron"
+      "bwt:green_dye_from_cauldron"
     ]
   }
 }

@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:purple_wool_from_cauldron_dyeing_with_purple_dye"
+        "recipe": "bwt:purple_wool_from_cauldron_dyeing_with_purple_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:purple_wool_from_cauldron_dyeing_with_purple_dye"
+      "bwt:purple_wool_from_cauldron_dyeing_with_purple_dye"
     ]
   }
 }

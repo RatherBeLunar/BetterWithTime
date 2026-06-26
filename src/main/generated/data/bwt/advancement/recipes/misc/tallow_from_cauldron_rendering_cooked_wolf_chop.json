@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:tallow_from_cauldron_rendering_cooked_wolf_chop"
+        "recipe": "bwt:tallow_from_cauldron_rendering_cooked_wolf_chop"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:tallow_from_cauldron_rendering_cooked_wolf_chop"
+      "bwt:tallow_from_cauldron_rendering_cooked_wolf_chop"
     ]
   }
 }

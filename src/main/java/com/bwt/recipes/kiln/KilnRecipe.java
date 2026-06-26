@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.generation.EmiDefaultsGenerator;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -254,7 +255,7 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         }
         public void addToDefaults(Identifier recipeId) {
             if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId);
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
             }
         }
 
@@ -265,7 +266,12 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
 
         @Override
         public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, "bwt:kiln_cook_" + fromBlockName);
+            this.offerTo(exporter, Id.of("kiln_cook_" + fromBlockName));
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override

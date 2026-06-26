@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "bwt:block/screw_pump",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "bwt:block/screw_pump"
+    },
+    "facing=south": {
+      "model": "bwt:block/screw_pump",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "bwt:block/screw_pump",
+      "y": 270
+    }
+  }
+}

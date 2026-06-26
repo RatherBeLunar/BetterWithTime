@@ -1,27 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
+  "category": "redstone",
   "key": {
-    "c": {
-      "tag": "bwt:wooden_corner_blocks"
+    "C": {
+      "item": "minecraft:chest"
     },
-    "g": {
-      "item": "bwt:gear"
-    },
-    "p": {
-      "tag": "minecraft:wooden_pressure_plates"
-    },
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
+    "N": {
+      "item": "minecraft:netherite_ingot"
     }
   },
   "pattern": [
-    "s s",
-    "gpg",
-    " c "
+    "N N",
+    "NCN",
+    " N "
   ],
   "result": {
-    "count": 1,
-    "id": "bwt:hopper"
+    "count": 2,
+    "id": "minecraft:hopper"
   }
 }

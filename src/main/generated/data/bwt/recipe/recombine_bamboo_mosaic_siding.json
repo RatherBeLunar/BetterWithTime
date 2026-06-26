@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    {
+      "item": "bwt:bamboo_mosaic_siding"
+    },
+    {
+      "item": "bwt:bamboo_mosaic_siding"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:bamboo_mosaic"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "bwt:cauldron",
+  "category": "food",
+  "group": "",
+  "ingredients": [
+    {
+      "count": 2,
+      "ingredient": {
+        "item": "bwt:flour"
+      }
+    },
+    {
+      "ingredient": {
+        "item": "minecraft:cocoa_beans"
+      }
+    }
+  ],
+  "results": [
+    {
+      "count": 8,
+      "id": "minecraft:cookie"
+    }
+  ]
+}

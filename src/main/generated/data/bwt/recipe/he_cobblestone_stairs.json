@@ -1,0 +1,17 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "building",
+  "key": {
+    "m": {
+      "item": "bwt:cobblestone_moulding"
+    }
+  },
+  "pattern": [
+    "m ",
+    "mm"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:cobblestone_stairs"
+  }
+}

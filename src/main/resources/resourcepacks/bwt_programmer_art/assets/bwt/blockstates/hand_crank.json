@@ -1,0 +1,36 @@
+{
+  "multipart": [
+    {
+      "when": { "AND": [{"facing": "north"}, {"click_timer": 0}]},
+      "apply": { "model": "bwt:block/hand_crank" }
+    },
+    {
+      "when": { "AND": [{"facing": "north"}, {"click_timer": "1|2|3|4|5|6|7"}]},
+      "apply": { "model": "bwt:block/hand_crank_on" }
+    },
+    {
+      "when": { "AND": [{"facing": "east"}, {"click_timer": 0}]},
+      "apply": { "model": "bwt:block/hand_crank", "y": 90 }
+    },
+    {
+      "when": { "AND": [{"facing": "east"}, {"click_timer": "1|2|3|4|5|6|7"}]},
+      "apply": { "model": "bwt:block/hand_crank_on", "y": 90 }
+    },
+    {
+      "when": { "AND": [{"facing": "south"}, {"click_timer": 0}]},
+      "apply": { "model": "bwt:block/hand_crank", "y": 180 }
+    },
+    {
+      "when": { "AND": [{"facing": "south"}, {"click_timer": "1|2|3|4|5|6|7"}]},
+      "apply": { "model": "bwt:block/hand_crank_on", "y": 180 }
+    },
+    {
+      "when": { "AND": [{"facing": "west"}, {"click_timer": 0}]},
+      "apply": { "model": "bwt:block/hand_crank", "y": 270 }
+    },
+    {
+      "when": { "AND": [{"facing": "west"}, {"click_timer": "1|2|3|4|5|6|7"}]},
+      "apply": { "model": "bwt:block/hand_crank_on", "y": 270 }
+    }
+  ]
+}

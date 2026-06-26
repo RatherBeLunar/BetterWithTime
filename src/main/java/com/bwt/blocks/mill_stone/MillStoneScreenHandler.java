@@ -14,8 +14,8 @@ import net.minecraft.util.math.MathHelper;
 
 public class MillStoneScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    private static final int SIZE = 3;
     private final PropertyDelegate propertyDelegate;
+    public static final int SIZE = 3;
 
     public MillStoneScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(SIZE), new ArrayPropertyDelegate(1));

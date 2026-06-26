@@ -1,0 +1,9 @@
+{
+	"parent": "bwt:block/cauldron",
+	"textures": {
+		"particle": "minecraft:block/clay",
+		"side": "minecraft:block/clay",
+		"top": "minecraft:block/clay",
+		"bottom": "minecraft:block/clay"
+	}
+}

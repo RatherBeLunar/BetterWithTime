@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:scoured_leather_from_milling_leather"
+        "recipe": "bwt:scoured_leather_from_milling_leather"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:scoured_leather_from_milling_leather"
+      "bwt:scoured_leather_from_milling_leather"
     ]
   }
 }

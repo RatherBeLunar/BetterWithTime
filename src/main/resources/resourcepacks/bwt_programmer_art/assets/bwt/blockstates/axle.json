@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "axis=x": { "model": "bwt:block/axle", "y": 90 },
+    "axis=y": { "model": "bwt:block/axle", "x": 90 },
+    "axis=z": { "model": "bwt:block/axle"}
+  }
+}

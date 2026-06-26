@@ -1,8 +1,10 @@
 package com.bwt.recipes.saw;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -188,6 +190,17 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
             return obj;
         }
 
+        protected boolean isDefaultRecipe;
+        public JsonBuilder markDefault() {
+            this.isDefaultRecipe = true;
+            return this;
+        }
+        public void addToDefaults(Identifier recipeId) {
+            if (this.isDefaultRecipe) {
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+            }
+        }
+
         public static void dropsSelf(Block block, RecipeExporter exporter) {
             create(block).result(block.asItem()).offerTo(exporter);
         }
@@ -238,11 +251,18 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
 
         @Override
         public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, "bwt:saw_" + fromBlockName);
+            this.offerTo(exporter, Id.of("saw_" + fromBlockName));
+        }
+
+        @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
         }
 
         @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+            addToDefaults(recipeId);
+
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
             SawRecipe sawRecipe = this.getRecipeFactory().create(
                     Objects.requireNonNullElse(this.group, ""),

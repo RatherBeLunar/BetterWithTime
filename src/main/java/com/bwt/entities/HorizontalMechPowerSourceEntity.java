@@ -1,6 +1,6 @@
 package com.bwt.entities;
 
-import com.bwt.blocks.AxleBlock;
+import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.block.BlockState;

@@ -283,11 +283,20 @@ public class PulleyBlockEntity extends BlockEntity implements NamedScreenHandler
 
         set.add(pos);
 
-        return Arrays.stream(Direction.values())
-                .map(pos::offset)
-                .filter(Predicate.not(set::contains))
-                .map(offsetPos -> addToList(world, offsetPos, sourcePos, set, up))
-                .reduce(false, Boolean::logicalOr);
+        List<BlockPos> fails = new ArrayList<>();
+
+        Arrays.stream(Direction.values()).map(pos::offset).forEach(offsetPos -> {
+            Vec3i distance2 = offsetPos.subtract(sourcePos);
+            if (Math.abs(distance2.getX()) > 2 || Math.abs(distance2.getZ()) > 2 || Math.abs(distance2.getY()) > 5) {
+                return;
+            }
+            if (fails.isEmpty() && !set.contains(offsetPos)) {
+                if (!addToList(world, offsetPos, sourcePos, set, up))
+                    fails.add(offsetPos);
+            }
+        });
+
+        return fails.isEmpty();
     }
 
     public boolean onJobCompleted(World world, BlockPos pulleyPos, BlockState pulleyState, boolean up, int targetY) {

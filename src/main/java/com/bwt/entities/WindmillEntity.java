@@ -1,12 +1,11 @@
 package com.bwt.entities;
 
-import com.bwt.blocks.AxleBlock;
+import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -172,11 +171,11 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
                 BlockPos connectedPos = hostAxlePos.offset(direction, i);
                 BlockState connectedState = getWorld().getBlockState(connectedPos);
                 if (
-                        connectedState.isOf(BwtBlocks.gearBoxBlock)
+                        connectedState.getBlock() instanceof GearBoxBlock gearBoxBlock
                         // Receiving power from this axle
                         && connectedState.get(GearBoxBlock.FACING).equals(direction.getOpposite())
                         // Not switched off
-                        && !connectedState.get(GearBoxBlock.POWERED)
+                        && gearBoxBlock.isMechPowered(connectedState)
                 ) {
                     GearBoxBlock.breakGearBox(getWorld(), connectedPos);
                     break;

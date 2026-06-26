@@ -4,6 +4,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.utils.Id;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancement.Advancement;
@@ -23,6 +24,7 @@ import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.recipe.book.CraftingRecipeCategory;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
@@ -33,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack block) implements Recipe<BlockDispenserClumpRecipeInput> {
+public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack block, CraftingRecipeCategory category) implements Recipe<BlockDispenserClumpRecipeInput> {
     public Ingredient getItem() {
         return item.ingredient();
     }
@@ -102,7 +104,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
 
     @Override
     public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+        return true;
     }
 
     @Override
@@ -139,10 +141,13 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
                     Registries.ITEM
                             .getEntryCodec()
                             .fieldOf("block")
-                            .forGetter(recipe -> recipe.block.getRegistryEntry())
+                            .forGetter(recipe -> recipe.block.getRegistryEntry()),
+                    CraftingRecipeCategory.CODEC.fieldOf("category")
+                            .orElse(CraftingRecipeCategory.MISC)
+                            .forGetter(recipe -> recipe.category)
                 ).apply(
                         instance,
-                        (ingredient, block) -> new BlockDispenserClumpRecipe(ingredient, new ItemStack(block))
+                        (ingredient, block, category) -> new BlockDispenserClumpRecipe(ingredient, new ItemStack(block), category)
                 )
         );
         public static final PacketCodec<RegistryByteBuf, BlockDispenserClumpRecipe> PACKET_CODEC = PacketCodec.ofStatic(
@@ -163,23 +168,26 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
         protected static BlockDispenserClumpRecipe read(RegistryByteBuf buf) {
             IngredientWithCount ingredient = IngredientWithCount.Serializer.read(buf);
             ItemStack block = ItemStack.PACKET_CODEC.decode(buf);
-            return new BlockDispenserClumpRecipe(ingredient, block);
+            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
+            return new BlockDispenserClumpRecipe(ingredient, block, category);
         }
 
         protected static void write(RegistryByteBuf buf, BlockDispenserClumpRecipe recipe) {
             IngredientWithCount.Serializer.PACKET_CODEC.encode(buf, recipe.item);
             ItemStack.PACKET_CODEC.encode(buf, recipe.block);
+            buf.writeEnumConstant(recipe.category);
         }
     }
 
     public interface RecipeFactory<T extends BlockDispenserClumpRecipe> {
-        T create(IngredientWithCount item, ItemStack block);
+        T create(IngredientWithCount item, ItemStack block, CraftingRecipeCategory category);
     }
 
     public static class JsonBuilder implements CraftingRecipeJsonBuilder {
         protected Ingredient item;
         protected int count = 1;
         protected ItemStack block;
+        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
 
         @Nullable
         protected String group;
@@ -191,6 +199,11 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
 
         RecipeFactory<BlockDispenserClumpRecipe> getRecipeFactory() {
             return BlockDispenserClumpRecipe::new;
+        }
+
+        public JsonBuilder category(CraftingRecipeCategory category) {
+            this.category = category;
+            return this;
         }
 
         public JsonBuilder ingredient(Ingredient ingredient) {
@@ -235,14 +248,20 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, ItemStack bloc
         }
 
         @Override
+        public void offerTo(RecipeExporter exporter, String recipePath) {
+            this.offerTo(exporter, Id.of(recipePath));
+        }
+
+        @Override
         public void offerTo(RecipeExporter exporter, Identifier recipeId) {
             Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
             this.criteria.forEach(advancementBuilder::criterion);
             BlockDispenserClumpRecipe blockDispenserClumpRecipe = this.getRecipeFactory().create(
                     new IngredientWithCount(item, count),
-                    this.block
+                    this.block,
+                    this.category
             );
-            exporter.accept(recipeId, blockDispenserClumpRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/")));
+            exporter.accept(recipeId, blockDispenserClumpRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/" + this.category.asString() + "/")));
         }
     }
 }

@@ -6,7 +6,9 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
+import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.loot.LootPool;
@@ -15,6 +17,8 @@ import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.ApplyBonusLootFunction;
+import net.minecraft.loot.function.CopyComponentsLootFunction;
+import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
 import net.minecraft.predicate.StatePredicate;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
@@ -28,6 +32,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
 
     @Override
     public void generate() {
+        addDrop(BwtBlocks.aqueductBlock);
         addDrop(BwtBlocks.anchorBlock);
 //        addDrop(BwtBlocks.anvilBlock);
         addDrop(BwtBlocks.axleBlock);
@@ -62,6 +67,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.crucibleBlock);
         addDrop(BwtBlocks.detectorBlock);
         addDrop(BwtBlocks.gearBoxBlock);
+        addDrop(BwtBlocks.redstoneClutchBlock);
         addDrop(BwtBlocks.grateBlock);
         addDrop(BwtBlocks.handCrankBlock);
         addHempDrop();
@@ -87,7 +93,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.ropeBlock);
         addDrop(BwtBlocks.ropeCoilBlock);
         addDrop(BwtBlocks.sawBlock);
-//        addDrop(BwtBlocks.screwPumpBlock);
+        addDrop(BwtBlocks.screwPumpBlock);
         addDrop(BwtBlocks.slatsBlock);
 //        addDrop(BwtBlocks.stakeBlock);
         addDrop(BwtBlocks.stokedFireBlock);
@@ -97,7 +103,9 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         addDrop(BwtBlocks.unfiredPlanterBlock);
         addDrop(BwtBlocks.unfiredVaseBlock);
         addDrop(BwtBlocks.unfiredUrnBlock);
-        addDrop(BwtBlocks.unfiredMouldBlock);
+        addDrop(BwtBlocks.unfiredFlowerPotBlock);
+        addDrop(BwtBlocks.unfiredDecoratedPotBlock);
+        addDrop(BwtBlocks.unfiredDecoratedPotBlockWithSherds, this::unfiredDecoratedPotBlockWithSherdsDrops);
         addDrop(BwtBlocks.urnBlock);
         addDrop(BwtBlocks.wickerPaneBlock);
         addDrop(BwtBlocks.wickerBlock);
@@ -139,6 +147,20 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
                                 )
                 )
         );
+    }
+
+    private LootTable.Builder unfiredDecoratedPotBlockWithSherdsDrops(Block block) {
+        return LootTable.builder()
+                .pool(
+                        LootPool.builder()
+                                .rolls(ConstantLootNumberProvider.create(1.0F))
+                                .with(
+                                        ItemEntry.builder(block)
+                                                .apply(CopyComponentsLootFunction.builder(CopyComponentsLootFunction.Source.BLOCK_ENTITY)
+                                                        .include(DataComponentTypes.POT_DECORATIONS)
+                                                )
+                                )
+                );
     }
 
 }

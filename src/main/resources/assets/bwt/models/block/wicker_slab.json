@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "bwt:block/wicker",
+    "side": "bwt:block/wicker",
+    "top": "bwt:block/wicker"
+  }
+}

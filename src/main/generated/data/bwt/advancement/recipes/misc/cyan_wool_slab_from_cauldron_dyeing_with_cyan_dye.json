@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:cyan_wool_slab_from_cauldron_dyeing_with_cyan_dye"
+        "recipe": "bwt:cyan_wool_slab_from_cauldron_dyeing_with_cyan_dye"
       },
       "trigger": "minecraft:recipe_unlocked"
     },
@@ -37,7 +37,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:cyan_wool_slab_from_cauldron_dyeing_with_cyan_dye"
+      "bwt:cyan_wool_slab_from_cauldron_dyeing_with_cyan_dye"
     ]
   }
 }
