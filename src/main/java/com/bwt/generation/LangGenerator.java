@@ -201,6 +201,9 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitle(BwtSoundEvents.MILL_STONE_INVALID, "Mill stone screeches", translationBuilder);
         addSubtitle(BwtSoundEvents.TURNTABLE_SETTING_CLICK, "Turntable setting changes", translationBuilder);
         addSubtitle(BwtSoundEvents.TURNTABLE_TURNING_CLICK, "Turntable rotates", translationBuilder);
+        addSubtitle(BwtSoundEvents.SAW_CUT, "Saw cuts", translationBuilder);
+        addSubtitle(BwtSoundEvents.SAW_DEPOWERED, "Saw slows down", translationBuilder);
+        addSubtitle(BwtSoundEvents.SAW_INITIALIZE, "Saw powers up", translationBuilder);
         addSubtitle(BwtSoundEvents.WOLF_DUNG_PRODUCTION, "Wolf produces dung", translationBuilder);
         addSubtitle(BwtSoundEvents.WOLF_DUNG_EFFORT, "Wolf growls", translationBuilder);
         addSubtitle(BwtSoundEvents.DYNAMITE_THROW, "Dynamite thrown", translationBuilder);
