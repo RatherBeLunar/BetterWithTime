@@ -83,6 +83,12 @@
       "mob/wolf/death"
     ]
   },
+  "block.companion_cube.whine": {
+    "subtitle": "bwt.subtitles.block.companion_cube.whine",
+    "sounds": [
+      "mob/wolf/whine"
+    ]
+  },
   "block.generic.soul_conversion": {
     "subtitle": "bwt.subtitles.block.generic.soul_conversion",
     "sounds": [
