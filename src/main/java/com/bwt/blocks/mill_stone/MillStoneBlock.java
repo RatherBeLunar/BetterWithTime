@@ -143,41 +143,6 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
 
     private void playMechSound(BlockState state, World world, BlockPos pos, Random random) {
         int millStoneState = state.get(STATE);
-// /* 424 */       if (iCurrentGrindingType == 4) {
-// /*     */         
-// /* 426 */         world.playSound(i + 0.5D, j + 0.5D, k + 0.5D, "minecart.base", 1.0F + world.rand.nextFloat() * 0.1F, 1.25F + world.rand.nextFloat() * 0.1F);
-// /*     */       }
-// /* 431 */       else if (iCurrentGrindingType != 0) {
-// /*     */         
-// /* 433 */         world.playSound(i + 0.5D, j + 0.5D, k + 0.5D, "minecart.base", 1.0F + world.rand
-// /*     */             
-// /* 435 */             .nextFloat() * 0.1F, 0.75F + world.rand
-// /* 436 */             .nextFloat() * 0.1F);
-// /*     */       }
-// /* 438 */       else if (random.nextInt(2) == 0) {
-// /*     */         
-// /* 440 */         world.playSound(i + 0.5D, j + 0.5D, k + 0.5D, "minecart.base", 1.5F + random
-// /*     */             
-// /* 442 */             .nextFloat() * 0.1F, 0.5F + random
-// /* 443 */             .nextFloat() * 0.1F);
-// /*     */       } 
-// /*     */       
-// /* 446 */       if (iCurrentGrindingType == 2) {
-// /*     */         
-// /* 448 */         if (random.nextInt(3) <= 1)
-// /*     */         {
-// /* 450 */           world.playSound(i + 0.5D, j + 0.5D, k + 0.5D, "mob.ghast.scream", 0.75F, random
-// /* 451 */               .nextFloat() * 0.4F + 0.8F);
-// /*     */         }
-// /*     */       }
-// /* 454 */       else if (iCurrentGrindingType == 3) {
-// /*     */         
-// /* 456 */         if (random.nextInt(3) <= 1)
-// /*     */         {
-// /* 458 */           world.playSound((i + 0.5F), (j + 0.5F), (k + 0.5F), "mob.wolf.hurt", 2.0F, (random
-// /* 459 */               .nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
-// /*     */         }
-// /*     */       } 
         switch (millStoneState) {
             case 1 -> world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundCategory.BLOCKS, 1.0F + random.nextFloat() * 0.1F, 1.25F, false);
             case 2 -> world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_INVALID, SoundCategory.BLOCKS, 1.0F + random.nextFloat() * 0.1F, 1F, false);
