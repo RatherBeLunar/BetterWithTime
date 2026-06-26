@@ -3,7 +3,7 @@
 	"id": "bwt",
 	"version": "${version}",
 	"name": "BetterWithTime",
-	"description": "A modern adaptation of Better Than Wolves' tech features",
+	"description": "This is an example description! Tell everyone what your mod is about!",
 	"authors": [
 		"RatherBeLunar"
 	],

@@ -215,4 +215,12 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
             world.addParticle(ParticleTypes.SMOKE, smokeX, smokeY, smokeZ, 0D, 0D, 0D );
         }
     }
+    public BlockState onUseRotate(BlockState state, World world, BlockPos pos, PlayerEntity player) {
+        if (!player.getMainHandStack().isEmpty() && !isMechPowered(state)) {
+            return state;
+        }
+        world.playSound(null, pos, state.getSoundGroup().getPlaceSound(),
+                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
+        return getNextOrientation(state);
+    }
 }

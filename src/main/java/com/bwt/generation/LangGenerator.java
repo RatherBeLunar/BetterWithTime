@@ -167,6 +167,7 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitle(BwtSoundEvents.MECH_CREAK, "Mechanical device creaks", translationBuilder);
         addSubtitle(BwtSoundEvents.ANCHOR_RETRACT, "Anchor retracts rope", translationBuilder);
         addSubtitle(BwtSoundEvents.BELLOWS_COMPRESS, "Bellows compresses", translationBuilder);
+        addSubtitle(BwtSoundEvents.BELLOWS_DECOMPRESS, "Bellows decompresses", translationBuilder);
         addSubtitle(BwtSoundEvents.COMPANION_CUBE_DEATH, "Companion cube dies. You monster.", translationBuilder);
         addSubtitle(BwtSoundEvents.COMPANION_CUBE_WHINE, "Companion cube whines", translationBuilder);
         addSubtitle(BwtSoundEvents.GEAR_BOX_ACTIVATE, "Gear box activates", translationBuilder);
@@ -177,6 +178,8 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitle(BwtSoundEvents.BLOOD_WOOD_MOAN, "Blood wood moans", translationBuilder);
         addSubtitle(BwtSoundEvents.SOUL_CONVERSION, "Souls transmogrify", translationBuilder);
         addSubtitle(BwtSoundEvents.MILL_STONE_GRIND, "Mill stone grinds", translationBuilder);
+        addSubtitle(BwtSoundEvents.MILL_STONE_IDLE, "Mill stone rubbing", translationBuilder);
+        addSubtitle(BwtSoundEvents.MILL_STONE_INVALID, "Mill stone screeches", translationBuilder);
         addSubtitle(BwtSoundEvents.TURNTABLE_SETTING_CLICK, "Turntable setting changes", translationBuilder);
         addSubtitle(BwtSoundEvents.TURNTABLE_TURNING_CLICK, "Turntable rotates", translationBuilder);
         addSubtitle(BwtSoundEvents.WOLF_DUNG_PRODUCTION, "Wolf produces dung", translationBuilder);

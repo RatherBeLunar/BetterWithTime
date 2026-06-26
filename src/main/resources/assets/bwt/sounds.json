@@ -29,6 +29,12 @@
       "block/chest/close3"
     ]
   },
+  "block.bellows.decompress": {
+    "subtitle": "bwt.subtitles.block.bellows.decompress",
+    "sounds": [
+      "block/chest/close3"
+    ]
+  },
   "block.detector.click": {
     "subtitle": "bwt.subtitles.block.detector.click",
     "sounds": [
@@ -77,12 +83,6 @@
       "mob/wolf/death"
     ]
   },
-  "block.companion_cube.whine": {
-    "subtitle": "bwt.subtitles.block.companion_cube.whine",
-    "sounds": [
-      "mob/wolf/whine"
-    ]
-  },
   "block.generic.soul_conversion": {
     "subtitle": "bwt.subtitles.block.generic.soul_conversion",
     "sounds": [
@@ -101,6 +101,18 @@
       "bwt:mechanical/bang"
     ]
   },
+  "block.mill_stone.idle": {
+    "subtitle": "bwt.subtitles.block.mill_stone.idle",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  },
+  "block.mill_stone.invalid": {
+    "subtitle": "bwt.subtitles.block.mill_stone.invalid",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ]
+  },
   "block.turntable.setting_click": {
     "subtitle": "bwt.subtitles.block.turntable.setting_click",
     "sounds": [
@@ -112,6 +124,22 @@
     "sounds": [
       "random/click"
     ]
+  },
+  "block.saw.cut": {
+    "subtitle": "bwt.subtitles.block.saw.cut",
+    "sounds": [
+      {"name": "bwt:mechanical/bang", "pitch": 1.5}
+    ]
+  },
+  "block.saw.init": {
+    "subtitle": "bwt.subtitles.block.saw.init",
+    "sounds": [
+      {"name": "bwt:mechanical/bang", "pitch": 1.5}
+    ]
+  },
+  "block.saw.depowered": {
+    "subtitle": "bwt.subtitles.block.saw.depowered",
+    "sounds": []
   },
   "entity.wolf.dung.production": {
     "subtitle": "bwt.subtitles.entity.wolf.dung.production",
