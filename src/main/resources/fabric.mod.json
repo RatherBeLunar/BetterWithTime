@@ -53,12 +53,12 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.17.2",
+		"fabricloader": ">=0.19.5",
 		"minecraft": "1.21.1",
 		"java": ">=21",
-		"fabric-api": ">=0.116.6+1.21.1"
+		"fabric-api": ">=0.116.17+1.21.1"
 	},
 	"suggests": {
-		"emi": ">=1.1.22+1.21.1+fabric"
+		"emi": ">=1.1.24+1.21.1+fabric"
 	}
 }
