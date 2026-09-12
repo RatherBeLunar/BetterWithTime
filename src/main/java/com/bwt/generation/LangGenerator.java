@@ -129,6 +129,8 @@ public class LangGenerator extends FabricLanguageProvider {
         translationBuilder.add("canvas.bwt.gifts.author", "Stohun");
         translationBuilder.add("canvas.bwt.windmill.title", "Windmill");
         translationBuilder.add("canvas.bwt.windmill.author", "Stohun");
+        translationBuilder.add("canvas.bwt.minefield.title", "Minefield");
+        translationBuilder.add("canvas.bwt.minefield.author", "Stohun");
     }
 
     protected void addTagNames(TranslationBuilder translationBuilder) {
