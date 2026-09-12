@@ -255,7 +255,7 @@ public class BlockDispenserBlock extends DispenserBlock {
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.onPlaced(world, pos, state, placer, itemStack);
-        if (isReceivingPower(world, pos, state.get(FACING))) {
+        if (isReceivingPower(world, pos, state.get(FACING)) && !state.get(TRIGGERED)) {
             world.scheduleBlockTick(pos, this, tickRate);
         }
     }
