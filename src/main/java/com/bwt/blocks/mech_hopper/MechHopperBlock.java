@@ -189,7 +189,7 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
         }
         BlockEntity blockEntity = world.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            MechHopperBlockEntity.onEntityCollided(world, entity, hopperBlockEntity);
+            hopperBlockEntity.onEntityCollided(world, entity);
         }
     }
 

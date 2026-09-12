@@ -26,6 +26,7 @@ import net.minecraft.entity.mob.GhastEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.SidedInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -56,7 +57,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
+public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, SidedInventory {
     public static final int INVENTORY_SIZE = 19;
     protected static final int STACK_SIZE_TO_EJECT = 8;
     protected static final int SOUL_STORAGE_LIMIT = 8;
@@ -83,6 +84,7 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
                     InventoryStorage.of(hopperInventory, null)
             )
     );
+    private static final int[] AVAILABLE_SLOTS = IntStream.range(1, INVENTORY_SIZE).toArray();
 
     protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
         @Override
@@ -320,53 +322,62 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
     }
 
     // Pick up items from above
-    public static void onEntityCollided(World world, Entity entity, MechHopperBlockEntity blockEntity) {
-        if (blockEntity.itemPickupCooldown > 0) {
+    public void onEntityCollided(World world, Entity entity) {
+        if (this.itemPickupCooldown > 0) {
             return;
         }
         if (entity instanceof ItemEntity itemEntity) {
-            pickupItemEntity(world, itemEntity, blockEntity);
+            pickupItemEntity(world, itemEntity);
         }
     }
 
-    protected static void pickupItemEntity(World world, ItemEntity itemEntity, MechHopperBlockEntity blockEntity) {
-        ItemStack itemStack = itemEntity.getStack();
-        if (itemStack.isEmpty()) {
-            return;
+    protected Optional<HopperFilterRecipe> getMatchingRecipe(ItemStack itemStack) {
+        HopperFilterRecipeInput recipeInput = new HopperFilterRecipeInput(getFilterItem(), itemStack);
+        if (world == null) {
+            return Optional.empty();
         }
-        Item filterItem = blockEntity.getFilterItem();
-
-        HopperFilterRecipeInput recipeInput = new HopperFilterRecipeInput(filterItem, itemStack);
-        Optional<HopperFilterRecipe> optionalRecipe = world.getRecipeManager().getFirstMatch(
+        return world.getRecipeManager().getFirstMatch(
                 BwtRecipes.HOPPER_FILTER_RECIPE_TYPE,
                 recipeInput,
                 world
         ).map(RecipeEntry::value);
+    }
 
-        if (optionalRecipe.isPresent()) {
-            processRecipe(world, itemEntity, blockEntity, optionalRecipe.get(), itemStack);
+    protected boolean passesFilter(ItemStack itemStack) {
+        return MechHopperBlock.filterMap.getOrDefault(getFilterItem(), s -> true).test(itemStack);
+    }
+
+    protected void pickupItemEntity(World world, ItemEntity itemEntity) {
+        ItemStack itemStack = itemEntity.getStack();
+        if (itemStack.isEmpty()) {
             return;
         }
 
-        if (!MechHopperBlock.filterMap.getOrDefault(filterItem, s -> true).test(itemStack)) {
+        Optional<HopperFilterRecipe> optionalRecipe = getMatchingRecipe(itemStack);
+        if (optionalRecipe.isPresent()) {
+            processRecipe(world, itemEntity, optionalRecipe.get(), itemStack);
+            return;
+        }
+
+        if (!passesFilter(itemStack)) {
             return;
         }
         try (Transaction transaction = Transaction.openOuter()) {
             int count = itemStack.getCount();
             long inserted = StorageUtil.insertStacking(
-                    blockEntity.inventoryWrapper.parts.get(1).getSlots(),
+                    this.inventoryWrapper.parts.get(1).getSlots(),
                     ItemVariant.of(itemStack),
                     count,
                     transaction
             );
             itemEntity.setStack(itemEntity.getStack().copyWithCount((int) (count - inserted)));
-            blockEntity.itemPickupCooldown++;
+            this.itemPickupCooldown++;
             transaction.commit();
-            blockEntity.hopperInventory.markDirty();
+            this.hopperInventory.markDirty();
         }
     }
 
-    private static void processRecipe(World world, ItemEntity itemEntity, MechHopperBlockEntity blockEntity, HopperFilterRecipe recipe, ItemStack itemStack) {
+    private void processRecipe(World world, ItemEntity itemEntity, HopperFilterRecipe recipe, ItemStack itemStack) {
         int inputCount = itemStack.getCount();
 
         // Results get inserted into the hopper
@@ -381,14 +392,14 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
                 // If 1 input item converts to multiple output items,
                 // operationsSucceeded only counts up the number of input items accepted
                 operationsSucceeded = (int) StorageUtil.insertStacking(
-                        blockEntity.inventoryWrapper.parts.get(1).getSlots(),
+                        this.inventoryWrapper.parts.get(1).getSlots(),
                         ItemVariant.of(resultStack),
                         (long) inputCount * resultStack.getCount(),
                         transaction
                 ) / resultStack.getCount();
-                blockEntity.itemPickupCooldown++;
+                this.itemPickupCooldown++;
                 transaction.commit();
-                blockEntity.hopperInventory.markDirty();
+                this.hopperInventory.markDirty();
             }
         }
         else {
@@ -400,22 +411,22 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
             int itemCount = operationsSucceeded * byproductStack.getCount();
             while (itemCount > 0) {
                 int spawnCount = Math.min(itemCount, byproductStack.getItem().getMaxCount());
-                blockEntity.spawnNewItemOnTop(world, itemEntity.getPos(), new ItemStack(byproductStack.getItem(), spawnCount));
+                this.spawnNewItemOnTop(world, itemEntity.getPos(), new ItemStack(byproductStack.getItem(), spawnCount));
                 itemCount -= spawnCount;
             }
         }
 
         int soulsInserted = operationsSucceeded * recipe.soulCount();
         if (soulsInserted > 0) {
-            int newSoulCount = blockEntity.soulCount + soulsInserted;
-            if (newSoulCount > SOUL_STORAGE_LIMIT && blockEntity.mechPower <= 0) {
-                soulOverloadExplode(world, blockEntity);
+            int newSoulCount = this.soulCount + soulsInserted;
+            if (newSoulCount > SOUL_STORAGE_LIMIT && this.mechPower <= 0) {
+                soulOverloadExplode(world, this);
                 return;
             }
-            blockEntity.soulCount = Math.min(newSoulCount, SOUL_STORAGE_LIMIT);
-            blockEntity.markDirty();
+            this.soulCount = Math.min(newSoulCount, SOUL_STORAGE_LIMIT);
+            this.markDirty();
             // Play ghast noise
-            world.playSound(null, blockEntity.pos, BwtSoundEvents.SOUL_CONVERSION, SoundCategory.BLOCKS, 1f, 1.5f);
+            world.playSound(null, this.pos, BwtSoundEvents.SOUL_CONVERSION, SoundCategory.BLOCKS, 1f, 1.5f);
         }
     }
 
@@ -488,6 +499,27 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         hopperInventory.clear();
     }
 
+    @Override
+    public int[] getAvailableSlots(Direction side) {
+        return side == Direction.UP ? AVAILABLE_SLOTS : new int[0];
+    }
+
+    @Override
+    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+        // Only insert via the top
+        if (slot <= 0 || dir != Direction.UP) {
+            return false;
+        }
+        // Don't process recipes via hoppers.
+        // Enforce filter checks
+        return getMatchingRecipe(stack).isEmpty() && passesFilter(stack);
+    }
+
+    @Override
+    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+        return slot > 0;
+    }
+
     public class FilterInventory extends SimpleSingleStackInventory {
         public FilterInventory() {
             super(1);
@@ -512,7 +544,5 @@ public class MechHopperBlockEntity extends BlockEntity implements NamedScreenHan
         public void markDirty() {
             MechHopperBlockEntity.this.markDirty();
         }
-
-
     }
 }
