@@ -8,6 +8,7 @@ import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.data.server.recipe.RecipeExporter;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
@@ -92,6 +93,7 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.POWERED_RAIL).result(Items.GOLD_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.DETECTOR_RAIL).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_DOOR).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_TRAPDOOR).result(Items.IRON_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtBlocks.stoneDetectorRailBlock.asItem()).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtBlocks.obsidianDetectorRailBlock.asItem()).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COMPASS).result(Items.IRON_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
@@ -99,7 +101,41 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.MINECART).result(Items.IRON_INGOT, 5).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SHEARS).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.FLINT_AND_STEEL).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CROSSBOW).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_HORSE_ARMOR).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_HORSE_ARMOR).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_NUGGET, 9).result(Items.GOLD_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
         StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_NUGGET, 9).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+
+        // Copper stuff
+//        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COPPER_NUGGET, 9).result(Items.COPPER_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        for (Item copperBulb : new Item[]{
+                Items.COPPER_BULB, Items.WAXED_COPPER_BULB,
+                Items.EXPOSED_COPPER_BULB, Items.WAXED_EXPOSED_COPPER_BULB,
+                Items.WEATHERED_COPPER_BULB, Items.WAXED_WEATHERED_COPPER_BULB,
+                Items.OXIDIZED_COPPER_BULB, Items.WAXED_OXIDIZED_COPPER_BULB,
+        }) {
+            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperBulb).result(Items.COPPER_INGOT, 6).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        }
+        for (Item copperDoor : new Item[]{
+                Items.COPPER_DOOR, Items.WAXED_COPPER_DOOR,
+                Items.EXPOSED_COPPER_DOOR, Items.WAXED_EXPOSED_COPPER_DOOR,
+                Items.WEATHERED_COPPER_DOOR, Items.WAXED_WEATHERED_COPPER_DOOR,
+                Items.OXIDIZED_COPPER_DOOR, Items.WAXED_OXIDIZED_COPPER_DOOR,
+        }) {
+            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperDoor).result(Items.COPPER_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        }
+        for (Item copperTrapDoor : new Item[]{
+                Items.COPPER_TRAPDOOR, Items.WAXED_COPPER_TRAPDOOR,
+                Items.EXPOSED_COPPER_TRAPDOOR, Items.WAXED_EXPOSED_COPPER_TRAPDOOR,
+                Items.WEATHERED_COPPER_TRAPDOOR, Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
+                Items.OXIDIZED_COPPER_TRAPDOOR, Items.WAXED_OXIDIZED_COPPER_TRAPDOOR,
+        }) {
+            // TODO change this to 4 once the recipe changes in 1.21.9
+            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperTrapDoor).result(Items.COPPER_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        }
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.BRUSH).result(Items.COPPER_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.LIGHTNING_ROD).result(Items.COPPER_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
+        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SPYGLASS).result(Items.COPPER_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
     }
 }

@@ -104,6 +104,7 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
             map.put(Items.LEATHER_CHESTPLATE, 8);
             map.put(Items.LEATHER_LEGGINGS, 7);
             map.put(Items.LEATHER_BOOTS, 4);
+            map.put(Items.LEATHER_HORSE_ARMOR, 7);
             map.put(Items.SADDLE, 3);
             map.put(Items.LEATHER, 1);
             map.put(BwtItems.scouredLeatherItem, 1);
