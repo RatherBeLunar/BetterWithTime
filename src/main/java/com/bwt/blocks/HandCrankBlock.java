@@ -116,7 +116,7 @@ public class HandCrankBlock extends Block {
         }
         if (clickTimer >= 7) {
             world.setBlockState(pos, state.with(CLICK_TIMER, 0));
-            playClick(world, pos);
+            world.playSound(null, pos, BwtSoundEvents.HAND_CRANK_CLICK, SoundCategory.BLOCKS, 1.0f,  0.75f);
             return;
         }
         playClick(world, pos);

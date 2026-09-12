@@ -17,6 +17,7 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.state.StateManager;
+import net.minecraft.state.property.IntProperty;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ItemScatterer;
@@ -31,14 +32,16 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBase {
+    public static final IntProperty STATE = IntProperty.of("state", 0, 2);
     public MillStoneBlock(Settings settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false));
+        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(STATE, 0));
     }
 
     @Override
     public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
+        builder.add(STATE);
     }
 
     @Override
@@ -53,9 +56,7 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
             return;
         }
         emitGearBoxParticles(world, pos, random);
-        if (random.nextInt(4) == 0) {
-            playMechSound(world, pos);
-        }
+        playMechSound(state, world, pos, random);
     }
 
     @Override
@@ -140,8 +141,15 @@ public class MillStoneBlock extends BlockWithEntity implements MechPowerBlockBas
         this.updatePowerTransfer(world, state, pos);
     }
 
-    private void playMechSound(World world, BlockPos pos) {
-        world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundCategory.BLOCKS, 0.125f,  1.25F, false);
+    private void playMechSound(BlockState state, World world, BlockPos pos, Random random) {
+        int millStoneState = state.get(STATE);
+        switch (millStoneState) {
+            case 1 -> world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundCategory.BLOCKS, 1.0F + random.nextFloat() * 0.1F, 1.25F, false);
+            case 2 -> world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_INVALID, SoundCategory.BLOCKS, 1.0F + random.nextFloat() * 0.1F, 1F, false);
+            default -> {
+                if(random.nextInt(2) == 0) world.playSoundAtBlockCenter(pos, BwtSoundEvents.MILL_STONE_IDLE, SoundCategory.BLOCKS, 1.5F + random.nextFloat() * 0.1F, 1F, false);
+            }
+        }
     }
 
     private void emitGearBoxParticles(World world, BlockPos pos, Random random) {

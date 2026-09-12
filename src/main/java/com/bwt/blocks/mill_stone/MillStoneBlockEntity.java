@@ -1,5 +1,7 @@
 package com.bwt.blocks.mill_stone;
 
+import java.util.List;
+
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
@@ -7,6 +9,7 @@ import com.bwt.recipes.IngredientWithCount;
 import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import com.bwt.recipes.mill_stone.MillStoneRecipeInput;
 import com.bwt.utils.OrderedRecipeMatcher;
+
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -22,7 +25,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.PropertyDelegate;
@@ -31,8 +33,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
     protected int grindProgressTime;
@@ -76,6 +76,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getHeldStacks());
         List<RecipeEntry<MillStoneRecipe>> matches = world.getRecipeManager().getAllMatches(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, world);
         if (matches.isEmpty()) {
+            world.setBlockState(pos, state.with(MillStoneBlock.STATE, blockEntity.isEmpty() ? 0 : 2));
             if (blockEntity.grindProgressTime != 0) {
                 blockEntity.grindProgressTime = 0;
                 blockEntity.markDirty();
@@ -84,6 +85,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         }
 
         blockEntity.grindProgressTime += 1;
+        world.setBlockState(pos, state.with(MillStoneBlock.STATE, 1));
         if (blockEntity.grindProgressTime >= timeToGrind) {
             blockEntity.grindProgressTime = 0;
             blockEntity.markDirty();
