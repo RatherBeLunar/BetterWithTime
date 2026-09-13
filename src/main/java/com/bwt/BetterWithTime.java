@@ -121,10 +121,12 @@ public class BetterWithTime implements ModInitializer {
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_SIDING_BLOCKS, 150);
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_MOULDING_BLOCKS, 75);
 		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_CORNER_BLOCKS, 38);
+		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_COLUMN_BLOCKS, 75);
+		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_PEDESTAL_BLOCKS, 300);
+		FuelRegistry.INSTANCE.add(BwtItemTags.WOODEN_TABLE_BLOCKS, 150);
 		FuelRegistry.INSTANCE.add(BwtBlocks.axleBlock, 150);
 		FuelRegistry.INSTANCE.add(BwtBlocks.axlePowerSourceBlock, 150);
 		FuelRegistry.INSTANCE.add(BwtBlocks.bellowsBlock, 450);
-//      FuelRegistry.INSTANCE.add(BwtBlocks.bloodWoodBlock)
 		FuelRegistry.INSTANCE.add(BwtBlocks.gearBoxBlock, 600);
 		FuelRegistry.INSTANCE.add(BwtBlocks.redstoneClutchBlock, 600);
 		FuelRegistry.INSTANCE.add(BwtBlocks.grateBlock, 300);
