@@ -159,7 +159,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                     .save(exporter, Id.of("recombine_" + BuiltInRegistries.BLOCK.getKey(cornerBlock).getPath()));
 
             // Decorative blocks
-            SoulForgeShapedRecipe.JsonBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, columnBlock)
+            SoulForgeShapedRecipe.JsonBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, columnBlock, 3)
                     .markDefault()
                     .pattern("#")
                     .pattern("#")

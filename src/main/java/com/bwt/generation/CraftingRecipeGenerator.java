@@ -473,7 +473,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .unlockedBy(getHasName(sidingBlock), has(sidingBlock))
                     .save(exporter, Id.of("recombine_" + BuiltInRegistries.BLOCK.getKey(cornerBlock).getPath()));
             // Decorative blocks
-            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, columnBlock)
+            ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, columnBlock, 3)
                     .pattern("#")
                     .pattern("#")
                     .pattern("#")
