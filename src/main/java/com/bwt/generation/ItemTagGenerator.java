@@ -94,6 +94,30 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         getOrCreateTagBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
         getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
+        //Blood wood blocks don't burn
+        getOrCreateTagBuilder(ItemTags.NON_FLAMMABLE_WOOD).add(
+                BwtBlocks.bloodWoodBlocks.saplingItem,
+                BwtBlocks.bloodWoodBlocks.buttonBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.fenceBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.fenceGateBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.leavesBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.logBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.planksBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.pressurePlateBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.slabBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.stairsBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.strippedLogBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.strippedWoodBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.trapdoorBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.woodBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.sidingBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.mouldingBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.cornerBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.columnBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.pedestalBlock.asItem(),
+                BwtBlocks.bloodWoodBlocks.tableBlock.asItem()
+        );
+
         addHopperFilters();
     }
 

@@ -446,6 +446,11 @@ public class BwtBlocks implements ModInitializer {
                 sidingBlocks, mouldingBlocks, cornerBlocks,
                 columnBlocks, pedestalBlocks, tableBlocks
         );
+        // Keep track of the blood wood mini blocks for easy access later
+        bloodWoodBlocks.initializeMiniBlocks(
+                sidingBlocks, mouldingBlocks, cornerBlocks,
+                columnBlocks, pedestalBlocks, tableBlocks
+        );
         // Crucible
         Registry.register(BuiltInRegistries.BLOCK, Id.of("crucible"), crucibleBlock);
         Registry.register(BuiltInRegistries.ITEM, Id.of("crucible"), new BlockItem(crucibleBlock, new Item.Properties()));

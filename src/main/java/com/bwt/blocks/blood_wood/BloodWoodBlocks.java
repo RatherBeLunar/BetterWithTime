@@ -1,5 +1,6 @@
 package com.bwt.blocks.blood_wood;
 
+import com.bwt.blocks.*;
 import com.bwt.features.BwtConfiguredFeatures;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
@@ -30,6 +31,8 @@ import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class BloodWoodBlocks {
@@ -55,6 +58,13 @@ public class BloodWoodBlocks {
     public Block stairsBlock;
     public Block doorBlock;
     public Block trapdoorBlock;
+
+    public SidingBlock sidingBlock;
+    public MouldingBlock mouldingBlock;
+    public CornerBlock cornerBlock;
+    public PedestalBlock pedestalBlock;
+    public ColumnBlock columnBlock;
+    public TableBlock tableBlock;
 
 
     public BloodWoodBlocks initialize() {
@@ -115,6 +125,22 @@ public class BloodWoodBlocks {
                 .recipeUnlockedBy("has_planks")
                 .getFamily();
         return this;
+    }
+
+    public void initializeMiniBlocks(
+            ArrayList<SidingBlock> sidingBlocks,
+            ArrayList<MouldingBlock> mouldingBlocks,
+            ArrayList<CornerBlock> cornerBlocks,
+            ArrayList<ColumnBlock> columnBlocks,
+            ArrayList<PedestalBlock> pedestalBlocks,
+            ArrayList<TableBlock> tableBlocks
+    ) {
+        this.sidingBlock = sidingBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
+        this.mouldingBlock = mouldingBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
+        this.cornerBlock = cornerBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
+        this.pedestalBlock = pedestalBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
+        this.columnBlock = columnBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
+        this.tableBlock = tableBlocks.stream().filter(block -> block.fullBlock.equals(this.planksBlock)).findFirst().orElse(null);
     }
 
     public void register() {
