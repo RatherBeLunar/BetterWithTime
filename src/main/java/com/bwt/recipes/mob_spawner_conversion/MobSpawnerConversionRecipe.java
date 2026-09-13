@@ -7,41 +7,37 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 
 public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRecipeInput> {
 
     protected final String group;
-    protected final CraftingRecipeCategory category;
+    protected final CraftingBookCategory category;
     protected final BlockIngredient ingredient;
     protected final Block result;
 
-    public MobSpawnerConversionRecipe(String group, CraftingRecipeCategory category, BlockIngredient ingredient, Block result) {
+    public MobSpawnerConversionRecipe(String group, CraftingBookCategory category, BlockIngredient ingredient, Block result) {
         this.group = group;
         this.category = category;
         this.ingredient = ingredient;
@@ -49,7 +45,7 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(Blocks.SPAWNER);
     }
 
@@ -59,12 +55,12 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
     }
 
     @Override
-    public boolean matches(MobSpawnerConversionRecipeInput input, World world) {
+    public boolean matches(MobSpawnerConversionRecipeInput input, Level level) {
         return this.ingredient.test(input.block());
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -86,13 +82,13 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
         return BwtRecipes.MOB_SPAWNER_CONVERSION_RECIPE_TYPE;
     }
 
-    public CraftingRecipeCategory getCategory() {
+    public CraftingBookCategory getCategory() {
         return this.category;
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+    public boolean isSpecial() {
+        return Recipe.super.isSpecial();
     }
 
     @Override
@@ -101,13 +97,13 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
     }
 
     @Override
-    public ItemStack craft(MobSpawnerConversionRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
-        return getResult(lookup);
+    public ItemStack assemble(MobSpawnerConversionRecipeInput input, HolderLookup.Provider lookup) {
+        return getResultItem(lookup);
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
-        return result.asItem().getDefaultStack();
+    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
+        return result.asItem().getDefaultInstance();
     }
 
     public static class Serializer implements RecipeSerializer<MobSpawnerConversionRecipe> {
@@ -115,18 +111,18 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
                 instance->instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
                                 .forGetter(recipe -> recipe.group),
-                        CraftingRecipeCategory.CODEC.fieldOf("category")
-                                .orElse(CraftingRecipeCategory.MISC)
+                        CraftingBookCategory.CODEC.fieldOf("category")
+                                .orElse(CraftingBookCategory.MISC)
                                 .forGetter(recipe -> recipe.category),
                         BlockIngredient.Serializer.CODEC
                                 .fieldOf("ingredient")
                                 .forGetter(recipe -> recipe.ingredient),
-                        Registries.BLOCK.getCodec()
+                        BuiltInRegistries.BLOCK.byNameCodec()
                                 .fieldOf("result")
                                 .forGetter(MobSpawnerConversionRecipe::getResult)
                 ).apply(instance, MobSpawnerConversionRecipe::new)
         );
-        public static final PacketCodec<RegistryByteBuf, MobSpawnerConversionRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, MobSpawnerConversionRecipe> PACKET_CODEC = StreamCodec.of(
                 MobSpawnerConversionRecipe.Serializer::write, MobSpawnerConversionRecipe.Serializer::read
         );
 
@@ -138,28 +134,28 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, MobSpawnerConversionRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, MobSpawnerConversionRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        protected static MobSpawnerConversionRecipe read(RegistryByteBuf buf) {
-            String group = buf.readString();
-            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
+        protected static MobSpawnerConversionRecipe read(RegistryFriendlyByteBuf buf) {
+            String group = buf.readUtf();
+            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
             BlockIngredient ingredient = BlockIngredient.Serializer.read(buf);
-            Block result = PacketCodecs.registryCodec(Registries.BLOCK.getCodec()).decode(buf);
+            Block result = ByteBufCodecs.fromCodecWithRegistries(BuiltInRegistries.BLOCK.byNameCodec()).decode(buf);
             return new MobSpawnerConversionRecipe(group, category, ingredient, result);
         }
 
-        protected static void write(RegistryByteBuf buf, MobSpawnerConversionRecipe recipe) {
-            buf.writeString(recipe.group);
-            buf.writeEnumConstant(recipe.category);
+        protected static void write(RegistryFriendlyByteBuf buf, MobSpawnerConversionRecipe recipe) {
+            buf.writeUtf(recipe.group);
+            buf.writeEnum(recipe.category);
             BlockIngredient.Serializer.write(buf, recipe.ingredient);
-            PacketCodecs.registryCodec(Registries.BLOCK.getCodec()).encode(buf, recipe.result);
+            ByteBufCodecs.fromCodecWithRegistries(BuiltInRegistries.BLOCK.byNameCodec()).encode(buf, recipe.result);
         }
     }
 
-    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
-        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
+    public static class JsonBuilder implements RecipeBuilder {
+        protected CraftingBookCategory category = CraftingBookCategory.MISC;
         protected BlockIngredient ingredient;
         protected Block result;
         protected String fromBlockName;
@@ -170,18 +166,18 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
         public static MobSpawnerConversionRecipe.JsonBuilder create(Block input) {
             MobSpawnerConversionRecipe.JsonBuilder obj = new MobSpawnerConversionRecipe.JsonBuilder();
             obj.ingredient = BlockIngredient.fromBlock(input);
-            obj.fromBlockName = Registries.BLOCK.getId(input).getPath();
+            obj.fromBlockName = BuiltInRegistries.BLOCK.getKey(input).getPath();
             return obj;
         }
 
         public static MobSpawnerConversionRecipe.JsonBuilder create(TagKey<Block> inputTag) {
             MobSpawnerConversionRecipe.JsonBuilder obj = new MobSpawnerConversionRecipe.JsonBuilder();
             obj.ingredient = BlockIngredient.fromTag(inputTag);
-            obj.fromBlockName = inputTag.id().getPath();
+            obj.fromBlockName = inputTag.location().getPath();
             return obj;
         }
 
-        public MobSpawnerConversionRecipe.JsonBuilder category(CraftingRecipeCategory category) {
+        public MobSpawnerConversionRecipe.JsonBuilder category(CraftingBookCategory category) {
             this.category = category;
             return this;
         }
@@ -192,7 +188,7 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
         }
 
         @Override
-        public MobSpawnerConversionRecipe.JsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
+        public MobSpawnerConversionRecipe.JsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
             return this;
         }
 
@@ -207,29 +203,29 @@ public class MobSpawnerConversionRecipe implements Recipe<MobSpawnerConversionRe
             return this;
         }
 
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if(this.isDefaultRecipe) {
                 EmiDefaultsGenerator.addBwtRecipe(recipeId);
             }
         }
 
         @Override
-        public Item getOutputItem() {
+        public Item getResult() {
             return ingredient.getMatchingStacks().get(0).getItem();
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, Id.of("mob_spawner_conversion_from_" + fromBlockName + "_to_" + Registries.BLOCK.getId(result).getPath()));
+        public void save(RecipeOutput exporter) {
+            this.save(exporter, Id.of("mob_spawner_conversion_from_" + fromBlockName + "_to_" + BuiltInRegistries.BLOCK.getKey(result).getPath()));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, String recipePath) {
-            this.offerTo(exporter, Id.of(recipePath));
+        public void save(RecipeOutput exporter, String recipePath) {
+            this.save(exporter, Id.of(recipePath));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             this.addToDefaults(recipeId);
             MobSpawnerConversionRecipe mobSpawnerConversionRecipe = new MobSpawnerConversionRecipe(
                     Objects.requireNonNullElse(this.group, ""),

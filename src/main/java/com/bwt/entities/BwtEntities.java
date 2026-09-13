@@ -2,108 +2,109 @@ package com.bwt.entities;
 
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.entity.*;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 
 public class BwtEntities implements ModInitializer {
     public static final EntityType<WindmillEntity> windmillEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("windmill"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<WindmillEntity>) WindmillEntity::new,
-                    SpawnGroup.MISC
-            ).maxTrackingRange(10).build()
+                    MobCategory.MISC
+            ).clientTrackingRange(10).build()
     );
     public static final EntityType<WaterWheelEntity> waterWheelEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("water_wheel"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                 (EntityType.EntityFactory<WaterWheelEntity>) WaterWheelEntity::new,
-                SpawnGroup.MISC
-            ).maxTrackingRange(10).build()
+                MobCategory.MISC
+            ).clientTrackingRange(10).build()
     );
     public static final EntityType<MovingRopeEntity> movingRopeEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("moving_rope"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<MovingRopeEntity>) MovingRopeEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.98f, 0.98f)
+            .sized(0.98f, 0.98f)
             .build()
     );
     public static final EntityType<BroadheadArrowEntity> broadheadArrowEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("broadhead_arrow"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<BroadheadArrowEntity>) BroadheadArrowEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.5f, 0.5f)
-            .maxTrackingRange(4)
-            .trackingTickInterval(20)
+            .sized(0.5f, 0.5f)
+            .clientTrackingRange(4)
+            .updateInterval(20)
             .build()
     );
     public static final EntityType<RottedArrowEntity> rottedArrowEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("rotted_arrow"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<RottedArrowEntity>) RottedArrowEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.5f, 0.5f)
-            .maxTrackingRange(4)
-            .trackingTickInterval(20)
+            .sized(0.5f, 0.5f)
+            .clientTrackingRange(4)
+            .updateInterval(20)
             .build()
     );
     public static final EntityType<DynamiteEntity> dynamiteEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("dynamite"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<DynamiteEntity>) DynamiteEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.25f, 0.40f)
-            .maxTrackingRange(4)
-            .trackingTickInterval(20)
+            .sized(0.25f, 0.40f)
+            .clientTrackingRange(4)
+            .updateInterval(20)
             .build()
     );
     public static final EntityType<MiningChargeEntity> miningChargeEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("mining_charge"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<MiningChargeEntity>) MiningChargeEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .makeFireImmune()
-            .dimensions(0.98f, 0.98f)
-            .maxTrackingRange(10)
-            .trackingTickInterval(10)
+            .fireImmune()
+            .sized(0.98f, 0.98f)
+            .clientTrackingRange(10)
+            .updateInterval(10)
             .build()
     );
     public static final EntityType<SoulUrnProjectileEntity> soulUrnProjectileEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             Id.of("soul_urn"),
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<SoulUrnProjectileEntity>) SoulUrnProjectileEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.25f, 0.40f)
-            .maxTrackingRange(6)
-            .trackingTickInterval(20)
+            .sized(0.25f, 0.40f)
+            .clientTrackingRange(6)
+            .updateInterval(20)
             .build()
     );
     public static final EntityType<CanvasEntity> canvasEntity = Registry.register(
-            Registries.ENTITY_TYPE,
+            BuiltInRegistries.ENTITY_TYPE,
             "canvas",
-            EntityType.Builder.create(
+            EntityType.Builder.of(
                     (EntityType.EntityFactory<CanvasEntity>) CanvasEntity::new,
-                    SpawnGroup.MISC
+                    MobCategory.MISC
             )
-            .dimensions(0.5F, 0.5F)
-            .maxTrackingRange(10)
-            .trackingTickInterval(Integer.MAX_VALUE)
+            .sized(0.5F, 0.5F)
+            .clientTrackingRange(10)
+            .updateInterval(Integer.MAX_VALUE)
             .build()
     );
 

@@ -1,27 +1,27 @@
 package com.bwt.blocks.axles;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class CreativePowerSourceBlock extends Block implements AxlePowerLevelGetter {
-    protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
-    protected static final VoxelShape Y_SHAPE = Block.createCuboidShape(6f, 0f, 6f, 10f, 16f, 10f);
-    protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6f, 6f, 0f, 10f, 10f, 16f);
-    protected static final VoxelShape OUTLINE = VoxelShapes.union(X_SHAPE, Y_SHAPE, Z_SHAPE);
+    protected static final VoxelShape X_SHAPE = Block.box(0f, 6f, 6f, 16f, 10f, 10f);
+    protected static final VoxelShape Y_SHAPE = Block.box(6f, 0f, 6f, 10f, 16f, 10f);
+    protected static final VoxelShape Z_SHAPE = Block.box(6f, 6f, 0f, 10f, 10f, 16f);
+    protected static final VoxelShape OUTLINE = Shapes.or(X_SHAPE, Y_SHAPE, Z_SHAPE);
 
-    public CreativePowerSourceBlock(Settings settings) {
+    public CreativePowerSourceBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState());
+        registerDefaultState(defaultBlockState());
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
         return OUTLINE;
     }
 

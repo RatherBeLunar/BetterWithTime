@@ -1,9 +1,9 @@
 package com.bwt.items;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 public class CementBucketItem extends Item {
-    public CementBucketItem(Item.Settings settings) {
+    public CementBucketItem(Item.Properties settings) {
         super(settings);
     }
 }

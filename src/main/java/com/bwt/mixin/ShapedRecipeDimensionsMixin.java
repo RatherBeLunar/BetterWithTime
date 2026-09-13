@@ -4,9 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RawShapedRecipe;
-import net.minecraft.util.dynamic.Codecs;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -16,21 +13,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 import java.util.function.Function;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 
-@Mixin(RawShapedRecipe.Data.class)
+@Mixin(ShapedRecipePattern.Data.class)
 public abstract class ShapedRecipeDimensionsMixin {
     @Mutable
     @Accessor
     private static void setPATTERN_CODEC(Codec<List<String>> value) {}
 
     @Accessor
-    private static Codec<Character> getKEY_ENTRY_CODEC() {
+    private static Codec<Character> getSYMBOL_CODEC() {
         return null;
     }
 
     @Mutable
     @Accessor
-    private static void setCODEC(MapCodec<RawShapedRecipe.Data> value) {}
+    private static void setMAP_CODEC(MapCodec<ShapedRecipePattern.Data> value) {}
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void clint(CallbackInfo ci) {
@@ -53,10 +53,10 @@ public abstract class ShapedRecipeDimensionsMixin {
             return DataResult.success(pattern);
         }, Function.identity());
         setPATTERN_CODEC(PATTERN_CODEC);
-        setCODEC(RecordCodecBuilder.mapCodec(instance -> instance.group(
-                (Codecs.strictUnboundedMap(getKEY_ENTRY_CODEC(), Ingredient.DISALLOW_EMPTY_CODEC).fieldOf("key"))
-                        .forGetter(RawShapedRecipe.Data::key), (PATTERN_CODEC.fieldOf("pattern"))
-                        .forGetter(RawShapedRecipe.Data::pattern)
-        ).apply(instance, RawShapedRecipe.Data::new)));
+        setMAP_CODEC(RecordCodecBuilder.mapCodec(instance -> instance.group(
+                (ExtraCodecs.strictUnboundedMap(getSYMBOL_CODEC(), Ingredient.CODEC_NONEMPTY).fieldOf("key"))
+                        .forGetter(ShapedRecipePattern.Data::key), (PATTERN_CODEC.fieldOf("pattern"))
+                        .forGetter(ShapedRecipePattern.Data::pattern)
+        ).apply(instance, ShapedRecipePattern.Data::new)));
     }
 }

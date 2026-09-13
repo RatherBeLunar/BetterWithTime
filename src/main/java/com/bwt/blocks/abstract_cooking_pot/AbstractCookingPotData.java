@@ -1,12 +1,12 @@
 package com.bwt.blocks.abstract_cooking_pot;
 
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 public record AbstractCookingPotData(boolean isStoked) {
-    public static final PacketCodec<RegistryByteBuf, AbstractCookingPotData> PACKET_CODEC = PacketCodec.tuple(
-            PacketCodecs.BOOL,
+    public static final StreamCodec<RegistryFriendlyByteBuf, AbstractCookingPotData> PACKET_CODEC = StreamCodec.composite(
+            ByteBufCodecs.BOOL,
             AbstractCookingPotData::isStoked,
             AbstractCookingPotData::new
     );

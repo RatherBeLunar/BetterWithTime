@@ -3,28 +3,32 @@ package com.bwt.blocks.abstract_cooking_pot;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -32,56 +36,56 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public abstract class AbstractCookingPotBlock extends BlockWithEntity implements MechPowerBlockBase {
-    public static final DirectionProperty TIP_DIRECTION = DirectionProperty.of("tip_direction", direction -> direction != Direction.DOWN);
+public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements MechPowerBlockBase {
+    public static final DirectionProperty TIP_DIRECTION = DirectionProperty.create("tip_direction", direction -> direction != Direction.DOWN);
 
-    public static Box box1 = new Box(1, 0, 1, 15, 16, 15);
-    public static Box box2 = new Box(0, 2, 0, 16, 14, 16);
+    public static final AABB box1 = new AABB(1, 0, 1, 15, 16, 15);
+    public static final AABB box2 = new AABB(0, 2, 0, 16, 14, 16);
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
-            .map(direction -> VoxelShapes.union(BlockUtils.rotateCuboidFromUp(direction, box1), BlockUtils.rotateCuboidFromUp(direction, box2)).simplify())
+            .map(direction -> Shapes.or(BlockUtils.rotateCuboidFromUp(direction, box1), BlockUtils.rotateCuboidFromUp(direction, box2)).optimize())
             .toList();
-    protected static final VoxelShape SIDES_SHAPE = Block.createCuboidShape(1.0, 0.0, 1.0, 15.0, 15.0, 15.0);
+    protected static final VoxelShape SIDES_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 15.0, 15.0);
 
-    public AbstractCookingPotBlock(Settings settings) {
+    public AbstractCookingPotBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(TIP_DIRECTION, Direction.UP).with(MECH_POWERED, false));
+        registerDefaultState(defaultBlockState().setValue(TIP_DIRECTION, Direction.UP).setValue(MECH_POWERED, false));
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
         builder.add(TIP_DIRECTION);
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return null;
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return COLLISION_SHAPES.get(state.get(TIP_DIRECTION).getId());
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return COLLISION_SHAPES.get(state.getValue(TIP_DIRECTION).get3DDataValue());
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.block();
     }
 
     @Override
-    public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
+    public VoxelShape getBlockSupportShape(BlockState state, BlockGetter level, BlockPos pos) {
         return SIDES_SHAPE;
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        ItemScatterer.onStateReplaced(state, newState, world, pos);
-        super.onStateReplaced(state, world, pos, newState, moved);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        Containers.dropContentsOnDestroy(state, newState, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
     @Override
@@ -95,80 +99,80 @@ public abstract class AbstractCookingPotBlock extends BlockWithEntity implements
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        schedulePowerUpdate(state, world, pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        schedulePowerUpdate(state, level, pos);
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        boolean isMechPowered = getPowerInputFaces(world, pos, state).count() == 1;
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
+        boolean isMechPowered = getPowerInputFaces(level, pos, state).count() == 1;
         // If block just turned on
         if (isMechPowered && !isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
+            level.scheduleTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
         }
         // If block just turned off
         else if (!isMechPowered && isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
+            level.scheduleTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, world, pos);
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Optional<Direction> input = getPowerInputFaces(world, pos, state).findFirst();
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        Optional<Direction> input = getPowerInputFaces(level, pos, state).findFirst();
         if (input.isPresent() == isMechPowered(state)) {
             return;
         }
         if (input.isEmpty()) {
-            world.setBlockState(pos, state.with(TIP_DIRECTION, Direction.UP).with(MECH_POWERED, false));
+            level.setBlockAndUpdate(pos, state.setValue(TIP_DIRECTION, Direction.UP).setValue(MECH_POWERED, false));
             return;
         }
-        world.setBlockState(pos, state.with(TIP_DIRECTION, input.get().rotateYClockwise()).with(MECH_POWERED, true));
+        level.setBlockAndUpdate(pos, state.setValue(TIP_DIRECTION, input.get().getClockWise()).setValue(MECH_POWERED, true));
     }
 
     @Nullable
-    protected static <A extends BlockEntity, E extends AbstractCookingPotBlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
-        return world.isClient ? null : BlockWithEntity.validateTicker(givenType, expectedType, E::tick);
+    protected static <A extends BlockEntity, E extends AbstractCookingPotBlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
+        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, expectedType, E::tick);
     }
 
     @Override
-    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
-        if (world.isClient) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (level.isClientSide) {
             return;
         }
-        if (state.get(TIP_DIRECTION) != Direction.UP) {
+        if (state.getValue(TIP_DIRECTION) != Direction.UP) {
             return;
         }
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof AbstractCookingPotBlockEntity cookingPotBlockEntity) {
             AbstractCookingPotBlockEntity.onEntityCollided(entity, cookingPotBlockEntity);
         }
     }
 
     @Override
-    public boolean hasComparatorOutput(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(TIP_DIRECTION, rotation.rotate(state.get(TIP_DIRECTION)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(TIP_DIRECTION, rotation.rotate(state.getValue(TIP_DIRECTION)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(TIP_DIRECTION, mirror.apply(state.get(TIP_DIRECTION)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(TIP_DIRECTION, mirror.mirror(state.getValue(TIP_DIRECTION)));
     }
 }

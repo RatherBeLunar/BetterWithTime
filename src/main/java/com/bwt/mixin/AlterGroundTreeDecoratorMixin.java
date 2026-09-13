@@ -2,13 +2,11 @@ package com.bwt.mixin;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtBlockTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.TestableWorld;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.stateprovider.BlockStateProvider;
-import net.minecraft.world.gen.treedecorator.AlterGroundTreeDecorator;
-import net.minecraft.world.gen.treedecorator.TreeDecorator;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvider;
+import net.minecraft.world.level.levelgen.feature.treedecorators.AlterGroundDecorator;
+import net.minecraft.world.level.levelgen.feature.treedecorators.TreeDecorator;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -16,17 +14,17 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(AlterGroundTreeDecorator.class)
+@Mixin(AlterGroundDecorator.class)
 public abstract class AlterGroundTreeDecoratorMixin {
 
     @Unique
-    private static boolean isSoilBlock(TestableWorld world, BlockPos pos) {
-        return world.testBlockState(pos, blockState -> blockState.isIn(BwtBlockTags.CAN_CONVERT_TO_PODZOL));
+    private static boolean isSoilBlock(LevelSimulatedReader level, BlockPos pos) {
+        return level.isStateAtPosition(pos, blockState -> blockState.is(BwtBlockTags.CAN_CONVERT_TO_PODZOL));
     }
 
     @Unique
-    private static boolean isSoilSlab(TestableWorld world, BlockPos pos) {
-        return world.testBlockState(pos, blockState -> blockState.isIn(BwtBlockTags.CAN_CONVERT_TO_PODZOL_SLAB));
+    private static boolean isSoilSlab(LevelSimulatedReader level, BlockPos pos) {
+        return level.isStateAtPosition(pos, blockState -> blockState.is(BwtBlockTags.CAN_CONVERT_TO_PODZOL_SLAB));
     }
 
 
@@ -34,17 +32,17 @@ public abstract class AlterGroundTreeDecoratorMixin {
     abstract BlockStateProvider getProvider();
 
 
-    @Inject(method = "setColumn", at = @At("HEAD"), cancellable = true)
-    private void bwt$setColumn(TreeDecorator.Generator generator, BlockPos origin, CallbackInfo ci) {
+    @Inject(method = "placeBlockAt", at = @At("HEAD"), cancellable = true)
+    private void bwt$setColumn(TreeDecorator.Context generator, BlockPos origin, CallbackInfo ci) {
         for (int i = 2; i >= -3; --i) {
-            BlockPos blockPos = origin.up(i);
-            if (isSoilBlock(generator.getWorld(), blockPos)) {
-                generator.replace(blockPos, getProvider().get(generator.getRandom(), origin));
+            BlockPos blockPos = origin.above(i);
+            if (isSoilBlock(generator.level(), blockPos)) {
+                generator.setBlock(blockPos, getProvider().getState(generator.random(), origin));
                 break;
             }
 
-            if (isSoilSlab(generator.getWorld(), blockPos)) {
-                generator.replace(blockPos, BwtBlocks.podzolSlabBlock.getDefaultState());
+            if (isSoilSlab(generator.level(), blockPos)) {
+                generator.setBlock(blockPos, BwtBlocks.podzolSlabBlock.defaultBlockState());
                 break;
             }
 

@@ -1,42 +1,40 @@
 package com.bwt.utils.rectangular_entity;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 
 public abstract class RectangularEntity extends Entity {
-    public RectangularEntity(EntityType<?> type, World world) {
-        super(type, world);
+    public RectangularEntity(EntityType<?> type, Level level) {
+        super(type, level);
     }
 
     @Override
-    public void calculateDimensions() {
+    public void refreshDimensions() {
         double d = this.getX();
         double e = this.getY();
         double f = this.getZ();
-        super.calculateDimensions();
-        this.setPosition(d, e, f);
+        super.refreshDimensions();
+        this.setPos(d, e, f);
     }
 
     abstract public EntityRectDimensions getRectDimensions();
 
     @Override
-    public void setYaw(float yaw) {
-        super.setYaw(yaw);
-        this.setBoundingBox(this.calculateBoundingBox());
+    public void setYRot(float yaw) {
+        super.setYRot(yaw);
+        this.setBoundingBox(this.makeBoundingBox());
     }
 
     @Override
-    protected Box calculateBoundingBox() {
+    protected AABB makeBoundingBox() {
         EntityRectDimensions dimensions = this.getRectDimensions();
-        return dimensions.getBoxAt(getPos(), getYaw()).offset(0, -1 * (dimensions.height() / 2), 0);
+        return dimensions.getBoxAt(position(), getYRot()).move(0, -1 * (dimensions.height() / 2), 0);
     }
 
     @Override
-    public Box getVisibilityBoundingBox() {
-        return super.getVisibilityBoundingBox();
+    public AABB getBoundingBoxForCulling() {
+        return super.getBoundingBoxForCulling();
     }
 }

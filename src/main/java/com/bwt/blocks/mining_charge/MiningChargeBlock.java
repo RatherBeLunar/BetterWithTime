@@ -6,79 +6,83 @@ import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
-import net.minecraft.block.*;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.stat.Stats;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBlock {
-    protected static final Box BOTTOM_SHAPE = new Box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock implements ICaughtFireBlock {
+    protected static final AABB BOTTOM_SHAPE = new AABB(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> BlockUtils.rotateCuboidFromUp(direction, BOTTOM_SHAPE))
             .toList();
-    public static final MapCodec<MiningChargeBlock> CODEC = SidingBlock.createCodec(MiningChargeBlock::new);
+    public static final MapCodec<MiningChargeBlock> CODEC = SidingBlock.simpleCodec(MiningChargeBlock::new);
 
-    public MiningChargeBlock(Settings settings) {
+    public MiningChargeBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(FACE, BlockFace.WALL));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(FACE, AttachFace.WALL));
         FlammableBlockRegistry.getDefaultInstance().add(
                 this, 15, 100
         );
     }
 
-    public MapCodec<? extends MiningChargeBlock> getCodec() {
+    public MapCodec<? extends MiningChargeBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(FACING, FACE);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return COLLISION_SHAPES.get(getSurfaceOrientation(state).getId());
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return COLLISION_SHAPES.get(getSurfaceOrientation(state).get3DDataValue());
     }
 
-    public BlockState getDispenserPlacmentState(ItemPlacementContext ctx) {
-        for (Direction direction : ctx.getPlacementDirections()) {
+    public BlockState getDispenserPlacmentState(BlockPlaceContext ctx) {
+        for (Direction direction : ctx.getNearestLookingDirections()) {
             BlockState blockState;
             if (direction.getAxis() == Direction.Axis.Y) {
-                blockState = this.getDefaultState()
-                        .with(FACE, direction == Direction.UP ? BlockFace.CEILING : BlockFace.FLOOR)
-                        .with(FACING, ctx.getHorizontalPlayerFacing());
+                blockState = this.defaultBlockState()
+                        .setValue(FACE, direction == Direction.UP ? AttachFace.CEILING : AttachFace.FLOOR)
+                        .setValue(FACING, ctx.getHorizontalDirection());
             } else {
-                blockState = this.getDefaultState().with(FACE, BlockFace.WALL).with(FACING, direction.getOpposite());
+                blockState = this.defaultBlockState().setValue(FACE, AttachFace.WALL).setValue(FACING, direction.getOpposite());
             }
             return blockState;
         }
@@ -87,114 +91,114 @@ public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBl
     }
 
     public static boolean isHorizontal(BlockState state) {
-        return state.get(FACE) == BlockFace.WALL;
+        return state.getValue(FACE) == AttachFace.WALL;
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (world.isReceivingRedstonePower(pos)) {
-            world.scheduleBlockTick(pos, this, 1);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        if (level.hasNeighborSignal(pos)) {
+            level.scheduleTick(pos, this, 1);
         }
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         return state;
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isReceivingRedstonePower(pos)) {
-            world.scheduleBlockTick(pos, this, 1);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.hasNeighborSignal(pos)) {
+            level.scheduleTick(pos, this, 1);
         }
-        if (world.isClient || !world.getBlockState(pos).isOf(this)) {
+        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
             return;
         }
-        if (canPlaceAt(state, world, pos)) {
+        if (canSurvive(state, level, pos)) {
             return;
         }
-        dropStacks(state, world, pos);
-        world.removeBlock(pos, notify);
+        dropResources(state, level, pos);
+        level.removeBlock(pos, notify);
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (moved) {
             return;
         }
-        super.onStateReplaced(state, world, pos, newState, moved);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        prime(world, pos, state, null);
-        world.removeBlock(pos, false);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        prime(level, pos, state, null);
+        level.removeBlock(pos, false);
     }
 
     @Deprecated
-    public void onExploded(BlockState state, World world, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> stackMerger) {
-        if (state.isIn(BlockTags.AIR) || explosion.getDestructionType() == Explosion.DestructionType.TRIGGER_BLOCK) {
+    public void onExplosionHit(BlockState state, Level level, BlockPos pos, Explosion explosion, BiConsumer<ItemStack, BlockPos> stackMerger) {
+        if (state.is(BlockTags.AIR) || explosion.getBlockInteraction() == Explosion.BlockInteraction.TRIGGER_BLOCK) {
             return;
         }
-        world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL);
-        if (world.isClient) {
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+        if (level.isClientSide) {
             return;
         }
-        MiningChargeEntity miningChargeEntity = new MiningChargeEntity(world, pos.toCenterPos().subtract(0, 0.5, 0), state, explosion.getCausingEntity());
+        MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, explosion.getIndirectSourceEntity());
         miningChargeEntity.setFuse(1);
-        world.spawnEntity(miningChargeEntity);
+        level.addFreshEntity(miningChargeEntity);
     }
 
-    private static void prime(World world, BlockPos pos, BlockState state, @Nullable LivingEntity igniter) {
-        if (world.isClient) {
+    private static void prime(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity igniter) {
+        if (level.isClientSide) {
             return;
         }
-        MiningChargeEntity miningChargeEntity = new MiningChargeEntity(world, pos.toCenterPos().subtract(0, 0.5, 0), state, igniter);
-        world.spawnEntity(miningChargeEntity);
-        world.playSound(null, miningChargeEntity.getX(), miningChargeEntity.getY(), miningChargeEntity.getZ(), BwtSoundEvents.MINING_CHARGE_PRIME, SoundCategory.BLOCKS, 1.0f, 1.0f);
-        world.emitGameEvent(igniter, GameEvent.PRIME_FUSE, pos);
+        MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, igniter);
+        level.addFreshEntity(miningChargeEntity);
+        level.playSound(null, miningChargeEntity.getX(), miningChargeEntity.getY(), miningChargeEntity.getZ(), BwtSoundEvents.MINING_CHARGE_PRIME, SoundSource.BLOCKS, 1.0f, 1.0f);
+        level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        ItemStack itemStack = player.getStackInHand(player.getActiveHand());
-        if (!itemStack.isOf(Items.FLINT_AND_STEEL) && !itemStack.isOf(Items.FIRE_CHARGE)) {
-            return super.onUse(state, world, pos, player, hit);
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        ItemStack itemStack = player.getItemInHand(player.getUsedItemHand());
+        if (!itemStack.is(Items.FLINT_AND_STEEL) && !itemStack.is(Items.FIRE_CHARGE)) {
+            return super.useWithoutItem(state, level, pos, player, hit);
         }
-        prime(world, pos, state, player);
-        world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL_AND_REDRAW);
+        prime(level, pos, state, player);
+        level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
         Item item = itemStack.getItem();
         if (!player.isCreative()) {
-            if (itemStack.isOf(Items.FLINT_AND_STEEL)) {
-                itemStack.damage(1, player, PlayerEntity.getSlotForHand(player.getActiveHand()));
+            if (itemStack.is(Items.FLINT_AND_STEEL)) {
+                itemStack.hurtAndBreak(1, player, Player.getSlotForHand(player.getUsedItemHand()));
             } else {
-                itemStack.decrement(1);
+                itemStack.shrink(1);
             }
         }
-        player.incrementStat(Stats.USED.getOrCreateStat(item));
-        return ActionResult.success(world.isClient);
+        player.awardStat(Stats.ITEM_USED.get(item));
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public void onProjectileHit(World world, BlockState state, BlockHitResult hit, ProjectileEntity projectile) {
-        if (!world.isClient) {
+    public void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
+        if (!level.isClientSide) {
             BlockPos blockPos = hit.getBlockPos();
             Entity entity = projectile.getOwner();
-            if (projectile.isOnFire() && projectile.canModifyAt(world, blockPos)) {
-                prime(world, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-                world.removeBlock(blockPos, false);
+            if (projectile.isOnFire() && projectile.mayInteract(level, blockPos)) {
+                prime(level, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+                level.removeBlock(blockPos, false);
             }
         }
     }
 
     @Override
-    public boolean shouldDropItemsOnExplosion(Explosion explosion) {
+    public boolean dropFromExplosion(Explosion explosion) {
         return false;
     }
 
     public static Direction getSurfaceOrientation(BlockState state) {
-        return switch (state.get(FACE)) {
-            case WALL -> state.get(FACING);
+        return switch (state.getValue(FACE)) {
+            case WALL -> state.getValue(FACING);
             case FLOOR -> Direction.UP;
             case CEILING -> Direction.DOWN;
         };
@@ -202,17 +206,17 @@ public class MiningChargeBlock extends WallMountedBlock implements ICaughtFireBl
 
     public static BlockState withSurfaceOrientation(BlockState state, Direction direction) {
         return switch (direction) {
-            case UP -> state.with(FACE, BlockFace.FLOOR);
-            case DOWN -> state.with(FACE, BlockFace.CEILING);
-            case NORTH -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.SOUTH);
-            case EAST -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.WEST);
-            case SOUTH -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.NORTH);
-            case WEST -> state.with(FACE, BlockFace.WALL).with(FACING, Direction.EAST);
+            case UP -> state.setValue(FACE, AttachFace.FLOOR);
+            case DOWN -> state.setValue(FACE, AttachFace.CEILING);
+            case NORTH -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.SOUTH);
+            case EAST -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.WEST);
+            case SOUTH -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.NORTH);
+            case WEST -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.EAST);
         };
     }
     @Override
-    public boolean onCaughtFire(BlockState state, World world, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
-        prime(world, pos, state, igniter);
+    public boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
+        prime(level, pos, state, igniter);
         return true;
     }
 }

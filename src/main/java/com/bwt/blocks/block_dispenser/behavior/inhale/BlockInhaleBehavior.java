@@ -3,52 +3,59 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlockEntity;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.event.GameEvent;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.CocoaBlock;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.DoublePlantBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
 
 public interface BlockInhaleBehavior {
     BlockInhaleBehavior NOOP = new BlockInhaleBehavior() {
         @Override
-        public ItemStack getInhaledItems(BlockPointer blockPointer) {
+        public ItemStack getInhaledItems(BlockSource blockPointer) {
             return ItemStack.EMPTY;
         }
         @Override
-        public void inhale(BlockPointer blockPointer) {}
+        public void inhale(BlockSource blockPointer) {}
     };
     BlockInhaleBehavior VOID = new VoidInhaleBehavior();
 
     BlockInhaleBehavior DEFAULT = new DefaultBlockInhaleBehavior();
 
-    ItemStack getInhaledItems(BlockPointer blockPointer);
+    ItemStack getInhaledItems(BlockSource blockPointer);
 
-    void inhale(BlockPointer blockPointer);
+    void inhale(BlockSource blockPointer);
 
-    default void breakBlockNoItems(ServerWorld world, BlockState state, BlockPos pos) {
-        if (state.isIn(BlockTags.AIR)) {
+    default void breakBlockNoItems(ServerLevel level, BlockState state, BlockPos pos) {
+        if (state.is(BlockTags.AIR)) {
             return;
         }
-        world.removeBlock(pos, false);
-        world.emitGameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Emitter.of(null, state));
-        BlockSoundGroup soundGroup = state.getSoundGroup();
-        world.playSound(null, pos, soundGroup.getBreakSound(), SoundCategory.BLOCKS, (soundGroup.getVolume() + 1.0f) / 2.0f, soundGroup.getPitch() * 0.8f);
+        level.removeBlock(pos, false);
+        level.gameEvent(GameEvent.BLOCK_DESTROY, pos, GameEvent.Context.of(null, state));
+        SoundType soundGroup = state.getSoundType();
+        level.playSound(null, pos, soundGroup.getBreakSound(), SoundSource.BLOCKS, (soundGroup.getVolume() + 1.0f) / 2.0f, soundGroup.getPitch() * 0.8f);
     }
 
-    default void breakBlockNoItems(ServerWorld world, BlockPos pos) {
-        breakBlockNoItems(world, world.getBlockState(pos), pos);
+    default void breakBlockNoItems(ServerLevel level, BlockPos pos) {
+        breakBlockNoItems(level, level.getBlockState(pos), pos);
     }
 
-    default void breakBlockNoItems(BlockPointer blockPointer) {
-        BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
-        BlockState facingState = blockPointer.world().getBlockState(facingPos);
-        breakBlockNoItems(blockPointer.world(), facingState, facingPos);
+    default void breakBlockNoItems(BlockSource blockPointer) {
+        BlockPos facingPos = blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING));
+        BlockState facingState = blockPointer.level().getBlockState(facingPos);
+        breakBlockNoItems(blockPointer.level(), facingState, facingPos);
     }
 
     static void registerBehaviors() {
@@ -56,22 +63,22 @@ public interface BlockInhaleBehavior {
         BlockDispenserBlock.registerBlockInhaleBehavior(CocoaBlock.class, new CocoaBeanInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(AmethystClusterBlock.class, new AmethystInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(DoorBlock.class, new DoubleTallBlockInhaleBehavior());
-        BlockDispenserBlock.registerBlockInhaleBehavior(TallPlantBlock.class, new DoubleTallBlockInhaleBehavior());
+        BlockDispenserBlock.registerBlockInhaleBehavior(DoublePlantBlock.class, new DoubleTallBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(BedBlock.class, new BedBlockInhaleBehavior());
         BlockDispenserBlock.registerBlockInhaleBehavior(BlockDispenserBlock.class, new BlockInhaleBehavior() {
             @Override
-            public ItemStack getInhaledItems(BlockPointer blockPointer) {
-                return BwtBlocks.blockDispenserBlock.asItem().getDefaultStack();
+            public ItemStack getInhaledItems(BlockSource blockPointer) {
+                return BwtBlocks.blockDispenserBlock.asItem().getDefaultInstance();
             }
 
             @Override
-            public void inhale(BlockPointer blockPointer) {
-                BlockPos blockDispenserPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
-                BlockEntity blockEntity = blockPointer.world().getBlockEntity(blockDispenserPos);
+            public void inhale(BlockSource blockPointer) {
+                BlockPos blockDispenserPos = blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING));
+                BlockEntity blockEntity = blockPointer.level().getBlockEntity(blockDispenserPos);
                 if (blockEntity instanceof BlockDispenserBlockEntity blockDispenserBlockEntity) {
-                    blockDispenserBlockEntity.clear();
+                    blockDispenserBlockEntity.clearContent();
                 }
-                breakBlockNoItems(blockPointer.world(), blockDispenserPos);
+                breakBlockNoItems(blockPointer.level(), blockDispenserPos);
             }
         });
     }

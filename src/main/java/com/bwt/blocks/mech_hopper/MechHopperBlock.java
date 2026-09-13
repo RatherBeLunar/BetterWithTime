@@ -5,53 +5,55 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.tags.BwtItemTags;
 import com.google.common.collect.Maps;
-import com.mojang.datafixers.types.templates.Tag;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.*;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
-public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBase {
-    public static final MapCodec<MechHopperBlock> CODEC = MechHopperBlock.createCodec(MechHopperBlock::new);
+public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBase {
+    public static final MapCodec<MechHopperBlock> CODEC = MechHopperBlock.simpleCodec(MechHopperBlock::new);
 
-    protected static final VoxelShape OUTLINE_SHAPE = VoxelShapes.union(
+    protected static final VoxelShape OUTLINE_SHAPE = Shapes.or(
 //            Block.createCuboidShape(0, 4, 0, 16, 16, 2),
 //            Block.createCuboidShape(0, 4, 0, 2, 16, 16),
 //            Block.createCuboidShape(0, 4, 14, 16, 16, 16),
 //            Block.createCuboidShape(14, 4, 0, 16, 16, 16),
-            Block.createCuboidShape(0, 4, 0, 16, 16, 16),
-            Block.createCuboidShape(5, 0, 5, 11, 4, 11)
+            Block.box(0, 4, 0, 16, 16, 16),
+            Block.box(5, 0, 5, 11, 4, 11)
     );
 
     public static final Map<Item, Predicate<ItemStack>> filterMap = Maps.newLinkedHashMap();
 
-    public MechHopperBlock(Settings settings) {
+    public MechHopperBlock(Properties settings) {
         super(settings);
     }
 
@@ -63,7 +65,7 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
 
         @Override
         public boolean test(ItemStack itemStack) {
-            return itemStack.isIn(this.tagKey);
+            return itemStack.is(this.tagKey);
         }
     }
 
@@ -102,105 +104,105 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(MECH_POWERED, false);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return defaultBlockState().setValue(MECH_POWERED, false);
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MechHopperBlockEntity(pos, state);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return OUTLINE_SHAPE;
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        boolean isMechPowered = isReceivingMechPower(world, state, pos);
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
+        boolean isMechPowered = isReceivingMechPower(level, state, pos);
         // If block just turned on
         if (isMechPowered && !isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
+            level.scheduleTick(pos, this, MechPowerBlockBase.getTurnOnTickRate());
         }
         // If block just turned off
         else if (!isMechPowered && isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
+            level.scheduleTick(pos, this, MechPowerBlockBase.getTurnOffTickRate());
         }
     }
 
     @Override
-    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        schedulePowerUpdate(state, world, pos);
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        ItemScatterer.onStateReplaced(state, newState, world, pos);
-        super.onStateReplaced(state, world, pos, newState, moved);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        Containers.dropContentsOnDestroy(state, newState, level, pos);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, world, pos);
+        schedulePowerUpdate(state, level, pos);
     }
 
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return state.with(MECH_POWERED, isReceivingMechPower(world, state, pos));
+    public BlockState getPowerStates(BlockState state, Level level, BlockPos pos) {
+        return state.setValue(MECH_POWERED, isReceivingMechPower(level, state, pos));
     }
 
-    public void updatePowerTransfer(World world, BlockState blockState, BlockPos pos) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.setBlockState(pos, updatedState);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+    public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {
+        BlockState updatedState = getPowerStates(blockState, level, pos);
+        level.setBlockAndUpdate(pos, updatedState);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            hopperBlockEntity.mechPower = updatedState.get(MechHopperBlock.MECH_POWERED) ? 1 : 0;
+            hopperBlockEntity.mechPower = updatedState.getValue(MechHopperBlock.MECH_POWERED) ? 1 : 0;
         }
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        this.updatePowerTransfer(world, state, pos);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        this.updatePowerTransfer(level, state, pos);
     }
 
     @Override
-    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
-        if (world.isClient) {
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        if (level.isClientSide) {
             return;
         }
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            hopperBlockEntity.onEntityCollided(world, entity);
+            hopperBlockEntity.onEntityCollided(level, entity);
         }
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (world.isClient) return ActionResult.SUCCESS;
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            player.openHandledScreen(hopperBlockEntity);
+            player.openMenu(hopperBlockEntity);
         }
-        return ActionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     @Override
@@ -209,23 +211,23 @@ public class MechHopperBlock extends BlockWithEntity implements MechPowerBlockBa
     }
 
     @Nullable
-    protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType) {
-        return world.isClient ? null : BlockWithEntity.validateTicker(givenType, BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntity::tick);
+    protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
+        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntity::tick);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return MechHopperBlock.validateTicker(world, type);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return MechHopperBlock.validateTicker(level, type);
     }
 
     @Override
-    public boolean hasComparatorOutput(BlockState state) {
+    public boolean hasAnalogOutputSignal(BlockState state) {
         return true;
     }
 
     @Override
-    public int getComparatorOutput(BlockState state, World world, BlockPos pos) {
-        return ScreenHandler.calculateComparatorOutput(world.getBlockEntity(pos));
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
     }
 }

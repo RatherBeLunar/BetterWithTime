@@ -3,14 +3,16 @@ package com.bwt.recipes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.*;
-import net.minecraft.recipe.input.RecipeInput;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.World;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
 
 public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
@@ -19,7 +21,7 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(Blocks.AIR);
     }
 
@@ -29,12 +31,12 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public boolean matches(@Nullable RecipeInput input, World world) {
+    public boolean matches(@Nullable RecipeInput input, Level level) {
         return false;
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return false;
     }
 
@@ -49,7 +51,7 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() {
+    public boolean isSpecial() {
         return true;
     }
 
@@ -59,12 +61,12 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public ItemStack craft(RecipeInput input, RegistryWrapper.WrapperLookup lookup) {
+    public ItemStack assemble(RecipeInput input, HolderLookup.Provider lookup) {
         return ItemStack.EMPTY;
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
         return ItemStack.EMPTY;
     }
 
@@ -74,7 +76,7 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
                         .group(Codec.STRING.optionalFieldOf("group", "").forGetter(recipe -> recipe.group))
                         .apply(instance, DisabledRecipe::new)
         );
-        public static final PacketCodec<RegistryByteBuf, DisabledRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, DisabledRecipe> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
         );
 
@@ -87,17 +89,17 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, DisabledRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, DisabledRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        private static DisabledRecipe read(RegistryByteBuf buf) {
-            String group = buf.readString();
+        private static DisabledRecipe read(RegistryFriendlyByteBuf buf) {
+            String group = buf.readUtf();
             return new DisabledRecipe(group);
         }
 
-        private static void write(RegistryByteBuf buf, DisabledRecipe recipe) {
-            buf.writeString(recipe.group);
+        private static void write(RegistryFriendlyByteBuf buf, DisabledRecipe recipe) {
+            buf.writeUtf(recipe.group);
         }
     }
 

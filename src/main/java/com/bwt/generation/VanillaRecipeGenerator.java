@@ -4,67 +4,66 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.server.recipe.CookingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.item.Items;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.block.Blocks;
 import java.util.concurrent.CompletableFuture;
 
 public class VanillaRecipeGenerator extends FabricRecipeProvider {
-    public VanillaRecipeGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+    public VanillaRecipeGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(output, registryLookup);
     }
 
     @Override
-    public void generate(RecipeExporter exporter) {
+    public void buildRecipes(RecipeOutput exporter) {
         // The detector rail recipe needs to be entirely replaced with no option of re-insertion,
         // since we need it to use the wooden plate. So it goes in the MC namespace
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.DETECTOR_RAIL, 6)
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.DETECTOR_RAIL, 6)
                 .pattern("i i")
                 .pattern("ipi")
                 .pattern("iri")
-                .input('i', Items.IRON_INGOT)
-                .input('p', ItemTags.WOODEN_PRESSURE_PLATES)
-                .input('r', Items.REDSTONE)
-                .criterion(hasItem(Blocks.RAIL), conditionsFromItem(Blocks.RAIL))
-                .offerTo(exporter, Registries.ITEM.getId(Items.DETECTOR_RAIL));
+                .define('i', Items.IRON_INGOT)
+                .define('p', ItemTags.WOODEN_PRESSURE_PLATES)
+                .define('r', Items.REDSTONE)
+                .unlockedBy(getHasName(Blocks.RAIL), has(Blocks.RAIL))
+                .save(exporter, BuiltInRegistries.ITEM.getKey(Items.DETECTOR_RAIL));
 
         // Bread is a separate recipe that doesn't overwrite anything, so it goes in BWT namespace
         // There's a DisabledRecipe for the vanilla bread recipe that can be toggled independently of this
-        CookingRecipeJsonBuilder.createSmelting(
-                Ingredient.ofItems(BwtItems.flourItem),
+        SimpleCookingRecipeBuilder.smelting(
+                Ingredient.of(BwtItems.flourItem),
                 RecipeCategory.FOOD,
                 Items.BREAD,
                 0.35f,
                 200
         )
-                .criterion(RecipeProvider.hasItem(BwtItems.flourItem), RecipeProvider.conditionsFromItem(BwtItems.flourItem))
-                .offerTo(exporter, Id.of(Registries.ITEM.getId(Items.BREAD).getPath()));
+                .unlockedBy(RecipeProvider.getHasName(BwtItems.flourItem), RecipeProvider.has(BwtItems.flourItem))
+                .save(exporter, Id.of(BuiltInRegistries.ITEM.getKey(Items.BREAD).getPath()));
 
         // Hopper recipe is getting overridden here via a disabled recipe + BWT recipe
         // so a modpack maker could re-enable the vanilla one and still keep the BWT one
-        ShapedRecipeJsonBuilder.create(RecipeCategory.REDSTONE, Blocks.HOPPER, 2)
-                .input('C', Blocks.CHEST)
-                .input('N', Items.NETHERITE_INGOT)
+        ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, Blocks.HOPPER, 2)
+                .define('C', Blocks.CHEST)
+                .define('N', Items.NETHERITE_INGOT)
                 .pattern("N N")
                 .pattern("NCN")
                 .pattern(" N ")
-                .criterion(RecipeProvider.hasItem(Items.NETHERITE_INGOT), RecipeProvider.conditionsFromItem(Items.NETHERITE_INGOT))
-                .offerTo(exporter, Id.of(Registries.ITEM.getId(Items.HOPPER).getPath()));
+                .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), RecipeProvider.has(Items.NETHERITE_INGOT))
+                .save(exporter, Id.of(BuiltInRegistries.ITEM.getKey(Items.HOPPER).getPath()));
     }
 
     // Don't enforce the ID into any specific namespace
     @Override
-    protected Identifier getRecipeIdentifier(Identifier identifier) {
+    protected ResourceLocation getRecipeIdentifier(ResourceLocation identifier) {
         return identifier;
     }
 }

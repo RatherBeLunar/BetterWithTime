@@ -2,67 +2,67 @@ package com.bwt.blocks;
 
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.RadiusAroundBlockStream;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.EntityPositionS2CPacket;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ClientboundTeleportEntityPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BellowsBlock extends Block implements MechPowerBlockBase {
-    public static DirectionProperty FACING = HorizontalFacingBlock.FACING;
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     public static final float compressedHeight = 11;
     protected static final int tickRate = 37;
 
-    protected static final VoxelShape COMPRESSED_SHAPE = Block.createCuboidShape(0f, 0f, 0f, 16f, compressedHeight, 16f);
+    protected static final VoxelShape COMPRESSED_SHAPE = Block.box(0f, 0f, 0f, 16f, compressedHeight, 16f);
 
-    public BellowsBlock(Settings settings) {
+    public BellowsBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false));
+        registerDefaultState(defaultBlockState().setValue(MECH_POWERED, false));
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        return state.get(MECH_POWERED) ? COMPRESSED_SHAPE : VoxelShapes.fullCube();
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext ctx) {
+        return state.getValue(MECH_POWERED) ? COMPRESSED_SHAPE : Shapes.block();
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(MECH_POWERED, FACING);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
     public Predicate<Direction> getValidAxleInputFaces(BlockState blockState, BlockPos pos) {
-        return direction -> direction != blockState.get(FACING) && direction != Direction.UP;
+        return direction -> direction != blockState.getValue(FACING) && direction != Direction.UP;
     }
 
     @Override
@@ -71,80 +71,80 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        schedulePowerUpdate(state, world, pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        schedulePowerUpdate(state, level, pos);
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        if (isReceivingMechPower(world, state, pos) != isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, tickRate);
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
+        if (isReceivingMechPower(level, state, pos) != isMechPowered(state)) {
+            level.scheduleTick(pos, this, tickRate);
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, world, pos);
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        boolean isReceivingMechPower = isReceivingMechPower(world, state, pos);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        boolean isReceivingMechPower = isReceivingMechPower(level, state, pos);
         if (isReceivingMechPower == isMechPowered(state)) {
             return;
         }
-        world.setBlockState(pos, state.with(MECH_POWERED, isReceivingMechPower));
-        world.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundCategory.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
+        level.setBlockAndUpdate(pos, state.setValue(MECH_POWERED, isReceivingMechPower));
+        level.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundSource.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
         if (isReceivingMechPower) {
-            stokeFire(world, pos, state);
+            stokeFire(level, pos, state);
         }
         else {
-            liftEntities(world, pos);
+            liftEntities(level, pos);
         }
     }
 
-    public void stokeFire(World world, BlockPos pos, BlockState state) {
-        BlockPos center = pos.offset(state.get(FACING), 2);
+    public void stokeFire(Level level, BlockPos pos, BlockState state) {
+        BlockPos center = pos.relative(state.getValue(FACING), 2);
         RadiusAroundBlockStream.allBlocksInHorizontalRadius(center, 1).forEach(firePos -> {
-            BlockPos hibachiPos = firePos.down();
-            BlockState fireState = world.getBlockState(firePos);
-            if (!fireState.isIn(BlockTags.FIRE)) {
+            BlockPos hibachiPos = firePos.below();
+            BlockState fireState = level.getBlockState(firePos);
+            if (!fireState.is(BlockTags.FIRE)) {
                 return;
             }
-            BlockState hibachiState = world.getBlockState(hibachiPos);
-            if (!hibachiState.isOf(BwtBlocks.hibachiBlock)) {
+            BlockState hibachiState = level.getBlockState(hibachiPos);
+            if (!hibachiState.is(BwtBlocks.hibachiBlock)) {
                 return;
             }
-            world.setBlockState(firePos, BwtBlocks.stokedFireBlock.getPlacementState(world, firePos), Block.NOTIFY_ALL);
+            level.setBlock(firePos, BwtBlocks.stokedFireBlock.getPlacementState(level, firePos), Block.UPDATE_ALL);
         });
     }
 
-    public void liftEntities(ServerWorld world, BlockPos pos) {
-        Box intersectionBox = new Box(0.01, 0.5, 0.01, 0.99, 0.99, 0.99).offset(pos);
-        List<Entity> list =  world.getEntitiesByClass(
+    public void liftEntities(ServerLevel level, BlockPos pos) {
+        AABB intersectionBox = new AABB(0.01, 0.5, 0.01, 0.99, 0.99, 0.99).move(pos);
+        List<Entity> list =  level.getEntitiesOfClass(
                 Entity.class,
                 intersectionBox,
-                EntityPredicates.EXCEPT_SPECTATOR
+                EntitySelector.NO_SPECTATORS
         );
         list.stream().filter(Entity::isPushable).forEach(entity -> {
             entity.setOnGround(false);
-            entity.setPosition(entity.getX(), pos.getY() + 1, entity.getZ());
-            if(entity instanceof ServerPlayerEntity){
-                ((ServerPlayerEntity) entity).networkHandler.sendPacket(new EntityPositionS2CPacket(entity));
+            entity.setPos(entity.getX(), pos.getY() + 1, entity.getZ());
+            if(entity instanceof ServerPlayer){
+                ((ServerPlayer) entity).connection.send(new ClientboundTeleportEntityPacket(entity));
             }
         });
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(FACING, mirror.apply(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 }

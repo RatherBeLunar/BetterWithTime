@@ -1,18 +1,18 @@
 package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import net.minecraft.block.dispenser.ItemDispenserBehavior;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Position;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
+import net.minecraft.world.item.ItemStack;
 
-public class DefaultItemDispenserBehavior extends ItemDispenserBehavior {
-    protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
-        Direction direction = pointer.state().get(BlockDispenserBlock.FACING);
-        Position position = BlockDispenserBlock.getOutputLocation(pointer);
+public class DefaultItemDispenserBehavior extends DefaultDispenseItemBehavior {
+    protected ItemStack execute(BlockSource pointer, ItemStack stack) {
+        Direction direction = pointer.state().getValue(BlockDispenserBlock.FACING);
+        Position position = BlockDispenserBlock.getDispensePosition(pointer);
         ItemStack itemStack = stack.copyWithCount(1);
-        ItemDispenserBehavior.spawnItem(pointer.world(), itemStack, 6, direction, position);
+        DefaultDispenseItemBehavior.spawnItem(pointer.level(), itemStack, 6, direction, position);
         return itemStack;
     }
 }

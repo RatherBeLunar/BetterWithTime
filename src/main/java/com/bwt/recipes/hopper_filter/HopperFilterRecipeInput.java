@@ -1,20 +1,17 @@
 package com.bwt.recipes.hopper_filter;
 
-import com.bwt.recipes.IngredientWithCount;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.RecipeInput;
-
-import java.util.List;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
 
 public record HopperFilterRecipeInput(Item filterItem, ItemStack itemStack) implements RecipeInput {
     @Override
-    public ItemStack getStackInSlot(int slot) {
-        return slot == 0 ? filterItem.getDefaultStack() : itemStack;
+    public ItemStack getItem(int slot) {
+        return slot == 0 ? filterItem.getDefaultInstance() : itemStack;
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return 2;
     }
 }

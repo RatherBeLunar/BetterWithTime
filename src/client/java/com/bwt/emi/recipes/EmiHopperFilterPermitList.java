@@ -4,22 +4,21 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.emi.BwtEmiPlugin;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
-import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
 
 public class EmiHopperFilterPermitList implements EmiRecipe {
 
-    private final Identifier id;
+    private final ResourceLocation id;
     private final EmiIngredient filter;
     private final EmiIngredient permitted;
 
-    public EmiHopperFilterPermitList(Identifier id, EmiIngredient filter, EmiIngredient permitted) {
+    public EmiHopperFilterPermitList(ResourceLocation id, EmiIngredient filter, EmiIngredient permitted) {
         this.id = id;
         this.filter = filter;
         this.permitted = permitted;
@@ -31,8 +30,8 @@ public class EmiHopperFilterPermitList implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

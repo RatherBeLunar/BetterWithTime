@@ -1,10 +1,10 @@
 package com.bwt.mixin;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.NetherWartBlock;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.NetherWartBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,8 +16,8 @@ public abstract class NetherWartGrowthMixin {
      * Don't grow nether wart unless in the nether or a similar dimension
      */
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random, CallbackInfo ci) {
-        if (!world.getDimension().ultrawarm()) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        if (!level.dimensionType().ultraWarm()) {
             ci.cancel();
         }
     }

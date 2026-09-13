@@ -4,88 +4,85 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.SimpleFacingBlock;
 import com.bwt.blocks.lens.LensBlock;
 import com.bwt.sounds.BwtSoundEvents;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class DetectorBlock extends SimpleFacingBlock {
-    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     private static final int tickRate = 4;
 
-    public DetectorBlock(Settings settings) {
+    public DetectorBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(POWERED, false));
+        registerDefaultState(defaultBlockState().setValue(POWERED, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(POWERED);
     }
 
     @NotNull
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(POWERED, false);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return super.getStateForPlacement(ctx).setValue(POWERED, false);
     }
 
     @Override
-    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        super.onBlockAdded(state, world, pos, oldState, notify);
-        world.scheduleBlockTick(pos, this, tickRate);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onPlace(state, level, pos, oldState, notify);
+        level.scheduleTick(pos, this, tickRate);
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-        boolean detected = checkForDetection(world, pos, state);
-        boolean wasDetected = state.get(POWERED);
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
+        boolean detected = checkForDetection(level, pos, state);
+        boolean wasDetected = state.getValue(POWERED);
         if (detected != wasDetected) {
-            world.scheduleBlockTick(pos, this, tickRate);
+            level.scheduleTick(pos, this, tickRate);
         }
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
-        boolean placedLogic = placeDetectorLogicIfNecessary(world, pos, state);
-        boolean detected = checkForDetection(world, pos, state);
-        boolean wasDetected = state.get(POWERED);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.tick(state, level, pos, random);
+        boolean placedLogic = placeDetectorLogicIfNecessary(level, pos, state);
+        boolean detected = checkForDetection(level, pos, state);
+        boolean wasDetected = state.getValue(POWERED);
 
-        if (state.get(FACING).equals(Direction.UP)) {
+        if (state.getValue(FACING).equals(Direction.UP)) {
             // facing upwards...check for rain or snow
-            detected |= world.isSkyVisible(pos.up()) && world.hasRain(pos.up());
+            detected |= level.canSeeSky(pos.above()) && level.isRainingAt(pos.above());
 
             // upward facing blocks have to periodically poll for weather changes
             // or they risk missing them.
-            world.scheduleBlockTick(pos, this, tickRate);
+            level.scheduleTick(pos, this, tickRate);
         }
 
         if (detected) {
             if (!wasDetected) {
-                world.setBlockState(pos, state.with(POWERED, true), Block.NOTIFY_ALL);
-                world.playSound(
+                level.setBlock(pos, state.setValue(POWERED, true), Block.UPDATE_ALL);
+                level.playSound(
                         null,
                         pos,
                         BwtSoundEvents.DETECTOR_CLICK,
-                        SoundCategory.BLOCKS,
+                        SoundSource.BLOCKS,
                         1.0f,
                         2f
                 );
@@ -94,12 +91,12 @@ public class DetectorBlock extends SimpleFacingBlock {
         else {
             if (wasDetected) {
                 if (!placedLogic) {
-                    world.setBlockState(pos, state.with(POWERED, false), Block.NOTIFY_ALL);
-                    world.playSound(
+                    level.setBlock(pos, state.setValue(POWERED, false), Block.UPDATE_ALL);
+                    level.playSound(
                             null,
                             pos,
                             BwtSoundEvents.DETECTOR_CLICK,
-                            SoundCategory.BLOCKS,
+                            SoundSource.BLOCKS,
                             1.0f,
                             2f
                     );
@@ -107,92 +104,92 @@ public class DetectorBlock extends SimpleFacingBlock {
                 else {
                     // if we just placed the logic block, then wait a tick until we turn off
                     // to give it a chance to detect anything that might be there
-                    world.scheduleBlockTick(pos, this, tickRate);
+                    level.scheduleTick(pos, this, tickRate);
                 }
             }
         }
     }
 
     @Override
-    public boolean emitsRedstonePower(BlockState state) {
+    public boolean isSignalSource(BlockState state) {
         return true;
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockView world, BlockPos pos, Direction direction) {
-        return state.get(POWERED) ? 15 : 0;
+    public int getSignal(BlockState state, BlockGetter level, BlockPos pos, Direction direction) {
+        return state.getValue(POWERED) ? 15 : 0;
     }
 
     /*
      * returns true if a new logic block needed to be placed
      */
-    public boolean placeDetectorLogicIfNecessary(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(FACING);
-        BlockPos targetPos = pos.offset(facing);
-        BlockState targetState = world.getBlockState(targetPos);
+    public boolean placeDetectorLogicIfNecessary(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPos targetPos = pos.relative(facing);
+        BlockState targetState = level.getBlockState(targetPos);
 
-        if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.detectorLogicBlock) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
-            world.setBlockState(targetPos, BwtBlocks.detectorLogicBlock.getDefaultState(), Block.NOTIFY_ALL, 0);
+        if (targetState.is(BlockTags.AIR) && !targetState.is(BwtBlocks.detectorLogicBlock) && !targetState.is(BwtBlocks.lensBeamBlock)) {
+            level.setBlock(targetPos, BwtBlocks.detectorLogicBlock.defaultBlockState(), Block.UPDATE_ALL, 0);
             return true;
         }
         return false;
     }
 
-    public void removeDetectorLogicIfNecessary(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(FACING);
-        BlockPos targetPos = pos.offset(facing);
-        BlockState targetState = world.getBlockState(targetPos);
+    public void removeDetectorLogicIfNecessary(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPos targetPos = pos.relative(facing);
+        BlockState targetState = level.getBlockState(targetPos);
 
-        if (targetState.isOf(BwtBlocks.detectorLogicBlock) && !DetectorLogicBlock.anyNeighborDetectors(world, targetPos)) {
-            world.setBlockState(targetPos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 0);
+        if (targetState.is(BwtBlocks.detectorLogicBlock) && !DetectorLogicBlock.anyNeighborDetectors(level, targetPos)) {
+            level.setBlock(targetPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL, 0);
         }
     }
 
 
-    public boolean checkForDetection(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(FACING);
-        BlockPos targetPos = pos.offset(facing);
-        BlockState targetState = world.getBlockState(targetPos);
+    public boolean checkForDetection(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPos targetPos = pos.relative(facing);
+        BlockState targetState = level.getBlockState(targetPos);
 
-        if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.detectorLogicBlock) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
+        if (targetState.is(BlockTags.AIR) && !targetState.is(BwtBlocks.detectorLogicBlock) && !targetState.is(BwtBlocks.lensBeamBlock)) {
             // We haven't placed the logic block yet, return false for now
             return false;
         }
-        if (targetState.isOf(BwtBlocks.lensBlock) && targetState.get(LensBlock.FACING).equals(facing.getOpposite())) {
-            return targetState.get(LensBlock.LIT);
+        if (targetState.is(BwtBlocks.lensBlock) && targetState.getValue(LensBlock.FACING).equals(facing.getOpposite())) {
+            return targetState.getValue(LensBlock.LIT);
         }
-        if (!targetState.isOf(BwtBlocks.detectorLogicBlock)) {
+        if (!targetState.is(BwtBlocks.detectorLogicBlock)) {
             // Logic block was replaced with something else
             return true;
         }
         // facing upwards...check for rain or snow
-        if (state.get(FACING).equals(Direction.UP)
-                && world.isSkyVisible(pos.up()) && world.hasRain(pos.up())) {
+        if (state.getValue(FACING).equals(Direction.UP)
+                && level.canSeeSky(pos.above()) && level.isRainingAt(pos.above())) {
             return true;
         }
         return DetectorLogicBlock.isEnabled(targetState);
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        if (!state.get(POWERED)) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        if (!state.getValue(POWERED)) {
             return;
         }
-        Direction facing = state.get(FACING);
-        BlockPos blockPos = pos.offset(facing);
-        if (world.getBlockState(blockPos).isOpaqueFullCube(world, blockPos)) return;
+        Direction facing = state.getValue(FACING);
+        BlockPos blockPos = pos.relative(facing);
+        if (level.getBlockState(blockPos).isSolidRender(level, blockPos)) return;
         Direction.Axis axis = facing.getAxis();
-        double e = axis == Direction.Axis.X ? 0.5 + 0.5625 * (double)facing.getOffsetX() : (double)random.nextFloat();
-        double f = axis == Direction.Axis.Y ? 0.5 + 0.5625 * (double)facing.getOffsetY() : (double)random.nextFloat();
-        double g = axis == Direction.Axis.Z ? 0.5 + 0.5625 * (double)facing.getOffsetZ() : (double)random.nextFloat();
-        world.addParticle(DustParticleEffect.DEFAULT, (double)pos.getX() + e, (double)pos.getY() + f, (double)pos.getZ() + g, 0.0, 0.0, 0.0);
+        double e = axis == Direction.Axis.X ? 0.5 + 0.5625 * (double)facing.getStepX() : (double)random.nextFloat();
+        double f = axis == Direction.Axis.Y ? 0.5 + 0.5625 * (double)facing.getStepY() : (double)random.nextFloat();
+        double g = axis == Direction.Axis.Z ? 0.5 + 0.5625 * (double)facing.getStepZ() : (double)random.nextFloat();
+        level.addParticle(DustParticleOptions.REDSTONE, (double)pos.getX() + e, (double)pos.getY() + f, (double)pos.getZ() + g, 0.0, 0.0, 0.0);
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
-        if (!newState.isOf(this)) {
-            removeDetectorLogicIfNecessary(world, pos, state);
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        super.onRemove(state, level, pos, newState, moved);
+        if (!newState.is(this)) {
+            removeDetectorLogicIfNecessary(level, pos, state);
         }
     }
 }

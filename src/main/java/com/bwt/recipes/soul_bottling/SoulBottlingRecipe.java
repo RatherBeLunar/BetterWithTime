@@ -8,36 +8,35 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
-public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, BlockIngredient bottle, int soulCount, ItemStack result) implements Recipe<SoulBottlingRecipeInput> {
+public record SoulBottlingRecipe(String group, CraftingBookCategory category, BlockIngredient bottle, int soulCount, ItemStack result) implements Recipe<SoulBottlingRecipeInput> {
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(BwtItems.soulUrnItem);
     }
 
@@ -47,18 +46,18 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
     }
 
     @Override
-    public boolean matches(SoulBottlingRecipeInput input, World world) {
+    public boolean matches(SoulBottlingRecipeInput input, Level level) {
         return bottle.test(input.block());
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
-    public DefaultedList<Ingredient> getIngredients() {
-        DefaultedList<Ingredient> defaultedList = DefaultedList.of();
+    public NonNullList<Ingredient> getIngredients() {
+        NonNullList<Ingredient> defaultedList = NonNullList.create();
         defaultedList.add(bottle.toVanilla());
         return defaultedList;
     }
@@ -74,8 +73,8 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+    public boolean isSpecial() {
+        return Recipe.super.isSpecial();
     }
 
     @Override
@@ -84,12 +83,12 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
     }
 
     @Override
-    public ItemStack craft(SoulBottlingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
-        return getResult(lookup);
+    public ItemStack assemble(SoulBottlingRecipeInput input, HolderLookup.Provider lookup) {
+        return getResultItem(lookup);
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup wrapperLookup) {
+    public ItemStack getResultItem(HolderLookup.Provider wrapperLookup) {
         return result;
     }
 
@@ -102,8 +101,8 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
                 instance->instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
                                 .forGetter(SoulBottlingRecipe::group),
-                        CraftingRecipeCategory.CODEC.fieldOf("category")
-                                .orElse(CraftingRecipeCategory.MISC)
+                        CraftingBookCategory.CODEC.fieldOf("category")
+                                .orElse(CraftingBookCategory.MISC)
                                 .forGetter(SoulBottlingRecipe::category),
                         BlockIngredient.Serializer.CODEC
                                 .fieldOf("bottle")
@@ -115,7 +114,7 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
                                 .forGetter(SoulBottlingRecipe::result)
                 ).apply(instance, SoulBottlingRecipe::new)
         );
-        public static final PacketCodec<RegistryByteBuf, SoulBottlingRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, SoulBottlingRecipe> PACKET_CODEC = StreamCodec.of(
                 SoulBottlingRecipe.Serializer::write, SoulBottlingRecipe.Serializer::read
         );
 
@@ -128,30 +127,30 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, SoulBottlingRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, SoulBottlingRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        public static SoulBottlingRecipe read(RegistryByteBuf buf) {
-            String group = buf.readString();
-            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
+        public static SoulBottlingRecipe read(RegistryFriendlyByteBuf buf) {
+            String group = buf.readUtf();
+            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
             BlockIngredient bottle = BlockIngredient.Serializer.PACKET_CODEC.decode(buf);
             int soulCount = buf.readVarInt();
-            ItemStack result = ItemStack.PACKET_CODEC.decode(buf);
+            ItemStack result = ItemStack.STREAM_CODEC.decode(buf);
             return new SoulBottlingRecipe(group, category, bottle, soulCount, result);
         }
 
-        public static void write(RegistryByteBuf buf, SoulBottlingRecipe recipe) {
-            buf.writeString(recipe.group);
-            buf.writeEnumConstant(recipe.category);
+        public static void write(RegistryFriendlyByteBuf buf, SoulBottlingRecipe recipe) {
+            buf.writeUtf(recipe.group);
+            buf.writeEnum(recipe.category);
             BlockIngredient.Serializer.PACKET_CODEC.encode(buf, recipe.bottle);
             buf.writeVarInt(recipe.soulCount);
-            ItemStack.PACKET_CODEC.encode(buf, recipe.getResult());
+            ItemStack.STREAM_CODEC.encode(buf, recipe.getResult());
         }
     }
 
-    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
-        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
+    public static class JsonBuilder implements RecipeBuilder {
+        protected CraftingBookCategory category = CraftingBookCategory.MISC;
         protected BlockIngredient bottle;
         protected int soulCount;
         protected ItemStack result = ItemStack.EMPTY;
@@ -167,13 +166,13 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
             this.isDefaultRecipe = true;
             return this;
         }
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
             }
         }
 
-        public SoulBottlingRecipe.JsonBuilder category(CraftingRecipeCategory category) {
+        public SoulBottlingRecipe.JsonBuilder category(CraftingBookCategory category) {
             this.category = category;
             return this;
         }
@@ -206,7 +205,7 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
         }
 
         @Override
-        public SoulBottlingRecipe.JsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
+        public SoulBottlingRecipe.JsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
             return this;
         }
 
@@ -217,28 +216,28 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
         }
 
         @Override
-        public Item getOutputItem() {
+        public Item getResult() {
             return result.getItem();
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter) {
-            this.offerTo(
+        public void save(RecipeOutput exporter) {
+            this.save(
                     exporter,
-                    Id.of(RecipeProvider.getItemPath(this.result.getItem()) + "_from_soul_bottling")
+                    Id.of(RecipeProvider.getItemName(this.result.getItem()) + "_from_soul_bottling")
             );
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, String recipePath) {
-            this.offerTo(exporter, Id.of(recipePath));
+        public void save(RecipeOutput exporter, String recipePath) {
+            this.save(exporter, Id.of(recipePath));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             addToDefaults(recipeId);
 
-            Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
             SoulBottlingRecipe soulBottlingRecipe = new SoulBottlingRecipe(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
@@ -246,7 +245,7 @@ public record SoulBottlingRecipe(String group, CraftingRecipeCategory category, 
                     this.soulCount,
                     this.result
             );
-            exporter.accept(recipeId, soulBottlingRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/" + this.category.asString() + "/")));
+            exporter.accept(recipeId, soulBottlingRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

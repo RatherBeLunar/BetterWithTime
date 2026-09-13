@@ -7,31 +7,30 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.ShapelessRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-
 import java.util.Objects;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.NonNullList;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.ItemLike;
 
 public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulForgeRecipe {
 
-    public SoulForgeShapelessRecipe(String group, CraftingRecipeCategory category, ItemStack result, DefaultedList<Ingredient> ingredients) {
+    public SoulForgeShapelessRecipe(String group, CraftingBookCategory category, ItemStack result, NonNullList<Ingredient> ingredients) {
         super(group, category, result, ingredients);
     }
 
@@ -46,12 +45,12 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width * height >= this.getIngredients().size();
     }
 
     public ItemStack getResult() {
-        return getResult(null);
+        return getResultItem(null);
     }
 
     public static class Serializer implements RecipeSerializer<SoulForgeShapelessRecipe> {
@@ -59,12 +58,12 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
                 instance -> instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
                                 .forGetter(ShapelessRecipe::getGroup),
-                        CraftingRecipeCategory.CODEC.fieldOf("category")
-                                .orElse(CraftingRecipeCategory.MISC)
-                                .forGetter(ShapelessRecipe::getCategory),
-                        ItemStack.VALIDATED_CODEC.fieldOf("result")
+                        CraftingBookCategory.CODEC.fieldOf("category")
+                                .orElse(CraftingBookCategory.MISC)
+                                .forGetter(ShapelessRecipe::category),
+                        ItemStack.STRICT_CODEC.fieldOf("result")
                                 .forGetter(SoulForgeShapelessRecipe::getResult),
-                        Ingredient.DISALLOW_EMPTY_CODEC
+                        Ingredient.CODEC_NONEMPTY
                                 .listOf()
                                 .fieldOf("ingredients")
                                 .flatXmap(ingredients -> {
@@ -75,11 +74,11 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
                                     if (ingredients2.length > 16) {
                                         return DataResult.error(() -> "Too many ingredients for shapeless recipe");
                                     }
-                                    return DataResult.success(DefaultedList.copyOf(Ingredient.EMPTY, ingredients2));
+                                    return DataResult.success(NonNullList.of(Ingredient.EMPTY, ingredients2));
                                 }, DataResult::success)
                                 .forGetter(ShapelessRecipe::getIngredients)
                 ).apply(instance, SoulForgeShapelessRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, SoulForgeShapelessRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, SoulForgeShapelessRecipe> PACKET_CODEC = StreamCodec.of(
                 SoulForgeShapelessRecipe.Serializer::write,
                 SoulForgeShapelessRecipe.Serializer::read
         );
@@ -90,41 +89,41 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, SoulForgeShapelessRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, SoulForgeShapelessRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        private static SoulForgeShapelessRecipe read(RegistryByteBuf buf) {
-            String string = buf.readString();
-            CraftingRecipeCategory craftingRecipeCategory = buf.readEnumConstant(CraftingRecipeCategory.class);
+        private static SoulForgeShapelessRecipe read(RegistryFriendlyByteBuf buf) {
+            String string = buf.readUtf();
+            CraftingBookCategory craftingRecipeCategory = buf.readEnum(CraftingBookCategory.class);
             int i = buf.readVarInt();
-            DefaultedList<Ingredient> defaultedList = DefaultedList.ofSize(i, Ingredient.EMPTY);
-            defaultedList.replaceAll(empty -> Ingredient.PACKET_CODEC.decode(buf));
-            ItemStack itemStack = ItemStack.PACKET_CODEC.decode(buf);
+            NonNullList<Ingredient> defaultedList = NonNullList.withSize(i, Ingredient.EMPTY);
+            defaultedList.replaceAll(empty -> Ingredient.CONTENTS_STREAM_CODEC.decode(buf));
+            ItemStack itemStack = ItemStack.STREAM_CODEC.decode(buf);
             return new SoulForgeShapelessRecipe(string, craftingRecipeCategory, itemStack, defaultedList);
         }
 
-        private static void write(RegistryByteBuf buf, SoulForgeShapelessRecipe recipe) {
-            buf.writeString(recipe.getGroup());
-            buf.writeEnumConstant(recipe.getCategory());
+        private static void write(RegistryFriendlyByteBuf buf, SoulForgeShapelessRecipe recipe) {
+            buf.writeUtf(recipe.getGroup());
+            buf.writeEnum(recipe.category());
             buf.writeVarInt(recipe.getIngredients().size());
             for (Ingredient ingredient : recipe.getIngredients()) {
-                Ingredient.PACKET_CODEC.encode(buf, ingredient);
+                Ingredient.CONTENTS_STREAM_CODEC.encode(buf, ingredient);
             }
-            ItemStack.PACKET_CODEC.encode(buf, recipe.getResult());
+            ItemStack.STREAM_CODEC.encode(buf, recipe.getResult());
         }
     }
 
-    public static class JsonBuilder extends ShapelessRecipeJsonBuilder {
-        public JsonBuilder(RecipeCategory category, ItemConvertible output, int count) {
+    public static class JsonBuilder extends ShapelessRecipeBuilder {
+        public JsonBuilder(RecipeCategory category, ItemLike output, int count) {
             super(category, output, count);
         }
 
-        public static JsonBuilder create(RecipeCategory category, ItemConvertible output) {
-            return JsonBuilder.create(category, output, 1);
+        public static JsonBuilder shapeless(RecipeCategory category, ItemLike output) {
+            return JsonBuilder.shapeless(category, output, 1);
         }
 
-        public static JsonBuilder create(RecipeCategory category, ItemConvertible output, int count) {
+        public static JsonBuilder shapeless(RecipeCategory category, ItemLike output, int count) {
             return new JsonBuilder(category, output, count);
         }
 
@@ -133,23 +132,23 @@ public class SoulForgeShapelessRecipe extends ShapelessRecipe implements SoulFor
             this.isDefaultRecipe = true;
             return this;
         }
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
             }
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             addToDefaults(recipeId);
 
             ShapelessRecipeJsonBuilderAccessorMixin accessor = (ShapelessRecipeJsonBuilderAccessorMixin) this;
 
             accessor.accessValidate(recipeId);
-            Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
-            accessor.getAdvancementBuilder().forEach(builder::criterion);
-            SoulForgeShapelessRecipe shapelessRecipe = new SoulForgeShapelessRecipe(Objects.requireNonNullElse(accessor.getGroup(), ""), CraftingRecipeJsonBuilder.toCraftingCategory(accessor.getCategory()), new ItemStack(accessor.getOutput(), accessor.getCount()), accessor.getInputs());
-            exporter.accept(recipeId, shapelessRecipe, builder.build(recipeId.withPrefixedPath("recipes/" + accessor.getCategory().getName() + "/")));
+            Advancement.Builder builder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+            accessor.getCriteria().forEach(builder::addCriterion);
+            SoulForgeShapelessRecipe shapelessRecipe = new SoulForgeShapelessRecipe(Objects.requireNonNullElse(accessor.getGroup(), ""), RecipeBuilder.determineBookCategory(accessor.getCategory()), new ItemStack(accessor.getResult(), accessor.getCount()), accessor.getIngredients());
+            exporter.accept(recipeId, shapelessRecipe, builder.build(recipeId.withPrefix("recipes/" + accessor.getCategory().getFolderName() + "/")));
         }
     }
 }

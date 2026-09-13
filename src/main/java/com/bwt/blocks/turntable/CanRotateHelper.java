@@ -1,21 +1,37 @@
 package com.bwt.blocks.turntable;
 
-import net.minecraft.block.*;
-import net.minecraft.block.enums.Attachment;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.block.enums.ChestType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.BaseCoralWallFanBlock;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.BellBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.ChestBlock;
+import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.RedstoneWallTorchBlock;
+import net.minecraft.world.level.block.VineBlock;
+import net.minecraft.world.level.block.WallBannerBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.WallTorchBlock;
+import net.minecraft.world.level.block.piston.MovingPistonBlock;
+import net.minecraft.world.level.block.piston.PistonBaseBlock;
+import net.minecraft.world.level.block.piston.PistonHeadBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BellAttachType;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import java.util.HashMap;
 import java.util.Map;
 
 public interface CanRotateHelper {
     interface CanRotatePredicate {
-        CanRotatePredicate FALSE = (world, pos, state) -> false;
-        CanRotatePredicate TRUE = (world, pos, state) -> true;
+        CanRotatePredicate FALSE = (level, pos, state) -> false;
+        CanRotatePredicate TRUE = (level, pos, state) -> true;
 
-        boolean test(World world, BlockPos pos, BlockState state);
+        boolean test(Level level, BlockPos pos, BlockState state);
     }
 
     HashMap<Class<? extends Block>, CanRotatePredicate> canRotateClassPredicates = new HashMap<>();
@@ -29,32 +45,32 @@ public interface CanRotateHelper {
         canRotateBlockPredicates.put(block, canRotatePredicate);
     }
 
-    static boolean canRotate(World world, BlockPos pos, BlockState state) {
+    static boolean canRotate(Level level, BlockPos pos, BlockState state) {
         Block block = state.getBlock();
         return canRotateClassPredicates.entrySet().stream()
                 .filter(entry -> entry.getKey().isInstance(block))
                 .findAny()
                 .map(Map.Entry::getValue)
                 .orElse(CanRotatePredicate.TRUE)
-                .test(world, pos, state);
+                .test(level, pos, state);
     }
 
     static void registerDefaults() {
-        register(PistonBlock.class, (world, pos, state) -> !state.get(PistonBlock.EXTENDED));
+        register(PistonBaseBlock.class, (level, pos, state) -> !state.getValue(PistonBaseBlock.EXTENDED));
         register(PistonHeadBlock.class, CanRotatePredicate.FALSE);
-        register(PistonExtensionBlock.class, CanRotatePredicate.FALSE);
+        register(MovingPistonBlock.class, CanRotatePredicate.FALSE);
         register(WallTorchBlock.class, CanRotatePredicate.FALSE);
-        register(WallRedstoneTorchBlock.class, CanRotatePredicate.FALSE);
+        register(RedstoneWallTorchBlock.class, CanRotatePredicate.FALSE);
         register(WallSignBlock.class, CanRotatePredicate.FALSE);
-        register(DeadCoralWallFanBlock.class, CanRotatePredicate.FALSE);
+        register(BaseCoralWallFanBlock.class, CanRotatePredicate.FALSE);
         register(WallBannerBlock.class, CanRotatePredicate.FALSE);
         register(VineBlock.class, CanRotatePredicate.FALSE);
         register(AmethystClusterBlock.class, CanRotatePredicate.FALSE);
         register(WallHangingSignBlock.class, CanRotatePredicate.FALSE);
-        register(WallMountedBlock.class, (world, pos, state) -> state.get(WallMountedBlock.FACE).equals(BlockFace.FLOOR));
-        register(BellBlock.class, (world, pos, state) -> state.get(BellBlock.ATTACHMENT).equals(Attachment.FLOOR));
+        register(FaceAttachedHorizontalDirectionalBlock.class, (level, pos, state) -> state.getValue(FaceAttachedHorizontalDirectionalBlock.FACE).equals(AttachFace.FLOOR));
+        register(BellBlock.class, (level, pos, state) -> state.getValue(BellBlock.ATTACHMENT).equals(BellAttachType.FLOOR));
         register(BedBlock.class, CanRotatePredicate.FALSE);
-        register(ChestBlock.class, (world, pos, state) -> state.get(ChestBlock.CHEST_TYPE).equals(ChestType.SINGLE));
+        register(ChestBlock.class, (level, pos, state) -> state.getValue(ChestBlock.TYPE).equals(ChestType.SINGLE));
         register(Blocks.OBSIDIAN, CanRotatePredicate.FALSE);
         register(Blocks.CRYING_OBSIDIAN, CanRotatePredicate.FALSE);
         register(Blocks.BEDROCK, CanRotatePredicate.FALSE);

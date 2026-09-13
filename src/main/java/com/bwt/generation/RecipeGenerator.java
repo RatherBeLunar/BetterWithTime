@@ -2,29 +2,28 @@ package com.bwt.generation;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.registry.RegistryWrapper;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
+import net.minecraft.data.recipes.RecipeOutput;
 import java.util.concurrent.CompletableFuture;
 
 public class RecipeGenerator extends FabricRecipeProvider {
-    protected BlockDispenserClumpRecipeGenerator blockDispenserClumpRecipeGenerator;
-    protected CauldronRecipeGenerator cauldronRecipeGenerator;
-    protected CrucibleRecipeGenerator crucibleRecipeGenerator;
-    protected CraftingRecipeGenerator craftingRecipeGenerator;
-    protected VanillaRecipeGenerator vanillaRecipeGenerator;
-    protected DisabledVanilaRecipeGenerator disabledVanilaRecipeGenerator;
-    protected HopperRecipeGenerator hopperRecipeGenerator;
-    protected MillStoneRecipeGenerator millStoneRecipeGenerator;
-    protected MobSpawnerConversionRecipeGenerator mobSpawnerConversionRecipeGenerator;
-    protected SawRecipeGenerator sawRecipeGenerator;
-    protected TurntableRecipeGenerator turntableRecipeGenerator;
-    protected KilnRecipeGenerator kilnRecipeGenerator;
-    protected SoulForgeRecipeGenerator soulForgeRecipeGenerator;
-    protected EmiDefaultsGenerator emiDefaultsGenerator;
+    protected final BlockDispenserClumpRecipeGenerator blockDispenserClumpRecipeGenerator;
+    protected final CauldronRecipeGenerator cauldronRecipeGenerator;
+    protected final CrucibleRecipeGenerator crucibleRecipeGenerator;
+    protected final CraftingRecipeGenerator craftingRecipeGenerator;
+    protected final VanillaRecipeGenerator vanillaRecipeGenerator;
+    protected final DisabledVanilaRecipeGenerator disabledVanilaRecipeGenerator;
+    protected final HopperRecipeGenerator hopperRecipeGenerator;
+    protected final MillStoneRecipeGenerator millStoneRecipeGenerator;
+    protected final MobSpawnerConversionRecipeGenerator mobSpawnerConversionRecipeGenerator;
+    protected final SawRecipeGenerator sawRecipeGenerator;
+    protected final TurntableRecipeGenerator turntableRecipeGenerator;
+    protected final KilnRecipeGenerator kilnRecipeGenerator;
+    protected final SoulForgeRecipeGenerator soulForgeRecipeGenerator;
+    protected final EmiDefaultsGenerator emiDefaultsGenerator;
 
-    public RecipeGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public RecipeGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
         this.blockDispenserClumpRecipeGenerator = new BlockDispenserClumpRecipeGenerator(output, registriesFuture);
         this.cauldronRecipeGenerator = new CauldronRecipeGenerator(output, registriesFuture);
@@ -43,10 +42,10 @@ public class RecipeGenerator extends FabricRecipeProvider {
     }
 
     @Override
-    public void generate(RecipeExporter exporter) {}
+    public void buildRecipes(RecipeOutput exporter) {}
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer, RegistryWrapper.WrapperLookup wrapperLookup) {
+    public CompletableFuture<?> run(CachedOutput writer, HolderLookup.Provider wrapperLookup) {
         return CompletableFuture.allOf(
                 disabledVanilaRecipeGenerator.run(writer, wrapperLookup),
                 blockDispenserClumpRecipeGenerator.run(writer, wrapperLookup),

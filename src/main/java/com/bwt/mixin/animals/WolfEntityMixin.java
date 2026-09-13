@@ -6,30 +6,30 @@ import com.bwt.entities.WolfIsFedAccess;
 import com.bwt.items.BwtItems;
 import com.bwt.mixin.accessors.MobEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
-import net.minecraft.block.BlockState;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,83 +37,83 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(WolfEntity.class)
-public abstract class WolfEntityMixin extends TameableEntity implements MobEntityAccessorMixin, WolfIsFedAccess {
-    protected WolfEntityMixin(EntityType<? extends TameableEntity> entityType, World world) {
-        super(entityType, world);
+@Mixin(Wolf.class)
+public abstract class WolfEntityMixin extends TamableAnimal implements MobEntityAccessorMixin, WolfIsFedAccess {
+    protected WolfEntityMixin(EntityType<? extends TamableAnimal> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Unique
-    private static final TrackedData<Boolean> IS_FED = DataTracker.registerData(WolfEntityMixin.class, TrackedDataHandlerRegistry.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> IS_FED = SynchedEntityData.defineId(WolfEntityMixin.class, EntityDataSerializers.BOOLEAN);
 
 
-    @Inject(method = "initDataTracker", at = @At("TAIL"))
-    public void initDataTracker(DataTracker.Builder builder, CallbackInfo ci) {
-        builder.add(IS_FED, false);
+    @Inject(method = "defineSynchedData", at = @At("TAIL"))
+    public void initDataTracker(SynchedEntityData.Builder builder, CallbackInfo ci) {
+        builder.define(IS_FED, false);
     }
 
-    @Inject(method = "writeCustomDataToNbt", at = @At("TAIL"))
-    public void bwt$writeCustomDataToNbt(NbtCompound nbt, CallbackInfo ci) {
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    public void bwt$writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
         nbt.putBoolean("IsFed", this.bwt$isFed());
     }
 
-    @Inject(method = "readCustomDataFromNbt", at = @At("TAIL"))
-    public void bwt$readCustomDataFromNbt(NbtCompound nbt, CallbackInfo ci) {
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    public void bwt$readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
         if (nbt.contains("IsFed")) {
             this.bwt$setIsFed(nbt.getBoolean("IsFed"));
         }
     }
 
-    @Inject(method = "initGoals", at = @At("TAIL"))
+    @Inject(method = "registerGoals", at = @At("TAIL"))
     public void addGoal(CallbackInfo ci) {
-        this.getGoalSelector().add(1, new PickUpBreedingItemWhileSittingGoal(
+        this.getGoalSelector().addGoal(1, new PickUpBreedingItemWhileSittingGoal(
                 this,
                 1.7,
-                wolf -> !wolf.getDataTracker().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
+                wolf -> !wolf.getEntityData().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
                 this::bwt$feed
         ));
-        this.getGoalSelector().add(7, new GoToAndPickUpBreedingItemGoal(
+        this.getGoalSelector().addGoal(7, new GoToAndPickUpBreedingItemGoal(
                 this,
                 8,
                 1.8,
                 1,
-                wolf -> !wolf.getDataTracker().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
+                wolf -> !wolf.getEntityData().get(IS_FED) || wolf.getHealth() < wolf.getMaxHealth(),
                 this::bwt$feed
         ));
     }
 
-    @Inject(method = "interactMob", at = @At("HEAD"), cancellable = true)
-    public void interactMob(PlayerEntity player, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
-        ItemStack itemStack = player.getStackInHand(hand);
-        if (!this.isBaby() && this.isTamed() && this.isBreedingItem(itemStack) && !bwt$isFed()) {
-            if (this.getWorld().isClient()) {
-                cir.setReturnValue(ActionResult.CONSUME);
+    @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
+    public void interactMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (!this.isBaby() && this.isTame() && this.isFood(itemStack) && !bwt$isFed()) {
+            if (this.level().isClientSide()) {
+                cir.setReturnValue(InteractionResult.CONSUME);
                 return;
             }
-            if (!player.getAbilities().creativeMode) {
-                itemStack.decrement(1);
+            if (!player.getAbilities().instabuild) {
+                itemStack.shrink(1);
             }
             this.bwt$feed(itemStack);
-            cir.setReturnValue(ActionResult.success(this.getWorld().isClient()));
+            cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
         }
     }
 
-    @Inject(method = "isBreedingItem", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "isFood", at = @At("HEAD"), cancellable = true)
     public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.isOf(BwtItems.kibbleItem)) {
+        if (stack.is(BwtItems.kibbleItem)) {
             cir.setReturnValue(true);
             return;
         }
-        if (stack.isOf(Items.ROTTEN_FLESH) || stack.isOf(BwtItems.wolfChopItem) || stack.isOf(BwtItems.cookedWolfChopItem)) {
+        if (stack.is(Items.ROTTEN_FLESH) || stack.is(BwtItems.wolfChopItem) || stack.is(BwtItems.cookedWolfChopItem)) {
             cir.setReturnValue(false);
         }
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo ci) {
-        World world = getWorld();
-        Random random = world.getRandom();
-        if (world.isClient) {
+        Level level = level();
+        RandomSource random = level.getRandom();
+        if (level.isClientSide) {
             return;
         }
         if (isBaby() || !bwt$isFed()) {
@@ -134,40 +134,40 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
 
     @Unique
     public boolean attemptProduceDung() {
-        World world = getWorld();
-        Random random = getRandom();
+        Level level = level();
+        RandomSource random = getRandom();
         
-        double dungVectorX = Math.sin(Math.toRadians(getHeadYaw()));
-        double dungVectorZ = -Math.cos(Math.toRadians(getHeadYaw()));
+        double dungVectorX = Math.sin(Math.toRadians(getYHeadRot()));
+        double dungVectorZ = -Math.cos(Math.toRadians(getYHeadRot()));
 
         double dungPosX = getX() + dungVectorX;
         double dungPosY = getY() + 0.25D;
         double dungPosZ = getZ() + dungVectorZ;
-        BlockPos dungBlockPos = BlockPos.ofFloored(dungPosX, dungPosY, dungPosZ);
+        BlockPos dungBlockPos = BlockPos.containing(dungPosX, dungPosY, dungPosZ);
 
         if (!isPathToBlockOpenToDung(dungBlockPos))
         {
             return false;
         }
 
-        ItemEntity itemEntity = new ItemEntity(world, dungPosX, dungPosY, dungPosZ, new ItemStack(BwtItems.dungItem));
+        ItemEntity itemEntity = new ItemEntity(level, dungPosX, dungPosY, dungPosZ, new ItemStack(BwtItems.dungItem));
         float velocityFactor = 0.05F;
 
-        itemEntity.setVelocity(
+        itemEntity.setDeltaMovement(
                 dungVectorX * 10.0f * velocityFactor,
                 (float)random.nextGaussian() * velocityFactor + 0.2F,
                 dungVectorZ * 10.0f * velocityFactor
         );
-        itemEntity.setPickupDelay(10);
-        world.spawnEntity(itemEntity);
-        world.playSound(this, getBlockPos(), BwtSoundEvents.WOLF_DUNG_PRODUCTION, getSoundCategory(), 0.2f, 1.25f);
-        world.playSound(this, getBlockPos(), BwtSoundEvents.WOLF_DUNG_EFFORT, getSoundCategory(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        itemEntity.setPickUpDelay(10);
+        level.addFreshEntity(itemEntity);
+        level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_PRODUCTION, getSoundSource(), 0.2f, 1.25f);
+        level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_EFFORT, getSoundSource(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         
         for (int counter = 0; counter < 5; counter++) {
             double smokeX = getX() + (dungVectorX * 0.5f) + (random.nextDouble() * 0.25F);
             double smokeY = getY() + random.nextDouble() * 0.5F + 0.25F;
             double smokeZ = getZ() + (dungVectorZ * 0.5f) + (random.nextDouble() * 0.25F);
-            world.addParticle(ParticleTypes.SMOKE, smokeX, smokeY, smokeZ, 0D, 0D, 0D);
+            level.addParticle(ParticleTypes.SMOKE, smokeX, smokeY, smokeZ, 0D, 0D, 0D);
         }
 
         return true;
@@ -179,8 +179,8 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
             return false;
         }
 
-        int wolfX = MathHelper.floor(getX());
-        int wolfZ = MathHelper.floor(getZ());
+        int wolfX = Mth.floor(getX());
+        int wolfZ = Mth.floor(getZ());
 
         int deltaX = dungBlockPos.getX() - wolfX;
         int deltaZ = dungBlockPos.getZ() - wolfZ;
@@ -194,27 +194,27 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
 
     @Unique
     protected boolean bwt$isBlockOpenToDung(int x, int y, int z) {
-        World world = getWorld();
+        Level level = level();
         BlockPos blockPos = new BlockPos(x, y, z);
-        BlockState blockState = world.getBlockState(blockPos);
-        FluidState fluidState = world.getFluidState(blockPos);
-        VoxelShape collisionShape = blockState.getCollisionShape(world, blockPos);
+        BlockState blockState = level.getBlockState(blockPos);
+        FluidState fluidState = level.getFluidState(blockPos);
+        VoxelShape collisionShape = blockState.getCollisionShape(level, blockPos);
 
         return !fluidState.isEmpty()
-                || blockState.isIn(BlockTags.FIRE)
-                || blockState.isReplaceable()
+                || blockState.is(BlockTags.FIRE)
+                || blockState.canBeReplaced()
                 || collisionShape.isEmpty()
-                || collisionShape.getBoundingBox().maxY + blockPos.getY() - 0.1 <= getY();
+                || collisionShape.bounds().maxY + blockPos.getY() - 0.1 <= getY();
     }
 
     @Override
     public boolean bwt$isFed() {
-        return getDataTracker().get(IS_FED);
+        return getEntityData().get(IS_FED);
     }
 
     @Unique
     public void bwt$setIsFed(boolean value) {
-        getDataTracker().set(IS_FED, value);
+        getEntityData().set(IS_FED, value);
     }
 
     @Unique
@@ -224,13 +224,13 @@ public abstract class WolfEntityMixin extends TameableEntity implements MobEntit
 
     @Unique
     public void bwt$feed(ItemStack itemStack) {
-        int nutrition = itemStack.isOf(BwtItems.kibbleItem) ? 2 : itemStack.getOrDefault(DataComponentTypes.FOOD, new FoodComponent.Builder().build()).nutrition();
+        int nutrition = itemStack.is(BwtItems.kibbleItem) ? 2 : itemStack.getOrDefault(DataComponents.FOOD, new FoodProperties.Builder().build()).nutrition();
         heal(nutrition * 2);
         bwt$feed(nutrition);
     }
 
     @Unique
     public boolean bwt$isInTheDark() {
-        return getWorld().getLightLevel(getBlockPos()) < 5;
+        return level().getMaxLocalRawBrightness(blockPosition()) < 5;
     }
 }

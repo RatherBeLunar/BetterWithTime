@@ -8,26 +8,26 @@ import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.IntStream;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiSawRecipe implements EmiRecipe {
 
     private final EmiRecipeCategory category;
-    private final Identifier id;
+    private final ResourceLocation id;
     private final EmiIngredient ingredient;
     private final List<EmiStack> results;
     private final int displayRows;
 
-    public EmiSawRecipe(EmiRecipeCategory category, RecipeEntry<SawRecipe> recipeEntry) {
+    public EmiSawRecipe(EmiRecipeCategory category, RecipeHolder<SawRecipe> recipeEntry) {
         this(category, recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiSawRecipe(EmiRecipeCategory category, Identifier id, SawRecipe recipe) {
+    public EmiSawRecipe(EmiRecipeCategory category, ResourceLocation id, SawRecipe recipe) {
         this.category = category;
         this.id = id;
         this.ingredient = BwtEmiPlugin.from(recipe.getIngredient());
@@ -41,8 +41,8 @@ public class EmiSawRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

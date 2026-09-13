@@ -1,18 +1,18 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.BlockSetType;
-import net.minecraft.block.PressurePlateBlock;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 
 public class ObsidianPressurePlateBlock extends PressurePlateBlock {
-    public ObsidianPressurePlateBlock(Settings settings) {
+    public ObsidianPressurePlateBlock(Properties settings) {
         super(BlockSetType.STONE, settings);
     }
 
     @Override
-    protected int getRedstoneOutput(World world, BlockPos pos) {
-        return PressurePlateBlock.getEntityCount(world, BOX.offset(pos), PlayerEntity.class) > 0 ? 15 : 0;
+    protected int getSignalStrength(Level level, BlockPos pos) {
+        return PressurePlateBlock.getEntityCount(level, TOUCH_AABB.move(pos), Player.class) > 0 ? 15 : 0;
     }
 }

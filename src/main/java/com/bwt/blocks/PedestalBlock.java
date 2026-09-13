@@ -1,40 +1,40 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class PedestalBlock extends DecorativeBlock {
-    public static final DirectionProperty VERTICAL_DIRECTION = Properties.VERTICAL_DIRECTION;
+    public static final DirectionProperty VERTICAL_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
 
-    VoxelShape UP_SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0, 0, 0, 16, 14, 16),
-            Block.createCuboidShape(1, 14, 1, 15, 15, 15),
-            Block.createCuboidShape(2, 15, 2, 14, 16, 14)
+    final VoxelShape UP_SHAPE = Shapes.or(
+            Block.box(0, 0, 0, 16, 14, 16),
+            Block.box(1, 14, 1, 15, 15, 15),
+            Block.box(2, 15, 2, 14, 16, 14)
     );
-    VoxelShape DOWN_SHAPE = VoxelShapes.union(
-            Block.createCuboidShape(0, 2, 0, 16, 16, 16),
-            Block.createCuboidShape(1, 1, 1, 15, 2, 15),
-            Block.createCuboidShape(2, 0, 2, 14, 1, 14)
+    final VoxelShape DOWN_SHAPE = Shapes.or(
+            Block.box(0, 2, 0, 16, 16, 16),
+            Block.box(1, 1, 1, 15, 2, 15),
+            Block.box(2, 0, 2, 14, 1, 14)
     );
 
-    public PedestalBlock(Settings settings, Block fullBlock) {
+    public PedestalBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
-        setDefaultState(getDefaultState().with(VERTICAL_DIRECTION, Direction.UP));
+        registerDefaultState(defaultBlockState().setValue(VERTICAL_DIRECTION, Direction.UP));
     }
 
     public static PedestalBlock ofBlock(Block fullBlock) {
-        return new PedestalBlock(Settings.copy(fullBlock), fullBlock);
+        return new PedestalBlock(Properties.ofFullCopy(fullBlock), fullBlock);
     }
 
     public static PedestalBlock ofWoodBlock(Block woodBlock) {
@@ -44,19 +44,19 @@ public class PedestalBlock extends DecorativeBlock {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(VERTICAL_DIRECTION);
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(VERTICAL_DIRECTION, ctx.getVerticalPlayerLookDirection().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return defaultBlockState().setValue(VERTICAL_DIRECTION, ctx.getNearestLookingVerticalDirection().getOpposite());
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext context) {
-        return state.get(VERTICAL_DIRECTION) == Direction.UP ? UP_SHAPE : DOWN_SHAPE;
+    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+        return state.getValue(VERTICAL_DIRECTION) == Direction.UP ? UP_SHAPE : DOWN_SHAPE;
     }
 }

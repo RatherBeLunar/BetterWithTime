@@ -10,13 +10,13 @@ import dev.emi.emi.api.render.EmiTooltipComponents;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.IntStream;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiMillstoneRecipe implements EmiRecipe {
 
@@ -24,16 +24,16 @@ public class EmiMillstoneRecipe implements EmiRecipe {
     public static final EmiTexture FULL_GEAR = new EmiTexture(BwtEmiPlugin.WIDGETS, 14, 0, 14, 14);
 
     private final EmiRecipeCategory category;
-    private final Identifier id;
+    private final ResourceLocation id;
     private final List<EmiIngredient> ingredients;
     private final List<EmiStack> results;
     private final int displayRows;
 
-    public EmiMillstoneRecipe(EmiRecipeCategory category, RecipeEntry<MillStoneRecipe> recipeEntry) {
+    public EmiMillstoneRecipe(EmiRecipeCategory category, RecipeHolder<MillStoneRecipe> recipeEntry) {
         this(category, recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiMillstoneRecipe(EmiRecipeCategory category, Identifier id, MillStoneRecipe recipe) {
+    public EmiMillstoneRecipe(EmiRecipeCategory category, ResourceLocation id, MillStoneRecipe recipe) {
         this.category = category;
         this.id = id;
         this.ingredients = recipe.getIngredientsWithCount().stream().map(BwtEmiPlugin::from).toList();
@@ -47,8 +47,8 @@ public class EmiMillstoneRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override
@@ -77,7 +77,7 @@ public class EmiMillstoneRecipe implements EmiRecipe {
         var x = 0;
         var i = 0;
 
-        widgets.addTexture(EMPTY_GEAR, 20 * 3, y).tooltip(List.of(EmiTooltipComponents.of(Text.literal(this.id.toString()))));
+        widgets.addTexture(EMPTY_GEAR, 20 * 3, y).tooltip(List.of(EmiTooltipComponents.of(Component.literal(this.id.toString()))));
         widgets.addAnimatedTexture(FULL_GEAR, 20 * 3, y, (AbstractCookingPotBlockEntity.timeToCompleteCook * 10), false, true, false);
 
         int constantInputSlots = 3;

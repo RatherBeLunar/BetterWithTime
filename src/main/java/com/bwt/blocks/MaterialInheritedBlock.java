@@ -1,27 +1,26 @@
 package com.bwt.blocks;
 
 import com.bwt.utils.Id;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.WoodType;
-import net.minecraft.data.family.BlockFamilies;
-import net.minecraft.data.family.BlockFamily;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.BlockFamilies;
+import net.minecraft.data.BlockFamily;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.WoodType;
 
 public abstract class MaterialInheritedBlock extends Block {
-    public Block fullBlock;
+    public final Block fullBlock;
     public boolean isWood = false;
 
-    public MaterialInheritedBlock(Settings settings, Block fullBlock) {
+    public MaterialInheritedBlock(Properties settings, Block fullBlock) {
         super(settings);
         this.fullBlock = fullBlock;
     }
@@ -39,8 +38,8 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<TableBlock> tableBlocks
     ) {
         Stream.concat(
-            WoodType.stream()
-                    .map(woodType -> Registries.BLOCK.getOrEmpty(Id.mc(woodType.name() + "_planks")))
+            WoodType.values()
+                    .map(woodType -> BuiltInRegistries.BLOCK.getOptional(Id.mc(woodType.name() + "_planks")))
                     .filter(Optional::isPresent)
                     .map(Optional::get),
             Stream.of(Blocks.BAMBOO_MOSAIC)
@@ -57,11 +56,11 @@ public abstract class MaterialInheritedBlock extends Block {
                 BlockFamilies.COBBLESTONE,
                 BlockFamilies.STONE,
                 BlockFamilies.STONE_BRICK,
-                BlockFamilies.MOSSY_STONE_BRICK,
+                BlockFamilies.MOSSY_STONE_BRICKS,
                 BlockFamilies.SANDSTONE,
                 BlockFamilies.RED_SANDSTONE,
-                BlockFamilies.BRICK,
-                BlockFamilies.NETHER_BRICK,
+                BlockFamilies.BRICKS,
+                BlockFamilies.NETHER_BRICKS,
                 BlockFamilies.DIORITE,
                 BlockFamilies.POLISHED_DIORITE,
                 BlockFamilies.ANDESITE,
@@ -70,9 +69,9 @@ public abstract class MaterialInheritedBlock extends Block {
                 BlockFamilies.POLISHED_GRANITE,
                 BlockFamilies.COBBLED_DEEPSLATE,
                 BlockFamilies.TUFF,
-                BlockFamilies.MUD_BRICK,
+                BlockFamilies.MUD_BRICKS,
                 BlockFamilies.PRISMARINE,
-                BlockFamilies.END_STONE_BRICK,
+                BlockFamilies.END_STONE_BRICKS,
                 BlockFamilies.PURPUR
         );
         blockFamilies.stream().map(BlockFamily::getBaseBlock).forEach(block -> {
@@ -90,25 +89,25 @@ public abstract class MaterialInheritedBlock extends Block {
             ColumnBlock columnBlock = columnBlocks.get(i);
             PedestalBlock pedestalBlock = pedestalBlocks.get(i);
             TableBlock tableBlock = tableBlocks.get(i);
-            Identifier blockId = Registries.BLOCK.getId(sidingBlock.fullBlock);
-            Identifier sidingId = Id.of(blockId.getPath() + "_siding");
-            Identifier mouldingId = Id.of(blockId.getPath() + "_moulding");
-            Identifier cornerId = Id.of(blockId.getPath() + "_corner");
-            Identifier columnId = Id.of(blockId.getPath() + "_column");
-            Identifier pedestalId = Id.of(blockId.getPath() + "_pedestal");
-            Identifier tableId = Id.of(blockId.getPath() + "_table");
-            Registry.register(Registries.BLOCK, sidingId, sidingBlock);
-            Registry.register(Registries.BLOCK, mouldingId, mouldingBlock);
-            Registry.register(Registries.BLOCK, cornerId, cornerBlock);
-            Registry.register(Registries.BLOCK, columnId, columnBlock);
-            Registry.register(Registries.BLOCK, pedestalId, pedestalBlock);
-            Registry.register(Registries.BLOCK, tableId, tableBlock);
-            Registry.register(Registries.ITEM, sidingId, new BlockItem(sidingBlock, new Item.Settings()));
-            Registry.register(Registries.ITEM, mouldingId, new BlockItem(mouldingBlock, new Item.Settings()));
-            Registry.register(Registries.ITEM, cornerId, new BlockItem(cornerBlock, new Item.Settings()));
-            Registry.register(Registries.ITEM, columnId, new BlockItem(columnBlock, new Item.Settings()));
-            Registry.register(Registries.ITEM, pedestalId, new BlockItem(pedestalBlock, new Item.Settings()));
-            Registry.register(Registries.ITEM, tableId, new BlockItem(tableBlock, new Item.Settings()));
+            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(sidingBlock.fullBlock);
+            ResourceLocation sidingId = Id.of(blockId.getPath() + "_siding");
+            ResourceLocation mouldingId = Id.of(blockId.getPath() + "_moulding");
+            ResourceLocation cornerId = Id.of(blockId.getPath() + "_corner");
+            ResourceLocation columnId = Id.of(blockId.getPath() + "_column");
+            ResourceLocation pedestalId = Id.of(blockId.getPath() + "_pedestal");
+            ResourceLocation tableId = Id.of(blockId.getPath() + "_table");
+            Registry.register(BuiltInRegistries.BLOCK, sidingId, sidingBlock);
+            Registry.register(BuiltInRegistries.BLOCK, mouldingId, mouldingBlock);
+            Registry.register(BuiltInRegistries.BLOCK, cornerId, cornerBlock);
+            Registry.register(BuiltInRegistries.BLOCK, columnId, columnBlock);
+            Registry.register(BuiltInRegistries.BLOCK, pedestalId, pedestalBlock);
+            Registry.register(BuiltInRegistries.BLOCK, tableId, tableBlock);
+            Registry.register(BuiltInRegistries.ITEM, sidingId, new BlockItem(sidingBlock, new Item.Properties()));
+            Registry.register(BuiltInRegistries.ITEM, mouldingId, new BlockItem(mouldingBlock, new Item.Properties()));
+            Registry.register(BuiltInRegistries.ITEM, cornerId, new BlockItem(cornerBlock, new Item.Properties()));
+            Registry.register(BuiltInRegistries.ITEM, columnId, new BlockItem(columnBlock, new Item.Properties()));
+            Registry.register(BuiltInRegistries.ITEM, pedestalId, new BlockItem(pedestalBlock, new Item.Properties()));
+            Registry.register(BuiltInRegistries.ITEM, tableId, new BlockItem(tableBlock, new Item.Properties()));
         }
     }
 }

@@ -4,20 +4,32 @@ import com.bwt.features.BwtConfiguredFeatures;
 import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.WoodTypeBuilder;
-import net.minecraft.block.*;
-import net.minecraft.block.enums.NoteBlockInstrument;
-import net.minecraft.block.piston.PistonBehavior;
-import net.minecraft.data.family.BlockFamilies;
-import net.minecraft.data.family.BlockFamily;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.HangingSignItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.SignItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.util.math.Direction;
 
+import net.minecraft.core.Direction;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.BlockFamilies;
+import net.minecraft.data.BlockFamily;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DoorBlock;
+import net.minecraft.world.level.block.FenceBlock;
+import net.minecraft.world.level.block.FenceGateBlock;
+import net.minecraft.world.level.block.PressurePlateBlock;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.TrapDoorBlock;
+import net.minecraft.world.level.block.grower.TreeGrower;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.block.state.properties.WoodType;
+import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import java.util.Optional;
 
 public class BloodWoodBlocks {
@@ -49,48 +61,48 @@ public class BloodWoodBlocks {
         blockSetType = BlockSetTypeBuilder.copyOf(BlockSetType.CRIMSON).register(Id.of("blood_wood"));
         woodType = WoodTypeBuilder.copyOf(WoodType.CRIMSON).register(Id.of("blood_wood"), blockSetType);
 
-        logBlock = new BloodWoodLogBlock(AbstractBlock.Settings.create().mapColor(state -> state.get(BloodWoodLogBlock.AXIS) == Direction.Axis.Y ? MapColor.DARK_CRIMSON : MapColor.OFF_WHITE).instrument(NoteBlockInstrument.BASS).strength(2.0f).sounds(BlockSoundGroup.NETHER_STEM).burnable());
-        strippedLogBlock = Blocks.createLogBlock(MapColor.DARK_CRIMSON, MapColor.OFF_WHITE, BlockSoundGroup.NETHER_STEM);
-        woodBlock = new PillarBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_HYPHAE));
-        strippedWoodBlock = new PillarBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_HYPHAE));
+        logBlock = new BloodWoodLogBlock(BlockBehaviour.Properties.of().mapColor(state -> state.getValue(BloodWoodLogBlock.AXIS) == Direction.Axis.Y ? MapColor.CRIMSON_HYPHAE : MapColor.QUARTZ).instrument(NoteBlockInstrument.BASS).strength(2.0f).sound(SoundType.STEM).ignitedByLava());
+        strippedLogBlock = Blocks.log(MapColor.CRIMSON_HYPHAE, MapColor.QUARTZ, SoundType.STEM);
+        woodBlock = new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_HYPHAE));
+        strippedWoodBlock = new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_HYPHAE));
 
         leavesBlock = new BloodWoodLeavesBlock(
-                AbstractBlock.Settings.create()
-                        .mapColor(MapColor.DARK_GREEN)
+                BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.PLANT)
                         .strength(0.2F)
-                        .ticksRandomly()
-                        .sounds(BlockSoundGroup.GRASS)
-                        .nonOpaque()
-                        .allowsSpawning(Blocks::canSpawnOnLeaves)
-                        .suffocates(Blocks::never)
-                        .blockVision(Blocks::never)
-                        .burnable()
-                        .pistonBehavior(PistonBehavior.DESTROY)
-                        .solidBlock(Blocks::never)
+                        .randomTicks()
+                        .sound(SoundType.GRASS)
+                        .noOcclusion()
+                        .isValidSpawn(Blocks::ocelotOrParrot)
+                        .isSuffocating(Blocks::never)
+                        .isViewBlocking(Blocks::never)
+                        .ignitedByLava()
+                        .pushReaction(PushReaction.DESTROY)
+                        .isRedstoneConductor(Blocks::never)
         );
         saplingBlock = new BloodWoodSaplingBlock(
-                new SaplingGenerator(
+                new TreeGrower(
                         Id.of("blood_wood").toString(),
                         Optional.empty(),
                         Optional.of(BwtConfiguredFeatures.BLOOD_WOOD_KEY),
                         Optional.empty()
                 ),
-                AbstractBlock.Settings.copy(Blocks.OAK_SAPLING).mapColor(MapColor.RED)
+                BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING).mapColor(MapColor.COLOR_RED)
         );
-        saplingItem = new BlockItem(saplingBlock, new Item.Settings());
-        pottedSaplingBlock = Blocks.createFlowerPotBlock(saplingBlock);
+        saplingItem = new BlockItem(saplingBlock, new Item.Properties());
+        pottedSaplingBlock = Blocks.flowerPot(saplingBlock);
 
-        planksBlock = new Block(AbstractBlock.Settings.copy(Blocks.CRIMSON_PLANKS));
-        buttonBlock = Blocks.createWoodenButtonBlock(blockSetType);
-        fenceBlock = new FenceBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_FENCE));
-        fenceGateBlock = new FenceGateBlock(woodType, AbstractBlock.Settings.copy(Blocks.CRIMSON_FENCE_GATE));
-        pressurePlateBlock = new PressurePlateBlock(blockSetType, AbstractBlock.Settings.copy(Blocks.CRIMSON_PRESSURE_PLATE));
-        slabBlock = new SlabBlock(AbstractBlock.Settings.copy(Blocks.CRIMSON_SLAB));
-        stairsBlock = new StairsBlock(planksBlock.getDefaultState(), AbstractBlock.Settings.copy(Blocks.CRIMSON_STAIRS));
-        doorBlock = new DoorBlock(blockSetType, AbstractBlock.Settings.copy(Blocks.CRIMSON_DOOR));
-        trapdoorBlock = new TrapdoorBlock(blockSetType, AbstractBlock.Settings.copy(Blocks.CRIMSON_TRAPDOOR));
+        planksBlock = new Block(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_PLANKS));
+        buttonBlock = Blocks.woodenButton(blockSetType);
+        fenceBlock = new FenceBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_FENCE));
+        fenceGateBlock = new FenceGateBlock(woodType, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_FENCE_GATE));
+        pressurePlateBlock = new PressurePlateBlock(blockSetType, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_PRESSURE_PLATE));
+        slabBlock = new SlabBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_SLAB));
+        stairsBlock = new StairBlock(planksBlock.defaultBlockState(), BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_STAIRS));
+        doorBlock = new DoorBlock(blockSetType, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_DOOR));
+        trapdoorBlock = new TrapDoorBlock(blockSetType, BlockBehaviour.Properties.ofFullCopy(Blocks.CRIMSON_TRAPDOOR));
 
-        blockFamily = BlockFamilies.register(planksBlock)
+        blockFamily = BlockFamilies.familyBuilder(planksBlock)
                 .button(buttonBlock)
                 .fence(fenceBlock)
                 .fenceGate(fenceGateBlock)
@@ -99,43 +111,43 @@ public class BloodWoodBlocks {
                 .stairs(stairsBlock)
                 .door(doorBlock)
                 .trapdoor(trapdoorBlock)
-                .group("wooden")
-                .unlockCriterionName("has_planks")
-                .build();
+                .recipeGroupPrefix("wooden")
+                .recipeUnlockedBy("has_planks")
+                .getFamily();
         return this;
     }
 
     public void register() {
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_log"), logBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_log"), new BlockItem(logBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood_log"), strippedLogBlock);
-        Registry.register(Registries.ITEM, Id.of("stripped_blood_wood_log"), new BlockItem(strippedLogBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_wood"), woodBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_wood"), new BlockItem(woodBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("stripped_blood_wood"), strippedWoodBlock);
-        Registry.register(Registries.ITEM, Id.of("stripped_blood_wood"), new BlockItem(strippedWoodBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_leaves"), leavesBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_leaves"), new BlockItem(leavesBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_sapling"), saplingBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_sapling"), saplingItem);
-        Registry.register(Registries.BLOCK, Id.of("potted_blood_wood_sapling"), pottedSaplingBlock);
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_planks"), planksBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_planks"), new BlockItem(planksBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_button"), buttonBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_button"), new BlockItem(buttonBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_fence"), fenceBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_fence"), new BlockItem(fenceBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_fence_gate"), fenceGateBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_fence_gate"), new BlockItem(fenceGateBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_pressure_plate"), pressurePlateBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_pressure_plate"), new BlockItem(pressurePlateBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_slab"), slabBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_slab"), new BlockItem(slabBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_stairs"), stairsBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_stairs"), new BlockItem(stairsBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_door"), doorBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_door"), new BlockItem(doorBlock, new Item.Settings()));
-        Registry.register(Registries.BLOCK, Id.of("blood_wood_trapdoor"), trapdoorBlock);
-        Registry.register(Registries.ITEM, Id.of("blood_wood_trapdoor"), new BlockItem(trapdoorBlock, new Item.Settings()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_log"), logBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_log"), new BlockItem(logBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("stripped_blood_wood_log"), strippedLogBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("stripped_blood_wood_log"), new BlockItem(strippedLogBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_wood"), woodBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_wood"), new BlockItem(woodBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("stripped_blood_wood"), strippedWoodBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("stripped_blood_wood"), new BlockItem(strippedWoodBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_leaves"), leavesBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_leaves"), new BlockItem(leavesBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_sapling"), saplingBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_sapling"), saplingItem);
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("potted_blood_wood_sapling"), pottedSaplingBlock);
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_planks"), planksBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_planks"), new BlockItem(planksBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_button"), buttonBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_button"), new BlockItem(buttonBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_fence"), fenceBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_fence"), new BlockItem(fenceBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_fence_gate"), fenceGateBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_fence_gate"), new BlockItem(fenceGateBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_pressure_plate"), pressurePlateBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_pressure_plate"), new BlockItem(pressurePlateBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_slab"), slabBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_slab"), new BlockItem(slabBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_stairs"), stairsBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_stairs"), new BlockItem(stairsBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_door"), doorBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_door"), new BlockItem(doorBlock, new Item.Properties()));
+        Registry.register(BuiltInRegistries.BLOCK, Id.of("blood_wood_trapdoor"), trapdoorBlock);
+        Registry.register(BuiltInRegistries.ITEM, Id.of("blood_wood_trapdoor"), new BlockItem(trapdoorBlock, new Item.Properties()));
     }
 }

@@ -7,15 +7,13 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,15 +22,15 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     public static final IngredientWithCount EMPTY = new IngredientWithCount(Ingredient.EMPTY, 0);
 
     public static IngredientWithCount fromStack(ItemStack stack) {
-        return new IngredientWithCount(Ingredient.ofStacks(stack), stack.getCount());
+        return new IngredientWithCount(Ingredient.of(stack), stack.getCount());
     }
 
     public static IngredientWithCount fromTag(TagKey<Item> itemTag, int count) {
-        return new IngredientWithCount(Ingredient.fromTag(itemTag), count);
+        return new IngredientWithCount(Ingredient.of(itemTag), count);
     }
 
     public static IngredientWithCount fromTag(TagKey<Item> itemTag) {
-        return new IngredientWithCount(Ingredient.fromTag(itemTag), 1);
+        return new IngredientWithCount(Ingredient.of(itemTag), 1);
     }
 
     @Override
@@ -47,7 +45,7 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
 
     @Override
     public List<ItemStack> getMatchingStacks() {
-        List<ItemStack> stacks = new ArrayList<>(List.of(ingredient.getMatchingStacks()));
+        List<ItemStack> stacks = new ArrayList<>(List.of(ingredient.getItems()));
         stacks.replaceAll(stack -> stack.copyWithCount(count));
         stacks.removeIf(stack -> !ingredient.test(stack));
         return stacks;
@@ -64,10 +62,10 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     }
 
     public static class Serializer implements CustomIngredientSerializer<IngredientWithCount> {
-        private static final Identifier ID = Id.of("ingredient_with_count");
-        public static final MapCodec<IngredientWithCount> ALLOW_EMPTY_CODEC = createCodec(Ingredient.ALLOW_EMPTY_CODEC);
-        public static final MapCodec<IngredientWithCount> DISALLOW_EMPTY_CODEC = createCodec(Ingredient.DISALLOW_EMPTY_CODEC);
-        public static final PacketCodec<RegistryByteBuf, IngredientWithCount> PACKET_CODEC = PacketCodec.ofStatic(
+        private static final ResourceLocation ID = Id.of("ingredient_with_count");
+        public static final MapCodec<IngredientWithCount> ALLOW_EMPTY_CODEC = createCodec(Ingredient.CODEC);
+        public static final MapCodec<IngredientWithCount> DISALLOW_EMPTY_CODEC = createCodec(Ingredient.CODEC_NONEMPTY);
+        public static final StreamCodec<RegistryFriendlyByteBuf, IngredientWithCount> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
         );
 
@@ -81,7 +79,7 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
         }
 
         @Override
-        public Identifier getIdentifier() {
+        public ResourceLocation getIdentifier() {
             return ID;
         }
 
@@ -91,18 +89,18 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, IngredientWithCount> getPacketCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, IngredientWithCount> getPacketCodec() {
             return PACKET_CODEC;
         }
 
-        public static IngredientWithCount read(RegistryByteBuf buf) {
-            Ingredient base = Ingredient.PACKET_CODEC.decode(buf);
+        public static IngredientWithCount read(RegistryFriendlyByteBuf buf) {
+            Ingredient base = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
             int count = buf.readInt();
             return new IngredientWithCount(base, count);
         }
 
-        public static void write(RegistryByteBuf buf, IngredientWithCount ingredient) {
-            Ingredient.PACKET_CODEC.encode(buf, ingredient.ingredient);
+        public static void write(RegistryFriendlyByteBuf buf, IngredientWithCount ingredient) {
+            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, ingredient.ingredient);
             buf.writeInt(ingredient.count);
         }
     }

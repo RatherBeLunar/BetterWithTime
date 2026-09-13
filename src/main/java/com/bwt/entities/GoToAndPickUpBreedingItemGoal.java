@@ -1,19 +1,19 @@
 package com.bwt.entities;
 
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class GoToAndPickUpBreedingItemGoal extends Goal {
-    protected final AnimalEntity animal;
+    protected final Animal animal;
     protected final double searchRadius;
     protected final double pickupRadius;
     protected final double speed;
@@ -21,21 +21,21 @@ public class GoToAndPickUpBreedingItemGoal extends Goal {
     protected ItemEntity targetBreedingItem;
 
     @Nullable
-    protected final Predicate<AnimalEntity> wantsFoodCondition;
+    protected final Predicate<Animal> wantsFoodCondition;
     @Nullable
     protected final Consumer<ItemStack> foodConsumer;
 
-    public GoToAndPickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed, @Nullable Predicate<AnimalEntity> wantsFoodCondition, @Nullable Consumer<ItemStack> foodConsumer) {
+    public GoToAndPickUpBreedingItemGoal(Animal animal, double searchRadius, double pickupRadius, double speed, @Nullable Predicate<Animal> wantsFoodCondition, @Nullable Consumer<ItemStack> foodConsumer) {
         this.animal = animal;
         this.searchRadius = searchRadius;
         this.pickupRadius = pickupRadius;
         this.speed = speed;
         this.wantsFoodCondition = wantsFoodCondition;
         this.foodConsumer = foodConsumer;
-        this.setControls(EnumSet.of(Control.MOVE, Control.LOOK));
+        this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
-    public GoToAndPickUpBreedingItemGoal(AnimalEntity animal, double searchRadius, double pickupRadius, double speed) {
+    public GoToAndPickUpBreedingItemGoal(Animal animal, double searchRadius, double pickupRadius, double speed) {
         this(animal, searchRadius, pickupRadius, speed, null, null);
     }
 
@@ -43,30 +43,30 @@ public class GoToAndPickUpBreedingItemGoal extends Goal {
         if (wantsFoodCondition != null && wantsFoodCondition.test(animal)) {
             return true;
         }
-        return animal.getBreedingAge() == 0 && animal.canEat();
+        return animal.getAge() == 0 && animal.canFallInLove();
     }
 
 
     protected boolean isTargetValid() {
-        return targetBreedingItem != null && targetBreedingItem.isAlive() && !targetBreedingItem.getStack().isEmpty();
+        return targetBreedingItem != null && targetBreedingItem.isAlive() && !targetBreedingItem.getItem().isEmpty();
     }
 
     @Nullable
     protected ItemEntity findClosestBreedingItem() {
-        return animal.getWorld()
-                .getEntitiesByClass(
+        return animal.level()
+                .getEntitiesOfClass(
                         ItemEntity.class,
-                        animal.getBoundingBox().expand(searchRadius),
-                        itemEntity -> animal.isBreedingItem(itemEntity.getStack())
+                        animal.getBoundingBox().inflate(searchRadius),
+                        itemEntity -> animal.isFood(itemEntity.getItem())
                 )
                 .stream()
-                .min(Comparator.comparingDouble(animal::squaredDistanceTo))
+                .min(Comparator.comparingDouble(animal::distanceToSqr))
                 .filter(itemEntity -> animal.distanceTo(itemEntity) < searchRadius)
                 .orElse(null);
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         if (!wantsFood()) {
             return false;
         }
@@ -75,26 +75,26 @@ public class GoToAndPickUpBreedingItemGoal extends Goal {
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         return isTargetValid() && wantsFood();
     }
 
     @Override
     public void tick() {
-        if (targetBreedingItem == null || !isTargetValid() || !wantsFood() || !animal.canMoveVoluntarily()) {
+        if (targetBreedingItem == null || !isTargetValid() || !wantsFood() || !animal.isEffectiveAi()) {
             return;
         }
-        animal.getLookControl().lookAt(targetBreedingItem, animal.getMaxLookYawChange(), animal.getMaxLookPitchChange());
-        if (!(animal instanceof TameableEntity tameableEntity) || !tameableEntity.isSitting()) {
-            animal.getNavigation().startMovingTo(targetBreedingItem, speed);
+        animal.getLookControl().setLookAt(targetBreedingItem, animal.getHeadRotSpeed(), animal.getMaxHeadXRot());
+        if (!(animal instanceof TamableAnimal tameableEntity) || !tameableEntity.isOrderedToSit()) {
+            animal.getNavigation().moveTo(targetBreedingItem, speed);
         }
         if (animal.distanceTo(targetBreedingItem) <= pickupRadius) {
             animal.getNavigation().stop();
             if (foodConsumer != null) {
-                foodConsumer.accept(targetBreedingItem.getStack().copyWithCount(1));
+                foodConsumer.accept(targetBreedingItem.getItem().copyWithCount(1));
             }
-            targetBreedingItem.getStack().decrement(1);
-            animal.lovePlayer(null);
+            targetBreedingItem.getItem().shrink(1);
+            animal.setInLove(null);
         }
     }
 }

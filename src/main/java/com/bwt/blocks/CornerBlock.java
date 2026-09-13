@@ -1,46 +1,49 @@
 package com.bwt.blocks;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class CornerBlock extends MiniBlock {
-    public static final IntProperty ORIENTATION = IntProperty.of("orientation", 0, 7);
+    public static final IntegerProperty ORIENTATION = IntegerProperty.create("orientation", 0, 7);
 
     private final List<VoxelShape> COLLISION_SHAPES = List.of(
             // bottom - south-west, north-west, north-east, south-east
-            Block.createCuboidShape(0, 0, 0, 8, 8, 8),
-            Block.createCuboidShape(8, 0, 0, 16, 8, 8),
-            Block.createCuboidShape(8, 0, 8, 16, 8, 16),
-            Block.createCuboidShape(0, 0, 8, 8, 8, 16),
+            Block.box(0, 0, 0, 8, 8, 8),
+            Block.box(8, 0, 0, 16, 8, 8),
+            Block.box(8, 0, 8, 16, 8, 16),
+            Block.box(0, 0, 8, 8, 8, 16),
             // top - south-west, north-west, north-east, south-east
-            Block.createCuboidShape(0, 8, 0, 8, 16, 8),
-            Block.createCuboidShape(8, 8, 0, 16, 16, 8),
-            Block.createCuboidShape(8, 8, 8, 16, 16, 16),
-            Block.createCuboidShape(0, 8, 8, 8, 16, 16)
+            Block.box(0, 8, 0, 8, 16, 8),
+            Block.box(8, 8, 0, 16, 16, 8),
+            Block.box(8, 8, 8, 16, 16, 16),
+            Block.box(0, 8, 8, 8, 16, 16)
     );
 
-    public static final MapCodec<CornerBlock> CODEC = CornerBlock.createCodec(s -> new CornerBlock(s, Blocks.STONE));
+    public static final MapCodec<CornerBlock> CODEC = CornerBlock.simpleCodec(s -> new CornerBlock(s, Blocks.STONE));
 
-    public CornerBlock(Settings settings, Block fullBlock) {
+    public CornerBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
-        this.setDefaultState(this.getDefaultState().with(ORIENTATION, 0));
+        this.registerDefaultState(this.defaultBlockState().setValue(ORIENTATION, 0));
     }
 
     public static CornerBlock ofBlock(Block fullBlock) {
-        return new CornerBlock(Settings.copy(fullBlock), fullBlock);
+        return new CornerBlock(Properties.ofFullCopy(fullBlock), fullBlock);
     }
 
     public static CornerBlock ofWoodBlock(Block woodBlock) {
@@ -50,54 +53,54 @@ public class CornerBlock extends MiniBlock {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(ORIENTATION);
     }
 
-    public MapCodec<? extends CornerBlock> getCodec() {
+    public MapCodec<? extends CornerBlock> codec() {
         return CODEC;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return COLLISION_SHAPES.get(state.get(ORIENTATION));
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return COLLISION_SHAPES.get(state.getValue(ORIENTATION));
     }
 
     @Override
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState state = getDefaultState().with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
-        BlockPos hitBlockPos = ctx.getBlockPos();
-        Vec3d hitPos = ctx.getHitPos().subtract(hitBlockPos.getX(), hitBlockPos.getY(), hitBlockPos.getZ());
-        double xDistFromCenter = hitPos.getX() - 0.5;
-        double yDistFromCenter = hitPos.getY() - 0.5;
-        double zDistFromCenter = hitPos.getZ() - 0.5;
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState state = defaultBlockState().setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER);
+        BlockPos hitBlockPos = ctx.getClickedPos();
+        Vec3 hitPos = ctx.getClickLocation().subtract(hitBlockPos.getX(), hitBlockPos.getY(), hitBlockPos.getZ());
+        double xDistFromCenter = hitPos.x() - 0.5;
+        double yDistFromCenter = hitPos.y() - 0.5;
+        double zDistFromCenter = hitPos.z() - 0.5;
 
         int orientation = (yDistFromCenter > 0 ? 4 : 0) +
                 (xDistFromCenter > 0
                     ? zDistFromCenter > 0 ? 2 : 1
                     : zDistFromCenter > 0 ? 3 : 0);
 
-        return state.with(ORIENTATION, orientation);
+        return state.setValue(ORIENTATION, orientation);
     }
 
     @Override
     public BlockState getNextOrientation(BlockState state) {
-        return state.with(ORIENTATION, (state.get(ORIENTATION) + 1) % 8);
+        return state.setValue(ORIENTATION, (state.getValue(ORIENTATION) + 1) % 8);
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        int orientation = state.get(ORIENTATION);
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        int orientation = state.getValue(ORIENTATION);
         int category = orientation / 4;
         int newOrientation = (orientation + 1) % 4 + (4 * category);
-        return state.with(ORIENTATION, newOrientation);
+        return state.setValue(ORIENTATION, newOrientation);
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        int orientation = state.get(ORIENTATION);
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        int orientation = state.getValue(ORIENTATION);
         int newOrientation = switch (mirror) {
             // Invert Z
             case LEFT_RIGHT -> switch (orientation) {
@@ -125,6 +128,6 @@ public class CornerBlock extends MiniBlock {
             };
             default -> orientation;
         };
-        return state.with(ORIENTATION, newOrientation);
+        return state.setValue(ORIENTATION, newOrientation);
     }
 }

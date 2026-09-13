@@ -3,26 +3,25 @@ package com.bwt.blocks;
 import com.bwt.tags.BwtFluidTags;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldAccess;
-
 import java.util.Map;
+import net.minecraft.Util;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
 
 public class AqueductBlock extends Block {
-    public static final BooleanProperty NORTH = Properties.NORTH;
-    public static final BooleanProperty EAST = Properties.EAST;
-    public static final BooleanProperty SOUTH = Properties.SOUTH;
-    public static final BooleanProperty WEST = Properties.WEST;
+    public static final BooleanProperty NORTH = BlockStateProperties.NORTH;
+    public static final BooleanProperty EAST = BlockStateProperties.EAST;
+    public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
+    public static final BooleanProperty WEST = BlockStateProperties.WEST;
     public static final Map<Direction, BooleanProperty> FACING_PROPERTIES = ImmutableMap.copyOf(Util.make(Maps.newEnumMap(Direction.class), directions -> {
         directions.put(Direction.NORTH, NORTH);
         directions.put(Direction.EAST, EAST);
@@ -30,85 +29,85 @@ public class AqueductBlock extends Block {
         directions.put(Direction.WEST, WEST);
     }));
 
-    public AqueductBlock(Settings settings) {
+    public AqueductBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState()
-                .with(NORTH, false)
-                .with(SOUTH, false)
-                .with(EAST, false)
-                .with(WEST, false)
+        registerDefaultState(defaultBlockState()
+                .setValue(NORTH, false)
+                .setValue(SOUTH, false)
+                .setValue(EAST, false)
+                .setValue(WEST, false)
         );
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(NORTH, SOUTH, EAST, WEST);
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        state = super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
-        if (!neighborPos.equals(pos.up())) {
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        if (!neighborPos.equals(pos.above())) {
             return state;
         }
         BlockState noFlowState = state
-                .with(NORTH, false)
-                .with(SOUTH, false)
-                .with(EAST, false)
-                .with(WEST, false);
+                .setValue(NORTH, false)
+                .setValue(SOUTH, false)
+                .setValue(EAST, false)
+                .setValue(WEST, false);
         FluidState aboveFluidState = neighborState.getFluidState();
-        if (!aboveFluidState.isIn(BwtFluidTags.AQUEDUCT_FLUIDS) || aboveFluidState.isStill()) {
+        if (!aboveFluidState.is(BwtFluidTags.AQUEDUCT_FLUIDS) || aboveFluidState.isSource()) {
             return noFlowState;
         }
-        for (Direction fluidAdjacentDirection : Direction.Type.HORIZONTAL) {
-            BlockPos fluidAdjacentPos = neighborPos.offset(fluidAdjacentDirection);
-            FluidState fluidAdjacentState = world.getFluidState(fluidAdjacentPos);
-            if (!fluidAdjacentState.getFluid().matchesType(aboveFluidState.getFluid())) {
+        for (Direction fluidAdjacentDirection : Direction.Plane.HORIZONTAL) {
+            BlockPos fluidAdjacentPos = neighborPos.relative(fluidAdjacentDirection);
+            FluidState fluidAdjacentState = level.getFluidState(fluidAdjacentPos);
+            if (!fluidAdjacentState.getType().isSame(aboveFluidState.getType())) {
                 continue;
             }
-            BlockState neighborSupportingBlockState = world.getBlockState(fluidAdjacentPos.down());
+            BlockState neighborSupportingBlockState = level.getBlockState(fluidAdjacentPos.below());
             FluidState neighborSupportingFluidState = neighborSupportingBlockState.getFluidState();
-            if (!neighborSupportingBlockState.isSolid() && (!neighborSupportingFluidState.getFluid().matchesType(fluidAdjacentState.getFluid()) || !neighborSupportingFluidState.isStill())) {
+            if (!neighborSupportingBlockState.isSolid() && (!neighborSupportingFluidState.getType().isSame(fluidAdjacentState.getType()) || !neighborSupportingFluidState.isSource())) {
                 continue;
             }
-            if (fluidAdjacentState.getLevel() < aboveFluidState.getLevel()) {
+            if (fluidAdjacentState.getAmount() < aboveFluidState.getAmount()) {
                 continue;
             }
             // If the neighbor is an aqueduct source, it won't flow into this block if this block is the one flowing into it
-            if (neighborSupportingBlockState.isOf(this) && neighborSupportingBlockState.get(FACING_PROPERTIES.get(fluidAdjacentDirection.getOpposite()))) {
+            if (neighborSupportingBlockState.is(this) && neighborSupportingBlockState.getValue(FACING_PROPERTIES.get(fluidAdjacentDirection.getOpposite()))) {
                 continue;
             }
-            state = state.with(FACING_PROPERTIES.get(fluidAdjacentDirection), true);
+            state = state.setValue(FACING_PROPERTIES.get(fluidAdjacentDirection), true);
         }
         return state;
     }
 
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
+    protected BlockState rotate(BlockState state, Rotation rotation) {
         return switch (rotation) {
-            case CLOCKWISE_180 -> state.with(NORTH, state.get(SOUTH))
-                    .with(EAST, state.get(WEST))
-                    .with(SOUTH, state.get(NORTH))
-                    .with(WEST, state.get(EAST));
-            case COUNTERCLOCKWISE_90 -> state.with(NORTH, state.get(EAST))
-                    .with(EAST, state.get(SOUTH))
-                    .with(SOUTH, state.get(WEST))
-                    .with(WEST, state.get(NORTH));
-            case CLOCKWISE_90 -> state.with(NORTH, state.get(WEST))
-                    .with(EAST, state.get(NORTH))
-                    .with(SOUTH, state.get(EAST))
-                    .with(WEST, state.get(SOUTH));
+            case CLOCKWISE_180 -> state.setValue(NORTH, state.getValue(SOUTH))
+                    .setValue(EAST, state.getValue(WEST))
+                    .setValue(SOUTH, state.getValue(NORTH))
+                    .setValue(WEST, state.getValue(EAST));
+            case COUNTERCLOCKWISE_90 -> state.setValue(NORTH, state.getValue(EAST))
+                    .setValue(EAST, state.getValue(SOUTH))
+                    .setValue(SOUTH, state.getValue(WEST))
+                    .setValue(WEST, state.getValue(NORTH));
+            case CLOCKWISE_90 -> state.setValue(NORTH, state.getValue(WEST))
+                    .setValue(EAST, state.getValue(NORTH))
+                    .setValue(SOUTH, state.getValue(EAST))
+                    .setValue(WEST, state.getValue(SOUTH));
             default -> state;
         };
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
+    protected BlockState mirror(BlockState state, Mirror mirror) {
         return switch (mirror) {
-            case LEFT_RIGHT -> state.with(NORTH, state.get(SOUTH)).with(SOUTH, state.get(NORTH));
-            case FRONT_BACK -> state.with(EAST, state.get(WEST)).with(WEST, state.get(EAST));
+            case LEFT_RIGHT -> state.setValue(NORTH, state.getValue(SOUTH)).setValue(SOUTH, state.getValue(NORTH));
+            case FRONT_BACK -> state.setValue(EAST, state.getValue(WEST)).setValue(WEST, state.getValue(EAST));
             default -> super.mirror(state, mirror);
         };
     }

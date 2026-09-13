@@ -1,28 +1,28 @@
 package com.bwt.entities;
 
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 
 public class PickUpBreedingItemWhileSittingGoal extends Goal {
-    protected final TameableEntity animal;
+    protected final TamableAnimal animal;
     protected final double searchRadius;
     @Nullable
     protected ItemEntity targetBreedingItem;
 
     @Nullable
-    protected final Predicate<AnimalEntity> wantsFoodCondition;
+    protected final Predicate<Animal> wantsFoodCondition;
     @Nullable
     protected final Consumer<ItemStack> foodConsumer;
 
-    public PickUpBreedingItemWhileSittingGoal(TameableEntity animal, double searchRadius, @Nullable Predicate<AnimalEntity> wantsFoodCondition, @Nullable Consumer<ItemStack> foodConsumer) {
+    public PickUpBreedingItemWhileSittingGoal(TamableAnimal animal, double searchRadius, @Nullable Predicate<Animal> wantsFoodCondition, @Nullable Consumer<ItemStack> foodConsumer) {
         this.animal = animal;
         this.searchRadius = searchRadius;
         this.wantsFoodCondition = wantsFoodCondition;
@@ -35,26 +35,26 @@ public class PickUpBreedingItemWhileSittingGoal extends Goal {
 
 
     protected boolean isTargetValid() {
-        return targetBreedingItem != null && targetBreedingItem.isAlive() && !targetBreedingItem.getStack().isEmpty();
+        return targetBreedingItem != null && targetBreedingItem.isAlive() && !targetBreedingItem.getItem().isEmpty();
     }
 
     @Nullable
     protected ItemEntity findClosestBreedingItem() {
-        return animal.getWorld()
-                .getEntitiesByClass(
+        return animal.level()
+                .getEntitiesOfClass(
                         ItemEntity.class,
-                        animal.getBoundingBox().expand(searchRadius),
-                        itemEntity -> animal.isBreedingItem(itemEntity.getStack())
+                        animal.getBoundingBox().inflate(searchRadius),
+                        itemEntity -> animal.isFood(itemEntity.getItem())
                 )
                 .stream()
-                .min(Comparator.comparingDouble(animal::squaredDistanceTo))
+                .min(Comparator.comparingDouble(animal::distanceToSqr))
                 .filter(itemEntity -> animal.distanceTo(itemEntity) < searchRadius)
                 .orElse(null);
     }
 
     @Override
-    public boolean canStart() {
-        if (!animal.isSitting() && !animal.isInSittingPose()) {
+    public boolean canUse() {
+        if (!animal.isOrderedToSit() && !animal.isInSittingPose()) {
             return false;
         }
         if (!wantsFood()) {
@@ -65,20 +65,20 @@ public class PickUpBreedingItemWhileSittingGoal extends Goal {
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         return isTargetValid() && wantsFood();
     }
 
     @Override
     public void tick() {
-        if (targetBreedingItem == null || !isTargetValid() || !wantsFood() || !animal.canMoveVoluntarily()) {
+        if (targetBreedingItem == null || !isTargetValid() || !wantsFood() || !animal.isEffectiveAi()) {
             return;
         }
         if (animal.distanceTo(targetBreedingItem) <= searchRadius) {
             if (foodConsumer != null) {
-                foodConsumer.accept(targetBreedingItem.getStack().copyWithCount(1));
+                foodConsumer.accept(targetBreedingItem.getItem().copyWithCount(1));
             }
-            targetBreedingItem.getStack().decrement(1);
+            targetBreedingItem.getItem().shrink(1);
         }
     }
 }

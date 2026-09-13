@@ -4,13 +4,12 @@ import com.bwt.utils.Id;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
 import javax.management.openmbean.KeyAlreadyExistsException;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -23,15 +22,15 @@ import java.util.concurrent.CompletableFuture;
 public class EmiDefaultsGenerator implements DataProvider {
     private final FabricDataOutput output;
 
-    private static final HashSet<Identifier> defaultRecipeIdentifiers = new HashSet<>();
-    public static void addDefaultRecipe(Identifier identifier) {
+    private static final HashSet<ResourceLocation> defaultRecipeIdentifiers = new HashSet<>();
+    public static void addDefaultRecipe(ResourceLocation identifier) {
         if (defaultRecipeIdentifiers.contains(identifier)) {
             throw new KeyAlreadyExistsException("duplicate defaulted recipe " + identifier.toString());
         }
         defaultRecipeIdentifiers.add(identifier);
     }
 
-    public static void addBwtRecipe(Identifier identifier) {
+    public static void addBwtRecipe(ResourceLocation identifier) {
         addDefaultRecipe(Id.of(identifier.getPath()));
     }
 
@@ -41,9 +40,9 @@ public class EmiDefaultsGenerator implements DataProvider {
         }
     }
 
-    public static void addDefaultRecipe(ItemConvertible... itemConvertibles) {
-        for (ItemConvertible itemConvertible : itemConvertibles) {
-            addBwtRecipe(Registries.ITEM.getId(itemConvertible.asItem()));
+    public static void addDefaultRecipe(ItemLike... itemConvertibles) {
+        for (ItemLike itemConvertible : itemConvertibles) {
+            addBwtRecipe(BuiltInRegistries.ITEM.getKey(itemConvertible.asItem()));
         }
     }
 
@@ -163,17 +162,17 @@ public class EmiDefaultsGenerator implements DataProvider {
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         addDefaults();
 
-        DataOutput.PathResolver recipeDefaults = this.output.getResolver(DataOutput.OutputType.RESOURCE_PACK, "recipe/defaults");
-        Path bwtRecipeDefaultsFile = recipeDefaults.resolveJson(Id.of("emi", Id.MOD_ID));
+        PackOutput.PathProvider recipeDefaults = this.output.createPathProvider(PackOutput.Target.RESOURCE_PACK, "recipe/defaults");
+        Path bwtRecipeDefaultsFile = recipeDefaults.json(Id.of("emi", Id.MOD_ID));
 
         JsonObject object = new JsonObject();
         JsonArray added = new JsonArray();
         defaultRecipeIdentifiers.stream().sorted().forEach(id -> added.add(id.toString()));
         object.add("added", added);
-        return DataProvider.writeToPath(writer, object, bwtRecipeDefaultsFile);
+        return DataProvider.saveStable(writer, object, bwtRecipeDefaultsFile);
     }
 
     @Override

@@ -1,45 +1,44 @@
 package com.bwt.utils;
 
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.data.TrackedDataHandler;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.syncher.EntityDataSerializer;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 import java.util.Map;
 
 public class TrackedDataHandlers implements ModInitializer {
-    public static TrackedDataHandler<Map<Vec3i, BlockState>> blockStateMapHandler = TrackedDataHandler.create(new PacketCodec<>() {
+    public static final EntityDataSerializer<Map<Vec3i, BlockState>> blockStateMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, BlockState> decode(RegistryByteBuf buf) {
-            return buf.readMap(RegistryByteBuf::readBlockPos, innerBuf -> Block.STATE_IDS.get(innerBuf.readInt()));
+        public Map<Vec3i, BlockState> decode(RegistryFriendlyByteBuf buf) {
+            return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, innerBuf -> Block.BLOCK_STATE_REGISTRY.byId(innerBuf.readInt()));
         }
 
         @Override
-        public void encode(RegistryByteBuf buf, Map<Vec3i, BlockState> map) {
-            buf.writeMap(map, (innerBuf, key) -> innerBuf.writeBlockPos(new BlockPos(key)), (innerBuf, value) -> innerBuf.writeInt(Block.STATE_IDS.getRawId(value)));
+        public void encode(RegistryFriendlyByteBuf buf, Map<Vec3i, BlockState> map) {
+            buf.writeMap(map, (innerBuf, key) -> innerBuf.writeBlockPos(new BlockPos(key)), (innerBuf, value) -> innerBuf.writeInt(Block.BLOCK_STATE_REGISTRY.getId(value)));
         }
     });
-    public static TrackedDataHandler<Map<Vec3i, NbtCompound>> blockEntityMapHandler = TrackedDataHandler.create(new PacketCodec<>() {
+    public static final EntityDataSerializer<Map<Vec3i, CompoundTag>> blockEntityMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, NbtCompound> decode(RegistryByteBuf buf) {
-            return buf.readMap(RegistryByteBuf::readBlockPos, RegistryByteBuf::readNbt);
+        public Map<Vec3i, CompoundTag> decode(RegistryFriendlyByteBuf buf) {
+            return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, RegistryFriendlyByteBuf::readNbt);
         }
 
         @Override
-        public void encode(RegistryByteBuf buf, Map<Vec3i, NbtCompound> map) {
-            buf.writeMap(map, (innerBuf, key) -> innerBuf.writeBlockPos(new BlockPos(key)), RegistryByteBuf::writeNbt);
+        public void encode(RegistryFriendlyByteBuf buf, Map<Vec3i, CompoundTag> map) {
+            buf.writeMap(map, (innerBuf, key) -> innerBuf.writeBlockPos(new BlockPos(key)), RegistryFriendlyByteBuf::writeNbt);
         }
     });
 
     @Override
     public void onInitialize() {
-        TrackedDataHandlerRegistry.register(blockStateMapHandler);
-        TrackedDataHandlerRegistry.register(blockEntityMapHandler);
+        EntityDataSerializers.registerSerializer(blockStateMapHandler);
+        EntityDataSerializers.registerSerializer(blockEntityMapHandler);
     }
 }

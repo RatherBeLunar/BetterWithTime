@@ -11,26 +11,27 @@ import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.*;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.ShapelessRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class EmiSoulForgeRecipe implements EmiRecipe {
     private final EmiRecipeCategory category;
-    protected final Identifier id;
+    protected final ResourceLocation id;
     protected final List<EmiIngredient> input;
     protected final EmiStack output;
     private final int size;
     private final SoulForgeRecipe recipe;
 
-    public EmiSoulForgeRecipe(RecipeEntry<SoulForgeRecipe> recipeEntry) {
+    public EmiSoulForgeRecipe(RecipeHolder<SoulForgeRecipe> recipeEntry) {
         this(recipeEntry.value(), recipeEntry.id());
     }
 
-    public EmiSoulForgeRecipe(SoulForgeRecipe recipe, Identifier id) {
+    public EmiSoulForgeRecipe(SoulForgeRecipe recipe, ResourceLocation id) {
         this.id = Id.of(String.format("%s-%s-%s", "soulforge", id.getNamespace(), id.getPath()));
         if (recipe instanceof SoulForgeShapedRecipe shapedRecipe) {
             this.input = padIngredients(shapedRecipe);
@@ -38,7 +39,7 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
         else {
             this.input = recipe.getIngredients().stream().map(EmiIngredient::of).toList();
         }
-        this.output = EmiStack.of(recipe.getResult(null));
+        this.output = EmiStack.of(recipe.getResultItem(null));
         this.recipe = recipe;
         this.size = 4;
         this.category = BwtEmiPlugin.SOUL_FORGE;
@@ -50,8 +51,8 @@ public class EmiSoulForgeRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

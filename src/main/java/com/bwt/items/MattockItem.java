@@ -1,17 +1,21 @@
 package com.bwt.items;
 
 import com.bwt.tags.BwtBlockTags;
-import net.minecraft.item.*;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.context.UseOnContext;
 
-public class MattockItem extends MiningToolItem {
-    public MattockItem(ToolMaterial material, Item.Settings settings) {
+public class MattockItem extends DiggerItem {
+    public MattockItem(Tier material, Item.Properties settings) {
         super(material, BwtBlockTags.MATTOCK_MINEABLE, settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
+    public InteractionResult useOn(UseOnContext context) {
         // Only shovels have a right click action, so we inherit from that
-        return Items.NETHERITE_SHOVEL.useOnBlock(context);
+        return Items.NETHERITE_SHOVEL.useOn(context);
     }
 }

@@ -4,76 +4,75 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.RadiusAroundBlockStream;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.PillarBlock;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-
 import java.util.Arrays;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
-public class BloodWoodLogBlock extends PillarBlock {
-    public static final IntProperty POS_NEG = IntProperty.of("pos_neg", 0, 1);
-    public static final BooleanProperty CAN_GROW = BooleanProperty.of("can_grow");
+public class BloodWoodLogBlock extends RotatedPillarBlock {
+    public static final IntegerProperty POS_NEG = IntegerProperty.create("pos_neg", 0, 1);
+    public static final BooleanProperty CAN_GROW = BooleanProperty.create("can_grow");
 
-    public BloodWoodLogBlock(Settings settings) {
+    public BloodWoodLogBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(CAN_GROW, false).with(POS_NEG, 0));
+        registerDefaultState(defaultBlockState().setValue(CAN_GROW, false).setValue(POS_NEG, 0));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(CAN_GROW, POS_NEG);
     }
 
     public boolean canGrow(BlockState state) {
-        return state.isOf(this) && state.get(CAN_GROW);
+        return state.is(this) && state.getValue(CAN_GROW);
     }
 
     @Override
-    protected boolean hasRandomTicks(BlockState state) {
+    protected boolean isRandomlyTicking(BlockState state) {
         return canGrow(state);
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.randomTick(state, world, pos, random);
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.randomTick(state, level, pos, random);
         if (canGrow(state)) {
-            if (world.getDimension().ultrawarm()) {
-                grow(world, pos, state, random);
+            if (level.dimensionType().ultraWarm()) {
+                grow(level, pos, state, random);
             }
-            world.setBlockState(pos, state.with(CAN_GROW, false));
+            level.setBlockAndUpdate(pos, state.setValue(CAN_GROW, false));
         }
     }
 
     public static Direction getFacing(BlockState state) {
-        Direction.Axis axis = state.get(AXIS);
-        Direction.AxisDirection axisDirection = state.get(POS_NEG) > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE;
+        Direction.Axis axis = state.getValue(AXIS);
+        Direction.AxisDirection axisDirection = state.getValue(POS_NEG) > 0 ? Direction.AxisDirection.POSITIVE : Direction.AxisDirection.NEGATIVE;
         return Direction.get(axisDirection, axis);
     }
 
-    public static void setFacing(World world, BlockPos pos, BlockState state, Direction facing) {
-        world.setBlockState(pos, withFacing(state, facing));
+    public static void setFacing(Level level, BlockPos pos, BlockState state, Direction facing) {
+        level.setBlockAndUpdate(pos, withFacing(state, facing));
     }
 
     public static BlockState withFacing(BlockState state, Direction facing) {
-        return state.with(AXIS, facing.getAxis()).with(POS_NEG, facing.getDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0);
+        return state.setValue(AXIS, facing.getAxis()).setValue(POS_NEG, facing.getAxisDirection() == Direction.AxisDirection.POSITIVE ? 1 : 0);
     }
 
-    public static Direction randomHorizontalDirection(Random random) {
-        return Direction.byId(random.nextBetween(2, 5));
+    public static Direction randomHorizontalDirection(RandomSource random) {
+        return Direction.from3DDataValue(random.nextIntBetweenInclusive(2, 5));
     }
 
-    public void grow(ServerWorld serverWorld, BlockPos pos, BlockState state, Random random) {
-        if (countBloodWoodNeighboringOnBlockWithSoulSand(serverWorld, pos) >= 2) {
+    public void grow(ServerLevel serverLevel, BlockPos pos, BlockState state, RandomSource random) {
+        if (countBloodWoodNeighboringOnBlockWithSoulSand(serverLevel, pos) >= 2) {
             // too much neighboring wood to grow further
             return;
         }
@@ -84,21 +83,21 @@ public class BloodWoodLogBlock extends PillarBlock {
             // trunk growth
             if (randomFactor < 25) {
                 // just continue growing upwards
-                attemptToGrowIntoBlock(serverWorld, pos.up(), Direction.UP);
+                attemptToGrowIntoBlock(serverLevel, pos.above(), Direction.UP);
             }
             else if (randomFactor < 90) {
                 // split and grow upwards
                 Direction targetFacing = randomHorizontalDirection(random);
-                BlockPos targetPos = pos.offset(targetFacing);
-                attemptToGrowIntoBlock(serverWorld, targetPos, targetFacing);
-                attemptToGrowIntoBlock(serverWorld, pos.up(), Direction.UP);
+                BlockPos targetPos = pos.relative(targetFacing);
+                attemptToGrowIntoBlock(serverLevel, targetPos, targetFacing);
+                attemptToGrowIntoBlock(serverLevel, pos.above(), Direction.UP);
             }
             else {
                 // split
                 for (int temp = 0; temp < 2; temp++) {
                     Direction targetFacing = randomHorizontalDirection(random);
-                    BlockPos targetPos = pos.offset(targetFacing);
-                    attemptToGrowIntoBlock(serverWorld, targetPos, targetFacing);
+                    BlockPos targetPos = pos.relative(targetFacing);
+                    attemptToGrowIntoBlock(serverLevel, targetPos, targetFacing);
                 }
             }
         }
@@ -107,13 +106,13 @@ public class BloodWoodLogBlock extends PillarBlock {
 
             if (randomFactor < 40) {
                 // grow upwards
-                attemptToGrowIntoBlock(serverWorld, pos.up(), facing);
+                attemptToGrowIntoBlock(serverLevel, pos.above(), facing);
                 // reorient existing block so that it looks right
-                setFacing(serverWorld, pos, state, Direction.UP);
+                setFacing(serverLevel, pos, state, Direction.UP);
             }
             else if (randomFactor < 65) {
                 // grow in the growth direction
-                attemptToGrowIntoBlock(serverWorld, pos.offset(facing), facing);
+                attemptToGrowIntoBlock(serverLevel, pos.relative(facing), facing);
             }
             else if (randomFactor < 90) {
                 // split and keep going
@@ -122,19 +121,19 @@ public class BloodWoodLogBlock extends PillarBlock {
                     targetFacing = Direction.UP;
                 }
 
-                BlockPos targetPos = pos.offset(targetFacing);
+                BlockPos targetPos = pos.relative(targetFacing);
 
                 Direction targetGrowthDirection = facing;
 
-                if (targetFacing.getId() >= 2 ) {
+                if (targetFacing.get3DDataValue() >= 2 ) {
                     targetGrowthDirection = targetFacing;
                 }
 
-                attemptToGrowIntoBlock(serverWorld, targetPos, targetGrowthDirection);
+                attemptToGrowIntoBlock(serverLevel, targetPos, targetGrowthDirection);
 
-                if (!attemptToGrowIntoBlock(serverWorld, pos.offset(facing), facing) && targetFacing.getId() == 1) {
+                if (!attemptToGrowIntoBlock(serverLevel, pos.relative(facing), facing) && targetFacing.get3DDataValue() == 1) {
                     // reorient existing block so that it looks right
-                    setFacing(serverWorld, pos, state, Direction.UP);
+                    setFacing(serverLevel, pos, state, Direction.UP);
                 }
             }
             else {
@@ -150,54 +149,54 @@ public class BloodWoodLogBlock extends PillarBlock {
                         targetFacing = Direction.UP;
                     }
 
-                    BlockPos targetPos = pos.offset(targetFacing);
+                    BlockPos targetPos = pos.relative(targetFacing);
 
                     Direction iTargetGrowthDirection = facing;
 
-                    if (targetFacing.getId() >= 2) {
+                    if (targetFacing.get3DDataValue() >= 2) {
                         iTargetGrowthDirection = targetFacing;
                     }
 
-                    if (attemptToGrowIntoBlock(serverWorld, targetPos, iTargetGrowthDirection)) {
+                    if (attemptToGrowIntoBlock(serverLevel, targetPos, iTargetGrowthDirection)) {
                         growthDirections[iTempCount] = targetFacing;
                     }
                 }
 
                 if ((growthDirections[0] == Direction.UP && growthDirections[1].getAxis().isVertical()) || (growthDirections[1] == Direction.UP && growthDirections[0] == Direction.DOWN)) {
                     // reorient existing block so that it looks right
-                    setFacing(serverWorld, pos, state, Direction.UP);
+                    setFacing(serverLevel, pos, state, Direction.UP);
                 }
             }
         }
     }
 
-    public boolean attemptToGrowIntoBlock(World world, BlockPos pos, Direction growthDirection) {
-        BlockState state = world.getBlockState(pos);
-        if (!(state.isIn(BlockTags.AIR) || state.isOf(BwtBlocks.bloodWoodBlocks.leavesBlock)) || countBloodWoodNeighboringOnBlockWithSoulSand(world, pos) >= 2) {
+    public boolean attemptToGrowIntoBlock(Level level, BlockPos pos, Direction growthDirection) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.is(BlockTags.AIR) || state.is(BwtBlocks.bloodWoodBlocks.leavesBlock)) || countBloodWoodNeighboringOnBlockWithSoulSand(level, pos) >= 2) {
             // not empty, or too much neighboring wood to grow further
             return false;
         }
-        world.setBlockState(pos, withFacing(getDefaultState(), growthDirection).with(CAN_GROW, true));
-        growLeaves(world, pos);
+        level.setBlockAndUpdate(pos, withFacing(defaultBlockState(), growthDirection).setValue(CAN_GROW, true));
+        growLeaves(level, pos);
 
         return true;
     }
 
-    public void growLeaves(World world, BlockPos pos) {
+    public void growLeaves(Level level, BlockPos pos) {
         RadiusAroundBlockStream
                 .neighboringBlocksInRadius(pos, 1)
-                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
-                .filter(neighbor -> neighbor.state().isIn(BlockTags.AIR))
-                .forEach(neighbor -> world.setBlockState(neighbor.pos(), BwtBlocks.bloodWoodBlocks.leavesBlock.getDefaultState()));
+                .map(neighborPos -> BlockPosAndState.of(level, neighborPos))
+                .filter(neighbor -> neighbor.state().is(BlockTags.AIR))
+                .forEach(neighbor -> level.setBlockAndUpdate(neighbor.pos(), BwtBlocks.bloodWoodBlocks.leavesBlock.defaultBlockState()));
     }
 
-    public int countBloodWoodNeighboringOnBlockWithSoulSand(World world, BlockPos pos) {
+    public int countBloodWoodNeighboringOnBlockWithSoulSand(Level level, BlockPos pos) {
         int neighborWoodCount = (int) Arrays.stream(Direction.values())
-                .map(pos::offset)
-                .map(world::getBlockState)
-                .filter(blockState -> blockState.isOf(this))
+                .map(pos::relative)
+                .map(level::getBlockState)
+                .filter(blockState -> blockState.is(this))
                 .count();
-        if (world.getBlockState(pos.down()).isIn(BwtBlockTags.BLOOD_WOOD_PLANTABLE_ON)) {
+        if (level.getBlockState(pos.below()).is(BwtBlockTags.BLOOD_WOOD_PLANTABLE_ON)) {
             neighborWoodCount += 1;
         }
         return neighborWoodCount;

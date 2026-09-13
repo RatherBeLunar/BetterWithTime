@@ -1,11 +1,26 @@
 package com.bwt.blocks.turntable;
 
-import net.minecraft.block.*;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.level.block.AmethystClusterBlock;
+import net.minecraft.world.level.block.BaseCoralWallFanBlock;
+import net.minecraft.world.level.block.BellBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DirectionalBlock;
+import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
+import net.minecraft.world.level.block.GlowLichenBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.LadderBlock;
+import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.RedstoneWallTorchBlock;
+import net.minecraft.world.level.block.TripWireHookBlock;
+import net.minecraft.world.level.block.WallBannerBlock;
+import net.minecraft.world.level.block.WallHangingSignBlock;
+import net.minecraft.world.level.block.WallSignBlock;
+import net.minecraft.world.level.block.WallTorchBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.AttachFace;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -18,7 +33,7 @@ public interface HorizontalBlockAttachmentHelper {
         static IsAttachedPredicate directional(DirectionalIsAttachedPredicate directionalIsAttachedPredicate) {
             return (attachedToPos, attachedToState, thisPos, thisState) -> {
                 Vec3i directionVector = thisPos.subtract(attachedToPos);
-                Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
+                Direction direction = Direction.fromDelta(directionVector.getX(), 0, directionVector.getZ());
                 return directionalIsAttachedPredicate.test(attachedToState, thisState, direction);
             };
         }
@@ -45,32 +60,32 @@ public interface HorizontalBlockAttachmentHelper {
     }
 
     static void registerDefaults() {
-        IsAttachedPredicate facingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.get(FacingBlock.FACING));
-        IsAttachedPredicate horizontalFacingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.get(HorizontalFacingBlock.FACING));
-        IsAttachedPredicate wallHangingSignPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction.rotateYClockwise().getAxis() == thisState.get(HorizontalFacingBlock.FACING).getAxis());
+        IsAttachedPredicate facingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.getValue(DirectionalBlock.FACING));
+        IsAttachedPredicate horizontalFacingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction == thisState.getValue(HorizontalDirectionalBlock.FACING));
+        IsAttachedPredicate wallHangingSignPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> direction.getClockWise().getAxis() == thisState.getValue(HorizontalDirectionalBlock.FACING).getAxis());
         IsAttachedPredicate wallMountedBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> {
-            if (!thisState.get(WallMountedBlock.FACE).equals(BlockFace.WALL)) {
+            if (!thisState.getValue(FaceAttachedHorizontalDirectionalBlock.FACE).equals(AttachFace.WALL)) {
                 return false;
             }
-            return direction == thisState.get(WallMountedBlock.FACING);
+            return direction == thisState.getValue(FaceAttachedHorizontalDirectionalBlock.FACING);
         });
-        IsAttachedPredicate connectingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> thisState.get(ConnectingBlock.FACING_PROPERTIES.get(Objects.requireNonNull(direction).getOpposite())));
-        IsAttachedPredicate bellPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> switch (thisState.get(BellBlock.ATTACHMENT)) {
+        IsAttachedPredicate connectingBlockPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> thisState.getValue(PipeBlock.PROPERTY_BY_DIRECTION.get(Objects.requireNonNull(direction).getOpposite())));
+        IsAttachedPredicate bellPredicate = IsAttachedPredicate.directional((attachedToState, thisState, direction) -> switch (thisState.getValue(BellBlock.ATTACHMENT)) {
             case FLOOR, CEILING -> false;
-            case SINGLE_WALL, DOUBLE_WALL -> thisState.get(BellBlock.FACING).getOpposite().equals(direction);
+            case SINGLE_WALL, DOUBLE_WALL -> thisState.getValue(BellBlock.FACING).getOpposite().equals(direction);
         });
 
         register(WallTorchBlock.class, horizontalFacingBlockPredicate);
-        register(WallRedstoneTorchBlock.class, horizontalFacingBlockPredicate);
+        register(RedstoneWallTorchBlock.class, horizontalFacingBlockPredicate);
         register(WallSignBlock.class, horizontalFacingBlockPredicate);
-        register(DeadCoralWallFanBlock.class, horizontalFacingBlockPredicate);
+        register(BaseCoralWallFanBlock.class, horizontalFacingBlockPredicate);
         register(WallBannerBlock.class, horizontalFacingBlockPredicate);
-        register(TripwireHookBlock.class, horizontalFacingBlockPredicate);
+        register(TripWireHookBlock.class, horizontalFacingBlockPredicate);
         register(LadderBlock.class, horizontalFacingBlockPredicate);
         register(GlowLichenBlock.class, connectingBlockPredicate);
         register(AmethystClusterBlock.class, facingBlockPredicate);
         register(BellBlock.class, bellPredicate);
         register(WallHangingSignBlock.class, wallHangingSignPredicate);
-        register(WallMountedBlock.class, wallMountedBlockPredicate);
+        register(FaceAttachedHorizontalDirectionalBlock.class, wallMountedBlockPredicate);
     }
 }

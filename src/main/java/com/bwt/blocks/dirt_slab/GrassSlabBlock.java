@@ -1,19 +1,19 @@
 package com.bwt.blocks.dirt_slab;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class GrassSlabBlock extends DirtSlabBlock {
-    public GrassSlabBlock(Settings settings, Block fullBlock) {
+    public GrassSlabBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        SpreadHandler.randomTick(state, world, pos, random);
-        meltSnowFromLight(world, pos, state);
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        SpreadHandler.randomTick(state, level, pos, random);
+        meltSnowFromLight(level, pos, state);
     }
 }

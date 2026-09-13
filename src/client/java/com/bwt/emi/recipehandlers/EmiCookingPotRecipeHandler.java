@@ -6,9 +6,8 @@ import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.handler.EmiCraftContext;
 import dev.emi.emi.api.recipe.handler.StandardRecipeHandler;
 import dev.emi.emi.api.stack.EmiIngredient;
-import net.minecraft.screen.slot.Slot;
-
 import java.util.List;
+import net.minecraft.world.inventory.Slot;
 
 public class EmiCookingPotRecipeHandler<T extends AbstractCookingPotScreenHandler> implements StandardRecipeHandler<T> {
 
@@ -22,12 +21,12 @@ public class EmiCookingPotRecipeHandler<T extends AbstractCookingPotScreenHandle
 
     @Override
     public List<Slot> getInputSources(T handler) {
-        return handler.slots.stream().filter(slot -> slot.id >= AbstractCookingPotScreenHandler.SIZE).toList();
+        return handler.slots.stream().filter(slot -> slot.getContainerSlot() >= AbstractCookingPotScreenHandler.SIZE).toList();
     }
 
     @Override
     public List<Slot> getCraftingSlots(T handler) {
-        return handler.slots.stream().filter(slot -> slot.id < AbstractCookingPotScreenHandler.SIZE).filter(slot -> slot.getStack().isEmpty()).toList();
+        return handler.slots.stream().filter(slot -> slot.getContainerSlot() < AbstractCookingPotScreenHandler.SIZE).filter(slot -> slot.getItem().isEmpty()).toList();
     }
 
     @Override

@@ -3,60 +3,60 @@ package com.bwt.items;
 import com.bwt.blocks.axles.AxlePowerSourceBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.event.GameEvent;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.Vec3;
 
 public class HorizontalMechPowerSourceItem extends Item {
-    protected HorizontalMechPowerSourceEntity.Factory entityFactory;
+    protected final HorizontalMechPowerSourceEntity.Factory entityFactory;
 
-    public HorizontalMechPowerSourceItem(HorizontalMechPowerSourceEntity.Factory entityFactory, Item.Settings settings) {
+    public HorizontalMechPowerSourceItem(HorizontalMechPowerSourceEntity.Factory entityFactory, Item.Properties settings) {
         super(settings);
         this.entityFactory = entityFactory;
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        BlockPos blockPos = context.getBlockPos();
-        World world = context.getWorld();
-        BlockState blockState = world.getBlockState(blockPos);
-        if (!blockState.isOf(BwtBlocks.axleBlock)) {
-            return ActionResult.FAIL;
+    public InteractionResult useOn(UseOnContext context) {
+        BlockPos blockPos = context.getClickedPos();
+        Level level = context.getLevel();
+        BlockState blockState = level.getBlockState(blockPos);
+        if (!blockState.is(BwtBlocks.axleBlock)) {
+            return InteractionResult.FAIL;
         }
 
-        Direction.Axis axleAxis = blockState.get(AxlePowerSourceBlock.AXIS);
+        Direction.Axis axleAxis = blockState.getValue(AxlePowerSourceBlock.AXIS);
         if (axleAxis.isVertical()) {
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
 
-        Vec3d middleOfAxle = blockPos.toCenterPos();
-        Vec3d playerPos = context.getPlayer().getPos();
-        Vec3d difference = playerPos.subtract(middleOfAxle);
-        Direction placementDirection = Direction.from(
+        Vec3 middleOfAxle = blockPos.getCenter();
+        Vec3 playerPos = context.getPlayer().position();
+        Vec3 difference = playerPos.subtract(middleOfAxle);
+        Direction placementDirection = Direction.fromAxisAndDirection(
                 axleAxis,
-                axleAxis.choose(difference.getX(), difference.getY(), difference.getZ()) > 0
+                axleAxis.choose(difference.x(), difference.y(), difference.z()) > 0
                         ? Direction.AxisDirection.POSITIVE
                         : Direction.AxisDirection.NEGATIVE
         );
 
-        HorizontalMechPowerSourceEntity mechPowerSourceEntity = entityFactory.create(world, middleOfAxle, placementDirection);
+        HorizontalMechPowerSourceEntity mechPowerSourceEntity = entityFactory.create(level, middleOfAxle, placementDirection);
 
         if (!mechPowerSourceEntity.tryToSpawn(context.getPlayer())) {
-            return ActionResult.FAIL;
+            return InteractionResult.FAIL;
         }
-        if (context.getPlayer() instanceof ServerPlayerEntity serverPlayerEntity) {
-            Criteria.SUMMONED_ENTITY.trigger(serverPlayerEntity, mechPowerSourceEntity);
-            world.emitGameEvent(serverPlayerEntity, GameEvent.ENTITY_PLACE, blockPos);
+        if (context.getPlayer() instanceof ServerPlayer serverPlayerEntity) {
+            CriteriaTriggers.SUMMONED_ENTITY.trigger(serverPlayerEntity, mechPowerSourceEntity);
+            level.gameEvent(serverPlayerEntity, GameEvent.ENTITY_PLACE, blockPos);
         }
-        context.getStack().decrement(1);
-        return ActionResult.SUCCESS;
+        context.getItemInHand().shrink(1);
+        return InteractionResult.SUCCESS;
     }
 }

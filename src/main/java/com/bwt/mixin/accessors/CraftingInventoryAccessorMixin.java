@@ -1,15 +1,15 @@
 package com.bwt.mixin.accessors;
 
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(CraftingInventory.class)
+@Mixin(TransientCraftingContainer.class)
 public interface CraftingInventoryAccessorMixin {
     @Mutable
-    @Accessor("stacks")
-    void setInventory(DefaultedList<ItemStack> inventory);
+    @Accessor("items")
+    void setInventory(NonNullList<ItemStack> inventory);
 }

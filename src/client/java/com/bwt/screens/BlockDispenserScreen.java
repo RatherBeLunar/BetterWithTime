@@ -3,35 +3,35 @@ package com.bwt.screens;
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.utils.Id;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Inventory;
 
-public class BlockDispenserScreen extends HandledScreen<BlockDispenserScreenHandler> {
-    private static final Identifier TEXTURE = Id.of("textures/gui/container/block_dispenser.png");
+public class BlockDispenserScreen extends AbstractContainerScreen<BlockDispenserScreenHandler> {
+    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/block_dispenser.png");
     static final int selectionIconWidth = 20;
     static final int selectionIconHeight = 20;
 
-    public BlockDispenserScreen(BlockDispenserScreenHandler handler, PlayerInventory inventory, Text title) {
+    public BlockDispenserScreen(BlockDispenserScreenHandler handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-        backgroundHeight = 166 + 18;
-        playerInventoryTitleY = backgroundHeight - 94;
+        imageHeight = 166 + 18;
+        inventoryLabelY = imageHeight - 94;
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
-        context.drawTexture(TEXTURE, x, y, 0, 0, backgroundWidth, backgroundHeight);
+        int x = (width - imageWidth) / 2;
+        int y = (height - imageHeight) / 2;
+        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
 
         // draw the selection rectangle
-        int selectedSlot = this.handler.getSelectedSlot();
+        int selectedSlot = this.menu.getSelectedSlot();
         if (selectedSlot < 0) {
             return;
         }
@@ -39,7 +39,7 @@ public class BlockDispenserScreen extends HandledScreen<BlockDispenserScreenHand
         int xOffset = ( selectedSlot % 4 ) * 18;
         int yOffset = ( selectedSlot / 4 ) * 18;
 
-        context.drawTexture(TEXTURE,
+        context.blit(TEXTURE,
                 x + 51 + xOffset,
                 y + 15 + yOffset,
                 176,
@@ -50,16 +50,16 @@ public class BlockDispenserScreen extends HandledScreen<BlockDispenserScreenHand
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         super.render(context, mouseX, mouseY, delta);
-        this.drawMouseoverTooltip(context, mouseX, mouseY);
+        this.renderTooltip(context, mouseX, mouseY);
     }
 
     @Override
     protected void init() {
         super.init();
         // Center the title
-        titleX = (backgroundWidth - textRenderer.getWidth(title)) / 2;
+        titleLabelX = (imageWidth - font.width(title)) / 2;
     }
 }
 

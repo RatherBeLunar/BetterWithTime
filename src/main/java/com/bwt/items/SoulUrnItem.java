@@ -2,53 +2,53 @@ package com.bwt.items;
 
 import com.bwt.entities.SoulUrnProjectileEntity;
 import com.bwt.sounds.BwtSoundEvents;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ProjectileItem;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Position;
-import net.minecraft.world.World;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Position;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ProjectileItem;
+import net.minecraft.world.level.Level;
 
 public class SoulUrnItem extends Item implements ProjectileItem {
-    public SoulUrnItem(Item.Settings settings) {
+    public SoulUrnItem(Item.Properties settings) {
         super(settings);
     }
 
     @Override
-    public boolean hasGlint(ItemStack stack) {
+    public boolean isFoil(ItemStack stack) {
         return true;
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        world.playSound(
-                null, user.getX(), user.getY(), user.getZ(), BwtSoundEvents.SOUL_URN_THROW, SoundCategory.PLAYERS, 0.5F, 0.4F / (world.getRandom().nextFloat() * 0.4F + 0.8F)
+    public InteractionResultHolder<ItemStack> use(Level level, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        level.playSound(
+                null, user.getX(), user.getY(), user.getZ(), BwtSoundEvents.SOUL_URN_THROW, SoundSource.PLAYERS, 0.5F, 0.4F / (level.getRandom().nextFloat() * 0.4F + 0.8F)
         );
-        if (!world.isClient) {
-            SoulUrnProjectileEntity soulUrnProjectileEntity = new SoulUrnProjectileEntity(world, user);
+        if (!level.isClientSide) {
+            SoulUrnProjectileEntity soulUrnProjectileEntity = new SoulUrnProjectileEntity(level, user);
             soulUrnProjectileEntity.setItem(itemStack);
-            soulUrnProjectileEntity.setVelocity(user, user.getPitch(), user.getYaw(), 0.0F, 1.5F, 1.0F);
-            soulUrnProjectileEntity.refreshPositionAndAngles(user.getPos(), user.getYaw(), 0.0F);
-            world.spawnEntity(soulUrnProjectileEntity);
+            soulUrnProjectileEntity.shootFromRotation(user, user.getXRot(), user.getYRot(), 0.0F, 1.5F, 1.0F);
+            soulUrnProjectileEntity.moveTo(user.position(), user.getYRot(), 0.0F);
+            level.addFreshEntity(soulUrnProjectileEntity);
         }
 
-        user.incrementStat(Stats.USED.getOrCreateStat(this));
-        itemStack.decrementUnlessCreative(1, user);
-        return TypedActionResult.success(itemStack, world.isClient());
+        user.awardStat(Stats.ITEM_USED.get(this));
+        itemStack.consume(1, user);
+        return InteractionResultHolder.sidedSuccess(itemStack, level.isClientSide());
     }
 
     @Override
-    public ProjectileEntity createEntity(World world, Position pos, ItemStack stack, Direction direction) {
-        SoulUrnProjectileEntity soulUrnProjectileEntity = new SoulUrnProjectileEntity(world, pos.getX(), pos.getY(), pos.getZ());
+    public Projectile asProjectile(Level level, Position pos, ItemStack stack, Direction direction) {
+        SoulUrnProjectileEntity soulUrnProjectileEntity = new SoulUrnProjectileEntity(level, pos.x(), pos.y(), pos.z());
         soulUrnProjectileEntity.setItem(stack);
-        soulUrnProjectileEntity.refreshPositionAndAngles(pos.getX(), pos.getY(), pos.getZ(), direction.asRotation(), 0f);
+        soulUrnProjectileEntity.moveTo(pos.x(), pos.y(), pos.z(), direction.toYRot(), 0f);
         return soulUrnProjectileEntity;
     }
 }

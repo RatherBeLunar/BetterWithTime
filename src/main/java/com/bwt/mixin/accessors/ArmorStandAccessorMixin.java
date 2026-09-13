@@ -1,16 +1,16 @@
 package com.bwt.mixin.accessors;
 
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.DefaultedList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ArmorStandEntity.class)
+@Mixin(ArmorStand.class)
 public interface ArmorStandAccessorMixin {
     @Accessor
-    DefaultedList<ItemStack> getHeldItems();
+    NonNullList<ItemStack> getHandItems();
 
     @Accessor
-    DefaultedList<ItemStack> getArmorItems();
+    NonNullList<ItemStack> getArmorItems();
 }

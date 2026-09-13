@@ -1,34 +1,33 @@
 package com.bwt.entities;
 
-import com.bwt.items.BroadheadArrowItem;
 import com.bwt.items.BwtItems;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
-public class BroadheadArrowEntity extends PersistentProjectileEntity {
+public class BroadheadArrowEntity extends AbstractArrow {
 
-    public BroadheadArrowEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
-        super(entityType, world);
+    public BroadheadArrowEntity(EntityType<? extends AbstractArrow> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Override
-    protected ItemStack getDefaultItemStack() {
-        return BwtItems.broadheadArrowItem.getDefaultStack();
+    protected ItemStack getDefaultPickupItem() {
+        return BwtItems.broadheadArrowItem.getDefaultInstance();
     }
 
-    public BroadheadArrowEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack weapon) {
-        super(BwtEntities.broadheadArrowEntity, x, y, z, world, stack, weapon);
+    public BroadheadArrowEntity(Level level, double x, double y, double z, ItemStack stack, @Nullable ItemStack weapon) {
+        super(BwtEntities.broadheadArrowEntity, x, y, z, level, stack, weapon);
     }
 
-    public BroadheadArrowEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
-        super(BwtEntities.broadheadArrowEntity, owner, world, stack, shotFrom);
+    public BroadheadArrowEntity(Level level, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
+        super(BwtEntities.broadheadArrowEntity, owner, level, stack, shotFrom);
     }
 
     public void initFromStack(ItemStack stack) {
-        setDamage(super.getDamage() * 2);
+        setBaseDamage(super.getBaseDamage() * 2);
     }
 }

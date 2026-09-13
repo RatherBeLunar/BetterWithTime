@@ -4,32 +4,30 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.mixin.accessors.ArmorStandAccessorMixin;
 import com.bwt.utils.DyeUtils;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.decoration.GlowItemFrameEntity;
-import net.minecraft.entity.decoration.ItemFrameEntity;
-import net.minecraft.entity.decoration.painting.PaintingEntity;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.entity.passive.WolfEntity;
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
-
 import java.util.stream.Stream;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.entity.decoration.GlowItemFrame;
+import net.minecraft.world.entity.decoration.ItemFrame;
+import net.minecraft.world.entity.decoration.Painting;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public interface EntityInhaleBehavior {
     default ItemStack getInhaledItems(Entity entity) {
         return ItemStack.EMPTY;
     }
-    default DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-        return DefaultedList.of();
+    default NonNullList<ItemStack> getDroppedItems(Entity entity) {
+        return NonNullList.create();
     }
 
     default boolean canInhale(Entity entity) {
@@ -48,89 +46,89 @@ public interface EntityInhaleBehavior {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.WOLF, new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
-                return (entity instanceof WolfEntity wolf) && !wolf.isBaby();
+                return (entity instanceof Wolf wolf) && !wolf.isBaby();
             }
 
             @Override
             public void inhale(Entity entity) {
-                WolfEntity wolf = ((WolfEntity) entity);
+                Wolf wolf = ((Wolf) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
-                wolf.playSound(SoundEvents.ENTITY_WOLF_DEATH, 0.4f, wolf.getSoundPitch());
+                wolf.playSound(SoundEvents.WOLF_DEATH, 0.4f, wolf.getVoicePitch());
             }
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
                 ItemStack itemStack = new ItemStack(BwtBlocks.companionCubeBlock);
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                return DefaultedList.copyOf(ItemStack.EMPTY, new ItemStack(Items.STRING), new ItemStack(Items.STRING));
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                return NonNullList.of(ItemStack.EMPTY, new ItemStack(Items.STRING), new ItemStack(Items.STRING));
             }
         });
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.CHICKEN, new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
-                return (entity instanceof ChickenEntity chicken) && !chicken.isBaby();
+                return (entity instanceof Chicken chicken) && !chicken.isBaby();
             }
 
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof ChickenEntity chicken)) {
+                if (!(entity instanceof Chicken chicken)) {
                     return;
                 }
                 chicken.remove(Entity.RemovalReason.KILLED);
-                chicken.playSound(SoundEvents.ENTITY_CHICKEN_DEATH, 0.4f, chicken.getSoundPitch());
+                chicken.playSound(SoundEvents.CHICKEN_DEATH, 0.4f, chicken.getVoicePitch());
             }
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
                 ItemStack itemStack = new ItemStack(Items.EGG);
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                return DefaultedList.copyOf(ItemStack.EMPTY, new ItemStack(Items.FEATHER));
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                return NonNullList.of(ItemStack.EMPTY, new ItemStack(Items.FEATHER));
             }
         });
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.SHEEP, new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
-                return (entity instanceof SheepEntity sheep) && sheep.isShearable();
+                return (entity instanceof Sheep sheep) && sheep.readyForShearing();
             }
 
             @Override
             public void inhale(Entity entity) {
-                SheepEntity sheep = ((SheepEntity) entity);
-                sheep.playSound(SoundEvents.ENTITY_SHEEP_HURT, 0.4f, sheep.getSoundPitch());
+                Sheep sheep = ((Sheep) entity);
+                sheep.playSound(SoundEvents.SHEEP_HURT, 0.4f, sheep.getVoicePitch());
             }
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                return new ItemStack(DyeUtils.WOOL_COLORS.get(((SheepEntity) entity).getColor()).asItem());
+                return new ItemStack(DyeUtils.WOOL_COLORS.get(((Sheep) entity).getColor()).asItem());
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                ((SheepEntity) entity).setSheared(true);
-                return DefaultedList.copyOf(ItemStack.EMPTY, new ItemStack(Items.STRING));
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                ((Sheep) entity).setSheared(true);
+                return NonNullList.of(ItemStack.EMPTY, new ItemStack(Items.STRING));
             }
         });
 
         EntityInhaleBehavior minecartBehavior = new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
-                return (entity instanceof AbstractMinecartEntity minecart) && minecart.isAlive();
+                return (entity instanceof AbstractMinecart minecart) && minecart.isAlive();
             }
 
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof AbstractMinecartEntity minecart)) {
+                if (!(entity instanceof AbstractMinecart minecart)) {
                     return;
                 }
                 minecart.kill();
@@ -138,8 +136,8 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
         };
@@ -157,12 +155,12 @@ public interface EntityInhaleBehavior {
         EntityInhaleBehavior boatBehavior = new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
-                return (entity instanceof BoatEntity boat) && boat.isAlive();
+                return (entity instanceof Boat boat) && boat.isAlive();
             }
 
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof BoatEntity boat)) {
+                if (!(entity instanceof Boat boat)) {
                     return;
                 }
                 boat.kill();
@@ -170,8 +168,8 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
         };
@@ -180,7 +178,7 @@ public interface EntityInhaleBehavior {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ARMOR_STAND, new EntityInhaleBehavior() {
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof ArmorStandEntity armorStand)) {
+                if (!(entity instanceof ArmorStand armorStand)) {
                     return;
                 }
                 armorStand.kill();
@@ -188,19 +186,19 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                if (!(entity instanceof ArmorStandEntity armorStand)) {
-                    return DefaultedList.of();
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof ArmorStand armorStand)) {
+                    return NonNullList.create();
                 }
-                DefaultedList<ItemStack> heldItems = ((ArmorStandAccessorMixin) armorStand).getHeldItems();
-                DefaultedList<ItemStack> armorItems = ((ArmorStandAccessorMixin) armorStand).getArmorItems();
-                DefaultedList<ItemStack> returnItems = DefaultedList.of();
+                NonNullList<ItemStack> heldItems = ((ArmorStandAccessorMixin) armorStand).getHandItems();
+                NonNullList<ItemStack> armorItems = ((ArmorStandAccessorMixin) armorStand).getArmorItems();
+                NonNullList<ItemStack> returnItems = NonNullList.create();
                 returnItems.addAll(heldItems);
                 returnItems.addAll(armorItems);
                 return returnItems;
@@ -210,7 +208,7 @@ public interface EntityInhaleBehavior {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof ItemFrameEntity itemFrame)) {
+                if (!(entity instanceof ItemFrame itemFrame)) {
                     return;
                 }
                 itemFrame.kill();
@@ -218,18 +216,18 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                if (!(entity instanceof ItemFrameEntity itemFrame)) {
-                    return DefaultedList.of();
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof ItemFrame itemFrame)) {
+                    return NonNullList.create();
                 }
-                DefaultedList<ItemStack> returnItems = DefaultedList.of();
-                returnItems.add(itemFrame.getHeldItemStack());
+                NonNullList<ItemStack> returnItems = NonNullList.create();
+                returnItems.add(itemFrame.getItem());
                 return returnItems;
             }
         });
@@ -237,7 +235,7 @@ public interface EntityInhaleBehavior {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.GLOW_ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof GlowItemFrameEntity itemFrame)) {
+                if (!(entity instanceof GlowItemFrame itemFrame)) {
                     return;
                 }
                 itemFrame.kill();
@@ -245,18 +243,18 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
 
             @Override
-            public DefaultedList<ItemStack> getDroppedItems(Entity entity) {
-                if (!(entity instanceof GlowItemFrameEntity itemFrame)) {
-                    return DefaultedList.of();
+            public NonNullList<ItemStack> getDroppedItems(Entity entity) {
+                if (!(entity instanceof GlowItemFrame itemFrame)) {
+                    return NonNullList.create();
                 }
-                DefaultedList<ItemStack> returnItems = DefaultedList.of();
-                returnItems.add(itemFrame.getHeldItemStack());
+                NonNullList<ItemStack> returnItems = NonNullList.create();
+                returnItems.add(itemFrame.getItem());
                 return returnItems;
             }
         });
@@ -264,7 +262,7 @@ public interface EntityInhaleBehavior {
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.PAINTING, new EntityInhaleBehavior() {
             @Override
             public void inhale(Entity entity) {
-                if (!(entity instanceof PaintingEntity painting)) {
+                if (!(entity instanceof Painting painting)) {
                     return;
                 }
                 painting.kill();
@@ -272,8 +270,8 @@ public interface EntityInhaleBehavior {
 
             @Override
             public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = (itemStack = entity.getPickBlockStack()) == null ? ItemStack.EMPTY : itemStack;
-                itemStack.set(DataComponentTypes.CUSTOM_NAME, entity.getCustomName());
+                ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
+                itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
         });

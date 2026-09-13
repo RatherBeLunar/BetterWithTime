@@ -8,51 +8,51 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.block.Block;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 public class SawRecipe implements Recipe<SawRecipeInput> {
     protected final String group;
-    protected final CraftingRecipeCategory category;
+    protected final CraftingBookCategory category;
     final BlockIngredient ingredient;
-    protected final DefaultedList<ItemStack> results;
+    protected final NonNullList<ItemStack> results;
 
-    public SawRecipe(String group, CraftingRecipeCategory category, BlockIngredient ingredient, List<ItemStack> results) {
+    public SawRecipe(String group, CraftingBookCategory category, BlockIngredient ingredient, List<ItemStack> results) {
         this.group = group;
         this.category = category;
         this.ingredient = ingredient;
-        this.results = DefaultedList.copyOf(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
+        this.results = NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(BwtBlocks.sawBlock);
     }
 
@@ -62,12 +62,12 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
     }
 
     @Override
-    public boolean matches(SawRecipeInput input, World world) {
+    public boolean matches(SawRecipeInput input, Level level) {
         return this.ingredient.test(input.block());
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -90,13 +90,13 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
         return BwtRecipes.SAW_RECIPE_TYPE;
     }
 
-    public CraftingRecipeCategory getCategory() {
+    public CraftingBookCategory getCategory() {
         return this.category;
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+    public boolean isSpecial() {
+        return Recipe.super.isSpecial();
     }
 
     @Override
@@ -105,12 +105,12 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
     }
 
     @Override
-    public ItemStack craft(SawRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
-        return getResult(lookup);
+    public ItemStack assemble(SawRecipeInput input, HolderLookup.Provider lookup) {
+        return getResultItem(lookup);
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
         return results.get(0);
     }
 
@@ -119,19 +119,19 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
                 instance->instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
                                 .forGetter(recipe -> recipe.group),
-                        CraftingRecipeCategory.CODEC.fieldOf("category")
-                                .orElse(CraftingRecipeCategory.MISC)
+                        CraftingBookCategory.CODEC.fieldOf("category")
+                                .orElse(CraftingBookCategory.MISC)
                                 .forGetter(recipe -> recipe.category),
                         BlockIngredient.Serializer.CODEC
                                 .fieldOf("ingredient")
                                 .forGetter(recipe -> recipe.ingredient),
-                        ItemStack.VALIDATED_CODEC
+                        ItemStack.STRICT_CODEC
                                 .listOf()
                                 .fieldOf("drops")
                                 .forGetter(SawRecipe::getResults)
                 ).apply(instance, SawRecipe::new)
         );
-        public static final PacketCodec<RegistryByteBuf, SawRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, SawRecipe> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
         );
 
@@ -144,49 +144,49 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, SawRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, SawRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        public static SawRecipe read(RegistryByteBuf buf) {
-            String group = buf.readString();
-            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
+        public static SawRecipe read(RegistryFriendlyByteBuf buf) {
+            String group = buf.readUtf();
+            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
             BlockIngredient ingredient = BlockIngredient.Serializer.read(buf);
-            List<ItemStack> drops = ItemStack.LIST_PACKET_CODEC.decode(buf);
+            List<ItemStack> drops = ItemStack.LIST_STREAM_CODEC.decode(buf);
             return new SawRecipe(group, category, ingredient, drops);
         }
 
-        public static void write(RegistryByteBuf buf, SawRecipe recipe) {
-            buf.writeString(recipe.group);
-            buf.writeEnumConstant(recipe.category);
+        public static void write(RegistryFriendlyByteBuf buf, SawRecipe recipe) {
+            buf.writeUtf(recipe.group);
+            buf.writeEnum(recipe.category);
             BlockIngredient.Serializer.write(buf, recipe.ingredient);
-            ItemStack.LIST_PACKET_CODEC.encode(buf, recipe.getResults());
+            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getResults());
         }
     }
 
     public interface RecipeFactory<T extends SawRecipe> {
-        T create(String group, CraftingRecipeCategory category, BlockIngredient ingredient, List<ItemStack> results);
+        T create(String group, CraftingBookCategory category, BlockIngredient ingredient, List<ItemStack> results);
     }
 
-    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
-        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
+    public static class JsonBuilder implements RecipeBuilder {
+        protected CraftingBookCategory category = CraftingBookCategory.MISC;
         protected BlockIngredient ingredient;
         protected String fromBlockName;
-        protected DefaultedList<ItemStack> results = DefaultedList.of();
+        protected final NonNullList<ItemStack> results = NonNullList.create();
         @Nullable
         protected String group;
 
         public static JsonBuilder create(Block block) {
             JsonBuilder obj = new JsonBuilder();
             obj.ingredient = BlockIngredient.fromBlock(block);
-            obj.fromBlockName = Registries.BLOCK.getId(block).getPath();
+            obj.fromBlockName = BuiltInRegistries.BLOCK.getKey(block).getPath();
             return obj;
         }
 
         public static JsonBuilder create(TagKey<Block> blockTag) {
             JsonBuilder obj = new JsonBuilder();
             obj.ingredient = BlockIngredient.fromTag(blockTag);
-            obj.fromBlockName = blockTag.id().getPath();
+            obj.fromBlockName = blockTag.location().getPath();
             return obj;
         }
 
@@ -195,21 +195,21 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
             this.isDefaultRecipe = true;
             return this;
         }
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
             }
         }
 
-        public static void dropsSelf(Block block, RecipeExporter exporter) {
-            create(block).result(block.asItem()).offerTo(exporter);
+        public static void dropsSelf(Block block, RecipeOutput exporter) {
+            create(block).result(block.asItem()).save(exporter);
         }
 
         RecipeFactory<SawRecipe> getRecipeFactory() {
             return SawRecipe::new;
         }
 
-        public JsonBuilder category(CraftingRecipeCategory category) {
+        public JsonBuilder category(CraftingBookCategory category) {
             this.category = category;
             return this;
         }
@@ -224,17 +224,17 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
             return this;
         }
 
-        public JsonBuilder result(ItemConvertible item, int count) {
+        public JsonBuilder result(ItemLike item, int count) {
             this.results.add(new ItemStack(item, count));
             return this;
         }
 
-        public JsonBuilder result(ItemConvertible item) {
+        public JsonBuilder result(ItemLike item) {
             return this.result(item, 1);
         }
 
         @Override
-        public JsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
+        public JsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
             return this;
         }
 
@@ -245,32 +245,32 @@ public class SawRecipe implements Recipe<SawRecipeInput> {
         }
 
         @Override
-        public Item getOutputItem() {
+        public Item getResult() {
             return results.get(0).getItem();
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, Id.of("saw_" + fromBlockName));
+        public void save(RecipeOutput exporter) {
+            this.save(exporter, Id.of("saw_" + fromBlockName));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, String recipePath) {
-            this.offerTo(exporter, Id.of(recipePath));
+        public void save(RecipeOutput exporter, String recipePath) {
+            this.save(exporter, Id.of(recipePath));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             addToDefaults(recipeId);
 
-            Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
             SawRecipe sawRecipe = this.getRecipeFactory().create(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
                     this.ingredient,
                     this.results
             );
-            exporter.accept(recipeId, sawRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/" + this.category.asString() + "/")));
+            exporter.accept(recipeId, sawRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

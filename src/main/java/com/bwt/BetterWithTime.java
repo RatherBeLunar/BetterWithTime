@@ -37,29 +37,30 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.HoeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.condition.*;
-import net.minecraft.loot.context.LootContext;
-import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.function.EnchantedCountIncreaseLootFunction;
-import net.minecraft.loot.function.FurnaceSmeltLootFunction;
-import net.minecraft.loot.function.SetCountLootFunction;
-import net.minecraft.loot.provider.number.UniformLootNumberProvider;
-import net.minecraft.predicate.entity.EntityFlagsPredicate;
-import net.minecraft.predicate.entity.EntityPredicate;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.text.Text;
+import net.minecraft.advancements.critereon.EntityFlagsPredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.HoeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFunction;
+import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
+import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
+import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,22 +79,22 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtGameRules gameRules = new BwtGameRules();
 	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
 	public static final TrackedDataHandlers dataHandlers = new TrackedDataHandlers();
-	public static ScreenHandlerType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new ScreenHandlerType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static MenuType<BlockDispenserScreenHandler> blockDispenserScreenHandler = new MenuType<>(BlockDispenserScreenHandler::new, FeatureFlags.VANILLA_SET);
 	public static ExtendedScreenHandlerType<CauldronScreenHandler, AbstractCookingPotData> cauldronScreenHandler = new ExtendedScreenHandlerType<>(CauldronScreenHandler::new, AbstractCookingPotData.PACKET_CODEC);
 	public static ExtendedScreenHandlerType<CrucibleScreenHandler, AbstractCookingPotData> crucibleScreenHandler = new ExtendedScreenHandlerType<>(CrucibleScreenHandler::new, AbstractCookingPotData.PACKET_CODEC);
-	public static ScreenHandlerType<MillStoneScreenHandler> millStoneScreenHandler = new ScreenHandlerType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static ScreenHandlerType<PulleyScreenHandler> pulleyScreenHandler = new ScreenHandlerType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static ScreenHandlerType<MechHopperScreenHandler> mechHopperScreenHandler = new ScreenHandlerType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
-	public static ScreenHandlerType<SoulForgeScreenHandler> soulForgeScreenHandler = new ScreenHandlerType<>(SoulForgeScreenHandler::new, FeatureFlags.VANILLA_FEATURES);
+	public static MenuType<MillStoneScreenHandler> millStoneScreenHandler = new MenuType<>(MillStoneScreenHandler::new, FeatureFlags.VANILLA_SET);
+	public static MenuType<PulleyScreenHandler> pulleyScreenHandler = new MenuType<>(PulleyScreenHandler::new, FeatureFlags.VANILLA_SET);
+	public static MenuType<MechHopperScreenHandler> mechHopperScreenHandler = new MenuType<>(MechHopperScreenHandler::new, FeatureFlags.VANILLA_SET);
+	public static MenuType<SoulForgeScreenHandler> soulForgeScreenHandler = new MenuType<>(SoulForgeScreenHandler::new, FeatureFlags.VANILLA_SET);
 
 	static {
-		blockDispenserScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("block_dispenser"), blockDispenserScreenHandler);
-		cauldronScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("cauldron"), cauldronScreenHandler);
-		crucibleScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("crucible"), crucibleScreenHandler);
-		millStoneScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("mill_stone"), millStoneScreenHandler);
-		pulleyScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("pulley"), pulleyScreenHandler);
-		mechHopperScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("hopper"), mechHopperScreenHandler);
-		soulForgeScreenHandler = Registry.register(Registries.SCREEN_HANDLER, Id.of("soul_forge"), soulForgeScreenHandler);
+		blockDispenserScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("block_dispenser"), blockDispenserScreenHandler);
+		cauldronScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("cauldron"), cauldronScreenHandler);
+		crucibleScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("crucible"), crucibleScreenHandler);
+		millStoneScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("mill_stone"), millStoneScreenHandler);
+		pulleyScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("pulley"), pulleyScreenHandler);
+		mechHopperScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("hopper"), mechHopperScreenHandler);
+		soulForgeScreenHandler = Registry.register(BuiltInRegistries.MENU, Id.of("soul_forge"), soulForgeScreenHandler);
 	}
 
 	@Override
@@ -157,22 +158,22 @@ public class BetterWithTime implements ModInitializer {
 			if (!source.isBuiltin()) {
 				return;
 			}
-			if (key.equals(EntityType.WOLF.getLootTableId())) {
-				LootPool.Builder poolBuilder = LootPool.builder()
-						.with(ItemEntry.builder(BwtItems.wolfChopItem)
-								.apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1.0f, 3.0f)))
+			if (key.equals(EntityType.WOLF.getDefaultLootTable())) {
+				LootPool.Builder poolBuilder = LootPool.lootPool()
+						.add(LootItem.lootTableItem(BwtItems.wolfChopItem)
+								.apply(SetItemCountFunction.setCount(UniformGenerator.between(1.0f, 3.0f)))
 						).apply(
-                                FurnaceSmeltLootFunction.builder()
-                                        .conditionally(
-                                                EntityPropertiesLootCondition.builder(LootContext.EntityTarget.THIS, EntityPredicate.Builder.create().flags(EntityFlagsPredicate.Builder.create().onFire(true)))
+                                SmeltItemFunction.smelted()
+                                        .when(
+                                                LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, EntityPredicate.Builder.entity().flags(EntityFlagsPredicate.Builder.flags().setOnFire(true)))
                                         )
-						).apply(EnchantedCountIncreaseLootFunction.builder(wrapperLookup, UniformLootNumberProvider.create(0.0f, 1.0f)));
+						).apply(EnchantedCountIncreaseFunction.lootingMultiplier(wrapperLookup, UniformGenerator.between(0.0f, 1.0f)));
 
-				tableBuilder.pool(poolBuilder);
+				tableBuilder.withPool(poolBuilder);
 			}
-			if (key.equals(Blocks.COBBLESTONE.getLootTableKey())) {
-				tableBuilder.modifyPools(builder -> builder.conditionally(new InvertedLootCondition(MiningChargeExplosion.LOOT_CONDITION)))
-						.pool(LootPool.builder().conditionally(MiningChargeExplosion.LOOT_CONDITION).with(ItemEntry.builder(Items.GRAVEL)));
+			if (key.equals(Blocks.COBBLESTONE.getLootTable())) {
+				tableBuilder.modifyPools(builder -> builder.conditionally(new InvertedLootItemCondition(MiningChargeExplosion.LOOT_CONDITION)))
+						.withPool(LootPool.lootPool().conditionally(MiningChargeExplosion.LOOT_CONDITION).add(LootItem.lootTableItem(Items.GRAVEL)));
 			}
 		});
 
@@ -182,17 +183,17 @@ public class BetterWithTime implements ModInitializer {
 		// Drop hemp seeds from tilled grass 1/25th of the time
 		TillableBlockRegistry.register(
 			Blocks.GRASS_BLOCK,
-			HoeItem::canTillFarmland,
+			HoeItem::onlyIfAirAbove,
 			context -> {
-				BlockState result = Blocks.FARMLAND.getDefaultState();
-				HoeItem.createTillAction(result).accept(context);
-				Item tool = context.getStack().getItem();
+				BlockState result = Blocks.FARMLAND.defaultBlockState();
+				HoeItem.changeIntoState(result).accept(context);
+				Item tool = context.getItemInHand().getItem();
 				int randBound = 30;
 				if (tool instanceof HoeItem hoeItem) {
-					randBound -= Math.round(hoeItem.getMaterial().getMiningSpeedMultiplier());
+					randBound -= Math.round(hoeItem.getTier().getSpeed());
 				}
-				if (context.getWorld().getRandom().nextInt(randBound) == 0) {
-					Block.dropStack(context.getWorld(), context.getBlockPos(), context.getSide(), new ItemStack(BwtItems.hempSeedsItem));
+				if (context.getLevel().getRandom().nextInt(randBound) == 0) {
+					Block.popResourceFromFace(context.getLevel(), context.getClickedPos(), context.getClickedFace(), new ItemStack(BwtItems.hempSeedsItem));
 				}
 			}
 		);
@@ -202,7 +203,7 @@ public class BetterWithTime implements ModInitializer {
         ResourceManagerHelper.registerBuiltinResourcePack(
                 Id.PROGRAMMER_ART_PACK_ID,
                 FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
-                Text.literal("BWT Programmer Art"),
+                Component.literal("BWT Programmer Art"),
                 ResourcePackActivationType.NORMAL
         );
 	}

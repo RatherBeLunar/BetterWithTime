@@ -8,28 +8,28 @@ import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiTurntableRecipe implements EmiRecipe {
 
     private final EmiRecipeCategory category;
-    private final Identifier id;
+    private final ResourceLocation id;
     private final EmiIngredient ingredient;
     private final List<EmiStack> drops;
     private final EmiStack output;
     private final int displayRows;
 
-    public EmiTurntableRecipe(EmiRecipeCategory category, RecipeEntry<TurntableRecipe> recipeEntry) {
+    public EmiTurntableRecipe(EmiRecipeCategory category, RecipeHolder<TurntableRecipe> recipeEntry) {
         this(category, recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiTurntableRecipe(EmiRecipeCategory category, Identifier id, TurntableRecipe recipe) {
+    public EmiTurntableRecipe(EmiRecipeCategory category, ResourceLocation id, TurntableRecipe recipe) {
         this.category = category;
         this.id = id;
         this.ingredient = BwtEmiPlugin.from(recipe.getIngredient());
@@ -45,8 +45,8 @@ public class EmiTurntableRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

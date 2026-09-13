@@ -1,54 +1,48 @@
 package com.bwt.blocks;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 public class ScrewPumpBlock extends Block implements MechPowerBlockBase {
-    public static final MapCodec<ScrewPumpBlock> CODEC = createCodec(ScrewPumpBlock::new);
-    public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-    public static final BooleanProperty JAMMED = BooleanProperty.of("jammed");
+    public static final MapCodec<ScrewPumpBlock> CODEC = simpleCodec(ScrewPumpBlock::new);
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final BooleanProperty JAMMED = BooleanProperty.create("jammed");
 
     protected static final int tickRate = 20;
 
-    public ScrewPumpBlock(Settings settings) {
+    public ScrewPumpBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(JAMMED, false));
+        registerDefaultState(defaultBlockState().setValue(MECH_POWERED, false).setValue(JAMMED, false));
     }
 
     @Override
-    protected MapCodec<ScrewPumpBlock> getCodec() {
+    protected MapCodec<ScrewPumpBlock> codec() {
         return CODEC;
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         MechPowerBlockBase.super.appendProperties(builder);
         builder.add(FACING);
         builder.add(JAMMED);
@@ -68,36 +62,36 @@ public class ScrewPumpBlock extends Block implements MechPowerBlockBase {
     public Predicate<Direction> getValidHandCrankFaces(BlockState blockState, BlockPos pos) {
         return direction ->
                 direction.getAxis().isHorizontal()
-                && !direction.equals(blockState.getOrEmpty(FACING).orElse(null));
+                && !direction.equals(blockState.getOptionalValue(FACING).orElse(null));
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        schedulePowerUpdate(state, world, pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        schedulePowerUpdate(state, level, pos);
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
-        if (isReceivingMechPower(world, state, pos) != isMechPowered(state)) {
-            world.scheduleBlockTick(pos, this, tickRate);
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
+        if (isReceivingMechPower(level, state, pos) != isMechPowered(state)) {
+            level.scheduleTick(pos, this, tickRate);
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, world, pos);
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(FACING, mirror.apply(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 }

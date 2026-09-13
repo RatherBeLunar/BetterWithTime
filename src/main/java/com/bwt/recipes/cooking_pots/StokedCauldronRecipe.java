@@ -3,14 +3,12 @@ package com.bwt.recipes.cooking_pots;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.book.CookingRecipeCategory;
-import net.minecraft.recipe.book.RecipeCategory;
-
 import java.util.List;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
     public StokedCauldronRecipe(String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
@@ -18,7 +16,7 @@ public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(BwtBlocks.cauldronBlock);
     }
 
@@ -38,8 +36,8 @@ public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, RecipeProvider.getItemPath(results.get(0).getItem()) + "_from_stoked_cauldron");
+        public void save(RecipeOutput exporter) {
+            this.save(exporter, RecipeProvider.getItemName(results.get(0).getItem()) + "_from_stoked_cauldron");
         }
     }
 }

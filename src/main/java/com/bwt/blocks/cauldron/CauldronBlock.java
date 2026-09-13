@@ -2,50 +2,49 @@ package com.bwt.blocks.cauldron;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class CauldronBlock extends AbstractCookingPotBlock {
 
-    public CauldronBlock(Settings settings) {
+    public CauldronBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CauldronBlockEntity(pos, state);
     }
 
     @Override
-    public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult blockHitResult) {
-        if (world.isClient) return ActionResult.SUCCESS;
-        BlockEntity blockEntity = world.getBlockEntity(blockPos);
+    public InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof CauldronBlockEntity cauldronBlockEntity) {
-            player.openHandledScreen(cauldronBlockEntity);
+            player.openMenu(cauldronBlockEntity);
         }
-        return ActionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> givenType) {
-        return CauldronBlock.validateTicker(world, givenType, BwtBlockEntities.cauldronBlockEntity);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> givenType) {
+        return CauldronBlock.validateTicker(level, givenType, BwtBlockEntities.cauldronBlockEntity);
     }
 }

@@ -1,30 +1,30 @@
 package com.bwt.mixin.accessors;
 
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.book.RecipeCategory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 import java.util.Map;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 
-@Mixin(ShapedRecipeJsonBuilder.class)
+@Mixin(ShapedRecipeBuilder.class)
 public interface ShapedRecipeJsonBuilderAccessorMixin {
     @Accessor
     RecipeCategory getCategory();
     @Accessor
-    Item getOutput();
+    Item getResult();
     @Accessor
     int getCount();
     @Accessor
-    List<String> getPattern();
+    List<String> getRows();
     @Accessor
-    Map<Character, Ingredient> getInputs();
+    Map<Character, Ingredient> getKey();
     @Accessor
-    Map<String, AdvancementCriterion<?>> getCriteria();
+    Map<String, Criterion<?>> getCriteria();
     @Accessor
     String getGroup();
     @Accessor

@@ -1,6 +1,6 @@
 package com.bwt.utils.kiln_block_cook_overlay;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public class KilnBlockCookingInfo implements Comparable<KilnBlockCookingInfo> {
     private final BlockPos pos;

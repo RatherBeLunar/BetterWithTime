@@ -3,17 +3,17 @@ package com.bwt.models;
 import com.bwt.BetterWithTimeClient;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.utils.Id;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.resources.ResourceLocation;
 
 public class WaterWheelEntityRenderer extends HorizontalMechPowerSourceEntityRenderer<WaterWheelEntity> {
-    public WaterWheelEntityRenderer(EntityRendererFactory.Context context) {
+    public WaterWheelEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new WaterWheelEntityModel(context.getPart(BetterWithTimeClient.MODEL_WATER_WHEEL_LAYER));
+        this.model = new WaterWheelEntityModel(context.bakeLayer(BetterWithTimeClient.MODEL_WATER_WHEEL_LAYER));
     }
 
     @Override
-    public Identifier getTexture(WaterWheelEntity entity) {
+    public ResourceLocation getTextureLocation(WaterWheelEntity entity) {
         return Id.of("textures/entity/water_wheel.png");
     }
 }

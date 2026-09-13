@@ -4,11 +4,10 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotData;
 import com.bwt.recipes.BwtRecipes;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class CauldronBlockEntity extends AbstractCookingPotBlockEntity {
     public CauldronBlockEntity(BlockPos pos, BlockState state) {
@@ -16,7 +15,7 @@ public class CauldronBlockEntity extends AbstractCookingPotBlockEntity {
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
         return new CauldronScreenHandler(syncId, playerInventory, this.inventory, propertyDelegate, new AbstractCookingPotData(this.isStoked));
     }
 }

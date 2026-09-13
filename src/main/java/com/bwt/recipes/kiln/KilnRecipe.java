@@ -8,54 +8,54 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.block.Block;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 
 public class KilnRecipe implements Recipe<KilnRecipeInput> {
-    public static int DEFAULT_COOKING_TIME = 1;
+    public static final int DEFAULT_COOKING_TIME = 1;
 
     protected final String group;
-    protected final CraftingRecipeCategory category;
+    protected final CraftingBookCategory category;
     protected final BlockIngredient ingredient;
     protected final int cookingTime;
-    protected final DefaultedList<ItemStack> drops;
+    protected final NonNullList<ItemStack> drops;
 
-    public KilnRecipe(String group, CraftingRecipeCategory category, BlockIngredient ingredient, int cookingTime, List<ItemStack> drops) {
+    public KilnRecipe(String group, CraftingBookCategory category, BlockIngredient ingredient, int cookingTime, List<ItemStack> drops) {
         this.group = group;
         this.category = category;
         this.ingredient = ingredient;
         this.cookingTime = cookingTime;
-        this.drops = DefaultedList.copyOf(ItemStack.EMPTY, drops.toArray(new ItemStack[0]));
+        this.drops = NonNullList.of(ItemStack.EMPTY, drops.toArray(new ItemStack[0]));
     }
 
     @Override
-    public ItemStack createIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(BwtBlocks.kilnBlock);
     }
 
@@ -65,12 +65,12 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
     }
 
     @Override
-    public boolean matches(KilnRecipeInput input, World world) {
+    public boolean matches(KilnRecipeInput input, Level level) {
         return this.ingredient.test(input.block());
     }
 
     @Override
-    public boolean fits(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -83,8 +83,8 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         return cookingTime;
     }
 
-    public DefaultedList<ItemStack> getDrops() {
-        return DefaultedList.copyOf(ItemStack.EMPTY, drops.stream().map(ItemStack::copy).toList().toArray(new ItemStack[]{}));
+    public NonNullList<ItemStack> getDrops() {
+        return NonNullList.of(ItemStack.EMPTY, drops.stream().map(ItemStack::copy).toList().toArray(new ItemStack[]{}));
     }
 
     @Override
@@ -97,13 +97,13 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         return BwtRecipes.KILN_RECIPE_TYPE;
     }
 
-    public CraftingRecipeCategory getCategory() {
+    public CraftingBookCategory getCategory() {
         return this.category;
     }
 
     @Override
-    public boolean isIgnoredInRecipeBook() {
-        return Recipe.super.isIgnoredInRecipeBook();
+    public boolean isSpecial() {
+        return Recipe.super.isSpecial();
     }
 
     @Override
@@ -112,12 +112,12 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
     }
 
     @Override
-    public ItemStack craft(KilnRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
-        return getResult(lookup);
+    public ItemStack assemble(KilnRecipeInput input, HolderLookup.Provider lookup) {
+        return getResultItem(lookup);
     }
 
     @Override
-    public ItemStack getResult(RegistryWrapper.WrapperLookup registriesLookup) {
+    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
         return drops.get(0);
     }
 
@@ -126,8 +126,8 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
                 instance->instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
                                 .forGetter(recipe -> recipe.group),
-                        CraftingRecipeCategory.CODEC.fieldOf("category")
-                                .orElse(CraftingRecipeCategory.MISC)
+                        CraftingBookCategory.CODEC.fieldOf("category")
+                                .orElse(CraftingBookCategory.MISC)
                                 .forGetter(recipe -> recipe.category),
                         BlockIngredient.Serializer.CODEC
                                 .fieldOf("ingredient")
@@ -135,13 +135,13 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
                         Codec.INT.fieldOf("cookingTime")
                                 .orElse(KilnRecipe.DEFAULT_COOKING_TIME)
                                 .forGetter(recipe -> recipe.cookingTime),
-                        ItemStack.VALIDATED_CODEC
+                        ItemStack.STRICT_CODEC
                                 .listOf()
                                 .fieldOf("drops")
                                 .forGetter(KilnRecipe::getDrops)
                 ).apply(instance, KilnRecipe::new)
         );
-        public static final PacketCodec<RegistryByteBuf, KilnRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, KilnRecipe> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
         );
 
@@ -153,41 +153,41 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, KilnRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, KilnRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        protected static KilnRecipe read(RegistryByteBuf buf) {
-            String group = buf.readString();
-            CraftingRecipeCategory category = buf.readEnumConstant(CraftingRecipeCategory.class);
+        protected static KilnRecipe read(RegistryFriendlyByteBuf buf) {
+            String group = buf.readUtf();
+            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
             BlockIngredient ingredient = BlockIngredient.Serializer.read(buf);
             int cookingTime = buf.readVarInt();
-            List<ItemStack> drops = ItemStack.LIST_PACKET_CODEC.decode(buf);
+            List<ItemStack> drops = ItemStack.LIST_STREAM_CODEC.decode(buf);
             return new KilnRecipe(group, category, ingredient, cookingTime, drops);
         }
 
-        protected static void write(RegistryByteBuf buf, KilnRecipe recipe) {
-            buf.writeString(recipe.group);
-            buf.writeEnumConstant(recipe.category);
+        protected static void write(RegistryFriendlyByteBuf buf, KilnRecipe recipe) {
+            buf.writeUtf(recipe.group);
+            buf.writeEnum(recipe.category);
             BlockIngredient.Serializer.write(buf, recipe.ingredient);
             buf.writeVarInt(recipe.cookingTime);
-            ItemStack.LIST_PACKET_CODEC.encode(buf, recipe.getDrops());
+            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getDrops());
         }
     }
 
-    public static class JsonBuilder implements CraftingRecipeJsonBuilder {
-        protected CraftingRecipeCategory category = CraftingRecipeCategory.MISC;
+    public static class JsonBuilder implements RecipeBuilder {
+        protected CraftingBookCategory category = CraftingBookCategory.MISC;
         protected BlockIngredient ingredient;
         protected int cookingTime;
         protected String fromBlockName;
-        protected DefaultedList<ItemStack> drops = DefaultedList.of();
+        protected final NonNullList<ItemStack> drops = NonNullList.create();
         @Nullable
         protected String group;
 
         public static JsonBuilder create(Block input) {
             JsonBuilder obj = new JsonBuilder();
             obj.ingredient = BlockIngredient.fromBlock(input);
-            obj.fromBlockName = Registries.BLOCK.getId(input).getPath();
+            obj.fromBlockName = BuiltInRegistries.BLOCK.getKey(input).getPath();
             obj.cookingTime = KilnRecipe.DEFAULT_COOKING_TIME;
             return obj;
         }
@@ -195,12 +195,12 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         public static JsonBuilder create(TagKey<Block> inputTag) {
             JsonBuilder obj = new JsonBuilder();
             obj.ingredient = BlockIngredient.fromTag(inputTag);
-            obj.fromBlockName = inputTag.id().getPath();
+            obj.fromBlockName = inputTag.location().getPath();
             obj.cookingTime = KilnRecipe.DEFAULT_COOKING_TIME;
             return obj;
         }
 
-        public JsonBuilder category(CraftingRecipeCategory category) {
+        public JsonBuilder category(CraftingBookCategory category) {
             this.category = category;
             return this;
         }
@@ -215,11 +215,11 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
             return this;
         }
 
-        public JsonBuilder drops(ItemConvertible item, int count) {
+        public JsonBuilder drops(ItemLike item, int count) {
             return this.drops(new ItemStack(item, count));
         }
 
-        public JsonBuilder drops(ItemConvertible item) {
+        public JsonBuilder drops(ItemLike item) {
             return this.drops(item, 1);
         }
 
@@ -228,17 +228,17 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
             return this;
         }
 
-        public JsonBuilder result(ItemConvertible item, int count) {
+        public JsonBuilder result(ItemLike item, int count) {
             this.drops.add(new ItemStack(item, count));
             return this;
         }
 
-        public JsonBuilder result(ItemConvertible item) {
+        public JsonBuilder result(ItemLike item) {
             return this.result(item, 1);
         }
 
         @Override
-        public JsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
+        public JsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
             return this;
         }
 
@@ -253,31 +253,31 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
             this.isDefaultRecipe = true;
             return this;
         }
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/"));
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
             }
         }
 
         @Override
-        public Item getOutputItem() {
+        public Item getResult() {
             return drops.get(0).getItem();
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter) {
-            this.offerTo(exporter, Id.of("kiln_cook_" + fromBlockName));
+        public void save(RecipeOutput exporter) {
+            this.save(exporter, Id.of("kiln_cook_" + fromBlockName));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, String recipePath) {
-            this.offerTo(exporter, Id.of(recipePath));
+        public void save(RecipeOutput exporter, String recipePath) {
+            this.save(exporter, Id.of(recipePath));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             this.addToDefaults(recipeId);
-            Advancement.Builder advancementBuilder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
             KilnRecipe kilnRecipe = new KilnRecipe(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
@@ -285,7 +285,7 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
                     this.cookingTime,
                     this.drops
             );
-            exporter.accept(recipeId, kilnRecipe, advancementBuilder.build(recipeId.withPrefixedPath("recipes/" + this.category.asString() + "/")));
+            exporter.accept(recipeId, kilnRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

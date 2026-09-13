@@ -1,84 +1,84 @@
 package com.bwt.blocks;
 
 import com.bwt.sounds.BwtSoundEvents;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.Nullable;
 
 public class HibachiBlock extends Block {
-    public static final BooleanProperty LIT = Properties.LIT;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
-    public HibachiBlock(Settings settings) {
+    public HibachiBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(LIT, false));
+        registerDefaultState(defaultBlockState().setValue(LIT, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(LIT);
     }
 
     @Override
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(LIT, ctx.getWorld().isReceivingRedstonePower(ctx.getBlockPos()));
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(LIT, ctx.getLevel().hasNeighborSignal(ctx.getClickedPos()));
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        world.scheduleBlockTick(pos, this, 4);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        level.scheduleTick(pos, this, 4);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.tick(state, level, pos, random);
 
-        boolean lit = world.isReceivingRedstonePower(pos);
-        if (state.get(LIT) != lit) {
-            world.setBlockState(pos, state.cycle(LIT), Block.NOTIFY_ALL);
+        boolean lit = level.hasNeighborSignal(pos);
+        if (state.getValue(LIT) != lit) {
+            level.setBlock(pos, state.cycle(LIT), Block.UPDATE_ALL);
         }
         if (lit) {
-            BlockState aboveState = world.getBlockState(pos.up());
-            if (!aboveState.isIn(BlockTags.FIRE)) {
-                if (aboveState.isIn(BlockTags.AIR) || BwtBlocks.stokedFireBlock.isFlammable(aboveState)) {
-                    world.playSound(null, pos, BwtSoundEvents.HIBACHI_IGNITE,
-                            SoundCategory.BLOCKS, 1F, world.random.nextFloat() * 0.4F + 1F);
-                    world.setBlockState(pos.up(), Blocks.FIRE.getDefaultState());
+            BlockState aboveState = level.getBlockState(pos.above());
+            if (!aboveState.is(BlockTags.FIRE)) {
+                if (aboveState.is(BlockTags.AIR) || BwtBlocks.stokedFireBlock.canBurn(aboveState)) {
+                    level.playSound(null, pos, BwtSoundEvents.HIBACHI_IGNITE,
+                            SoundSource.BLOCKS, 1F, level.random.nextFloat() * 0.4F + 1F);
+                    level.setBlockAndUpdate(pos.above(), Blocks.FIRE.defaultBlockState());
                 } else {
-                    world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 1.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+                    level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 1.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
                 }
             }
         }
         else {
-            if (world.getBlockState(pos.up()).isIn(BlockTags.FIRE)) {
-                world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH,
-                        SoundCategory.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
-                world.removeBlock(pos.up(), false);
+            if (level.getBlockState(pos.above()).is(BlockTags.FIRE)) {
+                level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH,
+                        SoundSource.BLOCKS, 0.5F, 2.6F + (level.random.nextFloat() - level.random.nextFloat()) * 0.8F);
+                level.removeBlock(pos.above(), false);
             }
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        world.scheduleBlockTick(pos, this, 4);
+        level.scheduleTick(pos, this, 4);
     }
 }

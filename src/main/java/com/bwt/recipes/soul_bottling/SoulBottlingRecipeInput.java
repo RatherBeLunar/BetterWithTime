@@ -1,20 +1,17 @@
 package com.bwt.recipes.soul_bottling;
 
-import com.bwt.recipes.IngredientWithCount;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.input.RecipeInput;
-
-import java.util.List;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.level.block.Block;
 
 public record SoulBottlingRecipeInput(Block block) implements RecipeInput {
     @Override
-    public ItemStack getStackInSlot(int slot) {
-        return block.asItem().getDefaultStack();
+    public ItemStack getItem(int slot) {
+        return block.asItem().getDefaultInstance();
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return 1;
     }
 }

@@ -5,16 +5,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RawShapedRecipe;
-import net.minecraft.util.dynamic.Codecs;
-
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 
 public class RawSoulForgeShapedRecipe {
-    public static final MapCodec<RawShapedRecipe> CODEC = Data.CODEC
+    public static final MapCodec<ShapedRecipePattern> CODEC = Data.CODEC
             .flatXmap(
                     RawShapedRecipeAccessorMixin::fromData,
                     recipe -> ((RawShapedRecipeAccessorMixin) (Object) recipe).getData().map(DataResult::success).orElseGet(() -> DataResult.error(() -> "Cannot encode unpacked recipe"))
@@ -49,12 +48,12 @@ public class RawSoulForgeShapedRecipe {
                 return " ".equals(keyEntry) ? DataResult.error(() -> "Invalid key entry: ' ' is a reserved symbol.") : DataResult.success(keyEntry.charAt(0));
             }
         }, String::valueOf);
-        public static final MapCodec<RawShapedRecipe.Data> CODEC = RecordCodecBuilder.mapCodec(
+        public static final MapCodec<ShapedRecipePattern.Data> CODEC = RecordCodecBuilder.mapCodec(
                 instance -> instance.group(
-                                Codecs.strictUnboundedMap(KEY_ENTRY_CODEC, Ingredient.DISALLOW_EMPTY_CODEC).fieldOf("key").forGetter(RawShapedRecipe.Data::key),
-                                PATTERN_CODEC.fieldOf("pattern").forGetter(RawShapedRecipe.Data::pattern)
+                                ExtraCodecs.strictUnboundedMap(KEY_ENTRY_CODEC, Ingredient.CODEC_NONEMPTY).fieldOf("key").forGetter(ShapedRecipePattern.Data::key),
+                                PATTERN_CODEC.fieldOf("pattern").forGetter(ShapedRecipePattern.Data::pattern)
                         )
-                        .apply(instance, RawShapedRecipe.Data::new)
+                        .apply(instance, ShapedRecipePattern.Data::new)
         );
     }
 }

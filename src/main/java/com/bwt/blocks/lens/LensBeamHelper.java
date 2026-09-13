@@ -5,182 +5,181 @@ import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.utils.BlockPosAndState;
 import com.google.common.collect.Lists;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.TypeFilter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.block.NeighborUpdater;
-
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Stream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.level.redstone.NeighborUpdater;
+import net.minecraft.world.phys.AABB;
 
 public class LensBeamHelper {
-    protected static boolean anyEntitiesIntersecting(World world, BlockPos pos) {
+    protected static boolean anyEntitiesIntersecting(Level level, BlockPos pos) {
         ArrayList<Entity> list = Lists.newArrayList();
-        world.collectEntitiesByType(
-                TypeFilter.instanceOf(Entity.class),
-                new Box(pos),
-                EntityPredicates.EXCEPT_SPECTATOR,
+        level.getEntities(
+                EntityTypeTest.forClass(Entity.class),
+                new AABB(pos),
+                EntitySelector.NO_SPECTATORS,
                 list,
                 1
         );
         return !list.isEmpty();
     }
 
-    protected static int getRemainingRange(World world, BlockPos pos, Direction direction) {
-        BlockPos.Mutable mutable = pos.mutableCopy();
+    protected static int getRemainingRange(Level level, BlockPos pos, Direction direction) {
+        BlockPos.MutableBlockPos mutable = pos.mutable();
         int distanceFromLens = 0;
-        int maxRange = world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
+        int maxRange = level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
         while (distanceFromLens < maxRange) {
             mutable.move(direction.getOpposite());
             distanceFromLens++;
-            BlockState possibleLensBlockState = world.getBlockState(mutable);
-            if (possibleLensBlockState.isOf(BwtBlocks.lensBeamBlock)) {
-                if (possibleLensBlockState.get(LensBeamBlock.FACING_PROPERTIES.get(direction))) {
+            BlockState possibleLensBlockState = level.getBlockState(mutable);
+            if (possibleLensBlockState.is(BwtBlocks.lensBeamBlock)) {
+                if (possibleLensBlockState.getValue(LensBeamBlock.FACING_PROPERTIES.get(direction))) {
                     continue;
                 }
                 break;
             }
-            if (possibleLensBlockState.isOf(BwtBlocks.lensBlock)) {
+            if (possibleLensBlockState.is(BwtBlocks.lensBlock)) {
                 break;
             }
         }
         return maxRange - distanceFromLens;
     }
 
-    public static void fireBeam(World world, BlockPos lensPos, BlockState lensState) {
-        propagateBeam(world, lensPos, lensState, lensState.get(LensBlock.FACING), world.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE));
+    public static void fireBeam(Level level, BlockPos lensPos, BlockState lensState) {
+        propagateBeam(level, lensPos, lensState, lensState.getValue(LensBlock.FACING), level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE));
     }
 
-    public static void killBeam(World world, BlockPos originPos, Direction facing) {
+    public static void killBeam(Level level, BlockPos originPos, Direction facing) {
         BlockPos targetPos = originPos;
         BlockState targetState;
         while (true) {
-            targetPos = targetPos.offset(facing);
-            targetState = world.getBlockState(targetPos);
-            if (!(targetState.getBlock() instanceof LensBeamBlock) || !targetState.get(LensBeamBlock.FACING_PROPERTIES.get(facing))) {
+            targetPos = targetPos.relative(facing);
+            targetState = level.getBlockState(targetPos);
+            if (!(targetState.getBlock() instanceof LensBeamBlock) || !targetState.getValue(LensBeamBlock.FACING_PROPERTIES.get(facing))) {
                 break;
             }
-            removeBeam(world, targetPos, targetState, facing);
+            removeBeam(level, targetPos, targetState, facing);
         }
     }
 
-    public static void propagateBeam(World world, BlockPos originBeamPos, BlockState originBeamState, Direction facing, int range) {
+    public static void propagateBeam(Level level, BlockPos originBeamPos, BlockState originBeamState, Direction facing, int range) {
         if (range <= 0) {
             return;
         }
-        if (!(originBeamState.getBlock() instanceof LensBeamBlock) && !originBeamState.isOf(BwtBlocks.lensBlock)) {
+        if (!(originBeamState.getBlock() instanceof LensBeamBlock) && !originBeamState.is(BwtBlocks.lensBlock)) {
             return;
         }
 
-        BlockPos targetPos = originBeamPos.offset(facing);
-        BlockState targetState = world.getBlockState(targetPos);
+        BlockPos targetPos = originBeamPos.relative(facing);
+        BlockState targetState = level.getBlockState(targetPos);
         Block targetBlock = targetState.getBlock();
         LensBeamBlock lensBeamBlock = targetBlock instanceof LensBeamBlock beamBlock ? beamBlock : null;
-        boolean targetBlockIsBeamPermeable = targetState.isIn(BlockTags.AIR)
-                || targetState.isOf(BwtBlocks.lensBeamGlassBlock)
-                || targetState.isOf(BwtBlocks.lensBeamGlassBlock.glassBlock);
-        boolean targetBlockIsForwardFacingBeam = lensBeamBlock != null && targetState.get(LensBeamBlock.FACING_PROPERTIES.get(facing));
+        boolean targetBlockIsBeamPermeable = targetState.is(BlockTags.AIR)
+                || targetState.is(BwtBlocks.lensBeamGlassBlock)
+                || targetState.is(BwtBlocks.lensBeamGlassBlock.glassBlock);
+        boolean targetBlockIsForwardFacingBeam = lensBeamBlock != null && targetState.getValue(LensBeamBlock.FACING_PROPERTIES.get(facing));
         // if the first block is solid, or if it's a beam already being fired in the correct direction,
         // do nothing.
         if (!targetBlockIsBeamPermeable || targetBlockIsForwardFacingBeam) {
             if (!targetBlockIsBeamPermeable && originBeamState.getBlock() instanceof LensBeamBlock) {
-                setTerminus(world, originBeamPos, originBeamState, true);
+                setTerminus(level, originBeamPos, originBeamState, true);
             }
             return;
         }
-        boolean entitiesIntersecting = anyEntitiesIntersecting(world, targetPos);
-        targetState = addBeam(world, targetPos, targetState, facing, entitiesIntersecting);
+        boolean entitiesIntersecting = anyEntitiesIntersecting(level, targetPos);
+        targetState = addBeam(level, targetPos, targetState, facing, entitiesIntersecting);
 
         if (entitiesIntersecting) {
             return;
         }
 
-        propagateBeam(world, targetPos, targetState, facing, range - 1);
+        propagateBeam(level, targetPos, targetState, facing, range - 1);
 
     }
 
-    public static BlockState addBeam(World world, BlockPos targetPos, BlockState targetState, Direction facingToAdd, boolean entitiesIntersecting) {
+    public static BlockState addBeam(Level level, BlockPos targetPos, BlockState targetState, Direction facingToAdd, boolean entitiesIntersecting) {
         BlockState newState = targetState;
         if (!(newState.getBlock() instanceof LensBeamBlock)) {
-            if (newState.isIn(BlockTags.AIR)) {
-                newState = BwtBlocks.lensBeamBlock.getDefaultState();
+            if (newState.is(BlockTags.AIR)) {
+                newState = BwtBlocks.lensBeamBlock.defaultBlockState();
             }
-            else if (newState.isOf(BwtBlocks.lensBeamGlassBlock.glassBlock)) {
-                newState = BwtBlocks.lensBeamGlassBlock.getDefaultState();
+            else if (newState.is(BwtBlocks.lensBeamGlassBlock.glassBlock)) {
+                newState = BwtBlocks.lensBeamGlassBlock.defaultBlockState();
             }
         }
-        newState = newState.with(LensBeamBlock.FACING_PROPERTIES.get(facingToAdd), true)
-                .with(LensBeamBlock.TERMINUS, entitiesIntersecting || newState.get(LensBeamBlock.TERMINUS));
-        world.setBlockState(targetPos, newState, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
+        newState = newState.setValue(LensBeamBlock.FACING_PROPERTIES.get(facingToAdd), true)
+                .setValue(LensBeamBlock.TERMINUS, entitiesIntersecting || newState.getValue(LensBeamBlock.TERMINUS));
+        level.setBlock(targetPos, newState, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         return newState;
     }
 
-    public static void removeBeam(World world, BlockPos targetPos, BlockState targetState, Direction facingToRemove) {
-        BlockState newState = targetState.with(LensBeamBlock.FACING_PROPERTIES.get(facingToRemove), false);
+    public static void removeBeam(Level level, BlockPos targetPos, BlockState targetState, Direction facingToRemove) {
+        BlockState newState = targetState.setValue(LensBeamBlock.FACING_PROPERTIES.get(facingToRemove), false);
         boolean replacedWithAir = false;
         boolean terminusModified;
         if (streamFacingDirections(newState).findAny().isEmpty()) {
             newState = newState.getBlock() instanceof LensBeamBlock beamBlock
-                    ? beamBlock.getStateLeftOverWhenEmpty(world, targetPos)
-                    : Blocks.AIR.getDefaultState();
-            terminusModified = targetState.get(LensBeamBlock.TERMINUS);
-            replacedWithAir = newState.isIn(BlockTags.AIR);
+                    ? beamBlock.getStateLeftOverWhenEmpty(level, targetPos)
+                    : Blocks.AIR.defaultBlockState();
+            terminusModified = targetState.getValue(LensBeamBlock.TERMINUS);
+            replacedWithAir = newState.is(BlockTags.AIR);
         }
         else {
-            newState = newState.with(LensBeamBlock.TERMINUS, anyNeighborNotPropagable(world, targetPos, newState));
-            terminusModified = targetState.get(LensBeamBlock.TERMINUS) != newState.get(LensBeamBlock.TERMINUS);
+            newState = newState.setValue(LensBeamBlock.TERMINUS, anyNeighborNotPropagable(level, targetPos, newState));
+            terminusModified = targetState.getValue(LensBeamBlock.TERMINUS) != newState.getValue(LensBeamBlock.TERMINUS);
         }
-        world.setBlockState(targetPos, newState, Block.NOTIFY_LISTENERS | (terminusModified ? 0 : Block.FORCE_STATE));
+        level.setBlock(targetPos, newState, Block.UPDATE_CLIENTS | (terminusModified ? 0 : Block.UPDATE_KNOWN_SHAPE));
         if (replacedWithAir || terminusModified) {
             for (Direction direction : NeighborUpdater.UPDATE_ORDER) {
-                BlockPosAndState neighborPosAndState = BlockPosAndState.of(world, targetPos.offset(direction));
-                boolean facingIntoNeighbor = targetState.get(LensBeamBlock.FACING_PROPERTIES.get(direction)) && !neighborPosAndState.state().isIn(BlockTags.AIR);
-                boolean detectorFacingIntoBeam = neighborPosAndState.state().isOf(BwtBlocks.detectorBlock) && neighborPosAndState.state().get(DetectorBlock.FACING).equals(direction.getOpposite());
+                BlockPosAndState neighborPosAndState = BlockPosAndState.of(level, targetPos.relative(direction));
+                boolean facingIntoNeighbor = targetState.getValue(LensBeamBlock.FACING_PROPERTIES.get(direction)) && !neighborPosAndState.state().is(BlockTags.AIR);
+                boolean detectorFacingIntoBeam = neighborPosAndState.state().is(BwtBlocks.detectorBlock) && neighborPosAndState.state().getValue(DetectorBlock.FACING).equals(direction.getOpposite());
                 if (detectorFacingIntoBeam || (facingIntoNeighbor && terminusModified)) {
-                    world.updateNeighbor(neighborPosAndState.state(), neighborPosAndState.pos(), newState.getBlock(), targetPos, false);
+                    level.neighborChanged(neighborPosAndState.state(), neighborPosAndState.pos(), newState.getBlock(), targetPos, false);
                 }
                 if (facingIntoNeighbor && terminusModified) {
-                    world.replaceWithStateForNeighborUpdate(direction.getOpposite(), newState, neighborPosAndState.pos(), targetPos, Block.NOTIFY_LISTENERS, 512);
+                    level.neighborShapeChanged(direction.getOpposite(), newState, neighborPosAndState.pos(), targetPos, Block.UPDATE_CLIENTS, 512);
                 }
             }
         }
     }
 
-    public static boolean anyNeighborNotPropagable(WorldAccess world, BlockPos pos, BlockState state) {
+    public static boolean anyNeighborNotPropagable(LevelAccessor level, BlockPos pos, BlockState state) {
         return streamFacingDirections(state).map(Map.Entry::getKey)
-                .map(pos::offset)
-                .map(world::getBlockState)
-                .anyMatch(blockState -> !blockState.isIn(BlockTags.AIR)
-                        && !blockState.isOf(BwtBlocks.lensBeamGlassBlock)
-                        && !blockState.isOf(BwtBlocks.lensBeamGlassBlock.glassBlock));
+                .map(pos::relative)
+                .map(level::getBlockState)
+                .anyMatch(blockState -> !blockState.is(BlockTags.AIR)
+                        && !blockState.is(BwtBlocks.lensBeamGlassBlock)
+                        && !blockState.is(BwtBlocks.lensBeamGlassBlock.glassBlock));
     }
 
-    public static BlockState setTerminus(World world, BlockPos pos, BlockState state, boolean terminus) {
-        if (state.get(LensBeamBlock.TERMINUS) != terminus) {
-            state = state.with(LensBeamBlock.TERMINUS, terminus);
-            world.setBlockState(pos, state, Block.NOTIFY_ALL);
+    public static BlockState setTerminus(Level level, BlockPos pos, BlockState state, boolean terminus) {
+        if (state.getValue(LensBeamBlock.TERMINUS) != terminus) {
+            state = state.setValue(LensBeamBlock.TERMINUS, terminus);
+            level.setBlock(pos, state, Block.UPDATE_ALL);
         }
         return state;
     }
 
     public static boolean isValidInputBeamOrLens(BlockState neighborState, Direction directionToThisBlock) {
-        return (neighborState.isOf(BwtBlocks.lensBlock) && neighborState.get(LensBlock.FACING).equals(directionToThisBlock) && neighborState.get(LensBlock.LIT))
-                || (neighborState.getBlock() instanceof LensBeamBlock && neighborState.get(LensBeamBlock.FACING_PROPERTIES.get(directionToThisBlock)));
+        return (neighborState.is(BwtBlocks.lensBlock) && neighborState.getValue(LensBlock.FACING).equals(directionToThisBlock) && neighborState.getValue(LensBlock.LIT))
+                || (neighborState.getBlock() instanceof LensBeamBlock && neighborState.getValue(LensBeamBlock.FACING_PROPERTIES.get(directionToThisBlock)));
     }
 
     public static Stream<Map.Entry<Direction, BooleanProperty>> streamFacingDirections(BlockState state) {
         return LensBeamBlock.FACING_PROPERTIES.entrySet().stream()
-                .filter(entry -> state.get(entry.getValue()));
+                .filter(entry -> state.getValue(entry.getValue()));
     }
 }

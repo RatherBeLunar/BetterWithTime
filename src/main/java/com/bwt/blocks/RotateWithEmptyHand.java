@@ -1,16 +1,16 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
 public interface RotateWithEmptyHand {
     default BlockState getNextOrientation(BlockState blockState) {
-        return blockState.with(Properties.FACING, switch (blockState.get(Properties.FACING)) {
+        return blockState.setValue(BlockStateProperties.FACING, switch (blockState.getValue(BlockStateProperties.FACING)) {
             case NORTH -> Direction.EAST;
             case EAST -> Direction.SOUTH;
             case SOUTH -> Direction.WEST;
@@ -20,12 +20,12 @@ public interface RotateWithEmptyHand {
         });
     }
 
-    default BlockState onUseRotate(BlockState state, World world, BlockPos pos, PlayerEntity player) {
-        if (!player.getMainHandStack().isEmpty()) {
+    default BlockState onUseRotate(BlockState state, Level level, BlockPos pos, Player player) {
+        if (!player.getMainHandItem().isEmpty()) {
             return state;
         }
-        world.playSound(null, pos, state.getSoundGroup().getPlaceSound(),
-                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
+        level.playSound(null, pos, state.getSoundType().getPlaceSound(),
+                SoundSource.BLOCKS, 0.25f, level.random.nextFloat() * 0.25F + 0.25F);
         return getNextOrientation(state);
     }
 }

@@ -1,12 +1,12 @@
 package com.bwt.mixin.accessors;
 
-import net.minecraft.entity.vehicle.AbstractMinecartEntity;
-import net.minecraft.item.MinecartItem;
+import net.minecraft.world.entity.vehicle.AbstractMinecart;
+import net.minecraft.world.item.MinecartItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(MinecartItem.class)
 public interface MinecartItemAccessorMixin {
     @Accessor
-    AbstractMinecartEntity.Type getType();
+    AbstractMinecart.Type getType();
 }

@@ -7,28 +7,30 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.data.server.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.*;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.level.ItemLike;
 import java.util.Objects;
 
 public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeRecipe {
-    protected RawShapedRecipe raw;
+    protected final ShapedRecipePattern raw;
 
-    public SoulForgeShapedRecipe(String group, CraftingRecipeCategory category, RawShapedRecipe raw, ItemStack result, boolean showNotification) {
+    public SoulForgeShapedRecipe(String group, CraftingBookCategory category, ShapedRecipePattern raw, ItemStack result, boolean showNotification) {
         super(group, category, raw, result, showNotification);
         this.raw = raw;
     }
@@ -45,37 +47,37 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
 
     @Override
     public int getWidth() {
-        return this.raw.getWidth();
+        return this.raw.width();
     }
 
     @Override
     public int getHeight() {
-        return this.raw.getHeight();
+        return this.raw.height();
     }
 
     @Override
-    public boolean fits(int width, int height) {
-        return width >= this.raw.getWidth() && height >= this.raw.getHeight();
+    public boolean canCraftInDimensions(int width, int height) {
+        return width >= this.raw.width() && height >= this.raw.height();
     }
 
-    public RawShapedRecipe getRaw() {
+    public ShapedRecipePattern getRaw() {
         return raw;
     }
 
     public ItemStack getResult() {
-        return getResult(null);
+        return getResultItem(null);
     }
 
     public static class Serializer implements RecipeSerializer<SoulForgeShapedRecipe> {
         public static final MapCodec<SoulForgeShapedRecipe> CODEC = RecordCodecBuilder.mapCodec(
                 instance -> instance.group(
                         Codec.STRING.optionalFieldOf("group", "").forGetter(ShapedRecipe::getGroup),
-                        CraftingRecipeCategory.CODEC.fieldOf("category").orElse(CraftingRecipeCategory.MISC).forGetter(ShapedRecipe::getCategory),
+                        CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ShapedRecipe::category),
                         RawSoulForgeShapedRecipe.CODEC.forGetter(SoulForgeShapedRecipe::getRaw),
-                        ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter(SoulForgeShapedRecipe::getResult),
+                        ItemStack.STRICT_CODEC.fieldOf("result").forGetter(SoulForgeShapedRecipe::getResult),
                         Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(ShapedRecipe::showNotification)
                 ).apply(instance, SoulForgeShapedRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, SoulForgeShapedRecipe> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, SoulForgeShapedRecipe> PACKET_CODEC = StreamCodec.of(
                 SoulForgeShapedRecipe.Serializer::write,
                 SoulForgeShapedRecipe.Serializer::read
         );
@@ -86,38 +88,38 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
         }
 
         @Override
-        public PacketCodec<RegistryByteBuf, SoulForgeShapedRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, SoulForgeShapedRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        private static SoulForgeShapedRecipe read(RegistryByteBuf buf) {
-            String string = buf.readString();
-            CraftingRecipeCategory craftingRecipeCategory = buf.readEnumConstant(CraftingRecipeCategory.class);
-            RawShapedRecipe rawShapedRecipe = RawShapedRecipe.PACKET_CODEC.decode(buf);
-            ItemStack itemStack = ItemStack.PACKET_CODEC.decode(buf);
+        private static SoulForgeShapedRecipe read(RegistryFriendlyByteBuf buf) {
+            String string = buf.readUtf();
+            CraftingBookCategory craftingRecipeCategory = buf.readEnum(CraftingBookCategory.class);
+            ShapedRecipePattern rawShapedRecipe = ShapedRecipePattern.STREAM_CODEC.decode(buf);
+            ItemStack itemStack = ItemStack.STREAM_CODEC.decode(buf);
             boolean bl = buf.readBoolean();
             return new SoulForgeShapedRecipe(string, craftingRecipeCategory, rawShapedRecipe, itemStack, bl);
         }
 
-        private static void write(RegistryByteBuf buf, SoulForgeShapedRecipe recipe) {
-            buf.writeString(recipe.getGroup());
-            buf.writeEnumConstant(recipe.getCategory());
-            RawShapedRecipe.PACKET_CODEC.encode(buf, recipe.raw);
-            ItemStack.PACKET_CODEC.encode(buf, recipe.getResult());
+        private static void write(RegistryFriendlyByteBuf buf, SoulForgeShapedRecipe recipe) {
+            buf.writeUtf(recipe.getGroup());
+            buf.writeEnum(recipe.category());
+            ShapedRecipePattern.STREAM_CODEC.encode(buf, recipe.raw);
+            ItemStack.STREAM_CODEC.encode(buf, recipe.getResult());
             buf.writeBoolean(recipe.showNotification());
         }
     }
 
-    public static class JsonBuilder extends ShapedRecipeJsonBuilder {
-        public JsonBuilder(RecipeCategory category, ItemConvertible output, int count) {
+    public static class JsonBuilder extends ShapedRecipeBuilder {
+        public JsonBuilder(RecipeCategory category, ItemLike output, int count) {
             super(category, output, count);
         }
 
-        public static JsonBuilder create(RecipeCategory category, ItemConvertible output) {
-            return JsonBuilder.create(category, output, 1);
+        public static JsonBuilder shaped(RecipeCategory category, ItemLike output) {
+            return JsonBuilder.shaped(category, output, 1);
         }
 
-        public static JsonBuilder create(RecipeCategory category, ItemConvertible output, int count) {
+        public static JsonBuilder shaped(RecipeCategory category, ItemLike output, int count) {
             return new JsonBuilder(category, output, count);
         }
 
@@ -126,36 +128,36 @@ public class SoulForgeShapedRecipe extends ShapedRecipe implements SoulForgeReci
             this.isDefaultRecipe = true;
             return this;
         }
-        public void addToDefaults(Identifier recipeId) {
+        public void addToDefaults(ResourceLocation recipeId) {
             if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefixedPath("/soulforge-bwt-"));
+                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/soulforge-bwt-"));
             }
         }
 
-        private RawShapedRecipe validate(Identifier recipeId) {
+        private ShapedRecipePattern ensureValid(ResourceLocation recipeId) {
             ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
             if (accessor.getCriteria().isEmpty()) {
                 throw new IllegalStateException("No way of obtaining recipe " + recipeId);
             }
-            return RawShapedRecipe.create(accessor.getInputs(), accessor.getPattern());
+            return ShapedRecipePattern.of(accessor.getKey(), accessor.getRows());
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, String recipePath) {
-            this.offerTo(exporter, Id.of(recipePath));
+        public void save(RecipeOutput exporter, String recipePath) {
+            this.save(exporter, Id.of(recipePath));
         }
 
         @Override
-        public void offerTo(RecipeExporter exporter, Identifier recipeId) {
+        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
             this.addToDefaults(recipeId);
 
             recipeId = Id.of(recipeId.getPath());
             ShapedRecipeJsonBuilderAccessorMixin accessor = ((ShapedRecipeJsonBuilderAccessorMixin) this);
-            RawShapedRecipe rawShapedRecipe = validate(recipeId);
-            Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
-            accessor.getCriteria().forEach(builder::criterion);
-            SoulForgeShapedRecipe shapedRecipe = new SoulForgeShapedRecipe(Objects.requireNonNullElse(accessor.getGroup(), ""), CraftingRecipeJsonBuilder.toCraftingCategory(accessor.getCategory()), rawShapedRecipe, new ItemStack(accessor.getOutput(), accessor.getCount()), accessor.getShowNotification());
-            exporter.accept(recipeId, shapedRecipe, builder.build(recipeId.withPrefixedPath("recipes/" + accessor.getCategory().getName() + "/")));
+            ShapedRecipePattern rawShapedRecipe = ensureValid(recipeId);
+            Advancement.Builder builder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+            accessor.getCriteria().forEach(builder::addCriterion);
+            SoulForgeShapedRecipe shapedRecipe = new SoulForgeShapedRecipe(Objects.requireNonNullElse(accessor.getGroup(), ""), RecipeBuilder.determineBookCategory(accessor.getCategory()), rawShapedRecipe, new ItemStack(accessor.getResult(), accessor.getCount()), accessor.getShowNotification());
+            exporter.accept(recipeId, shapedRecipe, builder.build(recipeId.withPrefix("recipes/" + accessor.getCategory().getFolderName() + "/")));
         }
     }
 }

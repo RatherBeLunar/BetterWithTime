@@ -1,17 +1,14 @@
 package com.bwt.utils;
 
-import com.bwt.tags.BwtBlockTags;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class FireDataCluster {
     public static final int primaryFireFactor = 5;
     public static final int secondaryFireFactor = 1; // This was changed to 3 later
 
-    FireData fireData;
+    final FireData fireData;
     boolean centerBlockIsStoked;
 
     public FireDataCluster() {
@@ -19,12 +16,12 @@ public class FireDataCluster {
         this.centerBlockIsStoked = false;
     }
 
-    public static FireDataCluster fromWorld(World world, BlockPos pos, int radius) {
+    public static FireDataCluster fromWorld(Level level, BlockPos pos, int radius) {
         FireDataCluster fireDataCluster = new FireDataCluster();
-        BlockPos below = pos.down();
-        BlockState centerState = world.getBlockState(below);
+        BlockPos below = pos.below();
+        BlockState centerState = level.getBlockState(below);
         FireData centerData = FireData.FIRE_AMOUNT_FUNCTIONS.getOrDefault(centerState.getBlock().getClass(), FireData.FireAmountFunction.DEFAULT)
-                .getFireData(world, below, centerState);
+                .getFireData(level, below, centerState);
         // The center block determines whether a fire is active or not
         if (!centerData.anyFirePresent()) {
             return fireDataCluster;
@@ -37,17 +34,17 @@ public class FireDataCluster {
 
         RadiusAroundBlockStream
                 .neighboringBlocksInHorizontalRadius(below, radius)
-                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
+                .map(neighborPos -> BlockPosAndState.of(level, neighborPos))
                 .map(neighbor -> FireData.FIRE_AMOUNT_FUNCTIONS
                         .getOrDefault(neighbor.state().getBlock().getClass(), FireData.FireAmountFunction.DEFAULT)
-                        .getFireData(world, neighbor.pos(), neighbor.state())
+                        .getFireData(level, neighbor.pos(), neighbor.state())
                 )
                 .forEach(fireDataCluster.fireData::add);
         return fireDataCluster;
     }
 
-    public static FireDataCluster fromWorld(World world, BlockPos pos) {
-        return fromWorld(world, pos, 1);
+    public static FireDataCluster fromWorld(Level level, BlockPos pos) {
+        return fromWorld(level, pos, 1);
     }
 
     public boolean isStoked() {

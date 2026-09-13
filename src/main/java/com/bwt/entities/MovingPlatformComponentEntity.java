@@ -2,17 +2,16 @@ package com.bwt.entities;
 
 import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MovingPlatformComponentEntity extends RectangularEntity {
     public final MovingRopeEntity owner;
@@ -22,47 +21,47 @@ public class MovingPlatformComponentEntity extends RectangularEntity {
     public final EntityRectDimensions stateDimensions;
 
     public MovingPlatformComponentEntity(MovingRopeEntity owner, Vec3i offset, BlockState cachedState, BlockEntity blockEntity) {
-        super(owner.getType(), owner.getWorld());
+        super(owner.getType(), owner.level());
         this.owner = owner;
         this.offset = offset;
         this.cachedState = cachedState;
         this.blockEntity = blockEntity;
-        setPosition(owner.getPos().add(Vec3d.of(offset)));
-        VoxelShape shape = cachedState.getCollisionShape(owner.getWorld(), owner.getBlockPos().add(offset));
-        Box outlineShape = shape.getBoundingBox();
+        setPos(owner.position().add(Vec3.atLowerCornerOf(offset)));
+        VoxelShape shape = cachedState.getCollisionShape(owner.level(), owner.blockPosition().offset(offset));
+        AABB outlineShape = shape.bounds();
         this.stateDimensions = EntityRectDimensions.fixed((float) (outlineShape.maxX - outlineShape.minX), (float) (outlineShape.maxY - outlineShape.minY), (float) (outlineShape.maxZ - outlineShape.minZ));
-        this.calculateDimensions();
+        this.refreshDimensions();
     }
 
 
     @Override
-    protected Box calculateBoundingBox() {
+    protected AABB makeBoundingBox() {
         if (stateDimensions == null) {
-            return VoxelShapes.fullCube().getBoundingBox().offset(getPos());
+            return Shapes.block().bounds().move(position());
         }
-        return super.calculateBoundingBox();
+        return super.makeBoundingBox();
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
 
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound nbt) {
+    protected void readAdditionalSaveData(CompoundTag nbt) {
     }
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound nbt) {
+    protected void addAdditionalSaveData(CompoundTag nbt) {
     }
 
     @Override
-    public boolean canHit() {
+    public boolean isPickable() {
         return true;
     }
 
     @Override
-    public boolean isPartOf(Entity entity) {
+    public boolean is(Entity entity) {
         return this == entity || this.owner == entity;
     }
 
@@ -71,7 +70,7 @@ public class MovingPlatformComponentEntity extends RectangularEntity {
     }
 
     @Override
-    public boolean shouldSave() {
+    public boolean shouldBeSaved() {
         return false;
     }
 }

@@ -3,18 +3,17 @@ package com.bwt.generation;
 import com.bwt.tags.BwtEntityTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.RegistryWrapper;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.entity.EntityType;
 import java.util.concurrent.CompletableFuture;
 
 public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvider {
-    public EntityTypeTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+    public EntityTypeTagGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
         super(output, completableFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup arg) {
+    protected void addTags(HolderLookup.Provider arg) {
         getOrCreateTagBuilder(BwtEntityTags.BLOCK_DISPENSER_INHALE_ENTITIES)
                 .add(EntityType.WOLF)
                 .add(EntityType.CHICKEN)

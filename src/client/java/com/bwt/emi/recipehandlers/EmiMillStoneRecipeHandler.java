@@ -6,9 +6,8 @@ import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.handler.EmiCraftContext;
 import dev.emi.emi.api.recipe.handler.StandardRecipeHandler;
 import dev.emi.emi.api.stack.EmiIngredient;
-import net.minecraft.screen.slot.Slot;
-
 import java.util.List;
+import net.minecraft.world.inventory.Slot;
 
 public class EmiMillStoneRecipeHandler implements StandardRecipeHandler<MillStoneScreenHandler> {
     private final EmiRecipeCategory category;
@@ -19,12 +18,12 @@ public class EmiMillStoneRecipeHandler implements StandardRecipeHandler<MillSton
 
     @Override
     public List<Slot> getInputSources(MillStoneScreenHandler handler) {
-        return handler.slots.stream().filter(slot -> slot.id >= MillStoneScreenHandler.SIZE).toList();
+        return handler.slots.stream().filter(slot -> slot.getContainerSlot() >= MillStoneScreenHandler.SIZE).toList();
     }
 
     @Override
     public List<Slot> getCraftingSlots(MillStoneScreenHandler handler) {
-        return handler.slots.stream().filter(slot -> slot.id < MillStoneScreenHandler.SIZE).filter(slot -> slot.getStack().isEmpty()).toList();
+        return handler.slots.stream().filter(slot -> slot.getContainerSlot() < MillStoneScreenHandler.SIZE).filter(slot -> slot.getItem().isEmpty()).toList();
     }
 
     @Override

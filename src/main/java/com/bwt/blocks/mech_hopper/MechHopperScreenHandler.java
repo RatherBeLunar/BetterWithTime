@@ -2,35 +2,35 @@ package com.bwt.blocks.mech_hopper;
 
 import com.bwt.BetterWithTime;
 import com.bwt.utils.SimpleSingleStackInventory;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ArrayPropertyDelegate;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.inventory.SimpleContainerData;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 
-public class MechHopperScreenHandler extends ScreenHandler {
+public class MechHopperScreenHandler extends AbstractContainerMenu {
     private final SimpleSingleStackInventory filterInventory;
-    private final Inventory inventory;
+    private final Container inventory;
     private static final int SIZE = 19;
-    private final PropertyDelegate propertyDelegate;
+    private final ContainerData propertyDelegate;
 
-    public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleInventory(SIZE - 1), new ArrayPropertyDelegate(1));
+    public MechHopperScreenHandler(int syncId, Inventory playerInventory) {
+        this(syncId, playerInventory, new SimpleSingleStackInventory(1), new SimpleContainer(SIZE - 1), new SimpleContainerData(1));
     }
 
-    public MechHopperScreenHandler(int syncId, PlayerInventory playerInventory, SimpleSingleStackInventory filterInventory, Inventory inventory, PropertyDelegate propertyDelegate) {
+    public MechHopperScreenHandler(int syncId, Inventory playerInventory, SimpleSingleStackInventory filterInventory, Container inventory, ContainerData propertyDelegate) {
         super(BetterWithTime.mechHopperScreenHandler, syncId);
-        checkSize(filterInventory, 1);
-        checkSize(inventory, SIZE - 1);
+        checkContainerSize(filterInventory, 1);
+        checkContainerSize(inventory, SIZE - 1);
         this.filterInventory = filterInventory;
         this.inventory = inventory;
         this.propertyDelegate = propertyDelegate;
-        inventory.onOpen(playerInventory.player);
-        this.addProperties(propertyDelegate);
+        inventory.startOpen(playerInventory.player);
+        this.addDataSlots(propertyDelegate);
 
         // Filter Slot
         this.addSlot(new FilterSlot(filterInventory, 0, 8 + 4 * 18, 37));
@@ -56,43 +56,43 @@ public class MechHopperScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return this.inventory.canPlayerUse(player) && filterInventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return this.inventory.stillValid(player) && filterInventory.stillValid(player);
     }
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int slot) {
+    public ItemStack quickMoveStack(Player player, int slot) {
         ItemStack itemStack = ItemStack.EMPTY;
         Slot slot2 = this.slots.get(slot);
-        if (slot2.hasStack()) {
-            ItemStack itemStack2 = slot2.getStack();
+        if (slot2.hasItem()) {
+            ItemStack itemStack2 = slot2.getItem();
             itemStack = itemStack2.copy();
             if (slot < SIZE) {
-                if (!this.insertItem(itemStack2, SIZE, 36 + SIZE, true)) {
+                if (!this.moveItemStackTo(itemStack2, SIZE, 36 + SIZE, true)) {
                     return ItemStack.EMPTY;
                 }
             }
             else {
                 Slot slot0 = this.slots.get(0);
-                if (slot0.canInsert(itemStack2)) {
-                    ItemStack result = slot0.insertStack(itemStack2);
+                if (slot0.mayPlace(itemStack2)) {
+                    ItemStack result = slot0.safeInsert(itemStack2);
                     if (!result.isEmpty()) {
                         return itemStack2;
                     }
                 }
-                if (!this.insertItem(itemStack2, 1, SIZE, false)) {
+                if (!this.moveItemStackTo(itemStack2, 1, SIZE, false)) {
                     return ItemStack.EMPTY;
                 }
             }
             if (itemStack2.isEmpty()) {
-                slot2.setStack(ItemStack.EMPTY);
+                slot2.setByPlayer(ItemStack.EMPTY);
             } else {
-                slot2.markDirty();
+                slot2.setChanged();
             }
             if (itemStack2.getCount() == itemStack.getCount()) {
                 return ItemStack.EMPTY;
             }
-            slot2.onTakeItem(player, itemStack2);
+            slot2.onTake(player, itemStack2);
         }
         return itemStack;
     }
@@ -102,17 +102,17 @@ public class MechHopperScreenHandler extends ScreenHandler {
     }
 
     protected static class FilterSlot extends Slot {
-        public FilterSlot(Inventory inventory, int index, int x, int y) {
+        public FilterSlot(Container inventory, int index, int x, int y) {
             super(inventory, index, x, y);
         }
 
         @Override
-        public boolean canInsert(ItemStack stack) {
-            return this.getStack().isEmpty() && MechHopperBlock.filterMap.containsKey(stack.getItem());
+        public boolean mayPlace(ItemStack stack) {
+            return this.getItem().isEmpty() && MechHopperBlock.filterMap.containsKey(stack.getItem());
         }
 
         @Override
-        public int getMaxItemCount() {
+        public int getMaxStackSize() {
             return 1;
         }
     }

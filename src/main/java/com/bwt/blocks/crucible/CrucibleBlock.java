@@ -2,50 +2,49 @@ package com.bwt.blocks.crucible;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.state.StateManager;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class CrucibleBlock extends AbstractCookingPotBlock {
 
-    public CrucibleBlock(Settings settings) {
+    public CrucibleBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new CrucibleBlockEntity(pos, state);
     }
 
     @Override
-    public ActionResult onUse(BlockState blockState, World world, BlockPos blockPos, PlayerEntity player, BlockHitResult blockHitResult) {
-        if (world.isClient) return ActionResult.SUCCESS;
-        BlockEntity blockEntity = world.getBlockEntity(blockPos);
+    public InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
+        if (level.isClientSide) return InteractionResult.SUCCESS;
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof CrucibleBlockEntity crucibleBlockEntity) {
-            player.openHandledScreen(crucibleBlockEntity);
+            player.openMenu(crucibleBlockEntity);
         }
-        return ActionResult.CONSUME;
+        return InteractionResult.CONSUME;
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> givenType) {
-        return CrucibleBlock.validateTicker(world, givenType, BwtBlockEntities.crucibleBlockEntity);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> givenType) {
+        return CrucibleBlock.validateTicker(level, givenType, BwtBlockEntities.crucibleBlockEntity);
     }
 }

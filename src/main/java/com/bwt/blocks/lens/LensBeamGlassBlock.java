@@ -1,107 +1,110 @@
 package com.bwt.blocks.lens;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.List;
 import java.util.Map;
 
 public class LensBeamGlassBlock extends LensBeamBlock {
-    public static final MapCodec<LensBeamGlassBlock> CODEC = createCodec(s -> new LensBeamGlassBlock(Blocks.GLASS, s));
+    public static final MapCodec<LensBeamGlassBlock> CODEC = simpleCodec(s -> new LensBeamGlassBlock(Blocks.GLASS, s));
 
     public final Block glassBlock;
     protected final BlockState glassState;
 
-    public LensBeamGlassBlock(Block glassBlock, Settings settings) {
+    public LensBeamGlassBlock(Block glassBlock, Properties settings) {
         super(settings);
         this.glassBlock = glassBlock;
-        this.glassState = glassBlock.getDefaultState();
+        this.glassState = glassBlock.defaultBlockState();
     }
 
     @Override
-    protected MapCodec<LensBeamGlassBlock> getCodec() {
+    protected MapCodec<LensBeamGlassBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        super.onBlockAdded(state, world, pos, oldState, notify);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onPlace(state, level, pos, oldState, notify);
         if (!(state.getBlock() instanceof LensBeamBlock lensBeamBlock) || state.equals(oldState)) {
             return;
         }
         for (Map.Entry<Direction, BooleanProperty> entry : FACING_PROPERTIES.entrySet()) {
             Direction direction = entry.getKey();
             BooleanProperty facingProperty = entry.getValue();
-            BlockState neighborState = world.getBlockState(pos.offset(direction.getOpposite()));
+            BlockState neighborState = level.getBlockState(pos.relative(direction.getOpposite()));
             if (!LensBeamHelper.isValidInputBeamOrLens(neighborState, direction)) {
-                state = state.with(facingProperty, false);
+                state = state.setValue(facingProperty, false);
             }
             else {
-                int range = LensBeamHelper.getRemainingRange(world, pos, direction);
-                LensBeamHelper.propagateBeam(world, pos, state, direction, range);
+                int range = LensBeamHelper.getRemainingRange(level, pos, direction);
+                LensBeamHelper.propagateBeam(level, pos, state, direction, range);
             }
         }
         if (LensBeamHelper.streamFacingDirections(state).findAny().isEmpty()) {
-            world.setBlockState(pos, lensBeamBlock.getStateLeftOverWhenEmpty(world, pos));
+            level.setBlockAndUpdate(pos, lensBeamBlock.getStateLeftOverWhenEmpty(level, pos));
         }
     }
 
     @Override
-    protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.empty();
+    protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.empty();
     }
 
     @Override
-    protected float getAmbientOcclusionLightLevel(BlockState state, BlockView world, BlockPos pos) {
+    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.0F;
     }
 
     @Override
-    protected boolean isTransparent(BlockState state, BlockView world, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return true;
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return glassState.getOutlineShape(world, pos, context);
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return glassState.getShape(level, pos, context);
     }
 
     @Override
-    protected boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
-        return stateFrom.isOf(this)
-                || stateFrom.isOf(this.glassBlock)
-                || super.isSideInvisible(state, stateFrom, direction);
+    protected boolean skipRendering(BlockState state, BlockState stateFrom, Direction direction) {
+        return stateFrom.is(this)
+                || stateFrom.is(this.glassBlock)
+                || super.skipRendering(state, stateFrom, direction);
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        glassState.onEntityCollision(world, pos, entity);
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        glassState.entityInside(level, pos, entity);
     }
 
     @Override
-    protected List<ItemStack> getDroppedStacks(BlockState state, LootContextParameterSet.Builder builder) {
-        return glassState.getDroppedStacks(builder);
+    protected List<ItemStack> getDrops(BlockState state, LootParams.Builder builder) {
+        return glassState.getDrops(builder);
     }
 
     @Override
-    public BlockState getStateLeftOverWhenEmpty(WorldAccess world, BlockPos pos) {
+    public BlockState getStateLeftOverWhenEmpty(LevelAccessor level, BlockPos pos) {
         return glassState;
     }
 }

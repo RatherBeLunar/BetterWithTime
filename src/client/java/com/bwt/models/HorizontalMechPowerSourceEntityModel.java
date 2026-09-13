@@ -1,18 +1,18 @@
 package com.bwt.models;
 
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.EntityModel;
 
 public abstract class HorizontalMechPowerSourceEntityModel<T extends HorizontalMechPowerSourceEntity> extends EntityModel<T> {
     public HorizontalMechPowerSourceEntityModel() {}
 
     @Override
-    public void setAngles(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {}
+    public void setupAnim(T entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {}
 
-    public abstract void render(T entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, int color);
+    public abstract void render(T entity, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int uv, int color);
 
     @Override
-    public final void render(MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {}
+    public final void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {}
 }

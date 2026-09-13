@@ -1,27 +1,26 @@
 package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CropBlock;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 
 public class CropInhaleBehavior implements BlockInhaleBehavior {
     @Override
-    public ItemStack getInhaledItems(BlockPointer blockPointer) {
-        RegistryWrapper.Impl<Enchantment> enchantmentRegistry = blockPointer.world().getRegistryManager().getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
-        BlockState state = blockPointer.world().getBlockState(blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING)));
+    public ItemStack getInhaledItems(BlockSource blockPointer) {
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = blockPointer.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        BlockState state = blockPointer.level().getBlockState(blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING)));
         if (!(state.getBlock() instanceof CropBlock cropBlock)) {
             return ItemStack.EMPTY;
         }
@@ -33,15 +32,15 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
 
         // pretend like we're mining with silk touch
         ItemStack toolStack = new ItemStack(Items.NETHERITE_PICKAXE);
-        RegistryEntry.Reference<Enchantment> silkTouch = enchantmentRegistry.getOrThrow(Enchantments.SILK_TOUCH);
-        toolStack.addEnchantment(silkTouch, 1);
-        LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder(blockPointer.world())
-                .add(LootContextParameters.ORIGIN, blockPointer.pos().toCenterPos())
-                .add(LootContextParameters.TOOL, toolStack);
-        List<ItemStack> droppedStacks = state.getDroppedStacks(builder);
+        Holder.Reference<Enchantment> silkTouch = enchantmentRegistry.getOrThrow(Enchantments.SILK_TOUCH);
+        toolStack.enchant(silkTouch, 1);
+        LootParams.Builder builder = new LootParams.Builder(blockPointer.level())
+                .withParameter(LootContextParams.ORIGIN, blockPointer.pos().getCenter())
+                .withParameter(LootContextParams.TOOL, toolStack);
+        List<ItemStack> droppedStacks = state.getDrops(builder);
         if (droppedStacks.size() > 1) {
             return droppedStacks.stream()
-                    .filter(dropStack -> !dropStack.getItem().equals(cropBlock.getPickStack(blockPointer.world(), blockPointer.pos(), state).getItem()))
+                    .filter(dropStack -> !dropStack.getItem().equals(cropBlock.getCloneItemStack(blockPointer.level(), blockPointer.pos(), state).getItem()))
                     .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {
@@ -51,9 +50,9 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
     }
 
     @Override
-    public void inhale(BlockPointer blockPointer) {
-        BlockPos facingPos = blockPointer.pos().offset(blockPointer.state().get(BlockDispenserBlock.FACING));
-        BlockState facingState = blockPointer.world().getBlockState(facingPos);
+    public void inhale(BlockSource blockPointer) {
+        BlockPos facingPos = blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING));
+        BlockState facingState = blockPointer.level().getBlockState(facingPos);
         if (!(facingState.getBlock() instanceof CropBlock cropBlock)) {
             return;
         }
@@ -62,6 +61,6 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
         if (age < maxAge) {
             return;
         }
-        breakBlockNoItems(blockPointer.world(), facingState, facingPos);
+        breakBlockNoItems(blockPointer.level(), facingState, facingPos);
     }
 }

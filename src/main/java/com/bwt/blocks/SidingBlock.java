@@ -2,40 +2,43 @@ package com.bwt.blocks;
 
 import com.bwt.utils.BlockUtils;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class SidingBlock extends MiniBlock {
-    public static final DirectionProperty FACING = Properties.FACING;
-    protected static final Box BOTTOM_SHAPE = new Box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    protected static final AABB BOTTOM_SHAPE = new AABB(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
             .map(direction -> BlockUtils.rotateCuboidFromUp(direction, BOTTOM_SHAPE))
             .toList();
-    public static final MapCodec<SidingBlock> CODEC = SidingBlock.createCodec(s -> new SidingBlock(s, Blocks.STONE));
+    public static final MapCodec<SidingBlock> CODEC = SidingBlock.simpleCodec(s -> new SidingBlock(s, Blocks.STONE));
 
-    public SidingBlock(Settings settings, Block fullBlock) {
+    public SidingBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
-        this.setDefaultState(this.getDefaultState().with(FACING, Direction.NORTH).with(WATERLOGGED, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
     public static SidingBlock ofBlock(Block fullBlock) {
-        return new SidingBlock(Settings.copy(fullBlock), fullBlock);
+        return new SidingBlock(Properties.ofFullCopy(fullBlock), fullBlock);
     }
 
     public static SidingBlock ofWoodBlock(Block woodBlock) {
@@ -44,39 +47,39 @@ public class SidingBlock extends MiniBlock {
         return sidingBlock;
     }
 
-    public MapCodec<? extends SidingBlock> getCodec() {
+    public MapCodec<? extends SidingBlock> codec() {
         return CODEC;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(FACING);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return COLLISION_SHAPES.get(state.get(FACING).getId());
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return COLLISION_SHAPES.get(state.getValue(FACING).get3DDataValue());
     }
 
     @Override
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getPlayerLookDirection().getOpposite())
-                .with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getNearestLookingDirection().getOpposite())
+                .setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER);
     }
 
     @Override
-    public BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    public BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    public BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.with(FACING, mirror.apply(state.get(FACING)));
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        return state.setValue(FACING, mirror.mirror(state.getValue(FACING)));
     }
 
     public static boolean isHorizontal(BlockState state) {
-        return state.get(FACING).getAxis().isHorizontal();
+        return state.getValue(FACING).getAxis().isHorizontal();
     }
 }

@@ -1,65 +1,65 @@
 package com.bwt.utils;
 
-import net.minecraft.block.Block;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BlockUtils {
     public static VoxelShape rotateCuboidFromUp(Direction direction, double xMin, double yMin, double zMin, double xMax, double yMax, double zMax) {
         float deg_90 = ((float) Math.PI) / 2f;
-        Vec3d half = new Vec3d(8, 8, 8);
+        Vec3 half = new Vec3(8, 8, 8);
 
         // Shift to center of block for rotation
-        Vec3d minPos = new Vec3d(xMin, yMin, zMin).subtract(half);
-        Vec3d maxPos = new Vec3d(xMax, yMax, zMax).subtract(half);
+        Vec3 minPos = new Vec3(xMin, yMin, zMin).subtract(half);
+        Vec3 maxPos = new Vec3(xMax, yMax, zMax).subtract(half);
 
         switch (direction) {
             case UP:
                 break;
             case DOWN:
-                minPos = minPos.rotateZ(2 * deg_90);
-                maxPos = maxPos.rotateZ(2 * deg_90);
+                minPos = minPos.zRot(2 * deg_90);
+                maxPos = maxPos.zRot(2 * deg_90);
                 break;
             case NORTH:
-                minPos = minPos.rotateX(deg_90);
-                maxPos = maxPos.rotateX(deg_90);
+                minPos = minPos.xRot(deg_90);
+                maxPos = maxPos.xRot(deg_90);
                 break;
             case SOUTH:
-                minPos = minPos.rotateX(-deg_90);
-                maxPos = maxPos.rotateX(-deg_90);
+                minPos = minPos.xRot(-deg_90);
+                maxPos = maxPos.xRot(-deg_90);
                 break;
             case EAST:
-                minPos = minPos.rotateZ(deg_90);
-                maxPos = maxPos.rotateZ(deg_90);
+                minPos = minPos.zRot(deg_90);
+                maxPos = maxPos.zRot(deg_90);
                 break;
             case WEST:
-                minPos = minPos.rotateZ(-deg_90);
-                maxPos = maxPos.rotateZ(-deg_90);
+                minPos = minPos.zRot(-deg_90);
+                maxPos = maxPos.zRot(-deg_90);
                 break;
         }
 
         minPos = minPos.add(half);
         maxPos = maxPos.add(half);
-        return Block.createCuboidShape(
-                Math.min(minPos.getX(), maxPos.getX()),
-                Math.min(minPos.getY(), maxPos.getY()),
-                Math.min(minPos.getZ(), maxPos.getZ()),
-                Math.max(minPos.getX(), maxPos.getX()),
-                Math.max(minPos.getY(), maxPos.getY()),
-                Math.max(minPos.getZ(), maxPos.getZ())
+        return Block.box(
+                Math.min(minPos.x(), maxPos.x()),
+                Math.min(minPos.y(), maxPos.y()),
+                Math.min(minPos.z(), maxPos.z()),
+                Math.max(minPos.x(), maxPos.x()),
+                Math.max(minPos.y(), maxPos.y()),
+                Math.max(minPos.z(), maxPos.z())
         );
     }
 
-    public static VoxelShape rotateCuboidFromUp(Direction direction, Box box) {
+    public static VoxelShape rotateCuboidFromUp(Direction direction, AABB box) {
         return rotateCuboidFromUp(direction, box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
     }
 
-    public static VoxelShape rotateCuboid(Direction fromDirection, Direction toDirection, Box box) {
+    public static VoxelShape rotateCuboid(Direction fromDirection, Direction toDirection, AABB box) {
         // Rotate source to up direction via opposite direction
         VoxelShape shape = rotateCuboidFromUp(fromDirection.getAxis().isVertical() ? fromDirection : fromDirection.getOpposite(), box);
         // Rotate
-        return rotateCuboidFromUp(toDirection, shape.getBoundingBox());
+        return rotateCuboidFromUp(toDirection, shape.bounds());
     }
 }

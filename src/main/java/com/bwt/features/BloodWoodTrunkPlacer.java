@@ -1,16 +1,15 @@
 package com.bwt.features;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.TestableWorld;
-import net.minecraft.world.gen.feature.TreeFeatureConfig;
-import net.minecraft.world.gen.foliage.FoliagePlacer;
-import net.minecraft.world.gen.trunk.StraightTrunkPlacer;
-
 import java.util.List;
 import java.util.function.BiConsumer;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelSimulatedReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.configurations.TreeConfiguration;
+import net.minecraft.world.level.levelgen.feature.foliageplacers.FoliagePlacer;
+import net.minecraft.world.level.levelgen.feature.trunkplacers.StraightTrunkPlacer;
 
 public class BloodWoodTrunkPlacer extends StraightTrunkPlacer {
     public BloodWoodTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
@@ -18,10 +17,10 @@ public class BloodWoodTrunkPlacer extends StraightTrunkPlacer {
     }
 
     @Override
-    public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
+    public List<FoliagePlacer.FoliageAttachment> placeTrunk(LevelSimulatedReader level, BiConsumer<BlockPos, BlockState> replacer, RandomSource random, int height, BlockPos startPos, TreeConfiguration config) {
         for (int i = 0; i < height; ++i) {
-            this.getAndSetState(world, replacer, random, startPos.up(i), config);
+            this.placeLog(level, replacer, random, startPos.above(i), config);
         }
-        return ImmutableList.of(new FoliagePlacer.TreeNode(startPos.up(height), 0, false));
+        return ImmutableList.of(new FoliagePlacer.FoliageAttachment(startPos.above(height), 0, false));
     }
 }

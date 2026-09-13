@@ -2,27 +2,27 @@ package com.bwt.entities;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtBlockTags;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class BloodWoodSaplingItemEntity extends ItemEntity {
-    public BloodWoodSaplingItemEntity(World world, double x, double y, double z, ItemStack stack) {
-        super(world, x, y, z, stack);
+    public BloodWoodSaplingItemEntity(Level level, double x, double y, double z, ItemStack stack) {
+        super(level, x, y, z, stack);
     }
 
     @Override
-    public void onLanding() {
-        super.onLanding();
-        if (supportingBlockPos.isEmpty()) {
+    public void resetFallDistance() {
+        super.resetFallDistance();
+        if (mainSupportingBlockPos.isEmpty()) {
             return;
         }
-        BlockPos belowPos = supportingBlockPos.get();
-        if (getWorld().getBlockState(belowPos.up()).isIn(BlockTags.AIR) && getWorld().getBlockState(belowPos).isIn(BwtBlockTags.BLOOD_WOOD_PLANTABLE_ON)) {
+        BlockPos belowPos = mainSupportingBlockPos.get();
+        if (level().getBlockState(belowPos.above()).is(BlockTags.AIR) && level().getBlockState(belowPos).is(BwtBlockTags.BLOOD_WOOD_PLANTABLE_ON)) {
             this.discard();
-            getWorld().setBlockState(belowPos.up(), BwtBlocks.bloodWoodBlocks.saplingBlock.getDefaultState());
+            level().setBlockAndUpdate(belowPos.above(), BwtBlocks.bloodWoodBlocks.saplingBlock.defaultBlockState());
         }
     }
 }

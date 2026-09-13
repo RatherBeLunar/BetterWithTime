@@ -3,100 +3,95 @@ package com.bwt.blocks;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class AnchorBlock extends SimpleFacingBlock {
-    public static final BooleanProperty CONNECTED_ABOVE = BooleanProperty.of("connected_above");
-    public static final BooleanProperty CONNECTED_BELOW = BooleanProperty.of("connected_below");
+    public static final BooleanProperty CONNECTED_ABOVE = BooleanProperty.create("connected_above");
+    public static final BooleanProperty CONNECTED_BELOW = BooleanProperty.create("connected_below");
 
-    public static final Box baseBox = new Box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
-    protected static final VoxelShape NUB_SHAPE = Block.createCuboidShape(6, 6, 6, 10, 10, 10);
+    public static final AABB baseBox = new AABB(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
+    protected static final VoxelShape NUB_SHAPE = Block.box(6, 6, 6, 10, 10, 10);
     protected static final List<VoxelShape> SHAPES = Arrays.stream(Direction.values())
-            .map(direction -> VoxelShapes.union(BlockUtils.rotateCuboidFromUp(direction, baseBox), NUB_SHAPE))
+            .map(direction -> Shapes.or(BlockUtils.rotateCuboidFromUp(direction, baseBox), NUB_SHAPE))
             .collect(Collectors.toList());
 
-    public AnchorBlock(Settings settings) {
+    public AnchorBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(CONNECTED_ABOVE, CONNECTED_BELOW);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext context) {
-        return SHAPES.get(state.get(FACING).getId());
+    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+        return SHAPES.get(state.getValue(FACING).get3DDataValue());
     }
 
     @NotNull
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        BlockState upState = ctx.getWorld().getBlockState(ctx.getBlockPos().up());
-        BlockState downState = ctx.getWorld().getBlockState(ctx.getBlockPos().down());
-        BlockState placementState = getDefaultState().with(FACING, ctx.getSide());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        BlockState upState = ctx.getLevel().getBlockState(ctx.getClickedPos().above());
+        BlockState downState = ctx.getLevel().getBlockState(ctx.getClickedPos().below());
+        BlockState placementState = defaultBlockState().setValue(FACING, ctx.getClickedFace());
         return placementState
-                .with(CONNECTED_ABOVE, placementState.get(FACING) != Direction.DOWN && (upState.isOf(BwtBlocks.ropeBlock) || upState.isOf(BwtBlocks.pulleyBlock)))
-                .with(CONNECTED_BELOW, placementState.get(FACING) != Direction.UP && (downState.isOf(BwtBlocks.ropeBlock)));
+                .setValue(CONNECTED_ABOVE, placementState.getValue(FACING) != Direction.DOWN && (upState.is(BwtBlocks.ropeBlock) || upState.is(BwtBlocks.pulleyBlock)))
+                .setValue(CONNECTED_BELOW, placementState.getValue(FACING) != Direction.UP && (downState.is(BwtBlocks.ropeBlock)));
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         return switch (direction) {
-            case UP -> state.with(CONNECTED_ABOVE,
-                    (state.get(FACING) != Direction.DOWN && neighborState.isOf(BwtBlocks.ropeBlock))
-                            || (state.get(FACING) == Direction.UP && neighborState.isOf(BwtBlocks.pulleyBlock)));
-            case DOWN -> state.with(CONNECTED_BELOW,
-                    (state.get(FACING) != Direction.UP && neighborState.isOf(BwtBlocks.ropeBlock)));
+            case UP -> state.setValue(CONNECTED_ABOVE,
+                    (state.getValue(FACING) != Direction.DOWN && neighborState.is(BwtBlocks.ropeBlock))
+                            || (state.getValue(FACING) == Direction.UP && neighborState.is(BwtBlocks.pulleyBlock)));
+            case DOWN -> state.setValue(CONNECTED_BELOW,
+                    (state.getValue(FACING) != Direction.UP && neighborState.is(BwtBlocks.ropeBlock)));
             default -> state;
         };
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (player.getMainHandStack().isOf(BwtItems.ropeItem)) {
-            return super.onUse(state, world, pos, player, hit);
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (player.getMainHandItem().is(BwtItems.ropeItem)) {
+            return super.useWithoutItem(state, level, pos, player, hit);
         }
-        BlockPos.Mutable mutablePos = pos.mutableCopy().move(Direction.DOWN);
-        while (world.getBlockState(mutablePos.down()).isOf(BwtBlocks.ropeBlock)) {
+        BlockPos.MutableBlockPos mutablePos = pos.mutable().move(Direction.DOWN);
+        while (level.getBlockState(mutablePos.below()).is(BwtBlocks.ropeBlock)) {
             mutablePos.move(Direction.DOWN);
         }
-        if (!world.getBlockState(mutablePos).isOf(BwtBlocks.ropeBlock)) {
-            return ActionResult.FAIL;
+        if (!level.getBlockState(mutablePos).is(BwtBlocks.ropeBlock)) {
+            return InteractionResult.FAIL;
         }
-        player.getInventory().offerOrDrop(BwtItems.ropeItem.getDefaultStack());
-        world.setBlockState(mutablePos, Blocks.AIR.getDefaultState());
-        world.playSound(null, pos, BwtSoundEvents.ANCHOR_RETRACT, SoundCategory.PLAYERS, 0.2f, (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 1.4f + 2.0f);
+        player.getInventory().placeItemBackInInventory(BwtItems.ropeItem.getDefaultInstance());
+        level.setBlockAndUpdate(mutablePos, Blocks.AIR.defaultBlockState());
+        level.playSound(null, pos, BwtSoundEvents.ANCHOR_RETRACT, SoundSource.PLAYERS, 0.2f, (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 1.4f + 2.0f);
 
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 }

@@ -10,27 +10,27 @@ import dev.emi.emi.api.render.EmiTooltipComponents;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.IntStream;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiCookingPotRecipe<R extends AbstractCookingPotRecipe> implements EmiRecipe {
 
     private final EmiRecipeCategory category;
-    private final Identifier id;
+    private final ResourceLocation id;
     private final List<EmiIngredient> ingredients;
     private final List<EmiStack> results;
     private final int displayRows;
 
-    public EmiCookingPotRecipe(EmiRecipeCategory category, RecipeEntry<R> recipeEntry) {
+    public EmiCookingPotRecipe(EmiRecipeCategory category, RecipeHolder<R> recipeEntry) {
         this(category, recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiCookingPotRecipe(EmiRecipeCategory category, Identifier id, R recipe) {
+    public EmiCookingPotRecipe(EmiRecipeCategory category, ResourceLocation id, R recipe) {
         this.category = category;
         this.id = id;
         this.ingredients = recipe.getIngredientsWithCount().stream().map(BwtEmiPlugin::from).toList();
@@ -44,8 +44,8 @@ public class EmiCookingPotRecipe<R extends AbstractCookingPotRecipe> implements 
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override
@@ -72,7 +72,7 @@ public class EmiCookingPotRecipe<R extends AbstractCookingPotRecipe> implements 
     public void addWidgets(WidgetHolder widgets) {
         var y = 0;
         var x = 0;
-        widgets.addTexture(EmiTexture.EMPTY_FLAME, 20 * 3, 0).tooltip(List.of(EmiTooltipComponents.of(Text.literal(this.id.toString()))));
+        widgets.addTexture(EmiTexture.EMPTY_FLAME, 20 * 3, 0).tooltip(List.of(EmiTooltipComponents.of(Component.literal(this.id.toString()))));
         widgets.addAnimatedTexture(EmiTexture.FULL_FLAME, 20 * 3, 0, (AbstractCookingPotBlockEntity.timeToCompleteCook * 10), false, true, false);
 
         var i = 0;

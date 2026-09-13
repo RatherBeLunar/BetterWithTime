@@ -6,173 +6,173 @@ import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.recipes.kiln.KilnRecipeInput;
 import com.bwt.utils.FireDataCluster;
 import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookOverlay;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.Containers;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 
 public class KilnBlock extends Block {
     private static final int minFireFactorBaseTickRate = 20; // FC value 40
     private static final int maxFireFactorBaseTickRate = 80; // FC value 160
 
-    public static final IntProperty COOK_TIME = IntProperty.of("cook_time", 0, 15);
+    public static final IntegerProperty COOK_TIME = IntegerProperty.create("cook_time", 0, 15);
 
-    public KilnBlock(Settings settings) {
+    public KilnBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(COOK_TIME);
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        super.onPlaced(world, pos, state, placer, itemStack);
-        Optional<KilnRecipe> recipe = getRecipe(world, world.getBlockState(pos.up()));
-        recipe.ifPresent(kilnRecipe -> scheduleUpdateBasedOnCookState(world, pos, kilnRecipe));
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        super.setPlacedBy(level, pos, state, placer, itemStack);
+        Optional<KilnRecipe> recipe = getRecipe(level, level.getBlockState(pos.above()));
+        recipe.ifPresent(kilnRecipe -> scheduleUpdateBasedOnCookState(level, pos, kilnRecipe));
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
-        if (!newState.isOf(this)) {
-            resetBlockCookProgress(world, pos);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        super.onRemove(state, level, pos, newState, moved);
+        if (!newState.is(this)) {
+            resetBlockCookProgress(level, pos);
         }
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.tick(state, level, pos, random);
 
-        int oldCookCounter = state.get(COOK_TIME);
+        int oldCookCounter = state.getValue(COOK_TIME);
         int newCookCounter = 0;
 
-        BlockPos cookingBlockPos = pos.up();
-        BlockState cookingBlockState = world.getBlockState(cookingBlockPos);
-        Optional<KilnRecipe> recipe = getRecipe(world, cookingBlockState);
+        BlockPos cookingBlockPos = pos.above();
+        BlockState cookingBlockState = level.getBlockState(cookingBlockPos);
+        Optional<KilnRecipe> recipe = getRecipe(level, cookingBlockState);
         if (recipe.isPresent()) {
-            if (checkKilnIntegrity(world, pos)) {
+            if (checkKilnIntegrity(level, pos)) {
                 if (oldCookCounter >= 15) {
-                    cookBlock(world, pos.up(), cookingBlockState, recipe.get());
+                    cookBlock(level, pos.above(), cookingBlockState, recipe.get());
                 }
                 else {
                     newCookCounter = oldCookCounter + 1;
-                    scheduleUpdateBasedOnCookState(world, pos, recipe.get());
+                    scheduleUpdateBasedOnCookState(level, pos, recipe.get());
                 }
             }
             else {
                 // if we have a valid cook block above, we have to reschedule another tick
                 // regardless of other factors, because the shape of the kiln can change without
                 // an immediate neighbor changing, causing the cook process to restart
-                scheduleUpdateBasedOnCookState(world, pos, recipe.get());
+                scheduleUpdateBasedOnCookState(level, pos, recipe.get());
             }
         }
 
         if (oldCookCounter != newCookCounter) {
-            world.setBlockState(pos, state.with(COOK_TIME, newCookCounter));
+            level.setBlockAndUpdate(pos, state.setValue(COOK_TIME, newCookCounter));
             // The 10 here is the max block breaking progress
-            KilnBlockCookOverlay.setKilnBlockCookingInfo(world, pos.up(), ((int) MathHelper.clampedLerp(-1, 9, ((float) newCookCounter) / 15f)));
-            if (cookingBlockState.contains(UnfiredPotteryBlock.COOKING) && cookingBlockState.get(UnfiredPotteryBlock.COOKING).equals(false)) {
-                world.setBlockState(cookingBlockPos, cookingBlockState.with(UnfiredPotteryBlock.COOKING, true));
+            KilnBlockCookOverlay.setKilnBlockCookingInfo(level, pos.above(), ((int) Mth.clampedLerp(-1, 9, ((float) newCookCounter) / 15f)));
+            if (cookingBlockState.hasProperty(UnfiredPotteryBlock.COOKING) && cookingBlockState.getValue(UnfiredPotteryBlock.COOKING).equals(false)) {
+                level.setBlockAndUpdate(cookingBlockPos, cookingBlockState.setValue(UnfiredPotteryBlock.COOKING, true));
             }
         }
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (neighborPos.equals(pos.down()) && !neighborState.isOf(BwtBlocks.stokedFireBlock)) {
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (neighborPos.equals(pos.below()) && !neighborState.is(BwtBlocks.stokedFireBlock)) {
             // we don't have a stoked fire beneath us, so revert to regular brick
-            return Blocks.BRICKS.getDefaultState();
+            return Blocks.BRICKS.defaultBlockState();
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborUpdate(state, world, pos, sourceBlock, sourcePos, notify);
-        Optional<KilnRecipe> recipe = getRecipe(world, world.getBlockState(pos.up()));
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
+        Optional<KilnRecipe> recipe = getRecipe(level, level.getBlockState(pos.above()));
         if (recipe.isPresent()) {
-            scheduleUpdateBasedOnCookState(world, pos, recipe.get());
+            scheduleUpdateBasedOnCookState(level, pos, recipe.get());
         }
-        else if (state.get(COOK_TIME) > 0) {
+        else if (state.getValue(COOK_TIME) > 0) {
             // reset the cook counter so it doesn't get passed to another block on piston push
-            resetBlockCookProgress(world, pos);
-            world.setBlockState(pos, state.with(COOK_TIME, 0));
+            resetBlockCookProgress(level, pos);
+            level.setBlockAndUpdate(pos, state.setValue(COOK_TIME, 0));
         }
     }
 
-    protected void scheduleUpdateBasedOnCookState(World world, BlockPos pos, KilnRecipe recipe) {
-        int iTickRate = computeTickRateBasedOnFireFactor(world, pos);
+    protected void scheduleUpdateBasedOnCookState(Level level, BlockPos pos, KilnRecipe recipe) {
+        int iTickRate = computeTickRateBasedOnFireFactor(level, pos);
 
         iTickRate *= recipe.getCookingTime();
 
-        world.scheduleBlockTick(pos, this, iTickRate);
+        level.scheduleTick(pos, this, iTickRate);
     }
 
-    private Optional<KilnRecipe> getRecipe(World world, BlockState cookingBlockState) {
+    private Optional<KilnRecipe> getRecipe(Level level, BlockState cookingBlockState) {
         KilnRecipeInput recipeInput = new KilnRecipeInput(cookingBlockState.getBlock());
-        return world.getRecipeManager().getFirstMatch(
+        return level.getRecipeManager().getRecipeFor(
                 BwtRecipes.KILN_RECIPE_TYPE,
                 recipeInput,
-                world
-        ).map(RecipeEntry::value);
+                level
+        ).map(RecipeHolder::value);
     }
 
-    private void cookBlock(World world, BlockPos cookingBlockPos, BlockState cookingBlockState, KilnRecipe recipe) {
-        ComponentMap components = cookingBlockState.getBlock().getPickStack(world, cookingBlockPos, cookingBlockState).getComponents();
-        world.breakBlock(cookingBlockPos, false);
-        DefaultedList<ItemStack> drops = DefaultedList.copyOf(ItemStack.EMPTY, recipe.getDrops().stream().map(ItemStack::copy).toArray(ItemStack[]::new));
+    private void cookBlock(Level level, BlockPos cookingBlockPos, BlockState cookingBlockState, KilnRecipe recipe) {
+        DataComponentMap components = cookingBlockState.getBlock().getCloneItemStack(level, cookingBlockPos, cookingBlockState).getComponents();
+        level.destroyBlock(cookingBlockPos, false);
+        NonNullList<ItemStack> drops = NonNullList.of(ItemStack.EMPTY, recipe.getDrops().stream().map(ItemStack::copy).toArray(ItemStack[]::new));
         if (drops.isEmpty()) {
             return;
         }
         ItemStack firstDrop = drops.get(0);
-        firstDrop.applyComponentsFrom(components.filtered(componentType -> firstDrop.getComponents().contains(componentType)));
-        ItemScatterer.spawn(world, cookingBlockPos, drops);
+        firstDrop.applyComponents(components.filter(componentType -> firstDrop.getComponents().has(componentType)));
+        Containers.dropContents(level, cookingBlockPos, drops);
     }
 
-    private void resetBlockCookProgress(World world, BlockPos kilnPos) {
-        BlockPos cookingBlockPos = kilnPos.up();
-        BlockState cookingBlockState = world.getBlockState(cookingBlockPos);
-        if (cookingBlockState.contains(UnfiredPotteryBlock.COOKING) && cookingBlockState.get(UnfiredPotteryBlock.COOKING).equals(true)) {
-            world.setBlockState(cookingBlockPos, cookingBlockState.with(UnfiredPotteryBlock.COOKING, false));
+    private void resetBlockCookProgress(Level level, BlockPos kilnPos) {
+        BlockPos cookingBlockPos = kilnPos.above();
+        BlockState cookingBlockState = level.getBlockState(cookingBlockPos);
+        if (cookingBlockState.hasProperty(UnfiredPotteryBlock.COOKING) && cookingBlockState.getValue(UnfiredPotteryBlock.COOKING).equals(true)) {
+            level.setBlockAndUpdate(cookingBlockPos, cookingBlockState.setValue(UnfiredPotteryBlock.COOKING, false));
         }
-        KilnBlockCookOverlay.setKilnBlockCookingInfo(world, cookingBlockPos, -1);
+        KilnBlockCookOverlay.setKilnBlockCookingInfo(level, cookingBlockPos, -1);
     }
 
-    private boolean checkKilnIntegrity(World world, BlockPos pos) {
-        BlockPos center = pos.up();
+    private boolean checkKilnIntegrity(Level level, BlockPos pos) {
+        BlockPos center = pos.above();
         return Arrays.stream(Direction.values())
-                .map(center::offset)
+                .map(center::relative)
                 .filter(structurePos -> !structurePos.equals(pos))
-                .filter(structurePos -> world.getBlockState(structurePos).isOf(Blocks.BRICKS))
+                .filter(structurePos -> level.getBlockState(structurePos).is(Blocks.BRICKS))
                 .count() >= 3;
     }
 
-    private int computeTickRateBasedOnFireFactor(World world, BlockPos pos) {
-        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(world, pos);
+    private int computeTickRateBasedOnFireFactor(Level level, BlockPos pos) {
+        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(level, pos);
         int additionalFireCount = fireDataCluster.getStokedCount() - 1;
 //        return maxFireFactorBaseTickRate - (additionalFireCount / 8) * (maxFireFactorBaseTickRate - minFireFactorBaseTickRate);
         return ( ( maxFireFactorBaseTickRate - minFireFactorBaseTickRate ) *
@@ -180,32 +180,32 @@ public class KilnBlock extends Block {
     }
 
     @Override
-    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
-        return Blocks.BRICKS.getPickStack(world, pos, state);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return Blocks.BRICKS.getCloneItemStack(level, pos, state);
     }
 
     @Override
-    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-        super.randomDisplayTick(state, world, pos, random);
-        BlockState blockAboveState = world.getBlockState(pos.up());
-        if (blockAboveState.isIn(BlockTags.AIR)) {
+    public void animateTick(BlockState state, Level level, BlockPos pos, RandomSource random) {
+        super.animateTick(state, level, pos, random);
+        BlockState blockAboveState = level.getBlockState(pos.above());
+        if (blockAboveState.is(BlockTags.AIR)) {
             return;
         }
-        Optional<KilnRecipe> recipe = getRecipe(world, blockAboveState);
+        Optional<KilnRecipe> recipe = getRecipe(level, blockAboveState);
         if (recipe.isEmpty()) {
             return;
         }
-        if (!checkKilnIntegrity(world, pos)) {
+        if (!checkKilnIntegrity(level, pos)) {
             return;
         }
 
-        if (!blockAboveState.isOpaqueFullCube(world, pos)) {
+        if (!blockAboveState.isSolidRender(level, pos)) {
             for (int count = 0; count < 2; count++) {
                 double xPos = pos.getX() + random.nextDouble();
                 double yPos = pos.getY() + 1d + (random.nextDouble() * 0.75d);
                 double zPos = pos.getZ() + random.nextDouble();
 
-                world.addParticle(ParticleTypes.WHITE_SMOKE, xPos, yPos, zPos, 0d, 0d, 0d);
+                level.addParticle(ParticleTypes.WHITE_SMOKE, xPos, yPos, zPos, 0d, 0d, 0d);
             }
         }
         else {
@@ -241,7 +241,7 @@ public class KilnBlock extends Block {
                     zPos += dHorizontalOffset;
                 }
 
-                world.addParticle(ParticleTypes.WHITE_SMOKE, xPos, yPos, zPos, 0d, 0d, 0d);
+                level.addParticle(ParticleTypes.WHITE_SMOKE, xPos, yPos, zPos, 0d, 0d, 0d);
             }
         }
     }

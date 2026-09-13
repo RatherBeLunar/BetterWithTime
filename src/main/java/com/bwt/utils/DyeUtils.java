@@ -1,12 +1,10 @@
 package com.bwt.utils;
 
 import com.google.common.collect.Maps;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Util;
-
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.Util;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;

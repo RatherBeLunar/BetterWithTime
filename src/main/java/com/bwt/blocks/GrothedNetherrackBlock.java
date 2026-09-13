@@ -1,38 +1,38 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class GrothedNetherrackBlock extends Block {
-    public GrothedNetherrackBlock(Settings settings) {
+    public GrothedNetherrackBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.UP && !neighborState.isOf(BwtBlocks.netherGroth)) {
-            return Blocks.NETHERRACK.getDefaultState();
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (direction == Direction.UP && !neighborState.is(BwtBlocks.netherGroth)) {
+            return Blocks.NETHERRACK.defaultBlockState();
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        if (ctx.getWorld().getBlockState(ctx.getBlockPos().up()).isOf(BwtBlocks.netherGroth)) {
-            return this.getDefaultState();
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        if (ctx.getLevel().getBlockState(ctx.getClickedPos().above()).is(BwtBlocks.netherGroth)) {
+            return this.defaultBlockState();
         }
-        return Blocks.NETHERRACK.getDefaultState();
+        return Blocks.NETHERRACK.defaultBlockState();
     }
 
     @Override
-    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
-        return Blocks.NETHERRACK.getPickStack(world, pos, state);
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return Blocks.NETHERRACK.getCloneItemStack(level, pos, state);
     }
 }

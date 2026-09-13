@@ -2,21 +2,20 @@ package com.bwt.damage_types;
 
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.level.Level;
 
 public class BwtDamageTypes implements ModInitializer {
-    public static RegistryKey<DamageType> SAW_DAMAGE_TYPE;
+    public static ResourceKey<DamageType> SAW_DAMAGE_TYPE;
     @Override
     public void onInitialize() {
-         SAW_DAMAGE_TYPE = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, Id.of("saw"));
+         SAW_DAMAGE_TYPE = ResourceKey.create(Registries.DAMAGE_TYPE, Id.of("saw"));
     }
 
-    public static DamageSource of(World world, RegistryKey<DamageType> key) {
-        return new DamageSource(world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).entryOf(key));
+    public static DamageSource of(Level level, ResourceKey<DamageType> key) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key));
     }
 }

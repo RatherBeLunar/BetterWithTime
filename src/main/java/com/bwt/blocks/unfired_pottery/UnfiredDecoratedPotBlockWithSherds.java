@@ -2,86 +2,94 @@ package com.bwt.blocks.unfired_pottery;
 
 import com.bwt.blocks.BwtBlocks;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.*;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.block.entity.Sherds;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.loot.context.LootContextParameterSet;
-import net.minecraft.loot.context.LootContextParameters;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.DirectionProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.text.Text;
-import net.minecraft.util.*;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldView;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.PotDecorations;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock implements BlockEntityProvider {
-    public static final DirectionProperty FACING = Properties.HORIZONTAL_FACING;
-    public static final MapCodec<UnfiredDecoratedPotBlockWithSherds> CODEC = createCodec(UnfiredDecoratedPotBlockWithSherds::new);
+public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock implements EntityBlock {
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final MapCodec<UnfiredDecoratedPotBlockWithSherds> CODEC = simpleCodec(UnfiredDecoratedPotBlockWithSherds::new);
 
-    public UnfiredDecoratedPotBlockWithSherds(Settings settings) {
+    public UnfiredDecoratedPotBlockWithSherds(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(FACING, Direction.NORTH));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(FACING);
     }
 
     @Override
-    public MapCodec<UnfiredDecoratedPotBlockWithSherds> getCodec() {
+    public MapCodec<UnfiredDecoratedPotBlockWithSherds> codec() {
         return CODEC;
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return Blocks.DECORATED_POT.getDefaultState().getOutlineShape(world, pos, context);
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Blocks.DECORATED_POT.defaultBlockState().getShape(level, pos, context);
     }
 
     @Override
-    protected BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.ENTITYBLOCK_ANIMATED;
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
-    protected boolean onSyncedBlockEvent(BlockState state, World world, BlockPos pos, int type, int data) {
-        super.onSyncedBlockEvent(state, world, pos, type, data);
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity != null && blockEntity.onSyncedBlockEvent(type, data);
+    protected boolean triggerEvent(BlockState state, Level level, BlockPos pos, int type, int data) {
+        super.triggerEvent(state, level, pos, type, data);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity != null && blockEntity.triggerEvent(type, data);
     }
 
     @Nullable
     @Override
-    protected NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
-        return blockEntity instanceof NamedScreenHandlerFactory ? (NamedScreenHandlerFactory)blockEntity : null;
+    protected MenuProvider getMenuProvider(BlockState state, Level level, BlockPos pos) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity instanceof MenuProvider ? (MenuProvider)blockEntity : null;
     }
 
     @Nullable
@@ -92,49 +100,49 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     }
 
     @Override
-    protected boolean canPathfindThrough(BlockState state, NavigationType type) {
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
         return false;
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new UnfiredDecoratedPotBlockEntity(pos, state);
     }
 
     @Override
-    public @Nullable BlockState getPlacementState(ItemPlacementContext ctx) {
-        return this.getDefaultState().with(FACING, ctx.getHorizontalPlayerFacing().getOpposite());
+    public @Nullable BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return this.defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-            if (!world.isClient && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
+            if (!level.isClientSide && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
                 ItemStack itemStack = new ItemStack(this);
-                itemStack.applyComponentsFrom(unfiredDecoratedPotBlockEntity.createComponentMap());
-                ItemEntity itemEntity = new ItemEntity(world, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, itemStack);
-                itemEntity.setToDefaultPickupDelay();
-                world.spawnEntity(itemEntity);
+                itemStack.applyComponents(unfiredDecoratedPotBlockEntity.collectComponents());
+                ItemEntity itemEntity = new ItemEntity(level, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, itemStack);
+                itemEntity.setDefaultPickUpDelay();
+                level.addFreshEntity(itemEntity);
             }
         }
 
-        return super.onBreak(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
         if (moved) {
             return;
         }
-        if (!newState.isOf(state.getBlock()) && !newState.isAir()) {
-            BlockEntity blockEntity = world.getBlockEntity(pos);
+        if (!newState.is(state.getBlock()) && !newState.isAir()) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-                ItemScatterer.spawn(world, pos, DefaultedList.copyOf(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultStack).toArray(ItemStack[]::new)));
+                Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultInstance).toArray(ItemStack[]::new)));
             }
         }
-        super.onStateReplaced(state, world, pos, newState, moved);
+        super.onRemove(state, level, pos, newState, moved);
     }
 
 //    @Override
@@ -153,73 +161,73 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
 //    }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (!stack.isIn(ItemTags.DECORATED_POT_SHERDS)) {
-            return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        if (!stack.is(ItemTags.DECORATED_POT_SHERDS)) {
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        Direction side = hit.getSide();
+        Direction side = hit.getDirection();
         if (side.getAxis().isVertical()) {
-            return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
-            return super.onUseWithItem(stack, state, world, pos, player, hand, hit);
+            return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        if (!world.isClient && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
-            stack.decrementUnlessCreative(1, player);
+        if (!level.isClientSide && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+            stack.consume(1, player);
         }
-        return ItemActionResult.success(world.isClient);
+        return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        Direction side = hit.getSide();
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        Direction side = hit.getDirection();
         if (side.getAxis().isVertical()) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
-        BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockEntity blockEntity = level.getBlockEntity(pos);
         if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
         Optional<Item> sherd = unfiredDecoratedPotBlockEntity.tryRemoveSherd(side);
         if (sherd.isEmpty()) {
-            return ActionResult.PASS;
+            return InteractionResult.PASS;
         }
-        dropStack(world, pos, side, sherd.get().getDefaultStack());
+        popResourceFromFace(level, pos, side, sherd.get().getDefaultInstance());
         if (!unfiredDecoratedPotBlockEntity.hasSherds()) {
-            world.setBlockState(pos, BwtBlocks.unfiredDecoratedPotBlock.getDefaultState(), Block.NOTIFY_LISTENERS, 0);
+            level.setBlock(pos, BwtBlocks.unfiredDecoratedPotBlock.defaultBlockState(), Block.UPDATE_CLIENTS, 0);
         }
-        return ActionResult.success(world.isClient);
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType options) {
-        super.appendTooltip(stack, context, tooltip, options);
-        Sherds sherds = stack.getOrDefault(DataComponentTypes.POT_DECORATIONS, Sherds.DEFAULT);
-        if (!sherds.equals(Sherds.DEFAULT)) {
-            tooltip.add(ScreenTexts.EMPTY);
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
+        super.appendHoverText(stack, context, tooltip, options);
+        PotDecorations sherds = stack.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
+        if (!sherds.equals(PotDecorations.EMPTY)) {
+            tooltip.add(CommonComponents.EMPTY);
             Stream.of(sherds.front(), sherds.left(), sherds.right(), sherds.back())
                     .filter(Optional::isPresent)
                     .map(Optional::get)
-                    .map(Item::getDefaultStack)
-                    .forEach(sherd -> tooltip.add(sherd.getName().copyContentOnly().formatted(Formatting.GRAY)));
+                    .map(Item::getDefaultInstance)
+                    .forEach(sherd -> tooltip.add(sherd.getHoverName().plainCopy().withStyle(ChatFormatting.GRAY)));
         }
     }
 
     @Override
-    public ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state) {
-        return world.getBlockEntity(pos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+        return level.getBlockEntity(pos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
                 ? unfiredDecoratedPotBlockEntity.asStack()
-                : super.getPickStack(world, pos, state);
+                : super.getCloneItemStack(level, pos, state);
     }
 
     @Override
-    protected BlockState rotate(BlockState state, BlockRotation rotation) {
-        return state.with(FACING, rotation.rotate(state.get(FACING)));
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
     }
 
     @Override
-    protected BlockState mirror(BlockState state, BlockMirror mirror) {
-        return state.rotate(mirror.getRotation(state.get(FACING)));
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation(state.getValue(FACING)));
     }
 }

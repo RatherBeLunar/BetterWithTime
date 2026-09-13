@@ -6,143 +6,142 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.loot.LootPool;
-import net.minecraft.loot.LootTable;
-import net.minecraft.loot.condition.BlockStatePropertyLootCondition;
-import net.minecraft.loot.condition.RandomChanceLootCondition;
-import net.minecraft.loot.entry.ItemEntry;
-import net.minecraft.loot.function.ApplyBonusLootFunction;
-import net.minecraft.loot.function.CopyComponentsLootFunction;
-import net.minecraft.loot.provider.number.ConstantLootNumberProvider;
-import net.minecraft.predicate.StatePredicate;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
+import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import java.util.concurrent.CompletableFuture;
 
 public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
-    public BlockLootTableGenerator(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+    public BlockLootTableGenerator(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(dataOutput, registryLookup);
     }
 
     @Override
     public void generate() {
-        addDrop(BwtBlocks.aqueductBlock);
-        addDrop(BwtBlocks.anchorBlock);
+        dropSelf(BwtBlocks.aqueductBlock);
+        dropSelf(BwtBlocks.anchorBlock);
 //        addDrop(BwtBlocks.anvilBlock);
-        addDrop(BwtBlocks.axleBlock);
-        addDrop(BwtBlocks.axlePowerSourceBlock, BwtBlocks.axleBlock);
+        dropSelf(BwtBlocks.axleBlock);
+        dropOther(BwtBlocks.axlePowerSourceBlock, BwtBlocks.axleBlock);
 //        addDrop(BwtBlocks.barrelBlock);
-        addDrop(BwtBlocks.bellowsBlock);
-        addDrop(BwtBlocks.blockDispenserBlock);
+        dropSelf(BwtBlocks.bellowsBlock);
+        dropSelf(BwtBlocks.blockDispenserBlock);
 
-        addDrop(BwtBlocks.bloodWoodBlocks.logBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.strippedLogBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.woodBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.strippedWoodBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.logBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.strippedLogBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.woodBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.strippedWoodBlock);
 
-        addDrop(BwtBlocks.bloodWoodBlocks.leavesBlock, block -> leavesDrops(block, BwtBlocks.bloodWoodBlocks.saplingBlock, SAPLING_DROP_CHANCE));
-        addDrop(BwtBlocks.bloodWoodBlocks.saplingBlock);
-        addPottedPlantDrops(BwtBlocks.bloodWoodBlocks.pottedSaplingBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.planksBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.buttonBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.fenceBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.fenceGateBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.pressurePlateBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.slabBlock, this::slabDrops);
-        addDrop(BwtBlocks.bloodWoodBlocks.stairsBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.doorBlock);
-        addDrop(BwtBlocks.bloodWoodBlocks.trapdoorBlock);
+        add(BwtBlocks.bloodWoodBlocks.leavesBlock, block -> createLeavesDrops(block, BwtBlocks.bloodWoodBlocks.saplingBlock, NORMAL_LEAVES_SAPLING_CHANCES));
+        dropSelf(BwtBlocks.bloodWoodBlocks.saplingBlock);
+        dropPottedContents(BwtBlocks.bloodWoodBlocks.pottedSaplingBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.planksBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.buttonBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.fenceBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.fenceGateBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.pressurePlateBlock);
+        add(BwtBlocks.bloodWoodBlocks.slabBlock, this::createSlabItemTable);
+        dropSelf(BwtBlocks.bloodWoodBlocks.stairsBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.doorBlock);
+        dropSelf(BwtBlocks.bloodWoodBlocks.trapdoorBlock);
 
-        addDrop(BwtBlocks.buddyBlock);
-        addDrop(BwtBlocks.cauldronBlock);
+        dropSelf(BwtBlocks.buddyBlock);
+        dropSelf(BwtBlocks.cauldronBlock);
 //        addDrop(BwtBlocks.canvasBlock);
-        addDrop(BwtBlocks.companionCubeBlock);
-        addDrop(BwtBlocks.companionSlabBlock);
-        addDrop(BwtBlocks.crucibleBlock);
-        addDrop(BwtBlocks.detectorBlock);
-        addDrop(BwtBlocks.gearBoxBlock);
-        addDrop(BwtBlocks.redstoneClutchBlock);
-        addDrop(BwtBlocks.grateBlock);
-        addDrop(BwtBlocks.handCrankBlock);
+        dropSelf(BwtBlocks.companionCubeBlock);
+        dropSelf(BwtBlocks.companionSlabBlock);
+        dropSelf(BwtBlocks.crucibleBlock);
+        dropSelf(BwtBlocks.detectorBlock);
+        dropSelf(BwtBlocks.gearBoxBlock);
+        dropSelf(BwtBlocks.redstoneClutchBlock);
+        dropSelf(BwtBlocks.grateBlock);
+        dropSelf(BwtBlocks.handCrankBlock);
         addHempDrop();
-        addDrop(BwtBlocks.hibachiBlock);
-        addDrop(BwtBlocks.hopperBlock);
+        dropSelf(BwtBlocks.hibachiBlock);
+        dropSelf(BwtBlocks.hopperBlock);
 //        addDrop(BwtBlocks.infernalEnchanterBlock);
-        addDrop(BwtBlocks.kilnBlock, Blocks.BRICKS);
-        addDrop(BwtBlocks.lensBlock);
-        addDrop(BwtBlocks.lightBlockBlock);
-        addDrop(BwtBlocks.millStoneBlock);
-        addDrop(BwtBlocks.miningChargeBlock);
+        dropOther(BwtBlocks.kilnBlock, Blocks.BRICKS);
+        dropSelf(BwtBlocks.lensBlock);
+        dropSelf(BwtBlocks.lightBlockBlock);
+        dropSelf(BwtBlocks.millStoneBlock);
+        dropSelf(BwtBlocks.miningChargeBlock);
 //        addDrop(BwtBlocks.netherGrothBlock);
-        addDrop(BwtBlocks.obsidianDetectorRailBlock);
-        addDrop(BwtBlocks.obsidianPressurePlateBlock);
-        addDrop(BwtBlocks.obsidianDetectorRailBlock);
-        addDrop(BwtBlocks.planterBlock);
-        addDrop(BwtBlocks.soulForgeBlock);
-        addDrop(BwtBlocks.soilPlanterBlock);
-        addDrop(BwtBlocks.soulSandPlanterBlock);
-        addDrop(BwtBlocks.grassPlanterBlock);
-        addDrop(BwtBlocks.platformBlock);
-        addDrop(BwtBlocks.pulleyBlock);
-        addDrop(BwtBlocks.ropeBlock);
-        addDrop(BwtBlocks.ropeCoilBlock);
-        addDrop(BwtBlocks.sawBlock);
-        addDrop(BwtBlocks.screwPumpBlock);
-        addDrop(BwtBlocks.slatsBlock);
+        dropSelf(BwtBlocks.obsidianDetectorRailBlock);
+        dropSelf(BwtBlocks.obsidianPressurePlateBlock);
+        dropSelf(BwtBlocks.obsidianDetectorRailBlock);
+        dropSelf(BwtBlocks.planterBlock);
+        dropSelf(BwtBlocks.soulForgeBlock);
+        dropSelf(BwtBlocks.soilPlanterBlock);
+        dropSelf(BwtBlocks.soulSandPlanterBlock);
+        dropSelf(BwtBlocks.grassPlanterBlock);
+        dropSelf(BwtBlocks.platformBlock);
+        dropSelf(BwtBlocks.pulleyBlock);
+        dropSelf(BwtBlocks.ropeBlock);
+        dropSelf(BwtBlocks.ropeCoilBlock);
+        dropSelf(BwtBlocks.sawBlock);
+        dropSelf(BwtBlocks.screwPumpBlock);
+        dropSelf(BwtBlocks.slatsBlock);
 //        addDrop(BwtBlocks.stakeBlock);
-        addDrop(BwtBlocks.stokedFireBlock);
-        addDrop(BwtBlocks.stoneDetectorRailBlock);
-        addDrop(BwtBlocks.turntableBlock);
-        addDrop(BwtBlocks.unfiredCrucibleBlock);
-        addDrop(BwtBlocks.unfiredPlanterBlock);
-        addDrop(BwtBlocks.unfiredVaseBlock);
-        addDrop(BwtBlocks.unfiredUrnBlock);
-        addDrop(BwtBlocks.unfiredFlowerPotBlock);
-        addDrop(BwtBlocks.unfiredDecoratedPotBlock);
-        addDrop(BwtBlocks.unfiredDecoratedPotBlockWithSherds, this::unfiredDecoratedPotBlockWithSherdsDrops);
-        addDrop(BwtBlocks.urnBlock);
-        addDrop(BwtBlocks.wickerPaneBlock);
-        addDrop(BwtBlocks.wickerBlock);
-        addDrop(BwtBlocks.wickerSlabBlock, this::slabDrops);
-        addDrop(BwtBlocks.vineTrapBlock);
-        DyeUtils.streamColorItemsSorted(BwtBlocks.woolSlabBlocks).forEach(block -> addDrop(block, this::slabDrops));
-        DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).forEach(this::addDropWithSilkTouch);
-        BwtBlocks.sidingBlocks.forEach(this::addDrop);
-        BwtBlocks.mouldingBlocks.forEach(this::addDrop);
-        BwtBlocks.cornerBlocks.forEach(this::addDrop);
-        BwtBlocks.columnBlocks.forEach(this::addDrop);
-        BwtBlocks.pedestalBlocks.forEach(this::addDrop);
-        BwtBlocks.tableBlocks.forEach(this::addDrop);
-        addDrop(BwtBlocks.dirtSlabBlock);
-        addDrop(BwtBlocks.dirtPathSlabBlock, BwtBlocks.dirtSlabBlock);
-        addDrop(BwtBlocks.grassSlabBlock, drops(BwtBlocks.grassSlabBlock, BwtBlocks.dirtSlabBlock));
-        addDrop(BwtBlocks.myceliumSlabBlock, drops(BwtBlocks.myceliumSlabBlock, BwtBlocks.dirtSlabBlock));
-        addDrop(BwtBlocks.podzolSlabBlock, drops(BwtBlocks.podzolSlabBlock, BwtBlocks.dirtSlabBlock));
+        dropSelf(BwtBlocks.stokedFireBlock);
+        dropSelf(BwtBlocks.stoneDetectorRailBlock);
+        dropSelf(BwtBlocks.turntableBlock);
+        dropSelf(BwtBlocks.unfiredCrucibleBlock);
+        dropSelf(BwtBlocks.unfiredPlanterBlock);
+        dropSelf(BwtBlocks.unfiredVaseBlock);
+        dropSelf(BwtBlocks.unfiredUrnBlock);
+        dropSelf(BwtBlocks.unfiredFlowerPotBlock);
+        dropSelf(BwtBlocks.unfiredDecoratedPotBlock);
+        add(BwtBlocks.unfiredDecoratedPotBlockWithSherds, this::unfiredDecoratedPotBlockWithSherdsDrops);
+        dropSelf(BwtBlocks.urnBlock);
+        dropSelf(BwtBlocks.wickerPaneBlock);
+        dropSelf(BwtBlocks.wickerBlock);
+        add(BwtBlocks.wickerSlabBlock, this::createSlabItemTable);
+        dropSelf(BwtBlocks.vineTrapBlock);
+        DyeUtils.streamColorItemsSorted(BwtBlocks.woolSlabBlocks).forEach(block -> add(block, this::createSlabItemTable));
+        DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).forEach(this::dropWhenSilkTouch);
+        BwtBlocks.sidingBlocks.forEach(this::dropSelf);
+        BwtBlocks.mouldingBlocks.forEach(this::dropSelf);
+        BwtBlocks.cornerBlocks.forEach(this::dropSelf);
+        BwtBlocks.columnBlocks.forEach(this::dropSelf);
+        BwtBlocks.pedestalBlocks.forEach(this::dropSelf);
+        BwtBlocks.tableBlocks.forEach(this::dropSelf);
+        dropSelf(BwtBlocks.dirtSlabBlock);
+        dropOther(BwtBlocks.dirtPathSlabBlock, BwtBlocks.dirtSlabBlock);
+        add(BwtBlocks.grassSlabBlock, createSingleItemTableWithSilkTouch(BwtBlocks.grassSlabBlock, BwtBlocks.dirtSlabBlock));
+        add(BwtBlocks.myceliumSlabBlock, createSingleItemTableWithSilkTouch(BwtBlocks.myceliumSlabBlock, BwtBlocks.dirtSlabBlock));
+        add(BwtBlocks.podzolSlabBlock, createSingleItemTableWithSilkTouch(BwtBlocks.podzolSlabBlock, BwtBlocks.dirtSlabBlock));
     }
 
     private void addHempDrop() {
-        RegistryWrapper.Impl<Enchantment> enchantmentRegistry = this.registryLookup.getWrapperOrThrow(RegistryKeys.ENCHANTMENT);
-        addDrop(
+        HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = this.registries.lookupOrThrow(Registries.ENCHANTMENT);
+        add(
                 BwtBlocks.hempCropBlock,
                 applyExplosionDecay(
                         BwtBlocks.hempCropBlock,
-                        LootTable.builder()
-                                .pool(LootPool.builder()
+                        LootTable.lootTable()
+                                .withPool(LootPool.lootPool()
                                         // If fully grown, drop hemp item
-                                        .conditionally(BlockStatePropertyLootCondition.builder(BwtBlocks.hempCropBlock)
-                                                .properties(StatePredicate.Builder.create().exactMatch(HempCropBlock.AGE, HempCropBlock.MAX_AGE))
-                                        ).with(ItemEntry.builder(BwtItems.hempItem))
-                                ).pool(LootPool.builder()
+                                        .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(BwtBlocks.hempCropBlock)
+                                                .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(HempCropBlock.AGE, HempCropBlock.MAX_AGE))
+                                        ).add(LootItem.lootTableItem(BwtItems.hempItem))
+                                ).withPool(LootPool.lootPool()
                                         // Regardless of growth, drop some seeds
-                                        .with(ItemEntry.builder(BwtItems.hempSeedsItem)
-                                                .conditionally(RandomChanceLootCondition.builder(0.5f))
-                                                .apply(ApplyBonusLootFunction.binomialWithBonusCount(enchantmentRegistry.getOrThrow(Enchantments.FORTUNE), 0.5f, 0))
+                                        .add(LootItem.lootTableItem(BwtItems.hempSeedsItem)
+                                                .when(LootItemRandomChanceCondition.randomChance(0.5f))
+                                                .apply(ApplyBonusCount.addBonusBinomialDistributionCount(enchantmentRegistry.getOrThrow(Enchantments.FORTUNE), 0.5f, 0))
                                         )
                                 )
                 )
@@ -150,14 +149,14 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
     }
 
     private LootTable.Builder unfiredDecoratedPotBlockWithSherdsDrops(Block block) {
-        return LootTable.builder()
-                .pool(
-                        LootPool.builder()
-                                .rolls(ConstantLootNumberProvider.create(1.0F))
-                                .with(
-                                        ItemEntry.builder(block)
-                                                .apply(CopyComponentsLootFunction.builder(CopyComponentsLootFunction.Source.BLOCK_ENTITY)
-                                                        .include(DataComponentTypes.POT_DECORATIONS)
+        return LootTable.lootTable()
+                .withPool(
+                        LootPool.lootPool()
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(
+                                        LootItem.lootTableItem(block)
+                                                .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                                        .include(DataComponents.POT_DECORATIONS)
                                                 )
                                 )
                 );

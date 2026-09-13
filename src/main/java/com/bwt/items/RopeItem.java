@@ -2,48 +2,48 @@ package com.bwt.items;
 
 import com.bwt.blocks.AnchorBlock;
 import com.bwt.blocks.BwtBlocks;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class RopeItem extends BlockItem {
-    public RopeItem(Item.Settings settings) {
+    public RopeItem(Item.Properties settings) {
         super(BwtBlocks.ropeBlock, settings);
     }
 
     @Override
-    public ActionResult useOnBlock(ItemUsageContext context) {
-        if ( context.getStack().getCount() == 0 ) {
-            return ActionResult.FAIL;
+    public InteractionResult useOn(UseOnContext context) {
+        if ( context.getItemInHand().getCount() == 0 ) {
+            return InteractionResult.FAIL;
         }
-        ItemPlacementContext placementContext = new ItemPlacementContext(context);
-        World world = placementContext.getWorld();
+        BlockPlaceContext placementContext = new BlockPlaceContext(context);
+        Level level = placementContext.getLevel();
         // This is the original context's blockpos on purpose, since it gives us the hit result target, not air
-        BlockPos.Mutable mutablePos = context.getBlockPos().mutableCopy();
-        BlockState state = world.getBlockState(mutablePos);
+        BlockPos.MutableBlockPos mutablePos = context.getClickedPos().mutable();
+        BlockState state = level.getBlockState(mutablePos);
         Direction anchorFacing;
         // rope can only be attached to anchors or other ropes
         if (
-            state.isOf(BwtBlocks.ropeBlock)
+            state.is(BwtBlocks.ropeBlock)
             || (
-                state.isOf(BwtBlocks.anchorBlock)
-                && !(anchorFacing = state.get(AnchorBlock.FACING)).equals(Direction.UP)
-                && !placementContext.getSide().equals(anchorFacing.getOpposite())
+                state.is(BwtBlocks.anchorBlock)
+                && !(anchorFacing = state.getValue(AnchorBlock.FACING)).equals(Direction.UP)
+                && !placementContext.getClickedFace().equals(anchorFacing.getOpposite())
             )
         ) {
             do {
                 mutablePos.move(Direction.DOWN);
-                placementContext = ItemPlacementContext.offset(placementContext, mutablePos, Direction.DOWN);
-            } while (world.getBlockState(mutablePos).isOf(BwtBlocks.ropeBlock) && mutablePos.getY() > world.getBottomY());
+                placementContext = BlockPlaceContext.at(placementContext, mutablePos, Direction.DOWN);
+            } while (level.getBlockState(mutablePos).is(BwtBlocks.ropeBlock) && mutablePos.getY() > level.getMinBuildHeight());
 
             return this.place(placementContext);
         }
-        return super.useOnBlock(context);
+        return super.useOn(context);
     }
 }

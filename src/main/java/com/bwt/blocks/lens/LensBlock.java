@@ -5,141 +5,141 @@ import com.bwt.blocks.RotateWithEmptyHand;
 import com.bwt.blocks.SimpleFacingBlock;
 import com.bwt.blocks.detector.DetectorBlock;
 import com.bwt.utils.BlockPosAndState;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import org.jetbrains.annotations.NotNull;
 
 public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand {
-    public static BooleanProperty LIT = Properties.LIT;
+    public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
     private final static int lensTickRate = 1;
     private final static float minTriggerLightValue = 12;
 
 
-    public LensBlock(Settings settings) {
+    public LensBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(FACING, Direction.NORTH).with(LIT, false));
+        registerDefaultState(defaultBlockState().setValue(FACING, Direction.NORTH).setValue(LIT, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(LIT);
     }
 
     @Override
-    public @NotNull BlockState getPlacementState(ItemPlacementContext ctx) {
-        return super.getPlacementState(ctx).with(FACING, ctx.getPlayerLookDirection().getOpposite());
+    public @NotNull BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return super.getStateForPlacement(ctx).setValue(FACING, ctx.getNearestLookingDirection().getOpposite());
     }
 
     @Override
-    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        super.onBlockAdded(state, world, pos, oldState, notify);
-        world.scheduleBlockTick(pos, this, lensTickRate);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onPlace(state, level, pos, oldState, notify);
+        level.scheduleTick(pos, this, lensTickRate);
     }
 
     @Override
-    protected void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        super.onStateReplaced(state, world, pos, newState, moved);
-        if (!newState.isOf(this) || !newState.get(FACING).equals(state.get(FACING))) {
-            LensBeamHelper.killBeam(world, pos, state.get(FACING));
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        super.onRemove(state, level, pos, newState, moved);
+        if (!newState.is(this) || !newState.getValue(FACING).equals(state.getValue(FACING))) {
+            LensBeamHelper.killBeam(level, pos, state.getValue(FACING));
         }
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!world.getBlockTickScheduler().isTicking(pos, this)) {
-            world.scheduleBlockTick(pos, this, lensTickRate);
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!level.getBlockTicks().willTickThisTick(pos, this)) {
+            level.scheduleTick(pos, this, lensTickRate);
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     @Override
-    protected void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        Direction facing = state.get(FACING);
-        boolean isLightDetector = isDirectlyFacingBlockDetector(world, pos, state);
+    protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        Direction facing = state.getValue(FACING);
+        boolean isLightDetector = isDirectlyFacingBlockDetector(level, pos, state);
 
         if (isLightDetector) {
-            BlockPos sourcePos = pos.offset(facing.getOpposite());
+            BlockPos sourcePos = pos.relative(facing.getOpposite());
 
-            int sourceLightValue = world.getLightLevel(sourcePos);
+            int sourceLightValue = level.getMaxLocalRawBrightness(sourcePos);
 
             boolean shouldBeOn =  sourceLightValue >= 8;
 
-            if (state.get(LIT) != shouldBeOn ) {
-                setBlockState(world, pos, state.with(LIT, shouldBeOn));
+            if (state.getValue(LIT) != shouldBeOn ) {
+                setBlockState(level, pos, state.setValue(LIT, shouldBeOn));
             }
 
             // schedule another update immediately to check for light changes
-            world.scheduleBlockTick(pos, this, lensTickRate);
+            level.scheduleTick(pos, this, lensTickRate);
         }
         else {
-            boolean lightOn = hasEnoughDirectInputLight(world, pos, state);
-            if (state.get(LIT) != lightOn) {
-                setBlockState(world, pos, state.with(LIT, lightOn));
+            boolean lightOn = hasEnoughDirectInputLight(level, pos, state);
+            if (state.getValue(LIT) != lightOn) {
+                setBlockState(level, pos, state.setValue(LIT, lightOn));
             }
             if (lightOn) {
-                LensBeamHelper.fireBeam(world, pos, state);
+                LensBeamHelper.fireBeam(level, pos, state);
             }
             else {
-                LensBeamHelper.killBeam(world, pos, facing);
+                LensBeamHelper.killBeam(level, pos, facing);
             }
         }
     }
 
 
-    private boolean hasEnoughDirectInputLight(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(FACING);
+    private boolean hasEnoughDirectInputLight(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
         Direction targetFacing = facing.getOpposite();
 
-        BlockState targetState = world.getBlockState(pos.offset(targetFacing));
+        BlockState targetState = level.getBlockState(pos.relative(targetFacing));
 
-        if (targetState.isIn(BlockTags.AIR) && !targetState.isOf(BwtBlocks.lensBeamBlock)) {
+        if (targetState.is(BlockTags.AIR) && !targetState.is(BwtBlocks.lensBeamBlock)) {
             return false;
         }
-        if (targetState.isOf(this)) {
+        if (targetState.is(this)) {
             // Lenses can feed directly into each other
-            return targetState.get(LIT) && targetState.get(FACING) == facing;
+            return targetState.getValue(LIT) && targetState.getValue(FACING) == facing;
         }
-        if (targetState.getLuminance() > minTriggerLightValue) {
+        if (targetState.getLightEmission() > minTriggerLightValue) {
             // only power the lens with a terminus lens beam if it is facing directly into it.
             return !(targetState.getBlock() instanceof LensBeamBlock)
-                    || targetState.get(LensBeamBlock.FACING_PROPERTIES.get(facing));
+                    || targetState.getValue(LensBeamBlock.FACING_PROPERTIES.get(facing));
         }
 
         return false;
     }
 
-    private boolean isDirectlyFacingBlockDetector(World world, BlockPos pos, BlockState state) {
-        Direction facing = state.get(FACING);
-        BlockPosAndState targetPosAndState = BlockPosAndState.of(world, pos.offset(facing));
-        if (!targetPosAndState.state().isOf(BwtBlocks.detectorBlock)) {
+    private boolean isDirectlyFacingBlockDetector(Level level, BlockPos pos, BlockState state) {
+        Direction facing = state.getValue(FACING);
+        BlockPosAndState targetPosAndState = BlockPosAndState.of(level, pos.relative(facing));
+        if (!targetPosAndState.state().is(BwtBlocks.detectorBlock)) {
             return false;
         }
-        return targetPosAndState.state().get(DetectorBlock.FACING) == facing.getOpposite();
+        return targetPosAndState.state().getValue(DetectorBlock.FACING) == facing.getOpposite();
     }
 
-    public static void setBlockState(World world, BlockPos pos, BlockState state) {
-        world.setBlockState(pos, state, Block.NOTIFY_LISTENERS | Block.FORCE_STATE);
+    public static void setBlockState(Level level, BlockPos pos, BlockState state) {
+        level.setBlock(pos, state, Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE);
         for (Direction direction : Direction.values()) {
-            if (direction.equals(state.get(FACING).getOpposite())) {
+            if (direction.equals(state.getValue(FACING).getOpposite())) {
                 continue;
             }
-            BlockPos targetPos = pos.offset(direction);
-            BlockState neighborState = world.getBlockState(targetPos);
-            world.replaceWithStateForNeighborUpdate(direction.getOpposite(), state, targetPos, pos, Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS), 511);
-            world.updateNeighbor(neighborState, targetPos, state.getBlock(), pos, false);
+            BlockPos targetPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(targetPos);
+            level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 511);
+            level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
         }
     }
 }

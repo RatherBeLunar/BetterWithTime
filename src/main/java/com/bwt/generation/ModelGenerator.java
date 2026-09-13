@@ -12,17 +12,29 @@ import com.bwt.utils.Id;
 import com.google.common.collect.ImmutableList;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.enums.BlockFace;
-import net.minecraft.data.client.*;
-import net.minecraft.item.Items;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.core.Direction;
+import net.minecraft.data.models.BlockModelGenerators;
+import net.minecraft.data.models.ItemModelGenerators;
+import net.minecraft.data.models.blockstates.Condition;
+import net.minecraft.data.models.blockstates.MultiPartGenerator;
+import net.minecraft.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.data.models.blockstates.PropertyDispatch;
+import net.minecraft.data.models.blockstates.Variant;
+import net.minecraft.data.models.blockstates.VariantProperties;
+import net.minecraft.data.models.model.ModelLocationUtils;
+import net.minecraft.data.models.model.ModelTemplate;
+import net.minecraft.data.models.model.ModelTemplates;
+import net.minecraft.data.models.model.TextureMapping;
+import net.minecraft.data.models.model.TextureSlot;
+import net.minecraft.data.models.model.TexturedModel;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.properties.AttachFace;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,12 +44,12 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     @Override
-    public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
+    public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
         generateDirtAndGrassSlab(blockStateModelGenerator);
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
         generateStokedFireBlock(blockStateModelGenerator);
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.sawBlock, ModelIds.getBlockModelId(BwtBlocks.sawBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.sawBlock, ModelLocationUtils.getModelLocation(BwtBlocks.sawBlock));
         BwtBlocks.sidingBlocks.forEach(sidingBlock -> generateSidingBlock(blockStateModelGenerator, sidingBlock));
         BwtBlocks.mouldingBlocks.forEach(mouldingBlock -> generateMouldingBlock(blockStateModelGenerator, mouldingBlock));
         BwtBlocks.cornerBlocks.forEach(cornerBlock -> generateCornerBlock(blockStateModelGenerator, cornerBlock));
@@ -46,655 +58,655 @@ public class ModelGenerator extends FabricModelProvider {
         BwtBlocks.tableBlocks.forEach(tableBlock -> generateTableBlock(blockStateModelGenerator, tableBlock));
         BwtBlocks.vaseBlocks.values().forEach(vaseBlock -> generateVaseBlock(blockStateModelGenerator, vaseBlock));
         BwtBlocks.woolSlabBlocks.forEach((dyeColor, woolSlab) -> generateWoolSlab(blockStateModelGenerator, dyeColor, woolSlab));
-        blockStateModelGenerator.registerStraightRail(BwtBlocks.stoneDetectorRailBlock);
-        blockStateModelGenerator.registerStraightRail(BwtBlocks.obsidianDetectorRailBlock);
-        blockStateModelGenerator.registerItemModel(BwtBlocks.slatsBlock);
-        blockStateModelGenerator.registerItemModel(BwtBlocks.grateBlock);
-        blockStateModelGenerator.registerItemModel(BwtBlocks.wickerPaneBlock);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+        blockStateModelGenerator.createActiveRail(BwtBlocks.stoneDetectorRailBlock);
+        blockStateModelGenerator.createActiveRail(BwtBlocks.obsidianDetectorRailBlock);
+        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.slatsBlock);
+        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.grateBlock);
+        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.wickerPaneBlock);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.cauldronBlock,
-                        BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.cauldronBlock))
-                ).coordinate(BlockStateVariantMap.create(AbstractCookingPotBlock.TIP_DIRECTION)
-                        .register(Direction.UP, BlockStateVariant.create())
-                        .register(Direction.NORTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90))
-                        .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
-                        .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                        .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                        Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.cauldronBlock))
+                ).with(PropertyDispatch.property(AbstractCookingPotBlock.TIP_DIRECTION)
+                        .select(Direction.UP, Variant.variant())
+                        .select(Direction.NORTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(Direction.SOUTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
+                        .select(Direction.WEST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                        .select(Direction.EAST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.crucibleBlock,
-                        BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.crucibleBlock))
-                ).coordinate(BlockStateVariantMap.create(AbstractCookingPotBlock.TIP_DIRECTION)
-                        .register(Direction.UP, BlockStateVariant.create())
-                        .register(Direction.NORTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90))
-                        .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
-                        .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                        .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270).put(VariantSettings.Y, VariantSettings.Rotation.R270))
+                        Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.crucibleBlock))
+                ).with(PropertyDispatch.property(AbstractCookingPotBlock.TIP_DIRECTION)
+                        .select(Direction.UP, Variant.variant())
+                        .select(Direction.NORTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                        .select(Direction.SOUTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
+                        .select(Direction.WEST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                        .select(Direction.EAST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.pulleyBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                Models.CUBE_BOTTOM_TOP.upload(
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelTemplates.CUBE_BOTTOM_TOP.create(
                                         BwtBlocks.pulleyBlock,
-                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.pulleyBlock).getTextures().put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.pulleyBlock, "_side")),
-                                        blockStateModelGenerator.modelCollector
+                                        TexturedModel.CUBE_TOP_BOTTOM.get(BwtBlocks.pulleyBlock).getMapping().put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.pulleyBlock, "_side")),
+                                        blockStateModelGenerator.modelOutput
                                 )
                         )
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.turntableBlock)
-                .coordinate(BlockStateVariantMap.create(TurntableBlock.TICK_SETTING)
-                        .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_0")))
-                        .register(1, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_1")))
-                        .register(2, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_2")))
-                        .register(3, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_3")))
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(BwtBlocks.turntableBlock)
+                .with(PropertyDispatch.property(TurntableBlock.TICK_SETTING)
+                        .select(0, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_0")))
+                        .select(1, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_1")))
+                        .select(2, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_2")))
+                        .select(3, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_3")))
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.platformBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(BwtBlocks.platformBlock)
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelLocationUtils.getModelLocation(BwtBlocks.platformBlock)
                         )
                 )
         );
-        Identifier bellowsId = ModelIds.getBlockModelId(BwtBlocks.bellowsBlock);
-        Identifier bellowsCompressedId = bellowsId.withSuffixedPath("_compressed");
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.bellowsBlock)
-                .coordinate(BlockStateVariantMap.create(BellowsBlock.MECH_POWERED)
-                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsCompressedId))
-                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, bellowsId))
+        ResourceLocation bellowsId = ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock);
+        ResourceLocation bellowsCompressedId = bellowsId.withSuffix("_compressed");
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(BwtBlocks.bellowsBlock)
+                .with(PropertyDispatch.property(BellowsBlock.MECH_POWERED)
+                        .select(true, Variant.variant().with(VariantProperties.MODEL, bellowsCompressedId))
+                        .select(false, Variant.variant().with(VariantProperties.MODEL, bellowsId))
                 )
-                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+                .with(BlockModelGenerators.createHorizontalFacingDispatch())
         );
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soulForgeBlock, ModelIds.getBlockModelId(BwtBlocks.soulForgeBlock))
-                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.soulForgeBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soulForgeBlock))
+                .with(BlockModelGenerators.createHorizontalFacingDispatch())
         );
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.screwPumpBlock, ModelIds.getBlockModelId(BwtBlocks.screwPumpBlock))
-                .coordinate(BlockStateModelGenerator.createNorthDefaultHorizontalRotationStates())
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.screwPumpBlock, ModelLocationUtils.getModelLocation(BwtBlocks.screwPumpBlock))
+                .with(BlockModelGenerators.createHorizontalFacingDispatch())
         );
 
-        blockStateModelGenerator.excludeFromSimpleItemModelGeneration(BwtBlocks.unfiredDecoratedPotBlockWithSherds);
+        blockStateModelGenerator.skipAutoItemBlock(BwtBlocks.unfiredDecoratedPotBlockWithSherds);
         for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredFlowerPotBlock}) {
-            blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(unfiredPotteryBlock)
-                    .coordinate(BlockStateVariantMap.create(UnfiredPotteryBlock.COOKING)
-                            .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(unfiredPotteryBlock)))
-                            .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(unfiredPotteryBlock).withSuffixedPath("_cooking")))
+            blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(unfiredPotteryBlock)
+                    .with(PropertyDispatch.property(UnfiredPotteryBlock.COOKING)
+                            .select(false, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(unfiredPotteryBlock)))
+                            .select(true, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(unfiredPotteryBlock).withSuffix("_cooking")))
                     )
             );
         }
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.urnBlock)
-                .coordinate(BlockStateVariantMap.create(UrnBlock.CONNECTED_UP)
-                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock)))
-                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.urnBlock).withSuffixedPath("_connected_up")))
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(BwtBlocks.urnBlock)
+                .with(PropertyDispatch.property(UrnBlock.CONNECTED_UP)
+                        .select(false, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.urnBlock)))
+                        .select(true, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.urnBlock).withSuffix("_connected_up")))
                 )
         );
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.planterBlock, ModelIds.getBlockModelId(BwtBlocks.planterBlock)));
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soilPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.soilPlanterBlock)));
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.soulSandPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.soulSandPlanterBlock)));
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.grassPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.grassPlanterBlock)));
-        Identifier buddyBlockModelId = TexturedModel.makeFactory(block -> TextureMap.sideFrontTop(block).put(TextureKey.TOP, TextureMap.getSubId(block, "_side")), Models.ORIENTABLE)
-                .upload(BwtBlocks.buddyBlock, blockStateModelGenerator.modelCollector);
-        Identifier buddyBlockPoweredModelId = TexturedModel.makeFactory(block -> new TextureMap().put(TextureKey.SIDE, TextureMap.getSubId(block, "_side_powered")).put(TextureKey.FRONT, TextureMap.getSubId(block, "_front_powered")).put(TextureKey.TOP, TextureMap.getSubId(block, "_side_powered")), Models.ORIENTABLE)
-                .upload(BwtBlocks.buddyBlock, "_powered", blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.buddyBlock, BlockStateVariant.create().put(VariantSettings.MODEL, buddyBlockModelId))
-                        .coordinate(BlockStateModelGenerator.createBooleanModelMap(BuddyBlock.POWERED, buddyBlockPoweredModelId, buddyBlockModelId))
-                        .coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.planterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.planterBlock)));
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.soilPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soilPlanterBlock)));
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.soulSandPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soulSandPlanterBlock)));
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.grassPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.grassPlanterBlock)));
+        ResourceLocation buddyBlockModelId = TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
+                .create(BwtBlocks.buddyBlock, blockStateModelGenerator.modelOutput);
+        ResourceLocation buddyBlockPoweredModelId = TexturedModel.createDefault(block -> new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block, "_side_powered")).put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front_powered")).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side_powered")), ModelTemplates.CUBE_ORIENTABLE)
+                .createWithSuffix(BwtBlocks.buddyBlock, "_powered", blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.buddyBlock, Variant.variant().with(VariantProperties.MODEL, buddyBlockModelId))
+                        .with(BlockModelGenerators.createBooleanModelDispatch(BuddyBlock.POWERED, buddyBlockPoweredModelId, buddyBlockModelId))
+                        .with(BlockModelGenerators.createFacingDispatch())
         );
-        TexturedModel.makeFactory(block -> TextureMap.sideFrontTop(block).put(TextureKey.TOP, TextureMap.getSubId(block, "_side")), Models.ORIENTABLE)
-                .upload(BwtBlocks.soapBlock, blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.soapBlock, ModelIds.getBlockModelId(BwtBlocks.soapBlock));
-        blockStateModelGenerator.registerSingleton(BwtBlocks.ropeCoilBlock, TexturedModel.CUBE_COLUMN);
-        blockStateModelGenerator.registerSingleton(BwtBlocks.paddingBlock, TexturedModel.CUBE_ALL);
-        blockStateModelGenerator.registerSingleton(BwtBlocks.wickerBlock, TexturedModel.CUBE_ALL);
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createBlockStateWithRandomHorizontalRotations(BwtBlocks.dungBlock, ModelIds.getBlockModelId(BwtBlocks.dungBlock)));
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(
+        TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
+                .create(BwtBlocks.soapBlock, blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.soapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soapBlock));
+        blockStateModelGenerator.createTrivialBlock(BwtBlocks.ropeCoilBlock, TexturedModel.COLUMN);
+        blockStateModelGenerator.createTrivialBlock(BwtBlocks.paddingBlock, TexturedModel.CUBE);
+        blockStateModelGenerator.createTrivialBlock(BwtBlocks.wickerBlock, TexturedModel.CUBE);
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createRotatedVariant(BwtBlocks.dungBlock, ModelLocationUtils.getModelLocation(BwtBlocks.dungBlock)));
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSlab(
                 BwtBlocks.wickerSlabBlock,
-                ModelIds.getBlockModelId(BwtBlocks.wickerSlabBlock),
-                ModelIds.getBlockSubModelId(BwtBlocks.wickerSlabBlock, "_top"),
-                ModelIds.getBlockModelId(BwtBlocks.wickerBlock)
+                ModelLocationUtils.getModelLocation(BwtBlocks.wickerSlabBlock),
+                ModelLocationUtils.getModelLocation(BwtBlocks.wickerSlabBlock, "_top"),
+                ModelLocationUtils.getModelLocation(BwtBlocks.wickerBlock)
         ));
         generateMiningChargeBlock(blockStateModelGenerator);
-        TexturedModel.makeFactory(TextureMap::sideFrontBack, Models.TEMPLATE_COMMAND_BLOCK)
-                .upload(BwtBlocks.lensBlock, blockStateModelGenerator.modelCollector);
+        TexturedModel.createDefault(TextureMapping::commandBlock, ModelTemplates.COMMAND_BLOCK)
+                .create(BwtBlocks.lensBlock, blockStateModelGenerator.modelOutput);
         generateDebugLensBeam(blockStateModelGenerator);
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSingletonBlockState(BwtBlocks.lensBeamGlassBlock, ModelIds.getBlockModelId(Blocks.GLASS)));
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.lensBeamGlassBlock, ModelLocationUtils.getModelLocation(Blocks.GLASS)));
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.aqueductBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                Models.CUBE_BOTTOM_TOP.upload(
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelTemplates.CUBE_BOTTOM_TOP.create(
                                         BwtBlocks.aqueductBlock,
-                                        TexturedModel.CUBE_BOTTOM_TOP.get(BwtBlocks.aqueductBlock).getTextures(),
-                                        blockStateModelGenerator.modelCollector
+                                        TexturedModel.CUBE_TOP_BOTTOM.get(BwtBlocks.aqueductBlock).getMapping(),
+                                        blockStateModelGenerator.modelOutput
                                 )
                         )
                 )
         );
 
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.aqueductBlock, ModelIds.getBlockModelId(BwtBlocks.aqueductBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.anchorBlock, ModelIds.getBlockModelId(BwtBlocks.anchorBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.axleBlock, ModelIds.getBlockModelId(BwtBlocks.axleBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.creativePowerSouceBlock, ModelIds.getBlockModelId(BwtBlocks.creativePowerSouceBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.blockDispenserBlock, ModelIds.getBlockModelId(BwtBlocks.blockDispenserBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.cauldronBlock, ModelIds.getBlockModelId(BwtBlocks.cauldronBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.crucibleBlock, ModelIds.getBlockModelId(BwtBlocks.crucibleBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.detectorBlock, ModelIds.getBlockModelId(BwtBlocks.detectorBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.gearBoxBlock, ModelIds.getBlockModelId(BwtBlocks.gearBoxBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.screwPumpBlock, ModelIds.getBlockModelId(BwtBlocks.screwPumpBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.redstoneClutchBlock, ModelIds.getBlockModelId(BwtBlocks.redstoneClutchBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.handCrankBlock, ModelIds.getBlockModelId(BwtBlocks.handCrankBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.hibachiBlock, ModelIds.getBlockModelId(BwtBlocks.hibachiBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.hopperBlock, ModelIds.getBlockModelId(BwtBlocks.hopperBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.lensBlock, ModelIds.getBlockModelId(BwtBlocks.lensBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.lightBlockBlock, ModelIds.getBlockModelId(BwtBlocks.lightBlockBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.millStoneBlock, ModelIds.getBlockModelId(BwtBlocks.millStoneBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.obsidianPressurePlateBlock, ModelIds.getBlockModelId(BwtBlocks.obsidianPressurePlateBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.pulleyBlock, ModelIds.getBlockModelId(BwtBlocks.pulleyBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.turntableBlock, ModelIds.getBlockSubModelId(BwtBlocks.turntableBlock, "_0"));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.bellowsBlock, ModelIds.getBlockModelId(BwtBlocks.bellowsBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredDecoratedPotBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredDecoratedPotBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredCrucibleBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredCrucibleBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredPlanterBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredPlanterBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredVaseBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredVaseBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredUrnBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredUrnBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.unfiredFlowerPotBlock, ModelIds.getBlockModelId(BwtBlocks.unfiredFlowerPotBlock));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.vineTrapBlock, ModelIds.getBlockModelId(BwtBlocks.vineTrapBlock));
-        blockStateModelGenerator.registerItemModel(BwtBlocks.urnBlock.asItem());
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.aqueductBlock, ModelLocationUtils.getModelLocation(BwtBlocks.aqueductBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.anchorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.anchorBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.axleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.axleBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.creativePowerSouceBlock, ModelLocationUtils.getModelLocation(BwtBlocks.creativePowerSouceBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.blockDispenserBlock, ModelLocationUtils.getModelLocation(BwtBlocks.blockDispenserBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.cauldronBlock, ModelLocationUtils.getModelLocation(BwtBlocks.cauldronBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.crucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.crucibleBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.detectorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.detectorBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.gearBoxBlock, ModelLocationUtils.getModelLocation(BwtBlocks.gearBoxBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.screwPumpBlock, ModelLocationUtils.getModelLocation(BwtBlocks.screwPumpBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.redstoneClutchBlock, ModelLocationUtils.getModelLocation(BwtBlocks.redstoneClutchBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.handCrankBlock, ModelLocationUtils.getModelLocation(BwtBlocks.handCrankBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.hibachiBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hibachiBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.hopperBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hopperBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.lensBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lensBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.lightBlockBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lightBlockBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.millStoneBlock, ModelLocationUtils.getModelLocation(BwtBlocks.millStoneBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.obsidianPressurePlateBlock, ModelLocationUtils.getModelLocation(BwtBlocks.obsidianPressurePlateBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.pulleyBlock, ModelLocationUtils.getModelLocation(BwtBlocks.pulleyBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.turntableBlock, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_0"));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.bellowsBlock, ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredDecoratedPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredDecoratedPotBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredCrucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredCrucibleBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredPlanterBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredVaseBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredVaseBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredUrnBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredUrnBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredFlowerPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredFlowerPotBlock));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.vineTrapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.urnBlock.asItem());
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(BwtItems.armorPlateItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.beltItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.breedingHarnessItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.broadheadItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.broadheadArrowItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.canvasItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.coalDustItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.concentratedHellfireItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.cementBucketItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.donutItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.dungItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.dynamiteItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.fabricItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.filamentItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.flourItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.foulFoodItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.friedEggItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.gearItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.groundNetherrackItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.glueItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.haftItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.hempItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.hempFiberItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.hempSeedsItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.hellfireDustItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.kibbleItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.nethercoalItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.paddingItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.poachedEggItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.potashItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.rawEggItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.redstoneEyeItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.netheriteMattockItem, Models.HANDHELD);
-        itemModelGenerator.register(BwtItems.netheriteBattleAxeItem, Models.HANDHELD);
-        itemModelGenerator.register(BwtItems.ropeItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.rottedArrowItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.sawDustItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.sailItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.scouredLeatherItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.screwItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.soapItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.soulDustItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.soulUrnItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.strapItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.tallowItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.tannedLeatherItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.waterWheelItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.windmillItem, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.wolfChopItem, Items.PORKCHOP, Models.GENERATED);
-        itemModelGenerator.register(BwtItems.woodBladeItem, Models.GENERATED);
+    public void generateItemModels(ItemModelGenerators itemModelGenerator) {
+        itemModelGenerator.generateFlatItem(BwtItems.armorPlateItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.beltItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.breedingHarnessItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.broadheadItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.broadheadArrowItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.canvasItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.coalDustItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.concentratedHellfireItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.cementBucketItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.donutItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.dungItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.dynamiteItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.fabricItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.filamentItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.flourItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.foulFoodItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.friedEggItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.gearItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.groundNetherrackItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.glueItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.haftItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.hempItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.hempFiberItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.hempSeedsItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.hellfireDustItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.kibbleItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.nethercoalItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.paddingItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.poachedEggItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.potashItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.rawEggItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.redstoneEyeItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.netheriteMattockItem, ModelTemplates.FLAT_HANDHELD_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.netheriteBattleAxeItem, ModelTemplates.FLAT_HANDHELD_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.ropeItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.rottedArrowItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.sawDustItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.sailItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.scouredLeatherItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.screwItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.soapItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.soulDustItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.soulUrnItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.strapItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.tallowItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.tannedLeatherItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.waterWheelItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.windmillItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.wolfChopItem, Items.PORKCHOP, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtItems.woodBladeItem, ModelTemplates.FLAT_ITEM);
     }
 
-    private void generateBloodWoodBlocks(BlockStateModelGenerator blockStateModelGenerator) {
-        blockStateModelGenerator.registerLog(BwtBlocks.bloodWoodBlocks.logBlock).log(BwtBlocks.bloodWoodBlocks.logBlock).wood(BwtBlocks.bloodWoodBlocks.woodBlock);
-        blockStateModelGenerator.registerLog(BwtBlocks.bloodWoodBlocks.strippedLogBlock).log(BwtBlocks.bloodWoodBlocks.strippedLogBlock).wood(BwtBlocks.bloodWoodBlocks.strippedWoodBlock);
-        blockStateModelGenerator.registerSingleton(BwtBlocks.bloodWoodBlocks.leavesBlock, TexturedModel.LEAVES);
-        blockStateModelGenerator.registerFlowerPotPlant(BwtBlocks.bloodWoodBlocks.saplingBlock, BwtBlocks.bloodWoodBlocks.pottedSaplingBlock, BlockStateModelGenerator.TintType.NOT_TINTED);
-        blockStateModelGenerator.registerCubeAllModelTexturePool(BwtBlocks.bloodWoodBlocks.blockFamily.getBaseBlock()).family(BwtBlocks.bloodWoodBlocks.blockFamily);
+    private void generateBloodWoodBlocks(BlockModelGenerators blockStateModelGenerator) {
+        blockStateModelGenerator.woodProvider(BwtBlocks.bloodWoodBlocks.logBlock).logWithHorizontal(BwtBlocks.bloodWoodBlocks.logBlock).wood(BwtBlocks.bloodWoodBlocks.woodBlock);
+        blockStateModelGenerator.woodProvider(BwtBlocks.bloodWoodBlocks.strippedLogBlock).logWithHorizontal(BwtBlocks.bloodWoodBlocks.strippedLogBlock).wood(BwtBlocks.bloodWoodBlocks.strippedWoodBlock);
+        blockStateModelGenerator.createTrivialBlock(BwtBlocks.bloodWoodBlocks.leavesBlock, TexturedModel.LEAVES);
+        blockStateModelGenerator.createPlant(BwtBlocks.bloodWoodBlocks.saplingBlock, BwtBlocks.bloodWoodBlocks.pottedSaplingBlock, BlockModelGenerators.TintState.NOT_TINTED);
+        blockStateModelGenerator.family(BwtBlocks.bloodWoodBlocks.blockFamily.getBaseBlock()).generateFor(BwtBlocks.bloodWoodBlocks.blockFamily);
     }
 
-    private void generateCompanionBlocks(BlockStateModelGenerator blockStateModelGenerator) {
-        Identifier companionCubeModelId = TexturedModel.ORIENTABLE.upload(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+    private void generateCompanionBlocks(BlockModelGenerators blockStateModelGenerator) {
+        ResourceLocation companionCubeModelId = TexturedModel.ORIENTABLE_ONLY_TOP.create(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         BwtBlocks.companionCubeBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(BwtBlocks.companionCubeBlock)
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelLocationUtils.getModelLocation(BwtBlocks.companionCubeBlock)
                         )
-                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+                ).with(BlockModelGenerators.createFacingDispatch())
         );
-        Identifier companionSlabBottom = TexturedModel.makeFactory(
-                block -> new TextureMap()
-                        .put(TextureKey.BOTTOM, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_top"))
-                        .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.companionSlabBlock, "_top"))
-                        .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_side"))
-                , Models.SLAB
-        ).upload(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelCollector);
-        Identifier companionSlabTop = TexturedModel.makeFactory(
-                block -> new TextureMap()
-                        .put(TextureKey.BOTTOM, TextureMap.getSubId(BwtBlocks.companionSlabBlock, "_top"))
-                        .put(TextureKey.TOP, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_top"))
-                        .put(TextureKey.SIDE, TextureMap.getSubId(BwtBlocks.companionCubeBlock, "_side"))
-                , Models.SLAB_TOP
-        ).upload(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(BwtBlocks.companionSlabBlock, companionSlabBottom, companionSlabTop, companionCubeModelId));
-        blockStateModelGenerator.registerParentedItemModel(BwtBlocks.companionSlabBlock, companionSlabBottom);
+        ResourceLocation companionSlabBottom = TexturedModel.createDefault(
+                block -> new TextureMapping()
+                        .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_top"))
+                        .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.companionSlabBlock, "_top"))
+                        .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_side"))
+                , ModelTemplates.SLAB_BOTTOM
+        ).create(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelOutput);
+        ResourceLocation companionSlabTop = TexturedModel.createDefault(
+                block -> new TextureMapping()
+                        .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(BwtBlocks.companionSlabBlock, "_top"))
+                        .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_top"))
+                        .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_side"))
+                , ModelTemplates.SLAB_TOP
+        ).create(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSlab(BwtBlocks.companionSlabBlock, companionSlabBottom, companionSlabTop, companionCubeModelId));
+        blockStateModelGenerator.delegateItemModel(BwtBlocks.companionSlabBlock, companionSlabBottom);
     }
 
-    private void generateStokedFireBlock(BlockStateModelGenerator blockStateModelGenerator) {
-        Model tallFireFloorTemplate = new Model(Optional.of(Id.of("block/template_tall_fire_floor")), Optional.empty(), TextureKey.FIRE);
-        Model shortFireFloorTemplate = new Model(Optional.of(Id.of("block/template_short_fire_floor")), Optional.empty(), TextureKey.FIRE);
-        Model tallFireSideTemplate = new Model(Optional.of(Id.of("block/template_tall_fire_side")), Optional.empty(), TextureKey.FIRE);
-        Model shortFireSideTemplate = new Model(Optional.of(Id.of("block/template_short_fire_side")), Optional.empty(), TextureKey.FIRE);
-        Model tallFireSideAltTemplate = new Model(Optional.of(Id.of("block/template_tall_fire_side_alt")), Optional.empty(), TextureKey.FIRE);
-        Model shortFireSideAltTemplate = new Model(Optional.of(Id.of("block/template_short_fire_side_alt")), Optional.empty(), TextureKey.FIRE);
-        TextureMap short0 = new TextureMap().put(TextureKey.FIRE, TextureMap.getSubId(BwtBlocks.stokedFireBlock, "_short_0"));
-        TextureMap short1 = new TextureMap().put(TextureKey.FIRE, TextureMap.getSubId(BwtBlocks.stokedFireBlock, "_short_1"));
-        List<Identifier> tallFloorIdentifiers = ImmutableList.of(
-                tallFireFloorTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_floor0"), TextureMap.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector),
-                tallFireFloorTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_floor1"), TextureMap.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector)
+    private void generateStokedFireBlock(BlockModelGenerators blockStateModelGenerator) {
+        ModelTemplate tallFireFloorTemplate = new ModelTemplate(Optional.of(Id.of("block/template_tall_fire_floor")), Optional.empty(), TextureSlot.FIRE);
+        ModelTemplate shortFireFloorTemplate = new ModelTemplate(Optional.of(Id.of("block/template_short_fire_floor")), Optional.empty(), TextureSlot.FIRE);
+        ModelTemplate tallFireSideTemplate = new ModelTemplate(Optional.of(Id.of("block/template_tall_fire_side")), Optional.empty(), TextureSlot.FIRE);
+        ModelTemplate shortFireSideTemplate = new ModelTemplate(Optional.of(Id.of("block/template_short_fire_side")), Optional.empty(), TextureSlot.FIRE);
+        ModelTemplate tallFireSideAltTemplate = new ModelTemplate(Optional.of(Id.of("block/template_tall_fire_side_alt")), Optional.empty(), TextureSlot.FIRE);
+        ModelTemplate shortFireSideAltTemplate = new ModelTemplate(Optional.of(Id.of("block/template_short_fire_side_alt")), Optional.empty(), TextureSlot.FIRE);
+        TextureMapping short0 = new TextureMapping().put(TextureSlot.FIRE, TextureMapping.getBlockTexture(BwtBlocks.stokedFireBlock, "_short_0"));
+        TextureMapping short1 = new TextureMapping().put(TextureSlot.FIRE, TextureMapping.getBlockTexture(BwtBlocks.stokedFireBlock, "_short_1"));
+        List<ResourceLocation> tallFloorIdentifiers = ImmutableList.of(
+                tallFireFloorTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_floor0"), TextureMapping.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput),
+                tallFireFloorTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_floor1"), TextureMapping.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput)
         );
-        List<Identifier> shortFloorIdentifiers = ImmutableList.of(
-                tallFireFloorTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_floor0"), short0, blockStateModelGenerator.modelCollector),
-                tallFireFloorTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_floor1"), short1, blockStateModelGenerator.modelCollector)
+        List<ResourceLocation> shortFloorIdentifiers = ImmutableList.of(
+                tallFireFloorTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_floor0"), short0, blockStateModelGenerator.modelOutput),
+                tallFireFloorTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_floor1"), short1, blockStateModelGenerator.modelOutput)
         );
-        List<Identifier> tallSideIdentifiers = ImmutableList.of(
-                tallFireSideTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_side0"), TextureMap.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector),
-                tallFireSideTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_side1"), TextureMap.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector),
-                tallFireSideAltTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_side_alt0"), TextureMap.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector),
-                tallFireSideAltTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_tall_side_alt1"), TextureMap.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelCollector)
+        List<ResourceLocation> tallSideIdentifiers = ImmutableList.of(
+                tallFireSideTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_side0"), TextureMapping.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput),
+                tallFireSideTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_side1"), TextureMapping.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput),
+                tallFireSideAltTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_side_alt0"), TextureMapping.fire0(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput),
+                tallFireSideAltTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_tall_side_alt1"), TextureMapping.fire1(BwtBlocks.stokedFireBlock), blockStateModelGenerator.modelOutput)
         );
-        List<Identifier> shortSideIdentifiers = ImmutableList.of(
-                tallFireSideTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_side0"), short0, blockStateModelGenerator.modelCollector),
-                tallFireSideTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_side1"), short1, blockStateModelGenerator.modelCollector),
-                tallFireSideAltTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_side_alt0"), short0, blockStateModelGenerator.modelCollector),
-                tallFireSideAltTemplate.upload(ModelIds.getBlockSubModelId(BwtBlocks.stokedFireBlock, "_short_side_alt1"), short1, blockStateModelGenerator.modelCollector)
+        List<ResourceLocation> shortSideIdentifiers = ImmutableList.of(
+                tallFireSideTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_side0"), short0, blockStateModelGenerator.modelOutput),
+                tallFireSideTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_side1"), short1, blockStateModelGenerator.modelOutput),
+                tallFireSideAltTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_side_alt0"), short0, blockStateModelGenerator.modelOutput),
+                tallFireSideAltTemplate.create(ModelLocationUtils.getModelLocation(BwtBlocks.stokedFireBlock, "_short_side_alt1"), short1, blockStateModelGenerator.modelOutput)
         );
-        When whenShort = When.create().set(StokedFireBlock.TWO_HIGH, false);
-        When whenTall = When.create().set(StokedFireBlock.TWO_HIGH, true);
-        blockStateModelGenerator.blockStateCollector.accept(MultipartBlockStateSupplier.create(BwtBlocks.stokedFireBlock)
-                .with(whenShort, BlockStateModelGenerator.buildBlockStateVariants(shortFloorIdentifiers, blockStateVariant -> blockStateVariant))
-                .with(whenTall, BlockStateModelGenerator.buildBlockStateVariants(tallFloorIdentifiers, blockStateVariant -> blockStateVariant))
-                .with(whenShort, BlockStateModelGenerator.buildBlockStateVariants(shortSideIdentifiers, blockStateVariant -> blockStateVariant))
-                .with(whenTall, BlockStateModelGenerator.buildBlockStateVariants(tallSideIdentifiers, blockStateVariant -> blockStateVariant))
-                .with(whenShort, BlockStateModelGenerator.buildBlockStateVariants(shortSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R90)))
-                .with(whenTall, BlockStateModelGenerator.buildBlockStateVariants(tallSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R90)))
-                .with(whenShort, BlockStateModelGenerator.buildBlockStateVariants(shortSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R180)))
-                .with(whenTall, BlockStateModelGenerator.buildBlockStateVariants(tallSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R180)))
-                .with(whenShort, BlockStateModelGenerator.buildBlockStateVariants(shortSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R270)))
-                .with(whenTall, BlockStateModelGenerator.buildBlockStateVariants(tallSideIdentifiers, blockStateVariant -> blockStateVariant.put(VariantSettings.Y, VariantSettings.Rotation.R270))));
+        Condition whenShort = Condition.condition().term(StokedFireBlock.TWO_HIGH, false);
+        Condition whenTall = Condition.condition().term(StokedFireBlock.TWO_HIGH, true);
+        blockStateModelGenerator.blockStateOutput.accept(MultiPartGenerator.multiPart(BwtBlocks.stokedFireBlock)
+                .with(whenShort, BlockModelGenerators.wrapModels(shortFloorIdentifiers, blockStateVariant -> blockStateVariant))
+                .with(whenTall, BlockModelGenerators.wrapModels(tallFloorIdentifiers, blockStateVariant -> blockStateVariant))
+                .with(whenShort, BlockModelGenerators.wrapModels(shortSideIdentifiers, blockStateVariant -> blockStateVariant))
+                .with(whenTall, BlockModelGenerators.wrapModels(tallSideIdentifiers, blockStateVariant -> blockStateVariant))
+                .with(whenShort, BlockModelGenerators.wrapModels(shortSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)))
+                .with(whenTall, BlockModelGenerators.wrapModels(tallSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)))
+                .with(whenShort, BlockModelGenerators.wrapModels(shortSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)))
+                .with(whenTall, BlockModelGenerators.wrapModels(tallSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)))
+                .with(whenShort, BlockModelGenerators.wrapModels(shortSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)))
+                .with(whenTall, BlockModelGenerators.wrapModels(tallSideIdentifiers, blockStateVariant -> blockStateVariant.with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))));
     }
 
-    private void generateMiningChargeBlock(BlockStateModelGenerator blockStateModelGenerator) {
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.miningChargeBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(BwtBlocks.miningChargeBlock)))
-                        .coordinate(BlockStateVariantMap
-                                .create(Properties.BLOCK_FACE, Properties.HORIZONTAL_FACING)
-                                .register(BlockFace.CEILING, Direction.NORTH, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R180)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                                .register(BlockFace.CEILING, Direction.EAST, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R180)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                                .register(BlockFace.CEILING, Direction.SOUTH, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R180))
-                                .register(BlockFace.CEILING, Direction.WEST, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R180)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                                .register(BlockFace.FLOOR, Direction.NORTH, BlockStateVariant.create())
-                                .register(BlockFace.FLOOR, Direction.EAST, BlockStateVariant.create()
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                                .register(BlockFace.FLOOR, Direction.SOUTH, BlockStateVariant.create()
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                                .register(BlockFace.FLOOR, Direction.WEST, BlockStateVariant.create()
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                                .register(BlockFace.WALL, Direction.NORTH, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R90))
-                                .register(BlockFace.WALL, Direction.EAST, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R90)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                                .register(BlockFace.WALL, Direction.SOUTH, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R90)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                                .register(BlockFace.WALL, Direction.WEST, BlockStateVariant.create()
-                                        .put(VariantSettings.X, VariantSettings.Rotation.R90)
-                                        .put(VariantSettings.Y, VariantSettings.Rotation.R270))
+    private void generateMiningChargeBlock(BlockModelGenerators blockStateModelGenerator) {
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.miningChargeBlock, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.miningChargeBlock)))
+                        .with(PropertyDispatch
+                                .properties(BlockStateProperties.ATTACH_FACE, BlockStateProperties.HORIZONTAL_FACING)
+                                .select(AttachFace.CEILING, Direction.NORTH, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                                .select(AttachFace.CEILING, Direction.EAST, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                                .select(AttachFace.CEILING, Direction.SOUTH, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                                .select(AttachFace.CEILING, Direction.WEST, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R180)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                                .select(AttachFace.FLOOR, Direction.NORTH, Variant.variant())
+                                .select(AttachFace.FLOOR, Direction.EAST, Variant.variant()
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                                .select(AttachFace.FLOOR, Direction.SOUTH, Variant.variant()
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                                .select(AttachFace.FLOOR, Direction.WEST, Variant.variant()
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                                .select(AttachFace.WALL, Direction.NORTH, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                                .select(AttachFace.WALL, Direction.EAST, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                                .select(AttachFace.WALL, Direction.SOUTH, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                                .select(AttachFace.WALL, Direction.WEST, Variant.variant()
+                                        .with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
+                                        .with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
                         )
         );
     }
 
-    public static void generateDebugLensBeam(BlockStateModelGenerator blockStateModelGenerator) {
+    public static void generateDebugLensBeam(BlockModelGenerators blockStateModelGenerator) {
         LensBeamBlock beam = BwtBlocks.lensBeamBlock;
-        Identifier identifier = ModelIds.getBlockModelId(beam);
-        blockStateModelGenerator.blockStateCollector.accept(
-                MultipartBlockStateSupplier
-                        .create(beam)
+        ResourceLocation identifier = ModelLocationUtils.getModelLocation(beam);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiPartGenerator
+                        .multiPart(beam)
                         .with(
-                                When.create().set(LensBeamBlock.NORTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier)
+                                Condition.condition().term(LensBeamBlock.NORTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier)
                         ).with(
-                                When.create().set(LensBeamBlock.EAST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(LensBeamBlock.EAST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(LensBeamBlock.SOUTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R180)
+                                Condition.condition().term(LensBeamBlock.SOUTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
                         ).with(
-                                When.create().set(LensBeamBlock.WEST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R270)
+                                Condition.condition().term(LensBeamBlock.WEST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
                         ).with(
-                                When.create().set(LensBeamBlock.DOWN, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R90)
+                                Condition.condition().term(LensBeamBlock.DOWN, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(LensBeamBlock.UP, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R270)
+                                Condition.condition().term(LensBeamBlock.UP, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.X_ROT, VariantProperties.Rotation.R270)
                         )
         );
     }
 
-    public static void generateScrewPump(BlockStateModelGenerator blockStateModelGenerator) {
+    public static void generateScrewPump(BlockModelGenerators blockStateModelGenerator) {
         ScrewPumpBlock screwPump = BwtBlocks.screwPumpBlock;
-        Identifier identifier = ModelIds.getBlockModelId(screwPump);
-        blockStateModelGenerator.blockStateCollector.accept(
-                MultipartBlockStateSupplier
-                        .create(screwPump)
+        ResourceLocation identifier = ModelLocationUtils.getModelLocation(screwPump);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiPartGenerator
+                        .multiPart(screwPump)
                         .with(
-                                When.create().set(LensBeamBlock.NORTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier)
+                                Condition.condition().term(LensBeamBlock.NORTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier)
                         ).with(
-                                When.create().set(LensBeamBlock.EAST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(LensBeamBlock.EAST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(LensBeamBlock.SOUTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R180)
+                                Condition.condition().term(LensBeamBlock.SOUTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180)
                         ).with(
-                                When.create().set(LensBeamBlock.WEST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.Y, VariantSettings.Rotation.R270)
+                                Condition.condition().term(LensBeamBlock.WEST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270)
                         ).with(
-                                When.create().set(LensBeamBlock.DOWN, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R90)
+                                Condition.condition().term(LensBeamBlock.DOWN, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.X_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(LensBeamBlock.UP, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier).put(VariantSettings.X, VariantSettings.Rotation.R270)
+                                Condition.condition().term(LensBeamBlock.UP, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier).with(VariantProperties.X_ROT, VariantProperties.Rotation.R270)
                         )
         );
     }
 
-    public static void generatePaneBlock(BlockStateModelGenerator blockStateModelGenerator, Block pane) {
-        Identifier identifier = ModelIds.getBlockSubModelId(pane, "_post_ends");
-        Identifier identifier2 = ModelIds.getBlockSubModelId(pane, "_post");
-        Identifier identifier3 = ModelIds.getBlockSubModelId(pane, "_cap");
-        Identifier identifier4 = ModelIds.getBlockSubModelId(pane, "_cap_alt");
-        Identifier identifier5 = ModelIds.getBlockSubModelId(pane, "_side");
-        Identifier identifier6 = ModelIds.getBlockSubModelId(pane, "_side_alt");
-        blockStateModelGenerator.blockStateCollector.accept(
-                MultipartBlockStateSupplier
-                        .create(pane)
-                        .with(BlockStateVariant.create().put(VariantSettings.MODEL, identifier))
+    public static void generatePaneBlock(BlockModelGenerators blockStateModelGenerator, Block pane) {
+        ResourceLocation identifier = ModelLocationUtils.getModelLocation(pane, "_post_ends");
+        ResourceLocation identifier2 = ModelLocationUtils.getModelLocation(pane, "_post");
+        ResourceLocation identifier3 = ModelLocationUtils.getModelLocation(pane, "_cap");
+        ResourceLocation identifier4 = ModelLocationUtils.getModelLocation(pane, "_cap_alt");
+        ResourceLocation identifier5 = ModelLocationUtils.getModelLocation(pane, "_side");
+        ResourceLocation identifier6 = ModelLocationUtils.getModelLocation(pane, "_side_alt");
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiPartGenerator
+                        .multiPart(pane)
+                        .with(Variant.variant().with(VariantProperties.MODEL, identifier))
                         .with(
-                                When.create().set(Properties.NORTH, false).set(Properties.EAST, false).set(Properties.SOUTH, false).set(Properties.WEST, false),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier2)
+                                Condition.condition().term(BlockStateProperties.NORTH, false).term(BlockStateProperties.EAST, false).term(BlockStateProperties.SOUTH, false).term(BlockStateProperties.WEST, false),
+                                Variant.variant().with(VariantProperties.MODEL, identifier2)
                         ).with(
-                                When.create().set(Properties.NORTH, true).set(Properties.EAST, false).set(Properties.SOUTH, false).set(Properties.WEST, false),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier3)
+                                Condition.condition().term(BlockStateProperties.NORTH, true).term(BlockStateProperties.EAST, false).term(BlockStateProperties.SOUTH, false).term(BlockStateProperties.WEST, false),
+                                Variant.variant().with(VariantProperties.MODEL, identifier3)
                         ).with(
-                                When.create().set(Properties.NORTH, false).set(Properties.EAST, true).set(Properties.SOUTH, false).set(Properties.WEST, false),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier3).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(BlockStateProperties.NORTH, false).term(BlockStateProperties.EAST, true).term(BlockStateProperties.SOUTH, false).term(BlockStateProperties.WEST, false),
+                                Variant.variant().with(VariantProperties.MODEL, identifier3).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(Properties.NORTH, false).set(Properties.EAST, false).set(Properties.SOUTH, true).set(Properties.WEST, false),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier4)
+                                Condition.condition().term(BlockStateProperties.NORTH, false).term(BlockStateProperties.EAST, false).term(BlockStateProperties.SOUTH, true).term(BlockStateProperties.WEST, false),
+                                Variant.variant().with(VariantProperties.MODEL, identifier4)
                         ).with(
-                                When.create().set(Properties.NORTH, false).set(Properties.EAST, false).set(Properties.SOUTH, false).set(Properties.WEST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier4).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(BlockStateProperties.NORTH, false).term(BlockStateProperties.EAST, false).term(BlockStateProperties.SOUTH, false).term(BlockStateProperties.WEST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier4).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(Properties.NORTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier5)
+                                Condition.condition().term(BlockStateProperties.NORTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier5)
                         ).with(
-                                When.create().set(Properties.EAST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier5).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(BlockStateProperties.EAST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier5).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         ).with(
-                                When.create().set(Properties.SOUTH, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier6)
+                                Condition.condition().term(BlockStateProperties.SOUTH, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier6)
                         ).with(
-                                When.create().set(Properties.WEST, true),
-                                BlockStateVariant.create().put(VariantSettings.MODEL, identifier6).put(VariantSettings.Y, VariantSettings.Rotation.R90)
+                                Condition.condition().term(BlockStateProperties.WEST, true),
+                                Variant.variant().with(VariantProperties.MODEL, identifier6).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         )
         );
-        blockStateModelGenerator.registerItemModel(pane);
+        blockStateModelGenerator.createSimpleFlatItemModel(pane);
     }
 
-    public static void generateSidingBlock(BlockStateModelGenerator blockStateModelGenerator, SidingBlock sidingBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(sidingBlock.fullBlock);
-        Model model = new Model(Optional.of(Id.of("block/siding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        model.upload(sidingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+    public static void generateSidingBlock(BlockModelGenerators blockStateModelGenerator, SidingBlock sidingBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(sidingBlock.fullBlock);
+        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/siding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        model.create(sidingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         sidingBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(sidingBlock)
-                        ).put(VariantSettings.UVLOCK, true)
-                ).coordinate(BlockStateModelGenerator.createNorthDefaultRotationStates())
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelLocationUtils.getModelLocation(sidingBlock)
+                        ).with(VariantProperties.UV_LOCK, true)
+                ).with(BlockModelGenerators.createFacingDispatch())
         );
-        blockStateModelGenerator.registerParentedItemModel(sidingBlock, ModelIds.getBlockModelId(sidingBlock));
+        blockStateModelGenerator.delegateItemModel(sidingBlock, ModelLocationUtils.getModelLocation(sidingBlock));
     }
 
-    public static void generateMouldingBlock(BlockStateModelGenerator blockStateModelGenerator, MouldingBlock mouldingBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(mouldingBlock.fullBlock);
-        Model horizontalModel = new Model(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Model verticalModel = new Model(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Identifier horizontalId = horizontalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        Identifier verticalId = verticalModel.upload(mouldingBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(mouldingBlock).coordinate(createMouldingOrientationMap(horizontalId, verticalId)));
-        blockStateModelGenerator.registerParentedItemModel(mouldingBlock, horizontalId);
+    public static void generateMouldingBlock(BlockModelGenerators blockStateModelGenerator, MouldingBlock mouldingBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(mouldingBlock.fullBlock);
+        ModelTemplate horizontalModel = new ModelTemplate(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        ModelTemplate verticalModel = new ModelTemplate(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        ResourceLocation horizontalId = horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        ResourceLocation verticalId = verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(mouldingBlock).with(createMouldingOrientationMap(horizontalId, verticalId)));
+        blockStateModelGenerator.delegateItemModel(mouldingBlock, horizontalId);
     }
 
-    public static void generateCornerBlock(BlockStateModelGenerator blockStateModelGenerator, CornerBlock cornerBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(cornerBlock.fullBlock);
-        Model model = new Model(Optional.of(Id.of("block/corner")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        model.upload(cornerBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+    public static void generateCornerBlock(BlockModelGenerators blockStateModelGenerator, CornerBlock cornerBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(cornerBlock.fullBlock);
+        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/corner")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        model.create(cornerBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         cornerBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(cornerBlock)
-                        ).put(VariantSettings.UVLOCK, true)
-                ).coordinate(createCornerOrientationMap())
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelLocationUtils.getModelLocation(cornerBlock)
+                        ).with(VariantProperties.UV_LOCK, true)
+                ).with(createCornerOrientationMap())
         );
-        blockStateModelGenerator.registerParentedItemModel(cornerBlock, ModelIds.getBlockModelId(cornerBlock));
+        blockStateModelGenerator.delegateItemModel(cornerBlock, ModelLocationUtils.getModelLocation(cornerBlock));
     }
 
-    public static void generateColumnBlock(BlockStateModelGenerator blockStateModelGenerator, ColumnBlock columnBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(columnBlock.fullBlock);
-        Model model = new Model(Optional.of(Id.of("block/column")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        model.upload(columnBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(columnBlock, BlockStateVariant.create().put(VariantSettings.MODEL, ModelIds.getBlockModelId(columnBlock)).put(VariantSettings.UVLOCK, true)));
-        blockStateModelGenerator.registerParentedItemModel(columnBlock, ModelIds.getBlockModelId(columnBlock));
+    public static void generateColumnBlock(BlockModelGenerators blockStateModelGenerator, ColumnBlock columnBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(columnBlock.fullBlock);
+        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/column")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        model.create(columnBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(columnBlock, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(columnBlock)).with(VariantProperties.UV_LOCK, true)));
+        blockStateModelGenerator.delegateItemModel(columnBlock, ModelLocationUtils.getModelLocation(columnBlock));
     }
 
-    public static void generatePedestalBlock(BlockStateModelGenerator blockStateModelGenerator, PedestalBlock pedestalBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(pedestalBlock.fullBlock);
-        Model model = new Model(Optional.of(Id.of("block/pedestal")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        model.upload(pedestalBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(
+    public static void generatePedestalBlock(BlockModelGenerators blockStateModelGenerator, PedestalBlock pedestalBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(pedestalBlock.fullBlock);
+        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/pedestal")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        model.create(pedestalBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(
                         pedestalBlock,
-                        BlockStateVariant.create().put(
-                                VariantSettings.MODEL,
-                                ModelIds.getBlockModelId(pedestalBlock)
-                        ).put(VariantSettings.UVLOCK, true)
-                ).coordinate(BlockStateVariantMap.create(PedestalBlock.VERTICAL_DIRECTION)
-                        .register(Direction.DOWN, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
-                        .register(Direction.UP, BlockStateVariant.create())
+                        Variant.variant().with(
+                                VariantProperties.MODEL,
+                                ModelLocationUtils.getModelLocation(pedestalBlock)
+                        ).with(VariantProperties.UV_LOCK, true)
+                ).with(PropertyDispatch.property(PedestalBlock.VERTICAL_DIRECTION)
+                        .select(Direction.DOWN, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                        .select(Direction.UP, Variant.variant())
                 )
         );
-        blockStateModelGenerator.registerParentedItemModel(pedestalBlock, ModelIds.getBlockModelId(pedestalBlock));
+        blockStateModelGenerator.delegateItemModel(pedestalBlock, ModelLocationUtils.getModelLocation(pedestalBlock));
     }
 
-    public static void generateTableBlock(BlockStateModelGenerator blockStateModelGenerator, TableBlock tableBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(tableBlock.fullBlock);
-        Model tableModel = new Model(Optional.of(Id.of("block/table")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Model tableNoSupportModel = new Model(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureKey.BOTTOM, TextureKey.TOP, TextureKey.SIDE);
-        Identifier tableModelId = tableModel.upload(ModelIds.getBlockModelId(tableBlock), texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        Identifier noSupportModelId = tableNoSupportModel.upload(ModelIds.getBlockSubModelId(tableBlock, "_no_support"), texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(tableBlock)
-                        .coordinate(BlockStateVariantMap.create(TableBlock.SUPPORT)
-                                .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, tableModelId))
-                                .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, noSupportModelId))
+    public static void generateTableBlock(BlockModelGenerators blockStateModelGenerator, TableBlock tableBlock) {
+        TexturedModel texturedModel = TexturedModel.CUBE.get(tableBlock.fullBlock);
+        ModelTemplate tableModel = new ModelTemplate(Optional.of(Id.of("block/table")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        ModelTemplate tableNoSupportModel = new ModelTemplate(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+        ResourceLocation tableModelId = tableModel.create(ModelLocationUtils.getModelLocation(tableBlock), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        ResourceLocation noSupportModelId = tableNoSupportModel.create(ModelLocationUtils.getModelLocation(tableBlock, "_no_support"), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(tableBlock)
+                        .with(PropertyDispatch.property(TableBlock.SUPPORT)
+                                .select(true, Variant.variant().with(VariantProperties.MODEL, tableModelId))
+                                .select(false, Variant.variant().with(VariantProperties.MODEL, noSupportModelId))
                         )
         );
     }
 
-    public void generateVaseBlock(BlockStateModelGenerator blockStateModelGenerator, VaseBlock vaseBlock) {
-        Identifier modelId = new Model(
+    public void generateVaseBlock(BlockModelGenerators blockStateModelGenerator, VaseBlock vaseBlock) {
+        ResourceLocation modelId = new ModelTemplate(
                 Optional.of(Id.of("block/vase")),
                 Optional.empty(),
-                TextureKey.PARTICLE,
-                TextureKey.TOP,
-                TextureKey.SIDE,
-                TextureKey.BOTTOM
-        ).upload(
-                ModelIds.getBlockModelId(vaseBlock),
-                TextureMap.sideTopBottom(vaseBlock).put(TextureKey.PARTICLE, TextureMap.getSubId(vaseBlock, "_side")
-        ), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(vaseBlock, BlockStateVariant.create().put(VariantSettings.MODEL, modelId)));
+                TextureSlot.PARTICLE,
+                TextureSlot.TOP,
+                TextureSlot.SIDE,
+                TextureSlot.BOTTOM
+        ).create(
+                ModelLocationUtils.getModelLocation(vaseBlock),
+                TextureMapping.cubeBottomTop(vaseBlock).put(TextureSlot.PARTICLE, TextureMapping.getBlockTexture(vaseBlock, "_side")
+        ), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(vaseBlock, Variant.variant().with(VariantProperties.MODEL, modelId)));
     }
 
-    public void generateWoolSlab(BlockStateModelGenerator blockStateModelGenerator, DyeColor dyeColor, SlabBlock woolSlabBlock) {
+    public void generateWoolSlab(BlockModelGenerators blockStateModelGenerator, DyeColor dyeColor, SlabBlock woolSlabBlock) {
         Block woolBlock = DyeUtils.WOOL_COLORS.get(dyeColor);
-        Identifier identifier = ModelIds.getBlockModelId(woolBlock);
-        TexturedModel texturedModel = TexturedModel.CUBE_ALL.get(woolBlock);
-        Identifier identifier2 = Models.SLAB.upload(woolSlabBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        Identifier identifier3 = Models.SLAB_TOP.upload(woolSlabBlock, texturedModel.getTextures(), blockStateModelGenerator.modelCollector);
-        blockStateModelGenerator.blockStateCollector.accept(BlockStateModelGenerator.createSlabBlockState(woolSlabBlock, identifier2, identifier3, identifier));
+        ResourceLocation identifier = ModelLocationUtils.getModelLocation(woolBlock);
+        TexturedModel texturedModel = TexturedModel.CUBE.get(woolBlock);
+        ResourceLocation identifier2 = ModelTemplates.SLAB_BOTTOM.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        ResourceLocation identifier3 = ModelTemplates.SLAB_TOP.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSlab(woolSlabBlock, identifier2, identifier3, identifier));
     }
 
-    public static BlockStateVariantMap createUpDefaultRotationStates() {
-        return BlockStateVariantMap.create(Properties.FACING)
-                .register(Direction.DOWN, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
-                .register(Direction.UP, BlockStateVariant.create())
-                .register(Direction.NORTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90))
-                .register(Direction.SOUTH, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R270))
-                .register(Direction.WEST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                .register(Direction.EAST, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R90).put(VariantSettings.Y, VariantSettings.Rotation.R90));
+    public static PropertyDispatch createUpDefaultRotationStates() {
+        return PropertyDispatch.property(BlockStateProperties.FACING)
+                .select(Direction.DOWN, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                .select(Direction.UP, Variant.variant())
+                .select(Direction.NORTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90))
+                .select(Direction.SOUTH, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.WEST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(Direction.EAST, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R90).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90));
     }
 
-    public static BlockStateVariantMap createMouldingOrientationMap(Identifier horizontalId, Identifier verticalId) {
-        return BlockStateVariantMap.create(MouldingBlock.ORIENTATION)
+    public static PropertyDispatch createMouldingOrientationMap(ResourceLocation horizontalId, ResourceLocation verticalId) {
+        return PropertyDispatch.property(MouldingBlock.ORIENTATION)
                 // horizontal, bottom - west, north, east, south
-                .register(0, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(1, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                .register(2, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true))
-                .register(3, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .select(0, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(1, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(2, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true))
+                .select(3, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
                 // vertical - west, north, east, south
-                .register(4, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(5, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                .register(6, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true))
-                .register(7, BlockStateVariant.create().put(VariantSettings.MODEL, verticalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.Y, VariantSettings.Rotation.R90))
+                .select(4, Variant.variant().with(VariantProperties.MODEL, verticalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(5, Variant.variant().with(VariantProperties.MODEL, verticalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(6, Variant.variant().with(VariantProperties.MODEL, verticalId).with(VariantProperties.UV_LOCK, true))
+                .select(7, Variant.variant().with(VariantProperties.MODEL, verticalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
                 // horizontal, top - west, north, east, south
-                .register(8, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180))
-                .register(9, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                .register(10, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(11, BlockStateVariant.create().put(VariantSettings.MODEL, horizontalId).put(VariantSettings.UVLOCK, true).put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
+                .select(8, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                .select(9, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(10, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(11, Variant.variant().with(VariantProperties.MODEL, horizontalId).with(VariantProperties.UV_LOCK, true).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270));
     }
 
-    public static BlockStateVariantMap createCornerOrientationMap() {
-        return BlockStateVariantMap.create(CornerBlock.ORIENTATION)
+    public static PropertyDispatch createCornerOrientationMap() {
+        return PropertyDispatch.property(CornerBlock.ORIENTATION)
                 // bottom - south-west, north-west, north-east, south-east
-                .register(0, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                .register(1, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(2, BlockStateVariant.create().put(VariantSettings.Y, VariantSettings.Rotation.R270))
-                .register(3, BlockStateVariant.create())
+                .select(0, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(1, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(2, Variant.variant().with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270))
+                .select(3, Variant.variant())
                 // top - south-west, north-west, north-east, south-east
-                .register(4, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180))
-                .register(5, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R90))
-                .register(6, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R180))
-                .register(7, BlockStateVariant.create().put(VariantSettings.X, VariantSettings.Rotation.R180).put(VariantSettings.Y, VariantSettings.Rotation.R270));
+                .select(4, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                .select(5, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90))
+                .select(6, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R180))
+                .select(7, Variant.variant().with(VariantProperties.X_ROT, VariantProperties.Rotation.R180).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R270));
     }
 
-    public void generateDirtAndGrassSlab(BlockStateModelGenerator blockStateModelGenerator) {
+    public void generateDirtAndGrassSlab(BlockModelGenerators blockStateModelGenerator) {
         //Dirt Slab
-        TexturedModel dirtTexturedModel = TexturedModel.CUBE_ALL.get(Blocks.DIRT);
-        Identifier dirtTexture = dirtTexturedModel.getTextures().getTexture(TextureKey.ALL);
-        Identifier dirtSlab = TexturedModel.makeFactory(
-                block -> new TextureMap()
-                        .put(TextureKey.BOTTOM, dirtTexture)
-                        .put(TextureKey.TOP, dirtTexture)
-                        .put(TextureKey.SIDE, dirtTexture),
-                Models.SLAB
-        ).upload(BwtBlocks.dirtSlabBlock, blockStateModelGenerator.modelCollector);
-        Identifier snowyDirtSlab = Id.of("block/snowy_dirt_slab");
-        Identifier dirtPathSlab = Id.of("block/dirt_path_slab");
-        Identifier grassSlab = Id.of("block/grass_slab");
-        Identifier snowyGrassSlab = Id.of("block/snowy_grass_slab");
-        Identifier myceliumSlab = Id.of("block/mycelium_slab");
-        Identifier snowyMyceliumSlab = Id.of("block/snowy_mycelium_slab");
-        Identifier podzolSlab = Id.of("block/podzol_slab");
-        Identifier snowyPodzolSlab = Id.of("block/snowy_podzol_slab");
+        TexturedModel dirtTexturedModel = TexturedModel.CUBE.get(Blocks.DIRT);
+        ResourceLocation dirtTexture = dirtTexturedModel.getMapping().get(TextureSlot.ALL);
+        ResourceLocation dirtSlab = TexturedModel.createDefault(
+                block -> new TextureMapping()
+                        .put(TextureSlot.BOTTOM, dirtTexture)
+                        .put(TextureSlot.TOP, dirtTexture)
+                        .put(TextureSlot.SIDE, dirtTexture),
+                ModelTemplates.SLAB_BOTTOM
+        ).create(BwtBlocks.dirtSlabBlock, blockStateModelGenerator.modelOutput);
+        ResourceLocation snowyDirtSlab = Id.of("block/snowy_dirt_slab");
+        ResourceLocation dirtPathSlab = Id.of("block/dirt_path_slab");
+        ResourceLocation grassSlab = Id.of("block/grass_slab");
+        ResourceLocation snowyGrassSlab = Id.of("block/snowy_grass_slab");
+        ResourceLocation myceliumSlab = Id.of("block/mycelium_slab");
+        ResourceLocation snowyMyceliumSlab = Id.of("block/snowy_mycelium_slab");
+        ResourceLocation podzolSlab = Id.of("block/podzol_slab");
+        ResourceLocation snowyPodzolSlab = Id.of("block/snowy_podzol_slab");
 
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.dirtSlabBlock)
-                        .coordinate(
-                                BlockStateVariantMap.create(DirtSlabBlock.SNOWY)
-                                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, snowyDirtSlab))
-                                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, dirtSlab))
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.dirtSlabBlock)
+                        .with(
+                                PropertyDispatch.property(DirtSlabBlock.SNOWY)
+                                        .select(true, Variant.variant().with(VariantProperties.MODEL, snowyDirtSlab))
+                                        .select(false, Variant.variant().with(VariantProperties.MODEL, dirtSlab))
                         )
 
         );
 
         //Grass Slab
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.grassSlabBlock)
-                        .coordinate(
-                                BlockStateVariantMap.create(DirtSlabBlock.SNOWY)
-                                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, snowyGrassSlab))
-                                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, grassSlab))
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.grassSlabBlock)
+                        .with(
+                                PropertyDispatch.property(DirtSlabBlock.SNOWY)
+                                        .select(true, Variant.variant().with(VariantProperties.MODEL, snowyGrassSlab))
+                                        .select(false, Variant.variant().with(VariantProperties.MODEL, grassSlab))
                         )
         );
         //Mycelium Slab
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.myceliumSlabBlock)
-                        .coordinate(
-                                BlockStateVariantMap.create(DirtSlabBlock.SNOWY)
-                                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, snowyMyceliumSlab))
-                                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, myceliumSlab))
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.myceliumSlabBlock)
+                        .with(
+                                PropertyDispatch.property(DirtSlabBlock.SNOWY)
+                                        .select(true, Variant.variant().with(VariantProperties.MODEL, snowyMyceliumSlab))
+                                        .select(false, Variant.variant().with(VariantProperties.MODEL, myceliumSlab))
                         )
         );
         //Podzol Slab
-        blockStateModelGenerator.blockStateCollector.accept(
-                VariantsBlockStateSupplier.create(BwtBlocks.podzolSlabBlock)
-                        .coordinate(
-                                BlockStateVariantMap.create(DirtSlabBlock.SNOWY)
-                                        .register(true, BlockStateVariant.create().put(VariantSettings.MODEL, snowyPodzolSlab))
-                                        .register(false, BlockStateVariant.create().put(VariantSettings.MODEL, podzolSlab))
+        blockStateModelGenerator.blockStateOutput.accept(
+                MultiVariantGenerator.multiVariant(BwtBlocks.podzolSlabBlock)
+                        .with(
+                                PropertyDispatch.property(DirtSlabBlock.SNOWY)
+                                        .select(true, Variant.variant().with(VariantProperties.MODEL, snowyPodzolSlab))
+                                        .select(false, Variant.variant().with(VariantProperties.MODEL, podzolSlab))
                         )
         );
         //Dirt Path Slab
-        blockStateModelGenerator.blockStateCollector.accept(VariantsBlockStateSupplier.create(BwtBlocks.dirtPathSlabBlock, BlockStateVariant.create().put(VariantSettings.MODEL, dirtPathSlab)));
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(BwtBlocks.dirtPathSlabBlock, Variant.variant().with(VariantProperties.MODEL, dirtPathSlab)));
     }
 
 }

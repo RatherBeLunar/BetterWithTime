@@ -2,22 +2,22 @@ package com.bwt.blocks.block_dispenser.behavior.dispense;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserPlacementContext;
 import com.mojang.logging.LogUtils;
-import net.minecraft.block.DispenserBlock;
-import net.minecraft.block.dispenser.BlockPlacementDispenserBehavior;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.BlockPointer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.dispenser.BlockSource;
+import net.minecraft.core.dispenser.ShulkerBoxDispenseBehavior;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.DispenserBlock;
 import org.slf4j.Logger;
 
-public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
+public class BlockDispenserBehavior extends ShulkerBoxDispenseBehavior {
     protected static final Logger LOGGER = LogUtils.getLogger();
 
-    public static BlockDispenserBehavior DEFAULT = new BlockDispenserBehavior();
+    public static final BlockDispenserBehavior DEFAULT = new BlockDispenserBehavior();
 
-    boolean dropIfPlacementFails;
+    final boolean dropIfPlacementFails;
     public BlockDispenserBehavior(boolean dropIfPlacementFails) {
         super();
         this.dropIfPlacementFails = dropIfPlacementFails;
@@ -28,21 +28,21 @@ public class BlockDispenserBehavior extends BlockPlacementDispenserBehavior {
     }
 
     @Override
-    protected ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
+    protected ItemStack execute(BlockSource pointer, ItemStack stack) {
         this.setSuccess(false);
         Item item = stack.getItem();
         ItemStack placementStack = stack.copyWithCount(1);
         ItemStack returnStack = stack.copyWithCount(1);
         if (item instanceof BlockItem blockItem) {
-            Direction direction = pointer.state().get(DispenserBlock.FACING);
-            BlockPos blockPos = pointer.pos().offset(direction);
+            Direction direction = pointer.state().getValue(DispenserBlock.FACING);
+            BlockPos blockPos = pointer.pos().relative(direction);
 
             try {
-                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.world(), blockPos, direction, placementStack, direction);
-                boolean accepted = blockItem.place(context).isAccepted();
+                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.level(), blockPos, direction, placementStack, direction);
+                boolean accepted = blockItem.place(context).consumesAction();
                 setSuccess(accepted);
                 if (!accepted && dropIfPlacementFails) {
-                    new DefaultItemDispenserBehavior().dispenseSilently(pointer, returnStack);
+                    new DefaultItemDispenserBehavior().execute(pointer, returnStack);
                     setSuccess(true);
                 }
             } catch (Exception exception) {

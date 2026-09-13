@@ -1,115 +1,114 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.SwordItem;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.BlockSoundGroup;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.SwordItem;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class RopeBlock extends Block {
-    public static final VoxelShape SHAPE = Block.createCuboidShape(7, 0, 7, 9, 16, 9);
-    public static final VoxelShape ANCHORED_ABOVE_SHAPE = Block.createCuboidShape(7, 16, 7, 9, 26, 9);
-    public static final VoxelShape ANCHORED_BELOW_SHAPE = Block.createCuboidShape(7, -10, 7, 9, 0, 9);
+    public static final VoxelShape SHAPE = Block.box(7, 0, 7, 9, 16, 9);
+    public static final VoxelShape ANCHORED_ABOVE_SHAPE = Block.box(7, 16, 7, 9, 26, 9);
+    public static final VoxelShape ANCHORED_BELOW_SHAPE = Block.box(7, -10, 7, 9, 0, 9);
 
-    public static final BooleanProperty ANCHORED_ABOVE = BooleanProperty.of("anchored_above");
-    public static final BooleanProperty ANCHORED_BELOW = BooleanProperty.of("anchored_below");
+    public static final BooleanProperty ANCHORED_ABOVE = BooleanProperty.create("anchored_above");
+    public static final BooleanProperty ANCHORED_BELOW = BooleanProperty.create("anchored_below");
 
-    public RopeBlock(Settings settings) {
+    public RopeBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(ANCHORED_BELOW, false).with(ANCHORED_ABOVE, false));
+        registerDefaultState(defaultBlockState().setValue(ANCHORED_BELOW, false).setValue(ANCHORED_ABOVE, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(ANCHORED_ABOVE, ANCHORED_BELOW);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.union(
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.or(
                 SHAPE,
-                state.get(ANCHORED_ABOVE) ? ANCHORED_ABOVE_SHAPE : VoxelShapes.empty(),
-                state.get(ANCHORED_BELOW) ? ANCHORED_BELOW_SHAPE : VoxelShapes.empty()
+                state.getValue(ANCHORED_ABOVE) ? ANCHORED_ABOVE_SHAPE : Shapes.empty(),
+                state.getValue(ANCHORED_BELOW) ? ANCHORED_BELOW_SHAPE : Shapes.empty()
         );
     }
 
     @Override
     @Nullable
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        FluidState fluidState = ctx.getWorld().getFluidState(ctx.getBlockPos());
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        FluidState fluidState = ctx.getLevel().getFluidState(ctx.getClickedPos());
         if (!fluidState.isEmpty()) {
             return null;
         }
-        BlockState upState = ctx.getWorld().getBlockState(ctx.getBlockPos().up());
-        BlockState downState = ctx.getWorld().getBlockState(ctx.getBlockPos().down());
+        BlockState upState = ctx.getLevel().getBlockState(ctx.getClickedPos().above());
+        BlockState downState = ctx.getLevel().getBlockState(ctx.getClickedPos().below());
         if (stateValid(upState)) {
-            return getDefaultState()
-                    .with(ANCHORED_ABOVE, upState.isOf(BwtBlocks.anchorBlock) && upState.get(AnchorBlock.FACING) != Direction.UP)
-                    .with(ANCHORED_BELOW, downState.isOf(BwtBlocks.anchorBlock) && downState.get(AnchorBlock.FACING) != Direction.DOWN);
+            return defaultBlockState()
+                    .setValue(ANCHORED_ABOVE, upState.is(BwtBlocks.anchorBlock) && upState.getValue(AnchorBlock.FACING) != Direction.UP)
+                    .setValue(ANCHORED_BELOW, downState.is(BwtBlocks.anchorBlock) && downState.getValue(AnchorBlock.FACING) != Direction.DOWN);
         }
         return null;
     }
 
     @Override
-    public float calcBlockBreakingDelta(BlockState state, PlayerEntity player, BlockView world, BlockPos pos) {
-        if (player.getMainHandStack().getItem() instanceof SwordItem) {
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+        if (player.getMainHandItem().getItem() instanceof SwordItem) {
             return 1.0f;
         }
-        return super.calcBlockBreakingDelta(state, player, world, pos);
+        return super.getDestroyProgress(state, player, level, pos);
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (!state.canPlaceAt(world, pos)) {
-            world.breakBlock(pos, true);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (!state.canSurvive(level, pos)) {
+            level.destroyBlock(pos, true);
         }
     }
 
     @Override
-    public boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        return stateValid(world.getBlockState(pos.up()));
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return stateValid(level.getBlockState(pos.above()));
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canPlaceAt(world, pos)) {
-            world.scheduleBlockTick(pos, this, 1);
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canSurvive(level, pos)) {
+            level.scheduleTick(pos, this, 1);
         }
         return switch (direction) {
-            case UP -> state.with(ANCHORED_ABOVE, neighborState.isOf(BwtBlocks.anchorBlock) && neighborState.get(AnchorBlock.FACING) != Direction.UP);
-            case DOWN -> state.with(ANCHORED_BELOW, neighborState.isOf(BwtBlocks.anchorBlock) && neighborState.get(AnchorBlock.FACING) != Direction.DOWN);
+            case UP -> state.setValue(ANCHORED_ABOVE, neighborState.is(BwtBlocks.anchorBlock) && neighborState.getValue(AnchorBlock.FACING) != Direction.UP);
+            case DOWN -> state.setValue(ANCHORED_BELOW, neighborState.is(BwtBlocks.anchorBlock) && neighborState.getValue(AnchorBlock.FACING) != Direction.DOWN);
             default -> state;
         };
     }
 
     public boolean stateValid(BlockState upState) {
-        return upState.isOf(BwtBlocks.ropeBlock)
-                || (upState.isOf(BwtBlocks.anchorBlock) && !upState.get(AnchorBlock.FACING).equals(Direction.UP)
-                || upState.isOf(BwtBlocks.pulleyBlock));
+        return upState.is(BwtBlocks.ropeBlock)
+                || (upState.is(BwtBlocks.anchorBlock) && !upState.getValue(AnchorBlock.FACING).equals(Direction.UP)
+                || upState.is(BwtBlocks.pulleyBlock));
     }
 
-    public static BlockPos getBottomRopePos(World world, BlockPos attachmentPos) {
-        BlockPos.Mutable mutablePos = attachmentPos.mutableCopy();
-        while (world.getBlockState(mutablePos.down()).isOf(BwtBlocks.ropeBlock)) {
+    public static BlockPos getBottomRopePos(Level level, BlockPos attachmentPos) {
+        BlockPos.MutableBlockPos mutablePos = attachmentPos.mutable();
+        while (level.getBlockState(mutablePos.below()).is(BwtBlocks.ropeBlock)) {
             mutablePos.move(Direction.DOWN);
         }
-        return mutablePos.toImmutable();
+        return mutablePos.immutable();
     }
 }

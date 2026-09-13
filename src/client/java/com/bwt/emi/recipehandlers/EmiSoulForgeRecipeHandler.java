@@ -8,15 +8,15 @@ import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.recipe.VanillaEmiRecipeCategories;
 import dev.emi.emi.api.recipe.handler.StandardRecipeHandler;
-import net.minecraft.screen.slot.Slot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.world.inventory.Slot;
 
 public class EmiSoulForgeRecipeHandler {
 
-    public static List<EmiRecipeCategory> CATEGORIES = List.of(BwtEmiPlugin.SOUL_FORGE, VanillaEmiRecipeCategories.CRAFTING);
+    public static final List<EmiRecipeCategory> CATEGORIES = List.of(BwtEmiPlugin.SOUL_FORGE, VanillaEmiRecipeCategories.CRAFTING);
 
     public static class FourByFour implements StandardRecipeHandler<SoulForgeScreenHandler> {
         @Override

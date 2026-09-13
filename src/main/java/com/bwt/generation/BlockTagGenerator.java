@@ -7,28 +7,27 @@ import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.TagBuilder;
-import net.minecraft.registry.tag.TagKey;
-
+import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagBuilder;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
-    public BlockTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+    public BlockTagGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
         super(output, completableFuture);
     }
 
-    public TagBuilder getTagBuilder(TagKey<Block> tag) {
-        return super.getTagBuilder(tag);
+    public TagBuilder getOrCreateRawBuilder(TagKey<Block> tag) {
+        return super.getOrCreateRawBuilder(tag);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup arg) {
+    protected void addTags(HolderLookup.Provider arg) {
         getOrCreateTagBuilder(BlockTags.AIR).add(
                 BwtBlocks.detectorLogicBlock,
                 BwtBlocks.lensBeamBlock
@@ -151,11 +150,11 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 BwtBlocks.tableBlocks.stream()
         )
                 .reduce(Stream::concat).orElseGet(Stream::empty)
-                .forEach(materialInheritedBlock -> getOrCreateTagBuilder(materialInheritedBlock.isWood() ? BlockTags.AXE_MINEABLE : BlockTags.PICKAXE_MINEABLE).add(materialInheritedBlock));
+                .forEach(materialInheritedBlock -> getOrCreateTagBuilder(materialInheritedBlock.isWood() ? BlockTags.MINEABLE_WITH_AXE : BlockTags.MINEABLE_WITH_PICKAXE).add(materialInheritedBlock));
 
-        getOrCreateTagBuilder(BwtBlockTags.MATTOCK_MINEABLE).forceAddTag(BlockTags.PICKAXE_MINEABLE).forceAddTag(BlockTags.SHOVEL_MINEABLE);
-        getOrCreateTagBuilder(BwtBlockTags.BATTLEAXE_MINEABLE).forceAddTag(BlockTags.AXE_MINEABLE).forceAddTag(BlockTags.SWORD_EFFICIENT);
-        getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
+        getOrCreateTagBuilder(BwtBlockTags.MATTOCK_MINEABLE).forceAddTag(BlockTags.MINEABLE_WITH_PICKAXE).forceAddTag(BlockTags.MINEABLE_WITH_SHOVEL);
+        getOrCreateTagBuilder(BwtBlockTags.BATTLEAXE_MINEABLE).forceAddTag(BlockTags.MINEABLE_WITH_AXE).forceAddTag(BlockTags.SWORD_EFFICIENT);
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(BwtBlocks.anchorBlock)
                 .add(BwtBlocks.blockDispenserBlock)
                 .add(BwtBlocks.buddyBlock)
@@ -184,7 +183,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.turntableBlock)
                 .add(BwtBlocks.urnBlock);
 
-        getOrCreateTagBuilder(BlockTags.SHOVEL_MINEABLE)
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(BwtBlocks.dungBlock)
                 .add(BwtBlocks.unfiredDecoratedPotBlock)
                 .add(BwtBlocks.unfiredDecoratedPotBlockWithSherds)
@@ -199,7 +198,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.myceliumSlabBlock)
                 .add(BwtBlocks.podzolSlabBlock);
 
-        getOrCreateTagBuilder(BlockTags.AXE_MINEABLE)
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_AXE)
                 .add(BwtBlocks.axleBlock)
                 .add(BwtBlocks.axlePowerSourceBlock)
                 .add(BwtBlocks.bellowsBlock)
@@ -233,7 +232,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(BwtBlocks.wickerSlabBlock)
                 .add(BwtBlocks.wickerPaneBlock);
 
-        getOrCreateTagBuilder(BlockTags.HOE_MINEABLE)
+        getOrCreateTagBuilder(BlockTags.MINEABLE_WITH_HOE)
                 .add(BwtBlocks.bloodWoodBlocks.leavesBlock)
                 .add(BwtBlocks.paddingBlock);
 

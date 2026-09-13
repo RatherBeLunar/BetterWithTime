@@ -1,58 +1,58 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class UrnBlock extends Block {
-    public static final BooleanProperty CONNECTED_UP = BooleanProperty.of("connected_up");
-    public static VoxelShape outlineShape = Block.createCuboidShape(5, 0, 5, 11, 10, 11);
-    public static VoxelShape connectedUpOutlineShape = Block.createCuboidShape(5, 6, 5, 11, 16, 11);
+    public static final BooleanProperty CONNECTED_UP = BooleanProperty.create("connected_up");
+    public static final VoxelShape outlineShape = Block.box(5, 0, 5, 11, 10, 11);
+    public static final VoxelShape connectedUpOutlineShape = Block.box(5, 6, 5, 11, 16, 11);
 
-    public UrnBlock(Settings settings) {
+    public UrnBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(CONNECTED_UP, false));
+        registerDefaultState(defaultBlockState().setValue(CONNECTED_UP, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(CONNECTED_UP);
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        if (ctx.getWorld().getBlockState(ctx.getBlockPos().up()).isOf(BwtBlocks.hopperBlock)) {
-            return getDefaultState().with(CONNECTED_UP, true);
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        if (ctx.getLevel().getBlockState(ctx.getClickedPos().above()).is(BwtBlocks.hopperBlock)) {
+            return defaultBlockState().setValue(CONNECTED_UP, true);
         }
-        return super.getPlacementState(ctx);
+        return super.getStateForPlacement(ctx);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (neighborPos.equals(pos.up())) {
-            return state.with(CONNECTED_UP, neighborState.isOf(BwtBlocks.hopperBlock));
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (neighborPos.equals(pos.above())) {
+            return state.setValue(CONNECTED_UP, neighborState.is(BwtBlocks.hopperBlock));
         }
         return state;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return state.get(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return state.get(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return state.getValue(CONNECTED_UP) ? connectedUpOutlineShape : outlineShape;
     }
 }

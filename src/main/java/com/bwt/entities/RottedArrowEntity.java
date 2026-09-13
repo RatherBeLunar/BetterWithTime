@@ -1,57 +1,56 @@
 package com.bwt.entities;
 
 import com.bwt.items.BwtItems;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.ItemStackParticleEffect;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.world.World;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class RottedArrowEntity extends PersistentProjectileEntity {
+public class RottedArrowEntity extends AbstractArrow {
     private static final ItemStack DEFAULT_STACK = new ItemStack(BwtItems.rottedArrowItem);
 
-    public RottedArrowEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
-        super(entityType, world);
+    public RottedArrowEntity(EntityType<? extends AbstractArrow> entityType, Level level) {
+        super(entityType, level);
     }
 
     @Override
-    protected ItemStack getDefaultItemStack() {
-        return BwtItems.broadheadArrowItem.getDefaultStack();
+    protected ItemStack getDefaultPickupItem() {
+        return BwtItems.broadheadArrowItem.getDefaultInstance();
     }
 
-    public RottedArrowEntity(World world, double x, double y, double z, ItemStack stack, @Nullable ItemStack weapon) {
-        super(BwtEntities.rottedArrowEntity, x, y, z, world, stack, weapon);
+    public RottedArrowEntity(Level level, double x, double y, double z, ItemStack stack, @Nullable ItemStack weapon) {
+        super(BwtEntities.rottedArrowEntity, x, y, z, level, stack, weapon);
     }
 
-    public RottedArrowEntity(World world, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
-        super(BwtEntities.rottedArrowEntity, owner, world, stack, shotFrom);
+    public RottedArrowEntity(Level level, LivingEntity owner, ItemStack stack, @Nullable ItemStack shotFrom) {
+        super(BwtEntities.rottedArrowEntity, owner, level, stack, shotFrom);
     }
 
     public void initFromStack(ItemStack stack) {
-        setDamage(super.getDamage() / 2);
+        setBaseDamage(super.getBaseDamage() / 2);
     }
 
     @Override
-    protected void onBlockHit(BlockHitResult blockHitResult) {
-        super.onBlockHit(blockHitResult);
-        this.getWorld().sendEntityStatus(this, EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES);
+    protected void onHitBlock(BlockHitResult blockHitResult) {
+        super.onHitBlock(blockHitResult);
+        this.level().broadcastEntityEvent(this, EntityEvent.DEATH);
         this.discard();
     }
 
     @Override
-    public void handleStatus(byte status) {
-        super.handleStatus(status);
-        if (status == EntityStatuses.PLAY_DEATH_SOUND_OR_ADD_PROJECTILE_HIT_PARTICLES) {
+    public void handleEntityEvent(byte status) {
+        super.handleEntityEvent(status);
+        if (status == EntityEvent.DEATH) {
             for (int i = 0; i < 8; ++i) {
-                this.getWorld().playSound(this.getX(), this.getY(), this.getZ(), DEFAULT_STACK.getBreakSound(), this.getSoundCategory(), 0.13f, 0.8f + this.getWorld().random.nextFloat() * 0.4f, false);
-                this.getWorld().addParticle(
-                        new ItemStackParticleEffect(ParticleTypes.ITEM, DEFAULT_STACK),
+                this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), DEFAULT_STACK.getBreakingSound(), this.getSoundSource(), 0.13f, 0.8f + this.level().random.nextFloat() * 0.4f, false);
+                this.level().addParticle(
+                        new ItemParticleOption(ParticleTypes.ITEM, DEFAULT_STACK),
                         this.getX(), this.getY(), this.getZ(),
                         ((double)this.random.nextFloat() - 0.5) * 0.08,
                         ((double)this.random.nextFloat() - 0.5) * 0.08,

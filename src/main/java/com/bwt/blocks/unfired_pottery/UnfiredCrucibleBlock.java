@@ -1,29 +1,29 @@
 package com.bwt.blocks.unfired_pottery;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class UnfiredCrucibleBlock extends UnfiredPotteryBlock {
-    public static VoxelShape outlineShape = VoxelShapes.union(
-            VoxelShapes.cuboid(0.0625, 0, 0.0625, 0.9375, 1, 0.9375),
-            VoxelShapes.cuboid(0, 0.125, 0, 1, 0.875, 1)
-    ).simplify();
+    public static final VoxelShape outlineShape = Shapes.or(
+            Shapes.box(0.0625, 0, 0.0625, 0.9375, 1, 0.9375),
+            Shapes.box(0, 0.125, 0, 1, 0.875, 1)
+    ).optimize();
 
-    public UnfiredCrucibleBlock(Settings settings) {
+    public UnfiredCrucibleBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return outlineShape;
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return VoxelShapes.fullCube();
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return Shapes.block();
     }
 }

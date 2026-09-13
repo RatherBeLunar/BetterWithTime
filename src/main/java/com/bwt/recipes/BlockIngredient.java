@@ -5,17 +5,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +38,7 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
     }
 
     public boolean test(Block block) {
-        return optionalBlockTagKey.filter(blockTagKey -> block.getDefaultState().isIn(blockTagKey)).isPresent()
+        return optionalBlockTagKey.filter(blockTagKey -> block.defaultBlockState().is(blockTagKey)).isPresent()
                 || optionalBlock.filter(block::equals).isPresent();
     }
 
@@ -59,29 +58,29 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
     }
 
     public static class Serializer implements CustomIngredientSerializer<BlockIngredient> {
-        private static final Identifier ID = Id.of("block_ingredient");
+        private static final ResourceLocation ID = Id.of("block_ingredient");
         public static final MapCodec<BlockIngredient> CODEC = createCodec();
-        public static final PacketCodec<RegistryByteBuf, BlockIngredient> PACKET_CODEC = PacketCodec.ofStatic(
+        public static final StreamCodec<RegistryFriendlyByteBuf, BlockIngredient> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
         );
 
         public static MapCodec<BlockIngredient> createCodec() {
             return RecordCodecBuilder.mapCodec(instance ->
                     instance.group(
-                            TagKey.codec(RegistryKeys.BLOCK).optionalFieldOf("blockTag").forGetter(blockIngredient -> blockIngredient.optionalBlockTagKey),
-                            Registries.BLOCK.getCodec().optionalFieldOf("block").forGetter(blockIngredient -> blockIngredient.optionalBlock)
+                            TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blockTag").forGetter(blockIngredient -> blockIngredient.optionalBlockTagKey),
+                            BuiltInRegistries.BLOCK.byNameCodec().optionalFieldOf("block").forGetter(blockIngredient -> blockIngredient.optionalBlock)
                     ).apply(instance, BlockIngredient::new)
             );
         }
 
         @Override
-        public Identifier getIdentifier() {
+        public ResourceLocation getIdentifier() {
             return ID;
         }
 
 
         @Override
-        public PacketCodec<RegistryByteBuf, BlockIngredient> getPacketCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, BlockIngredient> getPacketCodec() {
             return PACKET_CODEC;
         }
 
@@ -90,17 +89,17 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
             return CODEC;
         }
 
-        public static BlockIngredient read(RegistryByteBuf buf) {
-            Identifier blockTagKeyId = buf.readIdentifier();
-            Optional<TagKey<Block>> blockTagKey = blockTagKeyId.getNamespace().isBlank() ? Optional.empty() : Optional.of(TagKey.of(RegistryKeys.BLOCK, blockTagKeyId));
-            Identifier blockId = buf.readIdentifier();
-            Block block = Registries.BLOCK.get(blockId);
+        public static BlockIngredient read(RegistryFriendlyByteBuf buf) {
+            ResourceLocation blockTagKeyId = buf.readResourceLocation();
+            Optional<TagKey<Block>> blockTagKey = blockTagKeyId.getNamespace().isBlank() ? Optional.empty() : Optional.of(TagKey.create(Registries.BLOCK, blockTagKeyId));
+            ResourceLocation blockId = buf.readResourceLocation();
+            Block block = BuiltInRegistries.BLOCK.get(blockId);
             return new BlockIngredient(blockTagKey, block.equals(Blocks.AIR) ? Optional.empty() : Optional.of(block));
         }
 
-        public static void write(RegistryByteBuf buf, BlockIngredient ingredient) {
-            buf.writeIdentifier(ingredient.optionalBlockTagKey.map(TagKey::id).orElse(Id.of("", "")));
-            buf.writeIdentifier(ingredient.optionalBlock.map(Registries.BLOCK::getId).orElse(Id.of("", "")));
+        public static void write(RegistryFriendlyByteBuf buf, BlockIngredient ingredient) {
+            buf.writeResourceLocation(ingredient.optionalBlockTagKey.map(TagKey::location).orElse(Id.of("", "")));
+            buf.writeResourceLocation(ingredient.optionalBlock.map(BuiltInRegistries.BLOCK::getKey).orElse(Id.of("", "")));
         }
     }
 }

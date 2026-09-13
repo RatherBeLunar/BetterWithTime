@@ -1,56 +1,60 @@
 package com.bwt.blocks;
 
 import com.bwt.items.BwtItems;
-import net.minecraft.block.*;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class HempCropBlock extends CropBlock {
     private static final VoxelShape[] AGE_TO_SHAPE = new VoxelShape[]{
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D),
-            Block.createCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D)
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 3.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 5.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D),
+            Block.box(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D)
     };
-    public static final BooleanProperty CONNECTED_UP = BooleanProperty.of("connected_up");
+    public static final BooleanProperty CONNECTED_UP = BooleanProperty.create("connected_up");
 
-    public HempCropBlock(Settings settings) {
+    public HempCropBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(CONNECTED_UP, false));
+        registerDefaultState(defaultBlockState().setValue(CONNECTED_UP, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(CONNECTED_UP);
     }
 
     @Override
-    public ItemConvertible getSeedsItem() {
+    public ItemLike getBaseSeedId() {
         return BwtItems.hempSeedsItem;
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        int age = state.get(AGE);
-        boolean connectedUp = state.get(CONNECTED_UP);
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        int age = state.getValue(AGE);
+        boolean connectedUp = state.getValue(CONNECTED_UP);
 
         double height = (age + 1) / 8d;
         double halfWidth = 0.2f;
@@ -59,85 +63,85 @@ public class HempCropBlock extends CropBlock {
             height -= 2 / 16d;
         }
 
-        return VoxelShapes.cuboid(
+        return Shapes.box(
                 0.5D - halfWidth, 0D, 0.5D - halfWidth,
                 0.5D + halfWidth, height, 0.5D + halfWidth
         );
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canPlaceAt(world, pos) && !world.getBlockState(pos.down()).isOf(this)) {
-            return Blocks.AIR.getDefaultState();
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canSurvive(level, pos) && !level.getBlockState(pos.below()).is(this)) {
+            return Blocks.AIR.defaultBlockState();
         }
-        if (neighborPos.equals(pos.up())) {
-            return state.with(CONNECTED_UP, neighborState.isOf(this));
+        if (neighborPos.equals(pos.above())) {
+            return state.setValue(CONNECTED_UP, neighborState.is(this));
         }
         return state;
     }
 
     @Override
-    protected int getGrowthAmount(World world) {
+    protected int getBonemealAgeIncrease(Level level) {
         return 1;
     }
 
     @Override
-    public boolean hasRandomTicks(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        BlockState upState = world.getBlockState(pos.up());
-        BlockState up2State = world.getBlockState(pos.up(2));
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        BlockState upState = level.getBlockState(pos.above());
+        BlockState up2State = level.getBlockState(pos.above(2));
 
-        if (random.nextInt((int)(25.0f / (CropBlock.getAvailableMoisture(this, world, pos))) + 1) != 0) {
+        if (random.nextInt((int)(25.0f / (CropBlock.getGrowthSpeed(this, level, pos))) + 1) != 0) {
             return;
         }
-        if (!canGrow(world, random, pos, state)) {
+        if (!isBonemealSuccess(level, random, pos, state)) {
             return;
         }
 
         if (
-                (world.isSkyVisible(pos)
-                || (upState.isOf(BwtBlocks.lightBlockBlock) && upState.get(LightBlock.LIT))
-                || (up2State.isOf(BwtBlocks.lightBlockBlock) && up2State.get(LightBlock.LIT)))
-                && world.getBaseLightLevel(pos, 0) >= 9
+                (level.canSeeSky(pos)
+                || (upState.is(BwtBlocks.lightBlockBlock) && upState.getValue(LightBlock.LIT))
+                || (up2State.is(BwtBlocks.lightBlockBlock) && up2State.getValue(LightBlock.LIT)))
+                && level.getRawBrightness(pos, 0) >= 9
         ) {
-            grow(world, random, pos, state);
+            performBonemeal(level, random, pos, state);
         }
     }
 
     @Override
-    public boolean canGrow(World world, Random random, BlockPos pos, BlockState state) {
-        return !world.getBlockState(pos.down()).isOf(this) && world.getBlockState(pos.up()).isIn(BlockTags.AIR);
+    public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
+        return !level.getBlockState(pos.below()).is(this) && level.getBlockState(pos.above()).is(BlockTags.AIR);
     }
 
     @Override
-    public boolean isFertilizable(WorldView world, BlockPos pos, BlockState state) {
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
         return false;
     }
 
     @Override
-    public void grow(ServerWorld world, Random random, BlockPos pos, BlockState state) {
-        if (canGrow(world, random, pos, state)) {
-            applyGrowth(world, pos, state);
+    public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state) {
+        if (isBonemealSuccess(level, random, pos, state)) {
+            growCrops(level, pos, state);
         }
     }
 
     @Override
-    public void applyGrowth(World world, BlockPos pos, BlockState state) {
+    public void growCrops(Level level, BlockPos pos, BlockState state) {
         int currentAge = getAge(state);
-        int newAge = currentAge + getGrowthAmount(world);
+        int newAge = currentAge + getBonemealAgeIncrease(level);
         int maxAge = getMaxAge();
         if (newAge > maxAge) {
             newAge = maxAge;
-            if (world.getBlockState(pos.up()).isIn(BlockTags.AIR)) {
-                world.setBlockState(pos.up(), getDefaultState().with(AGE, maxAge));
+            if (level.getBlockState(pos.above()).is(BlockTags.AIR)) {
+                level.setBlockAndUpdate(pos.above(), defaultBlockState().setValue(AGE, maxAge));
             }
         }
         if (newAge != currentAge) {
-            world.setBlockState(pos, this.withAge(newAge), Block.NOTIFY_ALL);
+            level.setBlock(pos, this.getStateForAge(newAge), Block.UPDATE_ALL);
         }
     }
 }

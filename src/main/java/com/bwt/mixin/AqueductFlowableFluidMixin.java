@@ -4,18 +4,6 @@ import com.bwt.blocks.AqueductBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtFluidTags;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FlowableFluid;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.state.property.Property;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,98 +12,110 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.Vec3;
 
-@Mixin(FlowableFluid.class)
+@Mixin(FlowingFluid.class)
 public abstract class AqueductFlowableFluidMixin extends Fluid {
     @Unique
     public boolean bwt$isMatchingAndStill(FluidState state) {
-        return state.getFluid().matchesType(this) && state.isStill();
+        return state.getType().isSame(this) && state.isSource();
     }
 
-    @Inject(method = "getVelocity", at = @At(value = "HEAD"), cancellable = true)
-    public void bwt$getVelocity(BlockView world, BlockPos pos, FluidState state, CallbackInfoReturnable<Vec3d> cir) {
-        if (!state.isIn(BwtFluidTags.AQUEDUCT_FLUIDS)) {
+    @Inject(method = "getFlow", at = @At(value = "HEAD"), cancellable = true)
+    public void bwt$getVelocity(BlockGetter level, BlockPos pos, FluidState state, CallbackInfoReturnable<Vec3> cir) {
+        if (!state.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
             return;
         }
-        BlockState belowState = world.getBlockState(pos.down());
-        if (!belowState.isOf(BwtBlocks.aqueductBlock)) {
+        BlockState belowState = level.getBlockState(pos.below());
+        if (!belowState.is(BwtBlocks.aqueductBlock)) {
             return;
         }
 
         double xVelocity = 0.0;
         double zVelocity = 0.0;
-        for (Direction direction : Direction.Type.HORIZONTAL) {
-            boolean isFlowingFromDirection = belowState.get(AqueductBlock.FACING_PROPERTIES.get(direction));
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            boolean isFlowingFromDirection = belowState.getValue(AqueductBlock.FACING_PROPERTIES.get(direction));
             if (!isFlowingFromDirection) {
                 continue;
             }
-            double v = state.getHeight();
-            xVelocity += direction.getOpposite().getOffsetX() * v;
-            zVelocity += direction.getOpposite().getOffsetZ() * v;
+            double v = state.getOwnHeight();
+            xVelocity += direction.getOpposite().getStepX() * v;
+            zVelocity += direction.getOpposite().getStepZ() * v;
         }
-        Vec3d velocityVector = new Vec3d(xVelocity, 0.0, zVelocity);
+        Vec3 velocityVector = new Vec3(xVelocity, 0.0, zVelocity);
         cir.setReturnValue(velocityVector.normalize());
     }
 
-    @Inject(method = "getUpdatedState", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/fluid/FlowableFluid;getLevelDecreasePerBlock(Lnet/minecraft/world/WorldView;)I"), cancellable = true)
-    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) World world, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int i, @Local int k) {
-        if (!this.isIn(BwtFluidTags.AQUEDUCT_FLUIDS)) {
+    @Inject(method = "getNewLiquid", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/material/FlowingFluid;getDropOff(Lnet/minecraft/world/level/LevelReader;)I"), cancellable = true)
+    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int i, @Local int k) {
+        if (!this.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
             return;
         }
-        if (k <= 0 || !this.matchesType(this)) {
+        if (k <= 0 || !this.isSame(this)) {
             return;
         }
-        if (!world.getBlockState(pos.down()).isOf(BwtBlocks.aqueductBlock)) {
+        if (!level.getBlockState(pos.below()).is(BwtBlocks.aqueductBlock)) {
             return;
         }
-        int thisLevel = state.getFluidState().getLevel();
+        int thisLevel = state.getFluidState().getAmount();
 
         ArrayList<Integer> normalFlowingInNeighborLevels = new ArrayList<>();
         ArrayList<Integer> aqueductSupportedNeighborLevels = new ArrayList<>();
-        for (Direction direction : Direction.Type.HORIZONTAL) {
-            BlockPos neighborPos = pos.offset(direction);
-            FluidState neighborFluidState = world.getFluidState(neighborPos);
-            if (!neighborFluidState.getFluid().matchesType(this)) {
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            BlockPos neighborPos = pos.relative(direction);
+            FluidState neighborFluidState = level.getFluidState(neighborPos);
+            if (!neighborFluidState.getType().isSame(this)) {
                 continue;
             }
-            BlockState neighborSupportingBlockState = world.getBlockState(neighborPos.down());
+            BlockState neighborSupportingBlockState = level.getBlockState(neighborPos.below());
             // If supported by an aqueduct, only accept neighbor flow if that neighbor isn't getting flow from *this* block
-            if (neighborSupportingBlockState.isOf(BwtBlocks.aqueductBlock)) {
-                world.replaceWithStateForNeighborUpdate(Direction.UP, state, neighborPos.down(), neighborPos, Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS), 512);
-                neighborSupportingBlockState = world.getBlockState(neighborPos.down());
-                if (neighborSupportingBlockState.isOf(BwtBlocks.aqueductBlock) && !neighborSupportingBlockState.get(AqueductBlock.FACING_PROPERTIES.get(direction.getOpposite()))) {
-                    aqueductSupportedNeighborLevels.add(neighborFluidState.getLevel());
+            if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock)) {
+                level.neighborShapeChanged(Direction.UP, state, neighborPos.below(), neighborPos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                neighborSupportingBlockState = level.getBlockState(neighborPos.below());
+                if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock) && !neighborSupportingBlockState.getValue(AqueductBlock.FACING_PROPERTIES.get(direction.getOpposite()))) {
+                    aqueductSupportedNeighborLevels.add(neighborFluidState.getAmount());
                 }
                 continue;
             }
 
             if (
                     (neighborSupportingBlockState.isSolid() || this.bwt$isMatchingAndStill(neighborSupportingBlockState.getFluidState()))
-                    && neighborFluidState.getLevel() >= thisLevel
+                    && neighborFluidState.getAmount() >= thisLevel
             ) {
-                normalFlowingInNeighborLevels.add(neighborFluidState.getLevel());
+                normalFlowingInNeighborLevels.add(neighborFluidState.getAmount());
             }
         }
 
-        int level;
+        int fluidLevel;
         if (normalFlowingInNeighborLevels.isEmpty() && aqueductSupportedNeighborLevels.isEmpty()) {
-            level = 0;
+            fluidLevel = 0;
         }
         else if (!normalFlowingInNeighborLevels.isEmpty()) {
-            level = Math.max(
+            fluidLevel = Math.max(
                     Collections.max(normalFlowingInNeighborLevels),
                     aqueductSupportedNeighborLevels.stream().mapToInt(l -> l).max().orElse(0)
             );
         }
         else {
-            level = Collections.min(aqueductSupportedNeighborLevels);
+            fluidLevel = Collections.min(aqueductSupportedNeighborLevels);
         }
-        if (level == 0) {
-            cir.setReturnValue(Fluids.EMPTY.getDefaultState());
+        if (fluidLevel == 0) {
+            cir.setReturnValue(Fluids.EMPTY.defaultFluidState());
             return;
         }
         // Don't allow level 8 so we don't get fluid sources everywhere
-        level = Math.min(level, FlowableFluid.LEVEL.stream().mapToInt(Property.Value::value).max().orElse(8) - 1);
-        cir.setReturnValue(((FlowableFluid) (Object) this).getFlowing(level, false));
+        fluidLevel = Math.min(fluidLevel, FlowingFluid.LEVEL.getAllValues().mapToInt(Property.Value::value).max().orElse(8) - 1);
+        cir.setReturnValue(((FlowingFluid) (Object) this).getFlowing(fluidLevel, false));
     }
 }

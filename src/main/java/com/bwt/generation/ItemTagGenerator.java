@@ -4,20 +4,19 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
-import com.bwt.tags.CompatibilityTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.registry.tag.TagBuilder;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagBuilder;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -28,13 +27,13 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
     @Nullable
     private final Function<TagKey<Block>, TagBuilder> blockTagBuilderProvider;
 
-    public ItemTagGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture, BlockTagGenerator blockTagGenerator) {
+    public ItemTagGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture, BlockTagGenerator blockTagGenerator) {
         super(output, completableFuture, blockTagGenerator);
-        this.blockTagBuilderProvider = blockTagGenerator == null ? null : blockTagGenerator::getTagBuilder;
+        this.blockTagBuilderProvider = blockTagGenerator == null ? null : blockTagGenerator::getOrCreateRawBuilder;
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup arg) {
+    protected void addTags(HolderLookup.Provider arg) {
         copy(BlockTags.RAILS, ItemTags.RAILS);
         copy(BlockTags.SLABS, ItemTags.SLABS);
         copy(BlockTags.DIRT, ItemTags.DIRT);
@@ -100,9 +99,9 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
     public void copyIgnoreMissing(TagKey<Block> blockTag, TagKey<Item> itemTag) {
         TagBuilder blockTagBuilder = Objects.requireNonNull(this.blockTagBuilderProvider, "Pass Block tag provider via constructor to use copy").apply(blockTag);
-        TagBuilder itemTagBuilder = this.getTagBuilder(itemTag);
+        TagBuilder itemTagBuilder = this.getOrCreateRawBuilder(itemTag);
         blockTagBuilder.build().stream()
-                .filter(entry -> entry.canAdd(Registries.ITEM::containsId, tagId -> getTagBuilder(TagKey.of(RegistryKeys.ITEM, tagId)) != null))
+                .filter(entry -> entry.verifyIfPresent(BuiltInRegistries.ITEM::containsKey, tagId -> !getOrCreateRawBuilder(TagKey.create(Registries.ITEM, tagId)).build().isEmpty()))
                 .forEach(itemTagBuilder::add);
     }
 

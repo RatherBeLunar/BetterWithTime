@@ -2,23 +2,23 @@ package com.bwt.mixin.animals;
 
 import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.mixin.accessors.MobEntityAccessorMixin;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.SheepEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SheepEntity.class)
-public abstract class SheepEntityMixin extends AnimalEntity implements MobEntityAccessorMixin {
-    protected SheepEntityMixin(EntityType<? extends AnimalEntity> entityType, World world) {
-        super(entityType, world);
+@Mixin(Sheep.class)
+public abstract class SheepEntityMixin extends Animal implements MobEntityAccessorMixin {
+    protected SheepEntityMixin(EntityType<? extends Animal> entityType, Level level) {
+        super(entityType, level);
     }
 
-    @Inject(method = "initGoals", at = @At("TAIL"))
+    @Inject(method = "registerGoals", at = @At("TAIL"))
     public void addGoal(CallbackInfo ci) {
-        this.getGoalSelector().add(3, new GoToAndPickUpBreedingItemGoal(this, 6, 1.5, 1));
+        this.getGoalSelector().addGoal(3, new GoToAndPickUpBreedingItemGoal(this, 6, 1.5, 1));
     }
 }

@@ -5,29 +5,28 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.utils.rectangular_entity.EntityRectDimensions;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     public static final int NUM_SAILS = 4;
@@ -41,17 +40,17 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     private static final float rotationPerTickInNether = -0.07F;
     private static final int secondsInStormBeforeOverpower = 30;
 
-    protected static final TrackedData<Integer> dyeIndex = DataTracker.registerData(WindmillEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    protected static final List<TrackedData<Integer>> sailColors = IntStream.range(0, NUM_SAILS).mapToObj(i ->
-            DataTracker.registerData(WindmillEntity.class, TrackedDataHandlerRegistry.INTEGER)).collect(Collectors.toList());
+    protected static final EntityDataAccessor<Integer> dyeIndex = SynchedEntityData.defineId(WindmillEntity.class, EntityDataSerializers.INT);
+    protected static final List<EntityDataAccessor<Integer>> sailColors = IntStream.range(0, NUM_SAILS).mapToObj(i ->
+            SynchedEntityData.defineId(WindmillEntity.class, EntityDataSerializers.INT)).collect(Collectors.toList());
     protected int overpowerTimer = 0;
 
-    public WindmillEntity(EntityType<? extends WindmillEntity> entityType, World world) {
-        super(entityType, world);
+    public WindmillEntity(EntityType<? extends WindmillEntity> entityType, Level level) {
+        super(entityType, level);
     }
 
-    public WindmillEntity(World world, Vec3d pos, Direction facing) {
-        super(BwtEntities.windmillEntity, world, pos, facing);
+    public WindmillEntity(Level level, Vec3 pos, Direction facing) {
+        super(BwtEntities.windmillEntity, level, pos, facing);
     }
 
     @Override
@@ -60,38 +59,38 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(dyeIndex, 0);
-        sailColors.forEach(bladeColor -> builder.add(bladeColor, DyeColor.WHITE.getId()));
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(dyeIndex, 0);
+        sailColors.forEach(bladeColor -> builder.define(bladeColor, DyeColor.WHITE.getId()));
     }
 
     public DyeColor getSailColor(int index) {
-        return DyeColor.byId(dataTracker.get(sailColors.get(index)));
+        return DyeColor.byId(entityData.get(sailColors.get(index)));
     }
 
     public void setSailColor(int index, DyeColor dyeColor) {
-        dataTracker.set(sailColors.get(index), dyeColor.getId());
+        entityData.set(sailColors.get(index), dyeColor.getId());
     }
 
     @Override
-    public boolean tryToSpawn(PlayerEntity player) {
+    public boolean tryToSpawn(Player player) {
         return super.tryToSpawn(
                 player,
-                Text.of("Not enough room to place Wind Mill (They are friggin HUGE!)"),
-                Text.of("Wind Mill placement is obstructed by something, or by you")
+                Component.nullToEmpty("Not enough room to place Wind Mill (They are friggin HUGE!)"),
+                Component.nullToEmpty("Wind Mill placement is obstructed by something, or by you")
         );
     }
 
     @Override
-    public boolean shouldRender(double distance) {
-        double d = 128.0 * getRenderDistanceMultiplier();
+    public boolean shouldRenderAtSqrDistance(double distance) {
+        double d = 128.0 * getViewScale();
         return distance < d * d;
     }
 
     @Override
     public Predicate<BlockPos> getBlockInterferencePredicate() {
-        return blockPos -> !getWorld().getBlockState(blockPos).isIn(BlockTags.AIR);
+        return blockPos -> !level().getBlockState(blockPos).is(BlockTags.AIR);
     }
 
     @Override
@@ -101,21 +100,21 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
 
     @Override
     public float computeRotation() {
-        World world = getWorld();
+        Level level = level();
         // Nether
-        if (world.getDimension().ultrawarm()) {
+        if (level.dimensionType().ultraWarm()) {
             return rotationPerTickInNether;
         }
         // End dimension or modded
-        else if (!world.getDimension().natural()) {
+        else if (!level.dimensionType().natural()) {
             return 0.0f;
         }
         // Overworld, sky blocked
-        else if (!world.isSkyVisible(getBlockPos())) {
+        else if (!level.canSeeSky(blockPosition())) {
             return 0.0f;
         }
         // Overworld, storming
-        else if (world.isRaining() && world.isThundering()) {
+        else if (level.isRaining() && level.isThundering()) {
             return rotationPerTickInStorm;
         }
         // Overworld, not raining
@@ -123,24 +122,24 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
-    public ActionResult interact(PlayerEntity player, Hand hand) {
-        ItemStack stackInHand = player.getStackInHand(hand);
+    public InteractionResult interact(Player player, InteractionHand hand) {
+        ItemStack stackInHand = player.getItemInHand(hand);
         if (!(stackInHand.getItem() instanceof DyeItem dyeItem)) {
             return super.interact(player, hand);
         }
 
-        DyeColor dyeColor = dyeItem.getColor();
-        int dyeIdx = getDataTracker().get(dyeIndex);
+        DyeColor dyeColor = dyeItem.getDyeColor();
+        int dyeIdx = getEntityData().get(dyeIndex);
         if (dyeColor.equals(getSailColor(dyeIdx))) {
-            getDataTracker().set(dyeIndex, (dyeIdx + 1) % NUM_SAILS);
-            return ActionResult.SUCCESS;
+            getEntityData().set(dyeIndex, (dyeIdx + 1) % NUM_SAILS);
+            return InteractionResult.SUCCESS;
         }
         this.setSailColor(dyeIdx, dyeColor);
-        getDataTracker().set(dyeIndex, (dyeIdx + 1) % NUM_SAILS);
-        if (!player.getAbilities().creativeMode) {
-            stackInHand.decrement(1);
+        getEntityData().set(dyeIndex, (dyeIdx + 1) % NUM_SAILS);
+        if (!player.getAbilities().instabuild) {
+            stackInHand.shrink(1);
         }
-        return ActionResult.SUCCESS;
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -157,33 +156,33 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     protected void breakConnectedGearBoxes() {
-        BlockPos hostAxlePos = getBlockPos();
-        BlockState hostAxleState = getWorld().getBlockState(hostAxlePos);
+        BlockPos hostAxlePos = blockPosition();
+        BlockState hostAxleState = level().getBlockState(hostAxlePos);
 
         // Bad block type
-        if (!hostAxleState.isOf(BwtBlocks.axleBlock) && !hostAxleState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+        if (!hostAxleState.is(BwtBlocks.axleBlock) && !hostAxleState.is(BwtBlocks.axlePowerSourceBlock)) {
             return;
         }
-        Direction.Axis hostAxleAxis = hostAxleState.get(AxleBlock.AXIS);
+        Direction.Axis hostAxleAxis = hostAxleState.getValue(AxleBlock.AXIS);
         for (Direction.AxisDirection axisDirection : Direction.AxisDirection.values()) {
             for (int i = 1; i <= 4; i++) {
-                Direction direction = Direction.from(hostAxleAxis, axisDirection);
-                BlockPos connectedPos = hostAxlePos.offset(direction, i);
-                BlockState connectedState = getWorld().getBlockState(connectedPos);
+                Direction direction = Direction.fromAxisAndDirection(hostAxleAxis, axisDirection);
+                BlockPos connectedPos = hostAxlePos.relative(direction, i);
+                BlockState connectedState = level().getBlockState(connectedPos);
                 if (
                         connectedState.getBlock() instanceof GearBoxBlock gearBoxBlock
                         // Receiving power from this axle
-                        && connectedState.get(GearBoxBlock.FACING).equals(direction.getOpposite())
+                        && connectedState.getValue(GearBoxBlock.FACING).equals(direction.getOpposite())
                         // Not switched off
                         && gearBoxBlock.isMechPowered(connectedState)
                 ) {
-                    GearBoxBlock.breakGearBox(getWorld(), connectedPos);
+                    GearBoxBlock.breakGearBox(level(), connectedPos);
                     break;
                 }
-                if (!connectedState.isOf(BwtBlocks.axleBlock) && !connectedState.isOf(BwtBlocks.axlePowerSourceBlock)) {
+                if (!connectedState.is(BwtBlocks.axleBlock) && !connectedState.is(BwtBlocks.axlePowerSourceBlock)) {
                     break;
                 }
-                if (!connectedState.get(AxleBlock.AXIS).equals(hostAxleAxis)) {
+                if (!connectedState.getValue(AxleBlock.AXIS).equals(hostAxleAxis)) {
                     break;
                 }
             }
@@ -191,29 +190,29 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
-    protected void writeCustomDataToNbt(NbtCompound nbt) {
-        super.writeCustomDataToNbt(nbt);
-        nbt.putInt("dyeIndex", dataTracker.get(dyeIndex));
+    protected void addAdditionalSaveData(CompoundTag nbt) {
+        super.addAdditionalSaveData(nbt);
+        nbt.putInt("dyeIndex", entityData.get(dyeIndex));
         for (int i = 0; i < NUM_SAILS; i++) {
-            nbt.putInt("sail" + i + "Color", dataTracker.get(sailColors.get(i)));
+            nbt.putInt("sail" + i + "Color", entityData.get(sailColors.get(i)));
         }
         nbt.putInt("overpowerTimer", overpowerTimer);
     }
 
     @Override
-    protected void readCustomDataFromNbt(NbtCompound nbt) {
-        super.readCustomDataFromNbt(nbt);
-        dataTracker.set(dyeIndex, nbt.getInt("dyeIndex"));
+    protected void readAdditionalSaveData(CompoundTag nbt) {
+        super.readAdditionalSaveData(nbt);
+        entityData.set(dyeIndex, nbt.getInt("dyeIndex"));
         for (int i = 0; i < NUM_SAILS; i++) {
-            if (nbt.contains("sail" + i + "Color", NbtCompound.INT_TYPE)) {
-                dataTracker.set(sailColors.get(i), nbt.getInt("sail" + i + "Color"));
+            if (nbt.contains("sail" + i + "Color", CompoundTag.TAG_INT)) {
+                entityData.set(sailColors.get(i), nbt.getInt("sail" + i + "Color"));
             }
         }
         overpowerTimer = nbt.getInt("overpowerTimer");
     }
 
     @Override
-    public ItemStack getPickBlockStack() {
+    public ItemStack getPickResult() {
         return new ItemStack(BwtItems.windmillItem);
     }
 }

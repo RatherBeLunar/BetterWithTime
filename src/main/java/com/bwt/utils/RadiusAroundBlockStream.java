@@ -1,10 +1,9 @@
 package com.bwt.utils;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3i;
-
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 
 public class RadiusAroundBlockStream {
     protected static Vec3i oneDimensionalIndexTo3DCoord(int idx, int xRadius, int yRadius, int zRadius) {
@@ -25,7 +24,7 @@ public class RadiusAroundBlockStream {
         Stream<BlockPos> stream = IntStream
                 .range(0, oneDRange)
                 .mapToObj(idx -> oneDimensionalIndexTo3DCoord(idx, xRadius, yRadius, zRadius))
-                .map(centerPos::add);
+                .map(centerPos::offset);
         if (!includeSelf) {
             stream = stream.filter(pos -> !pos.equals(centerPos));
         }

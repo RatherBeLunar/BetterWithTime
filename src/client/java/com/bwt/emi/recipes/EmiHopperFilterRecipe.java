@@ -8,26 +8,24 @@ import com.bwt.utils.Id;
 import dev.emi.emi.api.recipe.EmiRecipe;
 import dev.emi.emi.api.recipe.EmiRecipeCategory;
 import dev.emi.emi.api.render.EmiTexture;
-import dev.emi.emi.api.render.EmiTooltipComponents;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiHopperFilterRecipe implements EmiRecipe {
 
     public static final EmiTexture EMPTY_GEAR = new EmiTexture(BwtEmiPlugin.WIDGETS, 0, 0, 14, 14);
     public static final EmiTexture FULL_GEAR = new EmiTexture(BwtEmiPlugin.WIDGETS, 14, 0, 14, 14);
     public static final EmiTexture ARROW = new EmiTexture(BwtEmiPlugin.WIDGETS, 28, 0, 22, 15);
-    public static final Identifier BACKGROUND = Id.of("textures/gui/container/hopper_recipe.png");
+    public static final ResourceLocation BACKGROUND = Id.of("textures/gui/container/hopper_recipe.png");
 
-    private final Identifier id;
+    private final ResourceLocation id;
     protected final EmiRecipeCategory category;
     protected final EmiIngredient ingredient;
     protected final EmiIngredient filter;
@@ -36,15 +34,15 @@ public class EmiHopperFilterRecipe implements EmiRecipe {
     protected final EmiStack byproduct;
     protected EmiSoulBottlingRecipe soulBottlingRecipe;
 
-    public EmiHopperFilterRecipe(EmiRecipeCategory category, RecipeEntry<HopperFilterRecipe> recipeEntry) {
+    public EmiHopperFilterRecipe(EmiRecipeCategory category, RecipeHolder<HopperFilterRecipe> recipeEntry) {
         this(category, recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiHopperFilterRecipe(EmiRecipeCategory category, Identifier id, HopperFilterRecipe recipe) {
+    public EmiHopperFilterRecipe(EmiRecipeCategory category, ResourceLocation id, HopperFilterRecipe recipe) {
         this(category, id, EmiIngredient.of(recipe.ingredient()), EmiIngredient.of(recipe.filter()), recipe.soulCount(), EmiStack.of(recipe.result()), EmiStack.of(recipe.byproduct()));
     }
 
-    public EmiHopperFilterRecipe(EmiRecipeCategory category, Identifier id, EmiIngredient ingredient, EmiIngredient filter, int soulCount, EmiStack result, EmiStack byproduct) {
+    public EmiHopperFilterRecipe(EmiRecipeCategory category, ResourceLocation id, EmiIngredient ingredient, EmiIngredient filter, int soulCount, EmiStack result, EmiStack byproduct) {
         this.category = category;
         this.id = id;
         this.ingredient = ingredient;
@@ -55,12 +53,12 @@ public class EmiHopperFilterRecipe implements EmiRecipe {
         this.soulBottlingRecipe = null;
     }
 
-    public EmiHopperFilterRecipe withSoulBottlingRecipe(Identifier id, SoulBottlingRecipe recipe) {
+    public EmiHopperFilterRecipe withSoulBottlingRecipe(ResourceLocation id, SoulBottlingRecipe recipe) {
         this.soulBottlingRecipe = new EmiSoulBottlingRecipe(id, recipe);
         return this;
     }
 
-    public EmiHopperFilterRecipe withSoulBottlingRecipe(RecipeEntry<SoulBottlingRecipe> recipeEntry) {
+    public EmiHopperFilterRecipe withSoulBottlingRecipe(RecipeHolder<SoulBottlingRecipe> recipeEntry) {
         return withSoulBottlingRecipe(recipeEntry.id(), recipeEntry.value());
     }
 
@@ -70,11 +68,11 @@ public class EmiHopperFilterRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
+    public @Nullable ResourceLocation getId() {
         if(this.soulBottlingRecipe != null) {
             return Id.of(String.format("/%s-%s", this.id.getPath(), this.soulBottlingRecipe.getId().getPath()));
         }
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

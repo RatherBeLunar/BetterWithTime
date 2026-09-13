@@ -19,36 +19,36 @@ import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.screen.ingame.HandledScreens;
-import net.minecraft.client.item.ModelPredicateProviderRegistry;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactories;
-import net.minecraft.client.render.entity.FlyingItemEntityRenderer;
-import net.minecraft.client.render.entity.PaintingEntityRenderer;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.GrassColors;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.entity.PaintingRenderer;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
+import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.world.level.GrassColor;
+import net.minecraft.world.level.biome.Biome;
 
 @Environment(EnvType.CLIENT)
 public class BetterWithTimeClient implements ClientModInitializer {
-	public static final EntityModelLayer MODEL_WINDMILL_LAYER = new EntityModelLayer(Id.of("windmill"), "main");
-	public static final EntityModelLayer MODEL_WATER_WHEEL_LAYER = new EntityModelLayer(Id.of("water_wheel"), "main");
-	public static final EntityModelLayer MECH_HOPPER_FILL_LAYER = new EntityModelLayer(Id.of("mech_hopper_fill"), "main");
-	public static final EntityModelLayer CAULDRON_FILL_LAYER = new EntityModelLayer(Id.of("cauldron_fill"), "main");
-	public static final EntityModelLayer CRUCIBLE_FILL_LAYER = new EntityModelLayer(Id.of("crucible_fill"), "main");
+	public static final ModelLayerLocation MODEL_WINDMILL_LAYER = new ModelLayerLocation(Id.of("windmill"), "main");
+	public static final ModelLayerLocation MODEL_WATER_WHEEL_LAYER = new ModelLayerLocation(Id.of("water_wheel"), "main");
+	public static final ModelLayerLocation MECH_HOPPER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
+	public static final ModelLayerLocation CAULDRON_FILL_LAYER = new ModelLayerLocation(Id.of("cauldron_fill"), "main");
+	public static final ModelLayerLocation CRUCIBLE_FILL_LAYER = new ModelLayerLocation(Id.of("crucible_fill"), "main");
 
-    private final UnfiredDecoratedPotBlockEntity renderUnfiredDecoratedPot = new UnfiredDecoratedPotBlockEntity(BlockPos.ORIGIN, BwtBlocks.unfiredDecoratedPotBlockWithSherds.getDefaultState());
+    private final UnfiredDecoratedPotBlockEntity renderUnfiredDecoratedPot = new UnfiredDecoratedPotBlockEntity(BlockPos.ZERO, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState());
 
 	@Override
 	public void onInitializeClient() {
 		// This entrypoint is suitable for setting up client-specific logic, such as rendering.
-        BlockEntityRendererFactories.register(BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntityRenderer::new);
-        BlockEntityRendererFactories.register(BwtBlockEntities.unfiredDecoratedPotBlockEntity, UnfiredDecoratedPotBlockEntityRenderer::new);
-        BlockEntityRendererFactories.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
-        BlockEntityRendererFactories.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
+        BlockEntityRenderers.register(BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntityRenderer::new);
+        BlockEntityRenderers.register(BwtBlockEntities.unfiredDecoratedPotBlockEntity, UnfiredDecoratedPotBlockEntityRenderer::new);
+        BlockEntityRenderers.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
+        BlockEntityRenderers.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
 		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
@@ -56,8 +56,8 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BwtEntities.rottedArrowEntity, RottedArrowEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.dynamiteEntity, DynamiteEntityRenderer::new);
 		EntityRendererRegistry.register(BwtEntities.miningChargeEntity, MiningChargeEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.soulUrnProjectileEntity, FlyingItemEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.canvasEntity, PaintingEntityRenderer::new);
+		EntityRendererRegistry.register(BwtEntities.soulUrnProjectileEntity, ThrownItemRenderer::new);
+		EntityRendererRegistry.register(BwtEntities.canvasEntity, PaintingRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
@@ -67,9 +67,9 @@ public class BetterWithTimeClient implements ClientModInitializer {
                 BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
                 (stack, mode, matrices, vertexConsumers, light, overlay) -> {
                     renderUnfiredDecoratedPot.readFrom(stack);
-                    MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
+                    Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
                 });
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(),
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.lensBeamGlassBlock,
 				BwtBlocks.hempCropBlock,
@@ -86,62 +86,62 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.doorBlock,
 				BwtBlocks.bloodWoodBlocks.trapdoorBlock
 		);
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutoutMipped(),
+		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutoutMipped(),
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);
-		HandledScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
-		HandledScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
-		HandledScreens.register(BetterWithTime.crucibleScreenHandler, CrucibleScreen::new);
-		HandledScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
-		HandledScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
-		HandledScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);
-		HandledScreens.register(BetterWithTime.soulForgeScreenHandler, SoulForgeScreen::new);
+		MenuScreens.register(BetterWithTime.blockDispenserScreenHandler, BlockDispenserScreen::new);
+		MenuScreens.register(BetterWithTime.cauldronScreenHandler, CauldronScreen::new);
+		MenuScreens.register(BetterWithTime.crucibleScreenHandler, CrucibleScreen::new);
+		MenuScreens.register(BetterWithTime.millStoneScreenHandler, MillStoneScreen::new);
+		MenuScreens.register(BetterWithTime.pulleyScreenHandler, PulleyScreen::new);
+		MenuScreens.register(BetterWithTime.mechHopperScreenHandler, MechHopperScreen::new);
+		MenuScreens.register(BetterWithTime.soulForgeScreenHandler, SoulForgeScreen::new);
 
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
 			if (view == null || pos == null) {
-				return GrassColors.getDefaultColor();
+				return GrassColor.getDefaultColor();
 			}
-			RegistryEntry<Biome> biomeEntry = view.getBiomeFabric(pos);
+            Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
 			if (biomeEntry == null) {
-				return GrassColors.getDefaultColor();
+				return GrassColor.getDefaultColor();
 			}
-			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
+			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
 		}, BwtBlocks.grassPlanterBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassPlanterBlock);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassPlanterBlock);
 
 		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
 			if (view == null || pos == null) {
-				return GrassColors.getDefaultColor();
+				return GrassColor.getDefaultColor();
 			}
-			RegistryEntry<Biome> biomeEntry = view.getBiomeFabric(pos);
+			Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
 			if (biomeEntry == null) {
-				return GrassColors.getDefaultColor();
+				return GrassColor.getDefaultColor();
 			}
-			return biomeEntry.value().getGrassColorAt(pos.getX(), pos.getZ());
+			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
 		}, BwtBlocks.grassSlabBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColors.getDefaultColor(), BwtBlocks.grassSlabBlock);
+		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassSlabBlock);
 
-		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
+		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {
 				return 0.0F;
 			}
-			return livingEntity.getActiveItem() != itemStack ? 0.0F : (itemStack.getMaxUseTime(livingEntity) - livingEntity.getItemUseTimeLeft()) / 20.0F;
+			return livingEntity.getMainHandItem() != itemStack ? 0.0F : (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
 		});
 
-		ModelPredicateProviderRegistry.register(BwtItems.compositeBowItem, Id.mc("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
+		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
 			if (livingEntity == null) {
 				return 0.0F;
 			}
-			return livingEntity.isUsingItem() && livingEntity.getActiveItem() == itemStack ? 1.0F : 0.0F;
+			return livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
 		});
 
-		ClientPlayNetworking.registerGlobalReceiver(KilnBlockCookingProgressPayload.ID, (payload, context) -> {
+		ClientPlayNetworking.registerGlobalReceiver(KilnBlockCookingProgressPayload.ID, (payload, context) ->
 			context.client().execute(() -> {
-				if (context.client().worldRenderer instanceof KilnBlockCookProgressSetter cookProgressSetter) {
+				if (context.client().levelRenderer instanceof KilnBlockCookProgressSetter cookProgressSetter) {
 					cookProgressSetter.betterWithTime$setKilnBlockCookingInfo(payload.blockPos(), payload.progress());
 				}
-			});
-		});
+			})
+		);
 	}
 }

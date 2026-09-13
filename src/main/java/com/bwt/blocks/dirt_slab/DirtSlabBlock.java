@@ -2,90 +2,98 @@ package com.bwt.blocks.dirt_slab;
 
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.*;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.event.GameEvent;
 
-public class DirtSlabBlock extends Block implements Waterloggable {
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.*;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.EntityCollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+public class DirtSlabBlock extends Block implements SimpleWaterloggedBlock {
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape BOTTOM_SHAPE, SNOW_LAYER;
     public static final BooleanProperty SNOWY;
     public Block fullBlock = Blocks.DIRT;
 
-    public static boolean isPlayerLookingAtSnowLayer(PlayerEntity playerEntity, BlockPos pos) {
+    public static boolean isPlayerLookingAtSnowLayer(Player playerEntity, BlockPos pos) {
         float tickDelta = 0;
-        double maxDistance = playerEntity.getBlockInteractionRange();
-        Vec3d vec3d = playerEntity.getCameraPosVec(tickDelta);
-        Vec3d vec3d2 = playerEntity.getRotationVec(tickDelta);
-        Vec3d vec3d3 = vec3d.add(vec3d2.x * maxDistance, vec3d2.y * maxDistance, vec3d2.z * maxDistance);
-        BlockHitResult hit = SNOW_LAYER.raycast(vec3d, vec3d3, pos);
+        double maxDistance = playerEntity.blockInteractionRange();
+        Vec3 vec3d = playerEntity.getEyePosition(tickDelta);
+        Vec3 vec3d2 = playerEntity.getViewVector(tickDelta);
+        Vec3 vec3d3 = vec3d.add(vec3d2.x * maxDistance, vec3d2.y * maxDistance, vec3d2.z * maxDistance);
+        BlockHitResult hit = SNOW_LAYER.clip(vec3d, vec3d3, pos);
         return hit != null;
     }
 
-    public DirtSlabBlock(Settings settings) {
+    public DirtSlabBlock(Properties settings) {
         super(settings);
-        setDefaultState(this.getDefaultState().with(WATERLOGGED, false).with(SNOWY, false));
+        registerDefaultState(this.defaultBlockState().setValue(WATERLOGGED, false).setValue(SNOWY, false));
     }
 
-    public DirtSlabBlock(Settings settings, Block fullBlock) {
+    public DirtSlabBlock(Properties settings, Block fullBlock) {
         this(settings);
         this.fullBlock = fullBlock;
     }
 
-    public static final MapCodec<Block> CODEC = Block.createCodec(DirtSlabBlock::new);
+    public static final MapCodec<Block> CODEC = Block.simpleCodec(DirtSlabBlock::new);
 
     @Override
-    public MapCodec<? extends Block> getCodec() {
+    public MapCodec<? extends Block> codec() {
         return CODEC;
     }
 
     @Override
-    public boolean hasSidedTransparency(BlockState state) {
+    public boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(WATERLOGGED, SNOWY);
     }
 
     @Override
-    protected VoxelShape getCameraCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return super.getCameraCollisionShape(state, world, pos, context);
+    protected VoxelShape getVisualShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return super.getVisualShape(state, level, pos, context);
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return BOTTOM_SHAPE;
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        if (state.get(SNOWY)) {
-            if (context instanceof EntityShapeContext ec) {
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.getValue(SNOWY)) {
+            if (context instanceof EntityCollisionContext ec) {
                 Entity entity = ec.getEntity();
-                if (entity instanceof PlayerEntity playerEntity) {
+                if (entity instanceof Player playerEntity) {
                     if (isPlayerLookingAtSnowLayer(playerEntity, pos)) {
                         return SNOW_LAYER;
                     }
@@ -96,57 +104,57 @@ public class DirtSlabBlock extends Block implements Waterloggable {
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext context) {
-        BlockPos blockPos = context.getBlockPos();
-        BlockState blockState = context.getWorld().getBlockState(blockPos);
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockPos blockPos = context.getClickedPos();
+        BlockState blockState = context.getLevel().getBlockState(blockPos);
         // No double slab, just convert back to full block
-        if (blockState.isOf(this)) {
-            return fullBlock.getDefaultState();
+        if (blockState.is(this)) {
+            return fullBlock.defaultBlockState();
         }
-        FluidState fluidState = context.getWorld().getFluidState(blockPos);
-        return this.getDefaultState().with(WATERLOGGED, fluidState.getFluid() == Fluids.WATER);
+        FluidState fluidState = context.getLevel().getFluidState(blockPos);
+        return this.defaultBlockState().setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
     }
 
     @Override
     protected FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStill(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
-    public boolean tryFillWithFluid(WorldAccess world, BlockPos pos, BlockState state, FluidState fluidState) {
-        if (state.get(Properties.WATERLOGGED) || fluidState.getFluid() != Fluids.WATER) {
+    public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
+        if (state.getValue(BlockStateProperties.WATERLOGGED) || fluidState.getType() != Fluids.WATER) {
             return false;
         }
-        if (!world.isClient()) {
+        if (!level.isClientSide()) {
             // The key difference from the default Waterloggable behavior here is that we unset the snowy property
-            world.setBlockState(pos, state.with(Properties.WATERLOGGED, Boolean.TRUE).with(SNOWY, false), Block.NOTIFY_ALL);
-            world.scheduleFluidTick(pos, fluidState.getFluid(), fluidState.getFluid().getTickRate(world));
+            level.setBlock(pos, state.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE).setValue(SNOWY, false), Block.UPDATE_ALL);
+            level.scheduleTick(pos, fluidState.getType(), fluidState.getType().getTickDelay(level));
         }
         return true;
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canPlaceAt(world, pos)) {
-            return Blocks.AIR.getDefaultState();
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canSurvive(level, pos)) {
+            return Blocks.AIR.defaultBlockState();
         }
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
 
     static {
-        PlayerBlockBreakEvents.BEFORE.register((world, player, pos, state, blockEntity) -> {
-            if (state.getBlock() instanceof DirtSlabBlock && state.get(DirtSlabBlock.SNOWY) && !player.isCreative()) {
+        PlayerBlockBreakEvents.BEFORE.register((level, player, pos, state, blockEntity) -> {
+            if (state.getBlock() instanceof DirtSlabBlock && state.getValue(DirtSlabBlock.SNOWY) && !player.isCreative()) {
                 if (isPlayerLookingAtSnowLayer(player, pos)) {
-                    world.setBlockState(pos, state.with(DirtSlabBlock.SNOWY, false));
-                    BlockState snowLayer = Blocks.SNOW.getDefaultState();
-                    ItemStack itemStack = player.getMainHandStack();
+                    level.setBlockAndUpdate(pos, state.setValue(DirtSlabBlock.SNOWY, false));
+                    BlockState snowLayer = Blocks.SNOW.defaultBlockState();
+                    ItemStack itemStack = player.getMainHandItem();
                     ItemStack itemStack2 = itemStack.copy();
-                    itemStack.postMine(world, snowLayer, pos, player);
-                    dropStacks(snowLayer, world, pos, null, player, itemStack2);
+                    itemStack.mineBlock(level, snowLayer, pos, player);
+                    dropResources(snowLayer, level, pos, null, player, itemStack2);
                     return false;
                 }
             }
@@ -156,77 +164,77 @@ public class DirtSlabBlock extends Block implements Waterloggable {
     }
 
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
-        if (enableSnow() && state.get(SNOWY)) {
-            HitResult hit = player.raycast(player.getBlockInteractionRange(), 0, false);
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (enableSnow() && state.getValue(SNOWY)) {
+            HitResult hit = player.pick(player.blockInteractionRange(), 0, false);
             if (hit instanceof BlockHitResult blockHitResult) {
-                Direction direction = blockHitResult.getSide();
+                Direction direction = blockHitResult.getDirection();
                 if (direction == Direction.UP) {
-                    return state.with(SNOWY, false);
+                    return state.setValue(SNOWY, false);
                 }
             }
         }
-        return super.onBreak(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    protected ItemActionResult onUseWithItem(ItemStack itemStack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
-        Direction direction = hit.getSide();
-        if (enableSnow() && itemStack.isOf(Blocks.SNOW.asItem()) && direction == Direction.UP && !state.get(SNOWY)) {
-            world.setBlockState(pos, state.with(SNOWY, true), 11);
-            var soundGroup = Blocks.SNOW.getDefaultState().getSoundGroup();
-            world.playSound(player, pos, soundGroup.getPlaceSound(), SoundCategory.BLOCKS, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
-            world.emitGameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Emitter.of(player, Blocks.SNOW.getDefaultState()));
-            itemStack.decrementUnlessCreative(1, player);
-            return ItemActionResult.SUCCESS;
+    protected ItemInteractionResult useItemOn(ItemStack itemStack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+        Direction direction = hit.getDirection();
+        if (enableSnow() && itemStack.is(Blocks.SNOW.asItem()) && direction == Direction.UP && !state.getValue(SNOWY)) {
+            level.setBlock(pos, state.setValue(SNOWY, true), 11);
+            var soundGroup = Blocks.SNOW.defaultBlockState().getSoundType();
+            level.playSound(player, pos, soundGroup.getPlaceSound(), SoundSource.BLOCKS, (soundGroup.getVolume() + 1.0F) / 2.0F, soundGroup.getPitch() * 0.8F);
+            level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, Blocks.SNOW.defaultBlockState()));
+            itemStack.consume(1, player);
+            return ItemInteractionResult.SUCCESS;
         }
-        return super.onUseWithItem(itemStack, state, world, pos, player, hand, hit);
+        return super.useItemOn(itemStack, state, level, pos, player, hand, hit);
     }
 
     @Override
-    protected boolean canReplace(BlockState state, ItemPlacementContext context) {
-        ItemStack itemStack = context.getStack();
-        if (itemStack.isOf(this.asItem()) && context.canReplaceExisting()) {
-            boolean bl = context.getHitPos().y - (double) context.getBlockPos().getY() > 0.5;
-            Direction direction = context.getSide();
+    protected boolean canBeReplaced(BlockState state, BlockPlaceContext context) {
+        ItemStack itemStack = context.getItemInHand();
+        if (itemStack.is(this.asItem()) && context.replacingClickedOnBlock()) {
+            boolean bl = context.getClickLocation().y - (double) context.getClickedPos().getY() > 0.5;
+            Direction direction = context.getClickedFace();
             return direction == Direction.UP || bl && direction.getAxis().isHorizontal();
         }
         return false;
     }
 
     @Override
-    public void precipitationTick(BlockState state, World world, BlockPos pos, Biome.Precipitation precipitation) {
+    public void handlePrecipitation(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
 
-        if (this.enableSnow() && !state.get(SNOWY) && precipitation.equals(Biome.Precipitation.SNOW) && world.getLightLevel(LightType.BLOCK, pos) <= 11) {
-            world.setBlockState(pos, state.with(SNOWY, true), 11);
+        if (this.enableSnow() && !state.getValue(SNOWY) && precipitation.equals(Biome.Precipitation.SNOW) && level.getBrightness(LightLayer.BLOCK, pos) <= 11) {
+            level.setBlock(pos, state.setValue(SNOWY, true), 11);
         }
-        super.precipitationTick(state, world, pos, precipitation);
+        super.handlePrecipitation(state, level, pos, precipitation);
     }
 
     public boolean enableSnow() {
         return true;
     }
 
-    protected void meltSnowFromLight(World world, BlockPos pos, BlockState state) {
-        if (world.getLightLevel(LightType.BLOCK, pos) > 11) {
-            world.setBlockState(pos, state.with(SNOWY, false));
+    protected void meltSnowFromLight(Level level, BlockPos pos, BlockState state) {
+        if (level.getBrightness(LightLayer.BLOCK, pos) > 11) {
+            level.setBlockAndUpdate(pos, state.setValue(SNOWY, false));
         }
     }
 
     @Override
-    protected boolean hasRandomTicks(BlockState state) {
-        return super.hasRandomTicks(state) || state.get(SNOWY);
+    protected boolean isRandomlyTicking(BlockState state) {
+        return super.isRandomlyTicking(state) || state.getValue(SNOWY);
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        meltSnowFromLight(world, pos, state);
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        meltSnowFromLight(level, pos, state);
     }
 
     static {
-        WATERLOGGED = Properties.WATERLOGGED;
-        SNOWY = Properties.SNOWY;
-        BOTTOM_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
-        SNOW_LAYER = Block.createCuboidShape(0.0, 8.0, 0.0, 16.0, 10.0, 16.0);
+        WATERLOGGED = BlockStateProperties.WATERLOGGED;
+        SNOWY = BlockStateProperties.SNOWY;
+        BOTTOM_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
+        SNOW_LAYER = Block.box(0.0, 8.0, 0.0, 16.0, 10.0, 16.0);
     }
 }

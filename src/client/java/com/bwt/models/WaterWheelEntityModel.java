@@ -1,10 +1,14 @@
 package com.bwt.models;
 
 import com.bwt.entities.WaterWheelEntity;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,27 +35,27 @@ public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<
         }
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
         float localPi = 3.141593F;
         for (int i = 0; i < numBlades; i++) {
-            modelPartData.addChild("blade" + i,
-                ModelPartBuilder.create()
-                    .uv(0, 0)
-                    .cuboid(bladeOffsetFromCenter, -(float) bladeWidth / 2.0f, -(float) bladeDepth / 2.0f,
+            modelPartData.addOrReplaceChild("blade" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 0)
+                    .addBox(bladeOffsetFromCenter, -(float) bladeWidth / 2.0f, -(float) bladeDepth / 2.0f,
                             bladeLength, bladeWidth, bladeDepth),
-                ModelTransform.rotation(0F, 0F, localPi * (float) i / 4.0F));
+                PartPose.rotation(0F, 0F, localPi * (float) i / 4.0F));
         }
         for (int i = 0; i < numBlades; i++ ) {
             float rotation = localPi * 0.25f * i;
 
-            modelPartData.addChild("strut" + i,
-                ModelPartBuilder.create()
-                    .uv(0, 15)
-                    .cuboid(0, -(float) strutWidth / 2.0f, -(float) strutDepth / 2.0f,
+            modelPartData.addOrReplaceChild("strut" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 15)
+                    .addBox(0, -(float) strutWidth / 2.0f, -(float) strutDepth / 2.0f,
                             strutLength, strutWidth, strutDepth),
-                ModelTransform.of(
+                PartPose.offsetAndRotation(
                         ((float) (strutDistanceFromCenter * Math.cos(rotation))),
                         ((float) (strutDistanceFromCenter * Math.sin(rotation))),
                         0f,
@@ -61,13 +65,13 @@ public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<
                 )
             );
         }
-        return TexturedModelData.of(modelData, 64, 32);
+        return LayerDefinition.create(modelData, 64, 32);
 
     }
 
     @Override
-    public void render(WaterWheelEntity entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
-        blades.forEach(blade -> blade.render(matrixStack, vertexConsumer, light, uv, color));
-        struts.forEach(blade -> blade.render(matrixStack, vertexConsumer, light, uv, color));
+    public void render(WaterWheelEntity entity, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
+        blades.forEach(blade -> blade.render(poseStack, vertexConsumer, light, uv, color));
+        struts.forEach(blade -> blade.render(poseStack, vertexConsumer, light, uv, color));
     }
 }

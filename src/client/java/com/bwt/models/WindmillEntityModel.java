@@ -1,12 +1,16 @@
 package com.bwt.models;
 
 import com.bwt.entities.WindmillEntity;
-import net.minecraft.client.model.*;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.DyeColor;
-import net.minecraft.util.math.ColorHelper;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.FastColor;
+import net.minecraft.world.item.DyeColor;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -31,15 +35,15 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
         sails = IntStream.range(0, WindmillEntity.NUM_SAILS).mapToObj(i -> modelPart.getChild("sail" + i)).collect(Collectors.toList());
     }
 
-    public static TexturedModelData getTexturedModelData() {
-        ModelData modelData = new ModelData();
-        ModelPartData modelPartData = modelData.getRoot();
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
         float localPi = 3.141593F;
         for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
-            modelPartData.addChild("shaft" + i,
-                ModelPartBuilder.create()
-                    .uv(0, 0)
-                    .cuboid(
+            modelPartData.addOrReplaceChild("shaft" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 0)
+                    .addBox(
                             shaftOffsetFromCenter,
                             -(float) shaftWidth / 2.0f,
                             -(float) shaftWidth / 2.0f,
@@ -47,14 +51,14 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
                             shaftWidth,
                             shaftWidth
                     ),
-                ModelTransform.rotation(0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+                PartPose.rotation(0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
             );
         }
         for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
-            modelPartData.addChild("sail" + i,
-                ModelPartBuilder.create()
-                    .uv(0, 15)
-                    .cuboid(
+            modelPartData.addOrReplaceChild("sail" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 15)
+                    .addBox(
                             bladeOffsetFromCenter,
                             1.75f,
                             1.0F,
@@ -62,19 +66,19 @@ public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<Wi
                             bladeWidth,
                             1
                     ),
-                ModelTransform.rotation(-localPi / 12.0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+                PartPose.rotation(-localPi / 12.0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
             );
         }
-        return TexturedModelData.of(modelData, 64, 32);
+        return LayerDefinition.create(modelData, 64, 32);
     }
 
     @Override
-    public void render(WindmillEntity entity, MatrixStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
+    public void render(WindmillEntity entity, PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
         shafts.forEach(shaft -> shaft.render(matrices, vertices, light, overlay));
         for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
             ModelPart sail = sails.get(i);
             DyeColor sailColor = entity.getSailColor(i);
-            sail.render(matrices, vertices, light, overlay, ColorHelper.Argb.mixColor(color, sailColor.getEntityColor()));
+            sail.render(matrices, vertices, light, overlay, FastColor.ARGB32.multiply(color, sailColor.getTextureDiffuseColor()));
         }
     }
 }

@@ -8,25 +8,24 @@ import com.bwt.recipes.turntable.TurntableRecipe;
 import com.bwt.recipes.turntable.TurntableRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockPosAndState;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.BlockRotation;
-import net.minecraft.util.ItemScatterer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldEvents;
-
 import java.util.*;
 import java.util.stream.Collectors;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.Vec3i;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LevelEvent;
+import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 public class TurntableBlockEntity extends BlockEntity {
     protected static final int blocksAboveToRotate = 2;
@@ -42,72 +41,72 @@ public class TurntableBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.loadAdditional(nbt, registryLookup);
         this.rotationTickCounter = nbt.getInt("rotationTickCounter");
         this.craftingTurnCounter = nbt.getInt("craftingTurnCounter");
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.writeNbt(nbt, registryLookup);
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.saveAdditional(nbt, registryLookup);
         nbt.putInt("rotationTickCounter", rotationTickCounter);
         nbt.putInt("craftingTurnCounter", craftingTurnCounter);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
-        if (world.isClient) {
+    public static void tick(Level level, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
+        if (level.isClientSide) {
             return;
         }
-        if (!state.isOf(BwtBlocks.turntableBlock) || !state.get(TurntableBlock.MECH_POWERED)) {
+        if (!state.is(BwtBlocks.turntableBlock) || !state.getValue(TurntableBlock.MECH_POWERED)) {
             blockEntity.rotationTickCounter = 0;
             return;
         }
-        int tickSetting = state.get(TurntableBlock.TICK_SETTING);
+        int tickSetting = state.getValue(TurntableBlock.TICK_SETTING);
 
         blockEntity.rotationTickCounter++;
         if (blockEntity.rotationTickCounter >= ticksToRotate[tickSetting]) {
-            world.playSound(null, pos, BwtSoundEvents.TURNTABLE_TURNING_CLICK, SoundCategory.BLOCKS, 0.05f, 1f);
+            level.playSound(null, pos, BwtSoundEvents.TURNTABLE_TURNING_CLICK, SoundSource.BLOCKS, 0.05f, 1f);
             blockEntity.rotationTickCounter = 0;
-            rotateTurnTable(world, pos, state, blockEntity);
+            rotateTurnTable(level, pos, state, blockEntity);
         }
     }
 
-    protected static void rotateTurnTable(World world, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
-        BlockRotation rotation = state.get(TurntableBlock.POWERED) ? BlockRotation.CLOCKWISE_90 : BlockRotation.COUNTERCLOCKWISE_90;
-        List<BlockPosAndState> blocksToRotate = getBlocksToRotate(world, pos);
-        List<BlockPosAndState> attachedBlocksBeingRotated = getAttachedBlocksBeingRotated(world, blocksToRotate);
-        List<BlockPosAndState> attachedBlockDestinations = getAttachedBlockDestinations(world, pos, attachedBlocksBeingRotated, rotation);
-        pickUpAttachedBlocks(world, attachedBlocksBeingRotated, attachedBlockDestinations);
-        rotateCentralColumnBlocks(world, blocksToRotate, blockEntity, rotation);
-        placeRotatedAttachedBlocks(world, attachedBlocksBeingRotated, attachedBlockDestinations, rotation);
+    protected static void rotateTurnTable(Level level, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
+        Rotation rotation = state.getValue(TurntableBlock.POWERED) ? Rotation.CLOCKWISE_90 : Rotation.COUNTERCLOCKWISE_90;
+        List<BlockPosAndState> blocksToRotate = getBlocksToRotate(level, pos);
+        List<BlockPosAndState> attachedBlocksBeingRotated = getAttachedBlocksBeingRotated(level, blocksToRotate);
+        List<BlockPosAndState> attachedBlockDestinations = getAttachedBlockDestinations(level, pos, attachedBlocksBeingRotated, rotation);
+        pickUpAttachedBlocks(level, attachedBlocksBeingRotated, attachedBlockDestinations);
+        rotateCentralColumnBlocks(level, blocksToRotate, blockEntity, rotation);
+        placeRotatedAttachedBlocks(level, attachedBlocksBeingRotated, attachedBlockDestinations, rotation);
         // Notify neighbors of the rotation
-        state.updateNeighbors(world, pos, Block.NOTIFY_NEIGHBORS);
+        state.updateNeighbourShapes(level, pos, Block.UPDATE_NEIGHBORS);
     }
 
-    protected static List<BlockPosAndState> getBlocksToRotate(World world, BlockPos turntablePos) {
-        RecipeManager recipeManager = world.getRecipeManager();
+    protected static List<BlockPosAndState> getBlocksToRotate(Level level, BlockPos turntablePos) {
+        RecipeManager recipeManager = level.getRecipeManager();
 
         List<BlockPosAndState> blocksToRotate = new ArrayList<>();
         for (int j = 1; j <= blocksAboveToRotate; j++) {
-            BlockPos blockAbovePos = turntablePos.up(j);
-            BlockState blockAboveState = world.getBlockState(blockAbovePos);
-            if (blockAboveState.isIn(BlockTags.AIR)) {
+            BlockPos blockAbovePos = turntablePos.above(j);
+            BlockState blockAboveState = level.getBlockState(blockAbovePos);
+            if (blockAboveState.is(BlockTags.AIR)) {
                 break;
             }
-            if (!CanRotateHelper.canRotate(world, blockAbovePos, blockAboveState)) {
+            if (!CanRotateHelper.canRotate(level, blockAbovePos, blockAboveState)) {
                 break;
             }
 
-            BlockEntity blockAboveEntity = world.getBlockEntity(blockAbovePos);
+            BlockEntity blockAboveEntity = level.getBlockEntity(blockAbovePos);
             blocksToRotate.add(new BlockPosAndState(blockAbovePos, blockAboveState, blockAboveEntity));
 
             // Crafting
             TurntableRecipeInput recipeInput = new TurntableRecipeInput(blockAboveState.getBlock());
-            boolean recipeExistsForBlock = recipeManager.getFirstMatch(
+            boolean recipeExistsForBlock = recipeManager.getRecipeFor(
                     BwtRecipes.TURNTABLE_RECIPE_TYPE,
                     recipeInput,
-                    world
+                    level
             ).isPresent();
 
             if (recipeExistsForBlock) {
@@ -115,14 +114,14 @@ public class TurntableBlockEntity extends BlockEntity {
                 break;
             }
             // The < check here is just a minor optimization, so we don't need to check propagation unnecessarily
-            if (!VerticalBlockAttachmentHelper.canPropagateRotationUpwards(world, blockAbovePos, blockAboveState)) {
+            if (!VerticalBlockAttachmentHelper.canPropagateRotationUpwards(level, blockAbovePos, blockAboveState)) {
                 break;
             }
         }
         return blocksToRotate;
     }
 
-    protected static List<BlockPosAndState> getAttachedBlocksBeingRotated(World world, List<BlockPosAndState> blocksToRotate) {
+    protected static List<BlockPosAndState> getAttachedBlocksBeingRotated(Level level, List<BlockPosAndState> blocksToRotate) {
         ArrayList<BlockPosAndState> attachedBlocks = new ArrayList<>();
         for (BlockPosAndState centralColumnPosAndState : blocksToRotate) {
             BlockPos centralColumnPos = centralColumnPosAndState.pos();
@@ -130,27 +129,27 @@ public class TurntableBlockEntity extends BlockEntity {
 
             attachedBlocks.addAll(Arrays.stream(Direction.values())
                     .filter(direction -> direction.getAxis().isHorizontal())
-                    .map(centralColumnPos::offset)
-                    .map(attachedPos -> BlockPosAndState.of(world, attachedPos))
+                    .map(centralColumnPos::relative)
+                    .map(attachedPos -> BlockPosAndState.of(level, attachedPos))
                     .filter(attachedPosAndState -> HorizontalBlockAttachmentHelper.isAttached(centralColumnPos, centralColumnState, attachedPosAndState.pos(), attachedPosAndState.state()))
                     .toList());
         }
         return attachedBlocks;
     }
 
-    protected static List<BlockPosAndState> getAttachedBlockDestinations(World world, BlockPos turntablePos, List<BlockPosAndState> attachedBlocksBeingRotated, BlockRotation rotation) {
+    protected static List<BlockPosAndState> getAttachedBlockDestinations(Level level, BlockPos turntablePos, List<BlockPosAndState> attachedBlocksBeingRotated, Rotation rotation) {
         return attachedBlocksBeingRotated.stream().map(attachedPosAndState -> {
             BlockPos attachedPos = attachedPosAndState.pos();
             BlockPos centralColumnPos = new BlockPos(turntablePos.getX(), attachedPos.getY(), turntablePos.getZ());
 
             Vec3i directionVector = attachedPos.subtract(centralColumnPos);
-            Direction direction = Direction.fromVector(directionVector.getX(), 0, directionVector.getZ());
-            BlockPos attachedDestinationPos = centralColumnPos.offset(rotation.equals(BlockRotation.CLOCKWISE_90) ? Objects.requireNonNull(direction).rotateYClockwise() : Objects.requireNonNull(direction).rotateYCounterclockwise());
-            return BlockPosAndState.of(world, attachedDestinationPos);
+            Direction direction = Direction.fromDelta(directionVector.getX(), 0, directionVector.getZ());
+            BlockPos attachedDestinationPos = centralColumnPos.relative(rotation.equals(Rotation.CLOCKWISE_90) ? Objects.requireNonNull(direction).getClockWise() : Objects.requireNonNull(direction).getCounterClockWise());
+            return BlockPosAndState.of(level, attachedDestinationPos);
         }).toList();
     }
 
-    protected static void pickUpAttachedBlocks(World world, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations) {
+    protected static void pickUpAttachedBlocks(Level level, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations) {
         HashSet<BlockPos> attachedPositions = attachedBlocksBeingRotated.stream().map(BlockPosAndState::pos).collect(Collectors.toCollection(HashSet::new));
 
         for (int idx = 0; idx < attachedBlocksBeingRotated.size(); idx++) {
@@ -161,23 +160,23 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockState attachedState = attachedPosAndState.state();
             BlockEntity attachedBlockEntity = attachedPosAndState.blockEntity();
 
-            if (attachedPositions.contains(destination.pos()) || destination.state().isReplaceable()) {
+            if (attachedPositions.contains(destination.pos()) || destination.state().canBeReplaced()) {
                 // Pick up block cleanly
                 if (attachedBlockEntity != null) {
-                    world.removeBlockEntity(attachedPos);
+                    level.removeBlockEntity(attachedPos);
                 }
-                world.removeBlock(attachedPos, false);
-                world.updateComparators(attachedPos, attachedState.getBlock());
+                level.removeBlock(attachedPos, false);
+                level.updateNeighbourForOutputSignal(attachedPos, attachedState.getBlock());
             }
             else {
                 // Break block with drops
-                world.breakBlock(attachedPos, true);
+                level.destroyBlock(attachedPos, true);
             }
         }
     }
 
-    protected static void rotateCentralColumnBlocks(World world, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, BlockRotation rotation) {
-        RecipeManager recipeManager = world.getRecipeManager();
+    protected static void rotateCentralColumnBlocks(Level level, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, Rotation rotation) {
+        RecipeManager recipeManager = level.getRecipeManager();
         boolean recipeFound = false;
 
         for (BlockPosAndState blockToRotate : blocksToRotate) {
@@ -186,24 +185,24 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockEntity blockToRotateEntity = blockToRotate.blockEntity();
 
             BlockState rotatedState = blockToRotateState.rotate(rotation);
-            RotationProcessHelper.processRotation(world, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
+            RotationProcessHelper.processRotation(level, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
 
             // Crafting
             TurntableRecipeInput recipeInput = new TurntableRecipeInput(blockToRotateState.getBlock());
-            Optional<TurntableRecipe> recipe = recipeManager.getFirstMatch(
+            Optional<TurntableRecipe> recipe = recipeManager.getRecipeFor(
                     BwtRecipes.TURNTABLE_RECIPE_TYPE,
                     recipeInput,
-                    world
-            ).map(RecipeEntry::value);
+                    level
+            ).map(RecipeHolder::value);
 
             if (recipe.isPresent()) {
                 recipeFound = true;
                 blockEntity.craftingTurnCounter += 1;
-                world.syncWorldEvent(WorldEvents.BLOCK_BROKEN, blockToRotatePos, Block.getRawIdFromState(blockToRotateState));
+                level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockToRotatePos, Block.getId(blockToRotateState));
                 if (blockEntity.craftingTurnCounter >= TurntableBlockEntity.turnsToCraft) {
                     blockEntity.craftingTurnCounter = 0;
-                    world.setBlockState(blockToRotatePos, recipe.get().getOutput().getDefaultState());
-                    ItemScatterer.spawn(world, blockToRotatePos, recipe.get().getDrops());
+                    level.setBlockAndUpdate(blockToRotatePos, recipe.get().getOutput().defaultBlockState());
+                    Containers.dropContents(level, blockToRotatePos, recipe.get().getDrops());
                 }
             }
         }
@@ -213,7 +212,7 @@ public class TurntableBlockEntity extends BlockEntity {
         }
     }
 
-    protected static void placeRotatedAttachedBlocks(World world, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations, BlockRotation rotation) {
+    protected static void placeRotatedAttachedBlocks(Level level, List<BlockPosAndState> attachedBlocksBeingRotated, List<BlockPosAndState> destinations, Rotation rotation) {
         HashSet<BlockPos> attachedPositions = attachedBlocksBeingRotated.stream().map(BlockPosAndState::pos).collect(Collectors.toCollection(HashSet::new));
 
         for (int idx = 0; idx < attachedBlocksBeingRotated.size(); idx++) {
@@ -224,20 +223,20 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockState attachedState = attachedPosAndState.state();
             BlockEntity attachedBlockEntity = attachedPosAndState.blockEntity();
 
-            if (attachedPositions.contains(destination.pos()) || destination.state().isReplaceable()) {
+            if (attachedPositions.contains(destination.pos()) || destination.state().canBeReplaced()) {
                 BlockState attachedStateRotated = attachedState.rotate(rotation);
-                world.setBlockState(destination.pos(), attachedStateRotated);
-                attachedStateRotated.getBlock().onPlaced(world, destination.pos(), attachedStateRotated, null, attachedStateRotated.getBlock().getPickStack(world, destination.pos(), attachedStateRotated));
+                level.setBlockAndUpdate(destination.pos(), attachedStateRotated);
+                attachedStateRotated.getBlock().setPlacedBy(level, destination.pos(), attachedStateRotated, null, attachedStateRotated.getBlock().getCloneItemStack(level, destination.pos(), attachedStateRotated));
                 if (attachedBlockEntity != null) {
                     ((MovableBlockEntityMixin) attachedBlockEntity).setPos(destination.pos());
-                    attachedBlockEntity.setCachedState(attachedStateRotated);
-                    attachedBlockEntity.markDirty();
-                    world.addBlockEntity(attachedBlockEntity);
+                    attachedBlockEntity.setBlockState(attachedStateRotated);
+                    attachedBlockEntity.setChanged();
+                    level.setBlockEntity(attachedBlockEntity);
                 }
             }
             else {
                 // Break block with drops
-                world.breakBlock(attachedPos, true);
+                level.destroyBlock(attachedPos, true);
             }
         }
     }

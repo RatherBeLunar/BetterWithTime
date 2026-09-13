@@ -11,30 +11,27 @@ import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeManager;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import java.util.List;
 
-public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, Inventory {
+public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, Container {
     protected int grindProgressTime;
     public static final int timeToGrind = 200;
     protected static final int INVENTORY_SIZE = 3;
@@ -42,7 +39,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
     public final MillStoneBlockEntity.Inventory inventory = new com.bwt.blocks.mill_stone.MillStoneBlockEntity.Inventory(INVENTORY_SIZE);
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
-    protected final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+    protected final ContainerData propertyDelegate = new ContainerData() {
         @Override
         public int get(int index) {
             return switch (index) {
@@ -60,7 +57,7 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         }
 
         @Override
-        public int size() {
+        public int getCount() {
             return 1;
         }
     };
@@ -69,16 +66,16 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         super(BwtBlockEntities.millStoneBlockEntity, pos, state);
     }
 
-    public static void tick(World world, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
-        if (!state.isOf(BwtBlocks.millStoneBlock) || !state.get(MillStoneBlock.MECH_POWERED)) {
+    public static void tick(Level level, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
+        if (!state.is(BwtBlocks.millStoneBlock) || !state.getValue(MillStoneBlock.MECH_POWERED)) {
             return;
         }
-        MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getHeldStacks());
-        List<RecipeEntry<MillStoneRecipe>> matches = world.getRecipeManager().getAllMatches(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, world);
+        MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getItems());
+        List<RecipeHolder<MillStoneRecipe>> matches = level.getRecipeManager().getRecipesFor(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, level);
         if (matches.isEmpty()) {
             if (blockEntity.grindProgressTime != 0) {
                 blockEntity.grindProgressTime = 0;
-                blockEntity.markDirty();
+                blockEntity.setChanged();
             }
             return;
         }
@@ -86,17 +83,17 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
         blockEntity.grindProgressTime += 1;
         if (blockEntity.grindProgressTime >= timeToGrind) {
             blockEntity.grindProgressTime = 0;
-            blockEntity.markDirty();
+            blockEntity.setChanged();
         }
         else {
             return;
         }
 
         // Get the first recipe and grind it
-        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getHeldStacks(), match -> blockEntity.completeRecipe(match, world, pos));
+        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getItems(), match -> blockEntity.completeRecipe(match, level, pos));
     }
 
-    public boolean completeRecipe(MillStoneRecipe recipe, World world, BlockPos pos) {
+    public boolean completeRecipe(MillStoneRecipe recipe, Level level, BlockPos pos) {
         try (Transaction transaction = Transaction.openOuter()) {
             // Spend ingredients
             for (IngredientWithCount ingredientWithCount : recipe.getIngredientsWithCount()) {
@@ -116,67 +113,67 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
             }
             // Eject results
             for (ItemStack result : recipe.getResults()) {
-                ejectItem(world, result, pos);
+                ejectItem(level, result, pos);
             }
             transaction.commit();
             return true;
         }
     }
 
-    public static void ejectItem(World world, ItemStack stack, BlockPos pos) {
+    public static void ejectItem(Level level, ItemStack stack, BlockPos pos) {
         // Start at the center of the block
-        Vec3d centerPos = pos.toCenterPos();
-        Vec3d horizontalUnitVector = new Vec3d(1, 0, 1);
+        Vec3 centerPos = pos.getCenter();
+        Vec3 horizontalUnitVector = new Vec3(1, 0, 1);
 
         // Pick a random direction
-        double angle = Math.toRadians(world.random.nextBetween(0, 359));
+        double angle = Math.toRadians(level.random.nextIntBetweenInclusive(0, 359));
         // Get distance from the center to the edge of a square, using the angle
         double distToEdge = Math.min(0.5 / Math.abs(Math.cos(angle)), 0.5 / Math.abs(Math.sin(angle)));
         // Apply that distance to get our item spawn position
-        Vec3d itemPos = horizontalUnitVector
-                .rotateY((float) angle)
-                .multiply(distToEdge + 0.01)
+        Vec3 itemPos = horizontalUnitVector
+                .yRot((float) angle)
+                .scale(distToEdge + 0.01)
                 .add(centerPos);
         // Velocity is in the same X/Z direction as position, but with random strength and y offset
-        Vec3d itemVelocity = horizontalUnitVector
-                .rotateY((float) angle)
-                .multiply(world.random.nextFloat() * 0.0125D + 0.1F)
-                .add(0, world.random.nextGaussian() * 0.0125D + 0.05F, 0);
+        Vec3 itemVelocity = horizontalUnitVector
+                .yRot((float) angle)
+                .scale(level.random.nextFloat() * 0.0125D + 0.1F)
+                .add(0, level.random.nextGaussian() * 0.0125D + 0.05F, 0);
 
-        ItemEntity itemEntity = new ItemEntity(world, itemPos.getX(), itemPos.getY(), itemPos.getZ(), stack);
-        itemEntity.setVelocity(itemVelocity);
-        world.spawnEntity(itemEntity);
+        ItemEntity itemEntity = new ItemEntity(level, itemPos.x(), itemPos.y(), itemPos.z(), stack);
+        itemEntity.setDeltaMovement(itemVelocity);
+        level.addFreshEntity(itemEntity);
     }
 
     @Override
-    protected void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.readNbt(nbt, registryLookup);
-        this.inventory.readNbtList(nbt.getList("Inventory", NbtElement.COMPOUND_TYPE), registryLookup);
+    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.loadAdditional(nbt, registryLookup);
+        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
         this.grindProgressTime = nbt.getInt("grindProgressTime");
     }
 
     @Override
-    protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
-        super.writeNbt(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.toNbtList(registryLookup));
+    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
+        super.saveAdditional(nbt, registryLookup);
+        nbt.put("Inventory", this.inventory.createTag(registryLookup));
         nbt.putInt("grindProgressTime", this.grindProgressTime);
     }
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, net.minecraft.world.entity.player.Inventory playerInventory, Player player) {
         //We provide *this* to the screenHandler as our class Implements Inventory
         //Only the Server has the Inventory at the start, this will be synced to the client in the ScreenHandler
         return new MillStoneScreenHandler(syncId, playerInventory, inventory, propertyDelegate);
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable(getCachedState().getBlock().getTranslationKey());
+    public Component getDisplayName() {
+        return Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
     @Override
-    public int size() {
-        return inventory.size();
+    public int getContainerSize() {
+        return inventory.getContainerSize();
     }
 
     @Override
@@ -185,42 +182,42 @@ public class MillStoneBlockEntity extends BlockEntity implements NamedScreenHand
     }
 
     @Override
-    public ItemStack getStack(int slot) {
-        return inventory.getStack(slot);
+    public ItemStack getItem(int slot) {
+        return inventory.getItem(slot);
     }
 
     @Override
-    public ItemStack removeStack(int slot, int amount) {
-        return inventory.removeStack(slot, amount);
+    public ItemStack removeItem(int slot, int amount) {
+        return inventory.removeItem(slot, amount);
     }
 
     @Override
-    public ItemStack removeStack(int slot) {
-        return inventory.removeStack(slot);
+    public ItemStack removeItemNoUpdate(int slot) {
+        return inventory.removeItemNoUpdate(slot);
     }
 
     @Override
-    public void setStack(int slot, ItemStack stack) {
-        inventory.setStack(slot, stack);
+    public void setItem(int slot, ItemStack stack) {
+        inventory.setItem(slot, stack);
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        return inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return inventory.stillValid(player);
     }
 
     @Override
-    public void clear() {
-        inventory.clear();
+    public void clearContent() {
+        inventory.clearContent();
     }
 
-    public class Inventory extends SimpleInventory {
+    public class Inventory extends SimpleContainer {
         public Inventory(int size) {
             super(size);
         }
         @Override
-        public void markDirty() {
-            MillStoneBlockEntity.this.markDirty();
+        public void setChanged() {
+            MillStoneBlockEntity.this.setChanged();
         }
     }
 }

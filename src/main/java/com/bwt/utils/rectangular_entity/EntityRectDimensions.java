@@ -1,18 +1,18 @@
 package com.bwt.utils.rectangular_entity;
 
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public record EntityRectDimensions(float width, float length, float height, float eyeHeight) {
     public static EntityRectDimensions fixed(float width, float length, float height) {
         return new EntityRectDimensions(width, height, length, height / 2f);
     }
 
-    public Box getBoxAt(Vec3d pos, float yaw) {
+    public AABB getBoxAt(Vec3 pos, float yaw) {
         return getBoxAt(pos.x, pos.y, pos.z, yaw);
     }
 
-    public Box getBoxAt(double x, double y, double z, float yaw) {
+    public AABB getBoxAt(double x, double y, double z, float yaw) {
         int num90degreeRotations = Math.round(yaw / 90);
         float half_width;
         float half_length;
@@ -24,7 +24,7 @@ public record EntityRectDimensions(float width, float length, float height, floa
             half_length = width / 2.0f;
             half_width = length / 2.0f;
         }
-        return new Box(
+        return new AABB(
                 x - half_width,
                 y,
                 z - half_length,

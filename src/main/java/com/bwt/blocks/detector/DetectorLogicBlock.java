@@ -3,147 +3,152 @@ package com.bwt.blocks.detector;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtBlockTags;
 import com.google.common.collect.Lists;
-import net.minecraft.block.*;
-import net.minecraft.entity.Entity;
-import net.minecraft.predicate.entity.EntityPredicates;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.TypeFilter;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.AirBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.entity.EntityTypeTest;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 
 public class DetectorLogicBlock extends AirBlock {
     private static final int tickRate = 4;
-    public static final BooleanProperty ENTITY_INTERSECT = BooleanProperty.of("entity_intersect");
-    public static final BooleanProperty BLOCK_INTERSECT = BooleanProperty.of("block_intersect");
+    public static final BooleanProperty ENTITY_INTERSECT = BooleanProperty.create("entity_intersect");
+    public static final BooleanProperty BLOCK_INTERSECT = BooleanProperty.create("block_intersect");
 
-    public DetectorLogicBlock(Settings settings) {
+    public DetectorLogicBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(ENTITY_INTERSECT, false).with(BLOCK_INTERSECT, false));
+        registerDefaultState(defaultBlockState().setValue(ENTITY_INTERSECT, false).setValue(BLOCK_INTERSECT, false));
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(ENTITY_INTERSECT);
         builder.add(BLOCK_INTERSECT);
     }
 
     public static boolean isEnabled(BlockState state) {
-        return state.get(ENTITY_INTERSECT) || state.get(BLOCK_INTERSECT);
+        return state.getValue(ENTITY_INTERSECT) || state.getValue(BLOCK_INTERSECT);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        world.scheduleBlockTick(pos, this, tickRate);
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        level.scheduleTick(pos, this, tickRate);
         return state;
     }
 
     @Override
-    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (!world.isClient() && !state.isOf(oldState.getBlock())) {
-            world.scheduleBlockTick(pos, this, tickRate);
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        if (!level.isClientSide() && !state.is(oldState.getBlock())) {
+            level.scheduleTick(pos, this, tickRate);
         }
     }
 
     @Override
-    public void onStateReplaced(BlockState state, World world, BlockPos pos, BlockState newState, boolean moved) {
-        if (!newState.isOf(this)) {
-            notifyNeighborDetectors(newState, world, pos);
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+        if (!newState.is(this)) {
+            notifyNeighborDetectors(newState, level, pos);
         }
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        super.onEntityCollision(state, world, pos, entity);
-        boolean updated = updateIntersectStates(state, world, pos, true, null);
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        super.entityInside(state, level, pos, entity);
+        boolean updated = updateIntersectStates(state, level, pos, true, null);
         if (updated) {
-            world.scheduleBlockTick(pos, this, tickRate);
+            level.scheduleTick(pos, this, tickRate);
         }
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.scheduledTick(state, world, pos, random);
-        boolean blockIntersect = anyBlocksIntersecting(world.getBlockState(pos.down()));
-        boolean entityIntersect = anyEntitiesIntersecting(world, pos);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.tick(state, level, pos, random);
+        boolean blockIntersect = anyBlocksIntersecting(level.getBlockState(pos.below()));
+        boolean entityIntersect = anyEntitiesIntersecting(level, pos);
         if (entityIntersect) {
             // Need to keep checking for the entity leaving
-            world.scheduleBlockTick(pos, this, tickRate);
+            level.scheduleTick(pos, this, tickRate);
         }
-        if (!updateIntersectStates(state, world, pos, entityIntersect, blockIntersect)) {
+        if (!updateIntersectStates(state, level, pos, entityIntersect, blockIntersect)) {
             // Detector block is gone, and the logic block is now destroyed
             return;
         }
     }
 
     protected boolean anyBlocksIntersecting(BlockState neighborState) {
-        return neighborState.isIn(BwtBlockTags.DETECTABLE_SMALL_CROPS)
-                && neighborState.getOrEmpty(CropBlock.AGE).orElse(0)
+        return neighborState.is(BwtBlockTags.DETECTABLE_SMALL_CROPS)
+                && neighborState.getOptionalValue(CropBlock.AGE).orElse(0)
                 >= ((CropBlock) neighborState.getBlock()).getMaxAge();
     }
 
-    protected boolean anyEntitiesIntersecting(World world, BlockPos pos) {
+    protected boolean anyEntitiesIntersecting(Level level, BlockPos pos) {
         ArrayList<Entity> list = Lists.newArrayList();
-        world.collectEntitiesByType(
-                TypeFilter.instanceOf(Entity.class),
-                new Box(pos),
-                EntityPredicates.EXCEPT_SPECTATOR,
+        level.getEntities(
+                EntityTypeTest.forClass(Entity.class),
+                new AABB(pos),
+                EntitySelector.NO_SPECTATORS,
                 list,
                 1
         );
         return !list.isEmpty();
     }
 
-    protected boolean updateIntersectStates(BlockState state, World world, BlockPos pos, @Nullable Boolean entityIntersect, @Nullable Boolean blockIntersect) {
-        if ((entityIntersect == null || entityIntersect == state.get(ENTITY_INTERSECT))
-            && (blockIntersect == null || blockIntersect == state.get(BLOCK_INTERSECT))
+    protected boolean updateIntersectStates(BlockState state, Level level, BlockPos pos, @Nullable Boolean entityIntersect, @Nullable Boolean blockIntersect) {
+        if ((entityIntersect == null || entityIntersect == state.getValue(ENTITY_INTERSECT))
+            && (blockIntersect == null || blockIntersect == state.getValue(BLOCK_INTERSECT))
         ) {
             return false;
         }
         if (entityIntersect != null) {
-            state = state.with(ENTITY_INTERSECT, entityIntersect);
+            state = state.setValue(ENTITY_INTERSECT, entityIntersect);
         }
         if (blockIntersect != null) {
-            state = state.with(BLOCK_INTERSECT, blockIntersect);
+            state = state.setValue(BLOCK_INTERSECT, blockIntersect);
         }
-        world.setBlockState(pos, state, Block.NOTIFY_ALL, 0);
-        int detectorsUpdated = notifyNeighborDetectors(state, world, pos);
+        level.setBlock(pos, state, Block.UPDATE_ALL, 0);
+        int detectorsUpdated = notifyNeighborDetectors(state, level, pos);
         if (detectorsUpdated == 0) {
-            world.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 0);
+            level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL, 0);
             return false;
         }
         return true;
     }
 
-    public static boolean anyNeighborDetectors(WorldAccess world, BlockPos pos) {
+    public static boolean anyNeighborDetectors(LevelAccessor level, BlockPos pos) {
         for (Direction direction : Direction.values()) {
-            BlockPos targetPos = pos.offset(direction);
-            BlockState neighborState = world.getBlockState(targetPos);
-            if (neighborState.isOf(BwtBlocks.detectorBlock) && neighborState.get(DetectorBlock.FACING).equals(direction.getOpposite())) {
+            BlockPos targetPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(targetPos);
+            if (neighborState.is(BwtBlocks.detectorBlock) && neighborState.getValue(DetectorBlock.FACING).equals(direction.getOpposite())) {
                 return true;
             }
         }
         return false;
     }
 
-    public int notifyNeighborDetectors(BlockState state, World world, BlockPos pos) {
+    public int notifyNeighborDetectors(BlockState state, Level level, BlockPos pos) {
         int numDetectorsUpdated = 0;
         for (Direction direction : Direction.values()) {
-            BlockPos targetPos = pos.offset(direction);
-            BlockState neighborState = world.getBlockState(targetPos);
-            if (neighborState.isOf(BwtBlocks.detectorBlock) && neighborState.get(DetectorBlock.FACING).equals(direction.getOpposite())) {
+            BlockPos targetPos = pos.relative(direction);
+            BlockState neighborState = level.getBlockState(targetPos);
+            if (neighborState.is(BwtBlocks.detectorBlock) && neighborState.getValue(DetectorBlock.FACING).equals(direction.getOpposite())) {
                 numDetectorsUpdated += 1;
-                world.replaceWithStateForNeighborUpdate(direction.getOpposite(), state, targetPos, pos, Block.NOTIFY_ALL & ~(Block.NOTIFY_NEIGHBORS | Block.SKIP_DROPS), 512);
-                world.updateNeighbor(neighborState, targetPos, state.getBlock(), pos, false);
+                level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
             }
         }
         return numDetectorsUpdated;

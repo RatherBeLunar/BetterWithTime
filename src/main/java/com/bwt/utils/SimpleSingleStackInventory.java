@@ -1,17 +1,16 @@
 package com.bwt.utils;
 
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.SingleStackInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
-import net.minecraft.registry.RegistryWrapper;
-
 import java.util.Optional;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.ticks.ContainerSingleItem;
 
-public class SimpleSingleStackInventory implements SingleStackInventory.SingleStackBlockEntityInventory {
-    int maxStackSize;
+public class SimpleSingleStackInventory implements ContainerSingleItem.BlockContainerSingleItem {
+    final int maxStackSize;
     protected ItemStack stack = ItemStack.EMPTY;
 
     public SimpleSingleStackInventory(int maxStackSize) {
@@ -20,22 +19,22 @@ public class SimpleSingleStackInventory implements SingleStackInventory.SingleSt
     }
 
     @Override
-    public void markDirty() {
+    public void setChanged() {
 
     }
 
     @Override
-    public int getMaxCountPerStack() {
+    public int getMaxStackSize() {
         return maxStackSize;
     }
 
     @Override
-    public ItemStack getStack() {
+    public ItemStack getTheItem() {
         return this.stack;
     }
 
     @Override
-    public ItemStack decreaseStack(int count) {
+    public ItemStack splitTheItem(int count) {
         ItemStack itemStack = this.stack.split(count);
         if (this.stack.isEmpty()) {
             this.stack = ItemStack.EMPTY;
@@ -44,36 +43,36 @@ public class SimpleSingleStackInventory implements SingleStackInventory.SingleSt
     }
 
     @Override
-    public void setStack(ItemStack stack) {
-        this.stack = stack.copyWithCount(getMaxCountPerStack());
-        stack.decrement(getMaxCountPerStack());
+    public void setTheItem(ItemStack stack) {
+        this.stack = stack.copyWithCount(getMaxStackSize());
+        stack.shrink(getMaxStackSize());
     }
 
     @Override
-    public BlockEntity asBlockEntity() {
+    public BlockEntity getContainerBlockEntity() {
         return null;
     }
 
     @Override
-    public boolean canPlayerUse(PlayerEntity player) {
-        if (asBlockEntity() != null) {
-            return SingleStackBlockEntityInventory.super.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        if (getContainerBlockEntity() != null) {
+            return BlockContainerSingleItem.super.stillValid(player);
         }
         return true;
     }
 
-    public void readNbt(NbtCompound nbtCompound, RegistryWrapper.WrapperLookup registryLookup) {
-        this.clear();
+    public void readNbt(CompoundTag nbtCompound, HolderLookup.Provider registryLookup) {
+        this.clearContent();
         if (nbtCompound.isEmpty()) {
             return;
         }
-        Optional<ItemStack> itemStack = ItemStack.fromNbt(registryLookup, nbtCompound);
-        itemStack.ifPresent(this::setStack);
+        Optional<ItemStack> itemStack = ItemStack.parse(registryLookup, nbtCompound);
+        itemStack.ifPresent(this::setTheItem);
     }
 
-    public NbtElement toNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        ItemStack itemStack = this.getStack();
-        if (itemStack.isEmpty()) return new NbtCompound();
-        return itemStack.encode(registryLookup);
+    public Tag toNbt(HolderLookup.Provider registryLookup) {
+        ItemStack itemStack = this.getTheItem();
+        if (itemStack.isEmpty()) return new CompoundTag();
+        return itemStack.save(registryLookup);
     }
 }

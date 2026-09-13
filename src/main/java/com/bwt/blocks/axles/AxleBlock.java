@@ -1,77 +1,81 @@
 package com.bwt.blocks.axles;
 
-import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.GearBoxBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
-import net.minecraft.block.*;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.pathing.NavigationType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.tag.FluidTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Waterloggable {
-    public static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
-    public static final IntProperty MECH_POWER = IntProperty.of("mech_power", 0, 3);
+public class AxleBlock extends RotatedPillarBlock implements AxlePowerLevelGetter, SimpleWaterloggedBlock {
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final IntegerProperty MECH_POWER = IntegerProperty.create("mech_power", 0, 3);
 
-    protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0f, 6f, 6f, 16f, 10f, 10f);
-    protected static final VoxelShape Y_SHAPE = Block.createCuboidShape(6f, 0f, 6f, 10f, 16f, 10f);
-    protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6f, 6f, 0f, 10f, 10f, 16f);
+    protected static final VoxelShape X_SHAPE = Block.box(0f, 6f, 6f, 16f, 10f, 10f);
+    protected static final VoxelShape Y_SHAPE = Block.box(6f, 0f, 6f, 10f, 16f, 10f);
+    protected static final VoxelShape Z_SHAPE = Block.box(6f, 6f, 0f, 10f, 10f, 16f);
 
-    public AxleBlock(Settings settings) {
+    public AxleBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState().with(AXIS, Direction.Axis.Z).with(MECH_POWER, 0).with(WATERLOGGED, false));
+        this.registerDefaultState(this.defaultBlockState().setValue(AXIS, Direction.Axis.Z).setValue(MECH_POWER, 0).setValue(WATERLOGGED, false));
     }
 
     @Override
-    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        updatePowerStates(state, world, pos);
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        updatePowerStates(state, level, pos);
     }
 
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return Optional.ofNullable(super.getPlacementState(ctx))
-                .map(state -> state.with(WATERLOGGED, ctx.getWorld().getFluidState(ctx.getBlockPos()).getFluid() == Fluids.WATER))
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return Optional.ofNullable(super.getStateForPlacement(ctx))
+                .map(state -> state.setValue(WATERLOGGED, ctx.getLevel().getFluidState(ctx.getClickedPos()).getType() == Fluids.WATER))
                 .orElse(null);
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        world.scheduleBlockTick(pos, this, 1);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        level.scheduleTick(pos, this, 1);
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(MECH_POWER).add(WATERLOGGED);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext ctx) {
-        Direction.Axis axis = state.get(AXIS);
+    public VoxelShape getShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext ctx) {
+        Direction.Axis axis = state.getValue(AXIS);
         return switch (axis) {
             case X -> X_SHAPE;
             case Y -> Y_SHAPE;
@@ -80,12 +84,12 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        return super.getCollisionShape(state, world, pos, context);
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter blockGetter, BlockPos pos, CollisionContext context) {
+        return super.getCollisionShape(state, blockGetter, pos, context);
     }
 
     public BlockState getNextOrientation(BlockState blockState) {
-        return blockState.with(AXIS, switch (blockState.get(AXIS)) {
+        return blockState.setValue(AXIS, switch (blockState.getValue(AXIS)) {
             case X -> Direction.Axis.Z;
             case Z -> Direction.Axis.Y;
             case Y -> Direction.Axis.X;
@@ -93,34 +97,34 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!player.getMainHandStack().isEmpty()) {
-            return ActionResult.PASS;
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.getMainHandItem().isEmpty()) {
+            return InteractionResult.PASS;
         }
         BlockState updatedState = getNextOrientation(state);
-        world.setBlockState(pos, updatedState);
-        world.playSound(null, pos, updatedState.getSoundGroup().getPlaceSound(),
-                SoundCategory.BLOCKS, 0.25f, world.random.nextFloat() * 0.25F + 0.25F);
-        updatePowerStates(updatedState, world, pos);
-        return ActionResult.SUCCESS;
+        level.setBlockAndUpdate(pos, updatedState);
+        level.playSound(null, pos, updatedState.getSoundType().getPlaceSound(),
+                SoundSource.BLOCKS, 0.25f, level.random.nextFloat() * 0.25F + 0.25F);
+        updatePowerStates(updatedState, level, pos);
+        return InteractionResult.SUCCESS;
     }
 
-    public void breakAxle(World world, BlockPos pos) {
-        world.removeBlock(pos, false);
-        world.playSound(null, pos, BwtSoundEvents.MECH_EXPLODE, SoundCategory.BLOCKS, 0.5f, 1);
-        dropStack(world, pos, Items.STICK.getDefaultStack());
-        dropStack(world, pos, BwtItems.hempFiberItem.getDefaultStack());
+    public void breakAxle(Level level, BlockPos pos) {
+        level.removeBlock(pos, false);
+        level.playSound(null, pos, BwtSoundEvents.MECH_EXPLODE, SoundSource.BLOCKS, 0.5f, 1);
+        popResource(level, pos, Items.STICK.getDefaultInstance());
+        popResource(level, pos, BwtItems.hempFiberItem.getDefaultInstance());
     }
 
-    public void updatePowerStates(BlockState state, World world, BlockPos pos) {
-        int currentPower = state.get(MECH_POWER);
-        Direction.Axis axis = state.get(AXIS);
+    public void updatePowerStates(BlockState state, Level level, BlockPos pos) {
+        int currentPower = state.getValue(MECH_POWER);
+        Direction.Axis axis = state.getValue(AXIS);
 
         int maxPowerNeighbor = 0;
         int greaterPowerNeighbors = 0;
         for (int i: new int[]{-1, 1}) {
-            BlockPos neighborPos = pos.offset(axis, i);
-            BlockState neighborState = world.getBlockState(neighborPos);
+            BlockPos neighborPos = pos.relative(axis, i);
+            BlockState neighborState = level.getBlockState(neighborPos);
 
             int neighborPower = 0;
             if (
@@ -129,7 +133,7 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
                     // Powered
                     && gearBoxBlock.isMechPowered(neighborState)
                     // Not getting power from this axle
-                    && !neighborPos.offset(neighborState.get(GearBoxBlock.FACING)).equals(pos)
+                    && !neighborPos.relative(neighborState.getValue(GearBoxBlock.FACING)).equals(pos)
             ) {
                 neighborPower = 4;
             }
@@ -148,7 +152,7 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
 
         if (greaterPowerNeighbors >= 2) {
             // We're getting power from multiple directions at once
-            breakAxle(world, pos);
+            breakAxle(level, pos);
             return;
         }
 
@@ -157,7 +161,7 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
         if (maxPowerNeighbor > currentPower) {
             if (maxPowerNeighbor == 1) {
                 // Power has overextended
-                breakAxle(world, pos);
+                breakAxle(level, pos);
                 return;
             }
             newPower = maxPowerNeighbor - 1;
@@ -167,42 +171,42 @@ public class AxleBlock extends PillarBlock implements AxlePowerLevelGetter, Wate
         }
 
         if (newPower != currentPower) {
-            world.setBlockState(pos, state.with(MECH_POWER, newPower));
+            level.setBlockAndUpdate(pos, state.setValue(MECH_POWER, newPower));
         }
     }
 
     @Override
     public int getMechPowerForNeighbor(BlockState state, Direction.Axis axis) {
-        return state.get(AXIS).equals(axis) ? state.get(MECH_POWER) : 0;
+        return state.getValue(AXIS).equals(axis) ? state.getValue(MECH_POWER) : 0;
     }
 
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        updatePowerStates(state, world, pos);
+        updatePowerStates(state, level, pos);
     }
 
     @Override
     public FluidState getFluidState(BlockState state) {
-        if (state.get(WATERLOGGED)) {
-            return Fluids.WATER.getStill(false);
+        if (state.getValue(WATERLOGGED)) {
+            return Fluids.WATER.getSource(false);
         }
         return super.getFluidState(state);
     }
 
     @Override
-    protected boolean canPathfindThrough(BlockState state, NavigationType type) {
-        return type.equals(NavigationType.WATER) && state.getFluidState().isIn(FluidTags.WATER);
+    protected boolean isPathfindable(BlockState state, PathComputationType type) {
+        return type.equals(PathComputationType.WATER) && state.getFluidState().is(FluidTags.WATER);
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (state.get(WATERLOGGED)) {
-            world.scheduleFluidTick(pos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 }

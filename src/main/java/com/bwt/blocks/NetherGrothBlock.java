@@ -4,36 +4,38 @@ import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.RadiusAroundBlockStream;
-import net.minecraft.block.*;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.WorldView;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -41,62 +43,62 @@ import java.util.stream.IntStream;
 // TODO: Does not include logic for nether groth growing to its max age when a soul urn entity collides with it,
 //  not sure if we even want that.
 public class NetherGrothBlock extends Block {
-    public static final IntProperty AGE = Properties.AGE_7;
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
     public static final int MAX_AGE = 7;
-    public static final VoxelShape FLAT_SHAPE = Block.createCuboidShape(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
+    public static final VoxelShape FLAT_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 2.0, 16.0);
 
-    public NetherGrothBlock(Settings settings) {
+    public NetherGrothBlock(Properties settings) {
         super(settings);
-        this.setDefaultState(this.getDefaultState().with(AGE, 0));
+        this.registerDefaultState(this.defaultBlockState().setValue(AGE, 0));
     }
 
     @Override
-    protected boolean hasSidedTransparency(BlockState state) {
+    protected boolean useShapeForLightOcclusion(BlockState state) {
         return true;
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE);
     }
 
     @Override
-    protected VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-        int age = state.get(AGE);
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        int age = state.getValue(AGE);
         int maxY = (age + 1);
-        return Block.createCuboidShape(0, 0, 0, 16, maxY, 16);
+        return Block.box(0, 0, 0, 16, maxY, 16);
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return FLAT_SHAPE;
     }
 
     @Override
-    protected boolean canPlaceAt(BlockState state, WorldView world, BlockPos pos) {
-        BlockState stateBelow = world.getBlockState(pos.down());
-        return stateBelow.isFullCube(world, pos.down());
+    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        BlockState stateBelow = level.getBlockState(pos.below());
+        return stateBelow.isCollisionShapeFullBlock(level, pos.below());
     }
 
     @Override
-    protected BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canPlaceAt(world, pos)) {
-            return Blocks.AIR.getDefaultState();
+    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        if (!state.canSurvive(level, pos)) {
+            return Blocks.AIR.defaultBlockState();
         }
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos);
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
     // Set the block below to Grothed Netherrack block when placed
     @Override
-    protected void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        super.onBlockAdded(state, world, pos, oldState, notify);
-        if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
-            world.setBlockState(pos.down(), BwtBlocks.grothedNetherrackBlock.getDefaultState());
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onPlace(state, level, pos, oldState, notify);
+        if (level.getBlockState(pos.below()).is(Blocks.NETHERRACK)) {
+            level.setBlockAndUpdate(pos.below(), BwtBlocks.grothedNetherrackBlock.defaultBlockState());
         }
     }
 
     public int getAge(BlockState state) {
-        return state.get(AGE);
+        return state.getValue(AGE);
     }
 
     public final boolean isMature(BlockState state) {
@@ -104,31 +106,31 @@ public class NetherGrothBlock extends Block {
     }
 
     @Override
-    protected boolean hasRandomTicks(BlockState state) {
+    protected boolean isRandomlyTicking(BlockState state) {
         return true;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // Only grow in the nether
-        if (!world.getDimension().ultrawarm()) {
+        if (!level.dimensionType().ultraWarm()) {
             return;
         }
 
-        int height = state.get(AGE);
-        BlockState stateBelow = world.getBlockState(pos.down());
+        int height = state.getValue(AGE);
+        BlockState stateBelow = level.getBlockState(pos.below());
         // TODO consider if we wanna do other blocks in a block tag
         // Adding nether quartz, nether gold ore, and then even more questionably: soul sand, magma, basalt, blackstone
-        boolean isOnNetherrack = stateBelow.isOf(BwtBlocks.grothedNetherrackBlock) || stateBelow.isOf(Blocks.NETHERRACK);
+        boolean isOnNetherrack = stateBelow.is(BwtBlocks.grothedNetherrackBlock) || stateBelow.is(Blocks.NETHERRACK);
 
         // Attempt to grow
         if (height < MAX_AGE) {
-            boolean canGrow = isOnNetherrack || getMaxHeightOfNeighbors(world, pos) > height + 1;
+            boolean canGrow = isOnNetherrack || getMaxHeightOfNeighbors(level, pos) > height + 1;
 
             if (canGrow) {
                 height++;
 
-                world.setBlockState(pos, state.with(AGE, height));
+                level.setBlockAndUpdate(pos, state.setValue(AGE, height));
                 // Not sure what this does and/or if it's necessary in modern minecraft
                 //world.markBlockRangeForRenderUpdate( i, j, k, i, j, k );
             }
@@ -139,18 +141,18 @@ public class NetherGrothBlock extends Block {
         }
         // Attempt to spread
         // Pick a random horizontal direction
-        Direction direction = Direction.Type.HORIZONTAL.random(random);
-        BlockPos targetPos = pos.offset(direction);
+        Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(random);
+        BlockPos targetPos = pos.relative(direction);
 
-        for (BlockPos potentialOpenSpace : new BlockPos[]{targetPos, targetPos.down(), targetPos.up()}) {
-            BlockState targetState = world.getBlockState(potentialOpenSpace);
+        for (BlockPos potentialOpenSpace : new BlockPos[]{targetPos, targetPos.below(), targetPos.above()}) {
+            BlockState targetState = level.getBlockState(potentialOpenSpace);
             // Check open air - first next to the source block, then above that, then below that
             if (isBlockOpenToSpread(targetState)) {
-                BlockPos belowPotentialOpenSpace = potentialOpenSpace.down();
-                BlockState belowTargetState = world.getBlockState(belowPotentialOpenSpace);
+                BlockPos belowPotentialOpenSpace = potentialOpenSpace.below();
+                BlockState belowTargetState = level.getBlockState(belowPotentialOpenSpace);
                 // Check if the block below can support growth
-                if (belowTargetState.isSideSolidFullSquare(world, belowPotentialOpenSpace, Direction.UP)) {
-                    spreadToBlock(world, potentialOpenSpace, targetState);
+                if (belowTargetState.isFaceSturdy(level, belowPotentialOpenSpace, Direction.UP)) {
+                    spreadToBlock(level, potentialOpenSpace, targetState);
                 }
             }
 
@@ -161,112 +163,112 @@ public class NetherGrothBlock extends Block {
         }
     }
 
-    private void spreadToBlock(World world, BlockPos pos, BlockState state) {
-        if (state.isOf(Blocks.FIRE)) {
-            world.playSound(null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS,
-                    0.5F, 2.6F + (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.8F
+    private void spreadToBlock(Level level, BlockPos pos, BlockState state) {
+        if (state.is(Blocks.FIRE)) {
+            level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+                    0.5F, 2.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.8F
             );
-        } else if (state.isIn(BwtBlockTags.NETHER_GROTH_CAN_EAT)) {
-            world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS,
-                    1.0F, world.getRandom().nextFloat() * 0.4F + 0.7F
+        } else if (state.is(BwtBlockTags.NETHER_GROTH_CAN_EAT)) {
+            level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.BLOCKS,
+                    1.0F, level.getRandom().nextFloat() * 0.4F + 0.7F
             );
         }
 
-        if (world.setBlockState(pos, this.getDefaultState(), Block.NOTIFY_ALL)) {
-            world.playSound(null, pos, SoundEvents.ENTITY_GHAST_AMBIENT, SoundCategory.BLOCKS,
-                    0.5F, 2.6F + (world.getRandom().nextFloat() - world.getRandom().nextFloat()) * 0.8F
+        if (level.setBlock(pos, this.defaultBlockState(), Block.UPDATE_ALL)) {
+            level.playSound(null, pos, SoundEvents.GHAST_AMBIENT, SoundSource.BLOCKS,
+                    0.5F, 2.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.8F
             );
         }
 
         // Set the block that it spreads to Grothed Netherrack
-        if (world.getBlockState(pos.down()).isOf(Blocks.NETHERRACK)) {
-            world.setBlockState(pos.down(), BwtBlocks.grothedNetherrackBlock.getDefaultState());
+        if (level.getBlockState(pos.below()).is(Blocks.NETHERRACK)) {
+            level.setBlockAndUpdate(pos.below(), BwtBlocks.grothedNetherrackBlock.defaultBlockState());
         }
     }
 
     private boolean isBlockOpenToSpread(BlockState state) {
-        return state.isAir() || state.isOf(Blocks.FIRE) || state.isIn(BwtBlockTags.NETHER_GROTH_CAN_EAT);
+        return state.isAir() || state.is(Blocks.FIRE) || state.is(BwtBlockTags.NETHER_GROTH_CAN_EAT);
     }
 
-    private int getMaxHeightOfNeighbors(World world, BlockPos pos) {
-        return Direction.Type.HORIZONTAL.stream()
-                .map(pos::offset)
-                .map(world::getBlockState)
-                .filter(neighborState -> neighborState.isOf(this))
-                .mapToInt(neighborState -> neighborState.get(AGE))
+    private int getMaxHeightOfNeighbors(Level level, BlockPos pos) {
+        return Direction.Plane.HORIZONTAL.stream()
+                .map(pos::relative)
+                .map(level::getBlockState)
+                .filter(neighborState -> neighborState.is(this))
+                .mapToInt(neighborState -> neighborState.getValue(AGE))
                 .max()
                 .orElse(-1);
     }
 
     @Override
-    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
-        if (world.isClient) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (level.isClientSide) {
             return;
         }
 
-        int age = state.get(AGE);
+        int age = state.getValue(AGE);
         if (age < MAX_AGE) {
             return;
         }
 
         if (entity instanceof LivingEntity livingEntity) {
-            if (entity instanceof PlayerEntity player && wearingPlateBoots(player)) {
+            if (entity instanceof Player player && wearingPlateBoots(player)) {
                 return;
             }
-            if (livingEntity.damage(world.getDamageSources().magic(), 2)) {
-                entity.setVelocity(entity.getVelocity().x, 0.84, entity.getVelocity().z);
-                entity.velocityModified = true;
-                world.playSound(null, pos, SoundEvents.ENTITY_GHAST_SCREAM, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            if (livingEntity.hurt(level.damageSources().magic(), 2)) {
+                entity.setDeltaMovement(entity.getDeltaMovement().x, 0.84, entity.getDeltaMovement().z);
+                entity.hurtMarked = true;
+                level.playSound(null, pos, SoundEvents.GHAST_SCREAM, SoundSource.BLOCKS, 1.0f, 1.0f);
             }
         } else if (entity instanceof ItemEntity itemEntity) {
-            if (itemEntity.cannotPickup()) {
+            if (itemEntity.hasPickUpDelay()) {
                 return;
             }
-            ItemStack stack = itemEntity.getStack();
-            if (stack.getComponents().contains(DataComponentTypes.FOOD) || stack.isIn(BwtItemTags.NETHER_GROTH_CAN_EAT)) {
+            ItemStack stack = itemEntity.getItem();
+            if (stack.getComponents().has(DataComponents.FOOD) || stack.is(BwtItemTags.NETHER_GROTH_CAN_EAT)) {
                 itemEntity.remove(Entity.RemovalReason.DISCARDED);
-                world.playSound(null, pos, SoundEvents.ENTITY_GENERIC_EAT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.BLOCKS, 1.0f, 1.0f);
             }
         }
     }
 
 
     @Override
-    public BlockState onBreak(World world, BlockPos pos, BlockState state, PlayerEntity player) {
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         // Revert Grothed Netherrack back to normal when block is broken
-        if (world.getBlockState(pos.down()).isOf(BwtBlocks.grothedNetherrackBlock)) {
-            world.setBlockState(pos.down(), Blocks.NETHERRACK.getDefaultState(), Block.NOTIFY_ALL);
+        if (level.getBlockState(pos.below()).is(BwtBlocks.grothedNetherrackBlock)) {
+            level.setBlock(pos.below(), Blocks.NETHERRACK.defaultBlockState(), Block.UPDATE_ALL);
         }
-        return super.onBreak(world, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override
-    public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
-        int height = state.get(AGE);
+    public void destroy(LevelAccessor level, BlockPos pos, BlockState state) {
+        int height = state.getValue(AGE);
 
         if (height == MAX_AGE) {
-            releaseSpores(world, pos);
+            releaseSpores(level, pos);
         }
 
-        super.onBroken(world, pos, state);
+        super.destroy(level, pos, state);
     }
 
-    private void releaseSpores(WorldAccess world, BlockPos pos) {
-        if (!(world instanceof ServerWorld server)) return;
+    private void releaseSpores(LevelAccessor level, BlockPos pos) {
+        if (!(level instanceof ServerLevel server)) return;
 
-        world.playSound(null, pos, SoundEvents.ENTITY_CREEPER_PRIMED, SoundCategory.BLOCKS,
-                2.0F, world.getRandom().nextFloat() * 0.4F + 1.5F
+        level.playSound(null, pos, SoundEvents.CREEPER_PRIMED, SoundSource.BLOCKS,
+                2.0F, level.getRandom().nextFloat() * 0.4F + 1.5F
         );
-        server.spawnParticles(
+        server.sendParticles(
                 ParticleTypes.EXPLOSION,
                 pos.getX(), pos.getY(), pos.getZ(),
                 10, 0.5, 0.5, 0.5, 0.1
         );
-//        world.addParticle(
+//        level.addParticle(
 //                ParticleTypes.EXPLOSION,
-//                pos.getX() + world.getRandom().nextDouble() * 10.0D - 5D,
-//                pos.getY() + world.getRandom().nextDouble() * 10.0D - 5D,
-//                pos.getZ() + world.getRandom().nextDouble() * 10.0D - 5D,
+//                pos.getX() + level.getRandom().nextDouble() * 10.0D - 5D,
+//                pos.getY() + level.getRandom().nextDouble() * 10.0D - 5D,
+//                pos.getZ() + level.getRandom().nextDouble() * 10.0D - 5D,
 //                0.0D, 0.0D, 0.0D
 //        );
 
@@ -274,48 +276,48 @@ public class NetherGrothBlock extends Block {
         RadiusAroundBlockStream
                 // Get all neighbors in range
                 .neighboringBlocksInRadius(pos, 3)
-                .map(neighborPos -> BlockPosAndState.of(world, neighborPos))
+                .map(neighborPos -> BlockPosAndState.of(level, neighborPos))
                 // Filter to blocks open to spread
                 .filter(neighbor -> isBlockOpenToSpread(neighbor.state()))
-                .map(neighbor -> BlockPosAndState.of(world, neighbor.pos().down()))
+                .map(neighbor -> BlockPosAndState.of(level, neighbor.pos().below()))
                 // Filter to blocks whose supporting block can support groth
-                .filter(neighborSupportingBlock -> neighborSupportingBlock.state().isSideSolidFullSquare(world, neighborSupportingBlock.pos(), Direction.UP))
+                .filter(neighborSupportingBlock -> neighborSupportingBlock.state().isFaceSturdy(level, neighborSupportingBlock.pos(), Direction.UP))
                 // Random chance of spreading
-                .filter(neighborSupportingBlock -> world.getRandom().nextInt(2) == 0)
+                .filter(neighborSupportingBlock -> level.getRandom().nextInt(2) == 0)
                 // Perform the spread
-                .forEach(neighborSupportingBlock -> world.setBlockState(neighborSupportingBlock.pos().up(), this.getDefaultState(), Block.NOTIFY_ALL));
+                .forEach(neighborSupportingBlock -> level.setBlock(neighborSupportingBlock.pos().above(), this.defaultBlockState(), Block.UPDATE_ALL));
 
         // damage living entities nearby
-        if (world.isClient()) {
+        if (level.isClientSide()) {
             return;
         }
-        Box box = new Box(
+        AABB box = new AABB(
                 pos.getX() - 5d, pos.getY() - 5d, pos.getZ() - 5d,
                 pos.getX() + 5d, pos.getY() + 5d, pos.getZ() + 5d
         );
-        server.getEntitiesByClass(LivingEntity.class, box, e -> true)
+        server.getEntitiesOfClass(LivingEntity.class, box, e -> true)
                 .stream()
-                .filter(target -> !(target instanceof PlayerEntity player) || !wearingFullNetherite(player))
+                .filter(target -> !(target instanceof Player player) || !wearingFullNetherite(player))
                 .forEach(target -> {
-                    target.addStatusEffect(new StatusEffectInstance(StatusEffects.POISON, 15 * 20, 0));
-                    target.damage(server.getDamageSources().magic(), 15.0f);
+                    target.addEffect(new MobEffectInstance(MobEffects.POISON, 15 * 20, 0));
+                    target.hurt(server.damageSources().magic(), 15.0f);
                 });
     }
 
-    private boolean wearingPlateBoots(PlayerEntity player) {
-        ItemStack boots = player.getInventory().getArmorStack(0);
-        return boots.isOf(Items.NETHERITE_BOOTS);
+    private boolean wearingPlateBoots(Player player) {
+        ItemStack boots = player.getInventory().getArmor(0);
+        return boots.is(Items.NETHERITE_BOOTS);
     }
 
-    private boolean wearingFullNetherite(PlayerEntity player) {
-        PlayerInventory inventory = player.getInventory();
+    private boolean wearingFullNetherite(Player player) {
+        Inventory inventory = player.getInventory();
         return IntStream
                 .range(0, 3)
-                .mapToObj(inventory::getArmorStack)
+                .mapToObj(inventory::getArmor)
                 .map(ItemStack::getItem)
                 .map(item -> Optional.ofNullable(item instanceof ArmorItem armorItem ? armorItem : null))
                 .map(optionalArmor -> optionalArmor.map(ArmorItem::getMaterial))
-                .allMatch(optionalMaterial -> optionalMaterial.isPresent() && ArmorMaterials.NETHERITE.matches(optionalMaterial.get()));
+                .allMatch(optionalMaterial -> optionalMaterial.isPresent() && ArmorMaterials.NETHERITE.is(optionalMaterial.get()));
     }
 
 }

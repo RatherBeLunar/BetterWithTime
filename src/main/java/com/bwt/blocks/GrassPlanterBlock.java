@@ -1,65 +1,64 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.Fertilizable;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.PlacedFeature;
-import net.minecraft.world.gen.feature.RandomPatchFeatureConfig;
-import net.minecraft.world.gen.feature.VegetationPlacedFeatures;
-
 import java.util.List;
 import java.util.Optional;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.placement.VegetationPlacements;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.RandomPatchConfiguration;
+import net.minecraft.world.level.levelgen.placement.PlacedFeature;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class GrassPlanterBlock extends PlanterBlock {
-    public GrassPlanterBlock(Settings settings) {
+    public GrassPlanterBlock(Properties settings) {
         super(settings);
     }
 
     @Override
-    public VoxelShape getCollisionShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return PlanterBlock.flatTopOutlineShape;
     }
 
     @Override
-    public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        super.randomTick(state, world, pos, random);
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        super.randomTick(state, level, pos, random);
 
-        BlockPos abovePlanterPos = pos.up();
-        BlockState shortGrassState = Blocks.SHORT_GRASS.getDefaultState();
-        Optional<RegistryEntry.Reference<PlacedFeature>> optionalPlacedFeature = world.getRegistryManager().get(RegistryKeys.PLACED_FEATURE).getEntry(VegetationPlacedFeatures.GRASS_BONEMEAL);
+        BlockPos abovePlanterPos = pos.above();
+        BlockState shortGrassState = Blocks.SHORT_GRASS.defaultBlockState();
+        Optional<Holder.Reference<PlacedFeature>> optionalPlacedFeature = level.registryAccess().registryOrThrow(Registries.PLACED_FEATURE).getHolder(VegetationPlacements.GRASS_BONEMEAL);
         block0: for (int i = 0; i < 128; ++i) {
-            RegistryEntry<PlacedFeature> registryEntry;
+            Holder<PlacedFeature> registryEntry;
             BlockPos aboveNeighborPos = abovePlanterPos;
             for (int j = 0; j < i / 16; ++j) {
-                aboveNeighborPos = aboveNeighborPos.add(random.nextInt(3) - 1, (random.nextInt(3) - 1) * random.nextInt(3) / 2, random.nextInt(3) - 1);
-                if (!world.getBlockState(aboveNeighborPos.down()).isOf(this) || world.getBlockState(aboveNeighborPos).isFullCube(world, aboveNeighborPos)) {
+                aboveNeighborPos = aboveNeighborPos.offset(random.nextInt(3) - 1, (random.nextInt(3) - 1) * random.nextInt(3) / 2, random.nextInt(3) - 1);
+                if (!level.getBlockState(aboveNeighborPos.below()).is(this) || level.getBlockState(aboveNeighborPos).isCollisionShapeFullBlock(level, aboveNeighborPos)) {
                     continue block0;
                 }
             }
-            BlockState aboveNeighborState = world.getBlockState(aboveNeighborPos);
-            if (aboveNeighborState.isOf(shortGrassState.getBlock()) && random.nextInt(10) == 0) {
-                ((Fertilizable) shortGrassState.getBlock()).grow(world, random, aboveNeighborPos, aboveNeighborState);
+            BlockState aboveNeighborState = level.getBlockState(aboveNeighborPos);
+            if (aboveNeighborState.is(shortGrassState.getBlock()) && random.nextInt(10) == 0) {
+                ((BonemealableBlock) shortGrassState.getBlock()).performBonemeal(level, random, aboveNeighborPos, aboveNeighborState);
             }
-            if (!aboveNeighborState.isIn(BlockTags.AIR)) continue;
+            if (!aboveNeighborState.is(BlockTags.AIR)) continue;
             if (random.nextInt(8) == 0) {
-                List<ConfiguredFeature<?, ?>> list = world.getBiome(aboveNeighborPos).value().getGenerationSettings().getFlowerFeatures();
+                List<ConfiguredFeature<?, ?>> list = level.getBiome(aboveNeighborPos).value().getGenerationSettings().getFlowerFeatures();
                 if (list.isEmpty()) continue;
-                registryEntry = ((RandomPatchFeatureConfig)list.get(0).config()).feature();
+                registryEntry = ((RandomPatchConfiguration)list.get(0).config()).feature();
             } else {
                 if (optionalPlacedFeature.isEmpty()) continue;
                 registryEntry = optionalPlacedFeature.get();
             }
-            registryEntry.value().generateUnregistered(world, world.getChunkManager().getChunkGenerator(), random, aboveNeighborPos);
+            registryEntry.value().place(level, level.getChunkSource().getGenerator(), random, aboveNeighborPos);
         }
     }
 }

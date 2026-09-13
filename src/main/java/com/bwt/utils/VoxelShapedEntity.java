@@ -1,6 +1,6 @@
 package com.bwt.utils;
 
-import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public interface VoxelShapedEntity {
     VoxelShape getVoxelShape();

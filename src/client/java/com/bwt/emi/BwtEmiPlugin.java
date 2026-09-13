@@ -23,40 +23,39 @@ import dev.emi.emi.api.render.EmiRenderable;
 import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
-import net.minecraft.block.Blocks;
-import net.minecraft.recipe.CraftingRecipe;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeType;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.RecipeInput;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Blocks;
+
 public class BwtEmiPlugin implements EmiPlugin {
-    public static final Identifier WIDGETS = Id.of("textures/gui/container/emiwidgets.png");
+    public static final ResourceLocation WIDGETS = Id.of("textures/gui/container/emiwidgets.png");
 
 
-    public static EmiRecipeCategory CAULDRON = category("cauldron", EmiStack.of(BwtBlocks.cauldronBlock));
-    public static EmiRecipeCategory STOKED_CAULDRON = category("stoked_cauldron", EmiStack.of(BwtBlocks.cauldronBlock));
-    public static EmiRecipeCategory CRUCIBLE = category("crucible", EmiStack.of(BwtBlocks.crucibleBlock));
-    public static EmiRecipeCategory STOKED_CRUCIBLE = category("stoked_crucible", EmiStack.of(BwtBlocks.crucibleBlock));
-    public static EmiRecipeCategory STOKED_CRUCIBLE_RECLAIM = category("stoked_crucible_reclaim", EmiStack.of(BwtBlocks.crucibleBlock));
+    public static final EmiRecipeCategory CAULDRON = category("cauldron", EmiStack.of(BwtBlocks.cauldronBlock));
+    public static final EmiRecipeCategory STOKED_CAULDRON = category("stoked_cauldron", EmiStack.of(BwtBlocks.cauldronBlock));
+    public static final EmiRecipeCategory CRUCIBLE = category("crucible", EmiStack.of(BwtBlocks.crucibleBlock));
+    public static final EmiRecipeCategory STOKED_CRUCIBLE = category("stoked_crucible", EmiStack.of(BwtBlocks.crucibleBlock));
+    public static final EmiRecipeCategory STOKED_CRUCIBLE_RECLAIM = category("stoked_crucible_reclaim", EmiStack.of(BwtBlocks.crucibleBlock));
 
-    public static EmiRecipeCategory MILL_STONE = category("mill_stone", EmiStack.of(BwtBlocks.millStoneBlock));
-    public static EmiRecipeCategory SAW = category("saw", EmiStack.of(BwtBlocks.sawBlock));
-    public static EmiRecipeCategory TURNTABLE = category("turntable", EmiStack.of(BwtBlocks.turntableBlock));
-    public static EmiRecipeCategory KILN = category("kiln", EmiStack.of(Blocks.BRICKS));
-    public static EmiRecipeCategory SOUL_FORGE = category("soul_forge", EmiStack.of(BwtBlocks.soulForgeBlock));
-    public static EmiRecipeCategory HOPPER_SOULS = category("hopper_souls", EmiStack.of(BwtBlocks.hopperBlock));
-    public static EmiRecipeCategory HOPPER_FILTERING = category("hopper_filtering", EmiStack.of(BwtBlocks.hopperBlock));
+    public static final EmiRecipeCategory MILL_STONE = category("mill_stone", EmiStack.of(BwtBlocks.millStoneBlock));
+    public static final EmiRecipeCategory SAW = category("saw", EmiStack.of(BwtBlocks.sawBlock));
+    public static final EmiRecipeCategory TURNTABLE = category("turntable", EmiStack.of(BwtBlocks.turntableBlock));
+    public static final EmiRecipeCategory KILN = category("kiln", EmiStack.of(Blocks.BRICKS));
+    public static final EmiRecipeCategory SOUL_FORGE = category("soul_forge", EmiStack.of(BwtBlocks.soulForgeBlock));
+    public static final EmiRecipeCategory HOPPER_SOULS = category("hopper_souls", EmiStack.of(BwtBlocks.hopperBlock));
+    public static final EmiRecipeCategory HOPPER_FILTERING = category("hopper_filtering", EmiStack.of(BwtBlocks.hopperBlock));
 
     public static EmiRenderable simplifiedEmiStack(EmiStack stack) {
         return stack;
@@ -67,17 +66,17 @@ public class BwtEmiPlugin implements EmiPlugin {
     }
 
     public static EmiRecipeCategory category(String id, EmiStack icon, Comparator<EmiRecipe> comp) {
-        return new EmiRecipeCategory(Identifier.of("btw", id), icon,
-                new EmiTexture(Identifier.of("emi", "textures/simple_icons/" + id + ".png"), 0, 0, 16, 16, 16, 16, 16, 16), comp);
+        return new EmiRecipeCategory(ResourceLocation.fromNamespaceAndPath("btw", id), icon,
+                new EmiTexture(ResourceLocation.fromNamespaceAndPath("emi", "textures/simple_icons/" + id + ".png"), 0, 0, 16, 16, 16, 16, 16, 16), comp);
     }
 
 
-    private static <C extends RecipeInput, T extends Recipe<C>> List<RecipeEntry<T>> getRecipes(EmiRegistry registry, RecipeType<T> type) {
-        return registry.getRecipeManager().listAllOfType(type);
+    private static <C extends RecipeInput, T extends Recipe<C>> List<RecipeHolder<T>> getRecipes(EmiRegistry registry, RecipeType<T> type) {
+        return registry.getRecipeManager().getAllRecipesFor(type);
     }
 
-    private static <C extends RecipeInput, T extends CraftingRecipe> List<RecipeEntry<T>> getRecipes(EmiRegistry registry, RecipeType<T> type, Predicate<CraftingRecipeCategory> category) {
-        return registry.getRecipeManager().listAllOfType(type).stream().filter(r -> category.test(r.value().getCategory())).toList();
+    private static <C extends RecipeInput, T extends CraftingRecipe> List<RecipeHolder<T>> getRecipes(EmiRegistry registry, RecipeType<T> type, Predicate<CraftingBookCategory> category) {
+        return registry.getRecipeManager().getAllRecipesFor(type).stream().filter(r -> category.test(r.value().category())).toList();
     }
 
 
@@ -144,17 +143,17 @@ public class BwtEmiPlugin implements EmiPlugin {
         getRecipes(reg, BwtRecipes.KILN_RECIPE_TYPE).stream()
                 .map(recipeEntry -> new EmiKilnRecipe(KILN, recipeEntry))
                 .forEach(reg::addRecipe);
-        getRecipes(reg, BwtRecipes.SOUL_FORGE_RECIPE_TYPE, c -> c != CraftingRecipeCategory.BUILDING).stream()
-                .sorted(Comparator.comparingInt(r -> r.value().getCategory().ordinal()))
+        getRecipes(reg, BwtRecipes.SOUL_FORGE_RECIPE_TYPE, c -> c != CraftingBookCategory.BUILDING).stream()
+                .sorted(Comparator.comparingInt(r -> r.value().category().ordinal()))
                 .map(EmiSoulForgeRecipe::new)
                 .forEach(reg::addRecipe);
-        getRecipes(reg, BwtRecipes.SOUL_FORGE_RECIPE_TYPE, c -> c == CraftingRecipeCategory.BUILDING).stream()
+        getRecipes(reg, BwtRecipes.SOUL_FORGE_RECIPE_TYPE, c -> c == CraftingBookCategory.BUILDING).stream()
                 .map(EmiSoulForgeRecipe::new)
                 .forEach(reg::addRecipe);
-        List<RecipeEntry<HopperFilterRecipe>> hopperFilterRecipes = getRecipes(reg, BwtRecipes.HOPPER_FILTER_RECIPE_TYPE);
-        List<RecipeEntry<SoulBottlingRecipe>> soulBottlingRecipes = getRecipes(reg, BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE);
+        List<RecipeHolder<HopperFilterRecipe>> hopperFilterRecipes = getRecipes(reg, BwtRecipes.HOPPER_FILTER_RECIPE_TYPE);
+        List<RecipeHolder<SoulBottlingRecipe>> soulBottlingRecipes = getRecipes(reg, BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE);
 
-        Stream<RecipeEntry<HopperFilterRecipe>> hopperFilterRecipesNoSouls = hopperFilterRecipes.stream()
+        Stream<RecipeHolder<HopperFilterRecipe>> hopperFilterRecipesNoSouls = hopperFilterRecipes.stream()
                 .filter(r -> r.value().soulCount() == 0);
 
         hopperFilterRecipesNoSouls
@@ -174,7 +173,7 @@ public class BwtEmiPlugin implements EmiPlugin {
         MechHopperBlock.filterMap.forEach((filter, permitted) -> {
             if (permitted instanceof MechHopperBlock.TagFilter f) {
                 var emiPermitted = EmiIngredient.of(f.tagKey());
-                Identifier id = Id.of(Registries.ITEM.getId(filter).getPath() + "_hopper_filter");
+                ResourceLocation id = Id.of(BuiltInRegistries.ITEM.getKey(filter).getPath() + "_hopper_filter");
                 reg.addRecipe(new EmiHopperFilterPermitList(id, EmiStack.of(filter), emiPermitted));
             }
         });

@@ -11,9 +11,9 @@ import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.TagKey;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.file.Path;
@@ -22,20 +22,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class LangGenerator extends FabricLanguageProvider {
-    public LangGenerator(FabricDataOutput dataOutput, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookup) {
+    public LangGenerator(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(dataOutput, registryLookup);
     }
 
     @Override
-    public void generateTranslations(RegistryWrapper.WrapperLookup registryLookup, TranslationBuilder translationBuilder) {
+    public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder translationBuilder) {
         addSubtitles(translationBuilder);
         addTagNames(translationBuilder);
         addEmiNames(translationBuilder);
         addCanvasDetails(translationBuilder);
 
         translationBuilder.add("death.attack.bwt.saw", "%1$s was sawed in half");
-        translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey(), "Lens Beam Range");
-        translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getTranslationKey() + ".description", "Impacts performance!");
+        translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getDescriptionId(), "Lens Beam Range");
+        translationBuilder.add(BwtGameRules.LENS_BEAM_RANGE.getDescriptionId() + ".description", "Impacts performance!");
         translationBuilder.add("container.bwt.soul_forge", "Soul Forge");
         BwtBlocks.sidingBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "siding"));
         BwtBlocks.mouldingBlocks.forEach(block -> addMaterialBlockName(translationBuilder, block, "moulding"));
@@ -209,7 +209,7 @@ public class LangGenerator extends FabricLanguageProvider {
     }
 
     protected void addSubtitle(SoundEvent soundEvent, String value, TranslationBuilder translationBuilder) {
-        translationBuilder.add(soundEvent.getId().withPrefixedPath("subtitles."), value);
+        translationBuilder.add(soundEvent.getLocation().withPrefix("subtitles."), value);
     }
 
     protected void addTagName(TagKey<?> tagKey, String value, TranslationBuilder translationBuilder) {
@@ -217,7 +217,7 @@ public class LangGenerator extends FabricLanguageProvider {
     }
 
     protected void addMaterialBlockName(TranslationBuilder translationBuilder, MaterialInheritedBlock materialInheritedBlock, String suffix) {
-        translationBuilder.add(materialInheritedBlock, nameKeyToTitleCase(materialInheritedBlock.fullBlock.getTranslationKey().replaceFirst("_planks", "") + "_" + suffix));
+        translationBuilder.add(materialInheritedBlock, nameKeyToTitleCase(materialInheritedBlock.fullBlock.getDescriptionId().replaceFirst("_planks", "") + "_" + suffix));
     }
 
     public static String nameKeyToTitleCase(String snakeString) {

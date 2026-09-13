@@ -1,19 +1,18 @@
 package com.bwt.items;
 
 import com.bwt.mixin.accessors.DyeItemAccessorMixin;
-import net.minecraft.item.DyeItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.util.DyeColor;
-
 import java.util.Map;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 public class DungItem extends DyeItem {
-    public DungItem(Item.Settings settings) {
+    public DungItem(Item.Properties settings) {
         super(DyeColor.BROWN, settings);
-        Map<DyeColor, DyeItem> dyes = DyeItemAccessorMixin.getDYES();
+        Map<DyeColor, DyeItem> dyes = DyeItemAccessorMixin.getITEM_BY_COLOR();
         if (dyes != null) {
-            dyes.put(getColor(), ((DyeItem) Items.BROWN_DYE));
+            dyes.put(getDyeColor(), ((DyeItem) Items.BROWN_DYE));
         }
     }
 }

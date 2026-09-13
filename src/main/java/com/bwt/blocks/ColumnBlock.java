@@ -1,21 +1,21 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.world.BlockView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ColumnBlock extends DecorativeBlock {
-    VoxelShape SHAPE = Block.createCuboidShape(3, 0, 3, 13, 16, 13);
+    final VoxelShape SHAPE = Block.box(3, 0, 3, 13, 16, 13);
 
-    public ColumnBlock(Settings settings, Block fullBlock) {
+    public ColumnBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
     }
 
     public static ColumnBlock ofBlock(Block fullBlock) {
-        return new ColumnBlock(Settings.copy(fullBlock), fullBlock);
+        return new ColumnBlock(Properties.ofFullCopy(fullBlock), fullBlock);
     }
 
     public static ColumnBlock ofWoodBlock(Block woodBlock) {
@@ -25,7 +25,7 @@ public class ColumnBlock extends DecorativeBlock {
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 }

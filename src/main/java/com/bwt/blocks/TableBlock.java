@@ -1,34 +1,34 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
-import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.WorldAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class TableBlock extends DecorativeBlock {
-    public static final BooleanProperty SUPPORT = BooleanProperty.of("support");
+    public static final BooleanProperty SUPPORT = BooleanProperty.create("support");
 
-    VoxelShape BASE_SHAPE = Block.createCuboidShape(0, 15, 0, 16, 16, 16);
-    VoxelShape SUPPORT_SHAPE = Block.createCuboidShape(6, 0, 6, 10, 15, 10);
+    final VoxelShape BASE_SHAPE = Block.box(0, 15, 0, 16, 16, 16);
+    final VoxelShape SUPPORT_SHAPE = Block.box(6, 0, 6, 10, 15, 10);
 
-    public TableBlock(Settings settings, Block fullBlock) {
+    public TableBlock(Properties settings, Block fullBlock) {
         super(settings, fullBlock);
-        setDefaultState(getDefaultState().with(SUPPORT, true));
+        registerDefaultState(defaultBlockState().setValue(SUPPORT, true));
     }
 
     public static TableBlock ofBlock(Block fullBlock) {
-        return new TableBlock(Settings.copy(fullBlock), fullBlock);
+        return new TableBlock(Properties.ofFullCopy(fullBlock), fullBlock);
     }
 
     public static TableBlock ofWoodBlock(Block woodBlock) {
@@ -38,32 +38,32 @@ public class TableBlock extends DecorativeBlock {
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(SUPPORT);
     }
 
     @Override
-    public VoxelShape getOutlineShape(BlockState state, BlockView view, BlockPos pos, ShapeContext context) {
-        return state.get(SUPPORT) ? VoxelShapes.union(BASE_SHAPE, SUPPORT_SHAPE) : BASE_SHAPE;
+    public VoxelShape getShape(BlockState state, BlockGetter view, BlockPos pos, CollisionContext context) {
+        return state.getValue(SUPPORT) ? Shapes.or(BASE_SHAPE, SUPPORT_SHAPE) : BASE_SHAPE;
     }
 
     @Nullable
     @Override
-    public BlockState getPlacementState(ItemPlacementContext ctx) {
-        return getDefaultState().with(SUPPORT,
+    public BlockState getStateForPlacement(BlockPlaceContext ctx) {
+        return defaultBlockState().setValue(SUPPORT,
                 Arrays.stream(Direction.Axis.values())
                         .filter(Direction.Axis::isHorizontal)
-                        .noneMatch(axis -> ctx.getWorld().getBlockState(ctx.getBlockPos().offset(axis, 1)).isOf(this) && ctx.getWorld().getBlockState(ctx.getBlockPos().offset(axis, -1)).isOf(this))
+                        .noneMatch(axis -> ctx.getLevel().getBlockState(ctx.getClickedPos().relative(axis, 1)).is(this) && ctx.getLevel().getBlockState(ctx.getClickedPos().relative(axis, -1)).is(this))
         );
     }
 
     @Override
-    public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState neighborState, WorldAccess world, BlockPos pos, BlockPos neighborPos) {
-        return super.getStateForNeighborUpdate(state, direction, neighborState, world, pos, neighborPos).with(SUPPORT,
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        return super.updateShape(state, direction, neighborState, level, pos, neighborPos).setValue(SUPPORT,
             Arrays.stream(Direction.Axis.values())
                     .filter(Direction.Axis::isHorizontal)
-                    .noneMatch(axis -> world.getBlockState(pos.offset(axis, 1)).isOf(this) && world.getBlockState(pos.offset(axis, -1)).isOf(this))
+                    .noneMatch(axis -> level.getBlockState(pos.relative(axis, 1)).is(this) && level.getBlockState(pos.relative(axis, -1)).is(this))
         );
     }
 }

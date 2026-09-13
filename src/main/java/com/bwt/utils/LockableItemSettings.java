@@ -1,15 +1,15 @@
 package com.bwt.utils;
 
-import net.minecraft.block.jukebox.JukeboxSong;
-import net.minecraft.component.ComponentType;
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.component.type.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.resource.featuretoggle.FeatureFlag;
-import net.minecraft.util.Rarity;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.flag.FeatureFlag;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.JukeboxSong;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
-public class LockableItemSettings extends Item.Settings {
+public class LockableItemSettings extends Item.Properties {
     protected boolean locked = false;
 
     public LockableItemSettings lock() {
@@ -18,27 +18,27 @@ public class LockableItemSettings extends Item.Settings {
     }
 
     @Override
-    public LockableItemSettings food(FoodComponent foodComponent) {
+    public LockableItemSettings food(FoodProperties foodComponent) {
         if (locked) return this;
         return (LockableItemSettings) super.food(foodComponent);
     }
 
     @Override
-    public LockableItemSettings maxCount(int maxCount) {
+    public LockableItemSettings stacksTo(int maxCount) {
         if (locked) return this;
-        return (LockableItemSettings) super.maxCount(maxCount);
+        return (LockableItemSettings) super.stacksTo(maxCount);
     }
 
     @Override
-    public LockableItemSettings maxDamage(int maxDamage) {
+    public LockableItemSettings durability(int maxDamage) {
         if (locked) return this;
-        return (LockableItemSettings) super.maxDamage(maxDamage);
+        return (LockableItemSettings) super.durability(maxDamage);
     }
 
     @Override
-    public LockableItemSettings recipeRemainder(Item recipeRemainder) {
+    public LockableItemSettings craftRemainder(Item recipeRemainder) {
         if (locked) return this;
-        return (LockableItemSettings) super.recipeRemainder(recipeRemainder);
+        return (LockableItemSettings) super.craftRemainder(recipeRemainder);
     }
 
     @Override
@@ -48,32 +48,32 @@ public class LockableItemSettings extends Item.Settings {
     }
 
     @Override
-    public LockableItemSettings fireproof() {
+    public LockableItemSettings fireResistant() {
         if (locked) return this;
-        return (LockableItemSettings) super.fireproof();
+        return (LockableItemSettings) super.fireResistant();
     }
 
     @Override
-    public LockableItemSettings jukeboxPlayable(RegistryKey<JukeboxSong> songKey) {
+    public LockableItemSettings jukeboxPlayable(ResourceKey<JukeboxSong> songKey) {
         if (locked) return this;
         return (LockableItemSettings) super.jukeboxPlayable(songKey);
     }
 
     @Override
-    public LockableItemSettings requires(FeatureFlag... features) {
+    public LockableItemSettings requiredFeatures(FeatureFlag... features) {
         if (locked) return this;
-        return (LockableItemSettings) super.requires(features);
+        return (LockableItemSettings) super.requiredFeatures(features);
     }
 
     @Override
-    public <T> LockableItemSettings component(ComponentType<T> type, T value) {
+    public <T> LockableItemSettings component(DataComponentType<T> type, T value) {
         if (locked) return this;
         return (LockableItemSettings) super.component(type, value);
     }
 
     @Override
-    public LockableItemSettings attributeModifiers(AttributeModifiersComponent attributeModifiersComponent) {
+    public LockableItemSettings attributes(ItemAttributeModifiers attributeModifiersComponent) {
         if (locked) return this;
-        return (LockableItemSettings) super.attributeModifiers(attributeModifiersComponent);
+        return (LockableItemSettings) super.attributes(attributeModifiersComponent);
     }
 }

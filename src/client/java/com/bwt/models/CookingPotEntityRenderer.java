@@ -6,72 +6,74 @@ package com.bwt.models;
 import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
-import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.render.*;
-import net.minecraft.client.render.block.BlockRenderManager;
-import net.minecraft.client.render.block.entity.BlockEntityRenderer;
-import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.BlockPos;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
 
 @Environment(value=EnvType.CLIENT)
 public class CookingPotEntityRenderer implements BlockEntityRenderer<AbstractCookingPotBlockEntity> {
-    private final BlockRenderManager manager;
-    private final Identifier fillTexture;
-    protected MechHopperFillModel model;
+    private final BlockRenderDispatcher manager;
+    private final ResourceLocation fillTexture;
+    protected final MechHopperFillModel model;
 
-    public CookingPotEntityRenderer(BlockEntityRendererFactory.Context ctx, Identifier fillTexture) {
-        this.manager = ctx.getRenderManager();
-        this.model = new MechHopperFillModel(ctx.getLayerModelPart(BetterWithTimeClient.MECH_HOPPER_FILL_LAYER));
+    public CookingPotEntityRenderer(BlockEntityRendererProvider.Context ctx, ResourceLocation fillTexture) {
+        this.manager = ctx.getBlockRenderDispatcher();
+        this.model = new MechHopperFillModel(ctx.bakeLayer(BetterWithTimeClient.MECH_HOPPER_FILL_LAYER));
         this.fillTexture = fillTexture;
     }
 
     @Override
-    public void render(AbstractCookingPotBlockEntity cookingPotBlockEntity, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, int uv) {
-        World world = cookingPotBlockEntity.getWorld();
-        if (world == null) {
+    public void render(AbstractCookingPotBlockEntity cookingPotBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumerProvider, int light, int uv) {
+        Level level = cookingPotBlockEntity.getLevel();
+        if (level == null) {
             return;
         }
-        BlockPos pos = cookingPotBlockEntity.getPos();
-        BlockState state = world.getBlockState(pos);
+        BlockPos pos = cookingPotBlockEntity.getBlockPos();
+        BlockState state = level.getBlockState(pos);
 
         // Render the block itself
-        matrixStack.push();
-        this.renderModel(pos, state, matrixStack, vertexConsumerProvider, world, uv);
-        matrixStack.pop();
+        poseStack.pushPose();
+        this.renderModel(pos, state, poseStack, vertexConsumerProvider, level, uv);
+        poseStack.popPose();
         // Render the fill texture
         if (cookingPotBlockEntity.slotsOccupied > 0) {
-            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.getLayer(fillTexture));
-            matrixStack.push();
-            matrixStack.translate(0.5f, 0.5f, 0.5f);
-            if (state.contains(AbstractCookingPotBlock.TIP_DIRECTION)) {
-                matrixStack.multiply(state.get(AbstractCookingPotBlock.TIP_DIRECTION).getRotationQuaternion());
+            VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.renderType(fillTexture));
+            poseStack.pushPose();
+            poseStack.translate(0.5f, 0.5f, 0.5f);
+            if (state.hasProperty(AbstractCookingPotBlock.TIP_DIRECTION)) {
+                poseStack.mulPose(state.getValue(AbstractCookingPotBlock.TIP_DIRECTION).getRotation());
             }
-            matrixStack.translate(-0.5f, -0.5f, -0.5f);
-            matrixStack.scale(0.99f, 1, 0.99f);
-            matrixStack.translate(0.01f, (cookingPotBlockEntity.slotsOccupied * (13f - 2f) / (cookingPotBlockEntity.inventory.size() - 1f) + 2f) / 16f, 0.01f);
-            this.model.render(matrixStack, vertexConsumer, light, OverlayTexture.getUv(0.0f, false), -1);
-            matrixStack.pop();
+            poseStack.translate(-0.5f, -0.5f, -0.5f);
+            poseStack.scale(0.99f, 1, 0.99f);
+            poseStack.translate(0.01f, (cookingPotBlockEntity.slotsOccupied * (13f - 2f) / (cookingPotBlockEntity.inventory.getContainerSize() - 1f) + 2f) / 16f, 0.01f);
+            this.model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.pack(0.0f, false), -1);
+            poseStack.popPose();
         }
     }
 
-    private void renderModel(BlockPos pos, BlockState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, World world, int overlay) {
-        RenderLayer renderLayer = RenderLayers.getBlockLayer(state);
+    private void renderModel(BlockPos pos, BlockState state, PoseStack matrices, MultiBufferSource vertexConsumers, Level level, int overlay) {
+        RenderType renderLayer = ItemBlockRenderTypes.getChunkRenderType(state);
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        matrices.push();
-        this.manager.getModelRenderer().render(world, this.manager.getModel(state), state, pos, matrices, vertexConsumer, false, Random.create(), state.getRenderingSeed(pos), overlay);
-        matrices.pop();
+        matrices.pushPose();
+        this.manager.getModelRenderer().tesselateBlock(level, this.manager.getBlockModel(state), state, pos, matrices, vertexConsumer, false, RandomSource.create(), state.getSeed(pos), overlay);
+        matrices.popPose();
     }
 
     @Override
-    public int getRenderDistance() {
+    public int getViewDistance() {
         return 68;
     }
 }

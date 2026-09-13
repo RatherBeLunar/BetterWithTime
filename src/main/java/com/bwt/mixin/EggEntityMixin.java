@@ -1,54 +1,54 @@
 package com.bwt.mixin;
 
 import com.bwt.items.BwtItems;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.projectile.thrown.EggEntity;
-import net.minecraft.entity.projectile.thrown.ThrownItemEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.ThrownEgg;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.HitResult;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(EggEntity.class)
-public abstract class EggEntityMixin extends ThrownItemEntity {
+@Mixin(ThrownEgg.class)
+public abstract class EggEntityMixin extends ThrowableItemProjectile {
     @Unique
     protected boolean chickenSpawned;
 
-    public EggEntityMixin(EntityType<? extends ThrownItemEntity> entityType, World world) {
-        super(entityType, world);
+    public EggEntityMixin(EntityType<? extends ThrowableItemProjectile> entityType, Level level) {
+        super(entityType, level);
         this.chickenSpawned = false;
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/World;Lnet/minecraft/entity/LivingEntity;)V", at = @At("TAIL"))
-    public void bwt$init1(World world, LivingEntity owner, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At("TAIL"))
+    public void bwt$init1(Level level, LivingEntity owner, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/World;DDD)V", at = @At("TAIL"))
-    public void bwt$init2(World world, double x, double y, double z, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDD)V", at = @At("TAIL"))
+    public void bwt$init2(Level level, double x, double y, double z, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V", at = @At("TAIL"))
-    public void bwt$init3(EntityType<EggEntity> entityType, World world, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("TAIL"))
+    public void bwt$init3(EntityType<ThrownEgg> entityType, Level level, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 
-    @Inject(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
+    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z"))
     public void bwt$preventRawEggDrops(HitResult hitResult, CallbackInfo ci) {
         this.chickenSpawned = true;
     }
 
-    @Inject(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/thrown/EggEntity;discard()V"))
+    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ThrownEgg;discard()V"))
     public void bwt$spawnRawEgg(HitResult hitResult, CallbackInfo ci) {
         if (!this.chickenSpawned) {
-            getWorld().spawnEntity(new ItemEntity(getWorld(), getX(), getY(), getZ(), new ItemStack(BwtItems.rawEggItem)));
+            level().addFreshEntity(new ItemEntity(level(), getX(), getY(), getZ(), new ItemStack(BwtItems.rawEggItem)));
         }
     }
 }

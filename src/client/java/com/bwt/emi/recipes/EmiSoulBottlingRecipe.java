@@ -9,31 +9,31 @@ import dev.emi.emi.api.render.EmiTexture;
 import dev.emi.emi.api.stack.EmiIngredient;
 import dev.emi.emi.api.stack.EmiStack;
 import dev.emi.emi.api.widget.WidgetHolder;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 public class EmiSoulBottlingRecipe implements EmiRecipe {
 
     public static final EmiTexture FULL_GEAR = new EmiTexture(BwtEmiPlugin.WIDGETS, 14, 0, 14, 14);
-    public static final Identifier BACKGROUND = Id.of("textures/gui/container/hopper_recipe.png");
+    public static final ResourceLocation BACKGROUND = Id.of("textures/gui/container/hopper_recipe.png");
 
-    private final Identifier id;
+    private final ResourceLocation id;
     protected final EmiIngredient bottle;
     protected final int soulCount;
     protected final EmiStack result;
 
-    public EmiSoulBottlingRecipe(RecipeEntry<SoulBottlingRecipe> recipeEntry) {
+    public EmiSoulBottlingRecipe(RecipeHolder<SoulBottlingRecipe> recipeEntry) {
         this(recipeEntry.id(), recipeEntry.value());
     }
 
-    public EmiSoulBottlingRecipe(Identifier id, SoulBottlingRecipe recipe) {
+    public EmiSoulBottlingRecipe(ResourceLocation id, SoulBottlingRecipe recipe) {
         this(id, BwtEmiPlugin.from(recipe.bottle()), recipe.soulCount(), EmiStack.of(recipe.getResult()));
     }
 
-    public EmiSoulBottlingRecipe(Identifier id, EmiIngredient bottle, int soulCount, EmiStack result) {
+    public EmiSoulBottlingRecipe(ResourceLocation id, EmiIngredient bottle, int soulCount, EmiStack result) {
         this.id = id;
         this.bottle = bottle;
         this.soulCount = soulCount;
@@ -46,8 +46,8 @@ public class EmiSoulBottlingRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable Identifier getId() {
-        return Identifier.of(id.getNamespace(), "/" + id.getPath());
+    public @Nullable ResourceLocation getId() {
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "/" + id.getPath());
     }
 
     @Override

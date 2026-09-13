@@ -2,36 +2,36 @@ package com.bwt.blocks.block_dispenser;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.block_entities.ImplementedInventory;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.DispenserBlockEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventories;
-import net.minecraft.inventory.SidedInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.screen.NamedScreenHandlerFactory;
-import net.minecraft.screen.PropertyDelegate;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.IntStream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.entity.DispenserBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class BlockDispenserBlockEntity extends DispenserBlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, SidedInventory {
-    public static final int INVENTORY_SIZE = 16;
-    private static final int[] AVAILABLE_SLOTS = IntStream.range(0, INVENTORY_SIZE).toArray();
+public class BlockDispenserBlockEntity extends DispenserBlockEntity implements MenuProvider, ImplementedInventory, WorldlyContainer {
+    public static final int CONTAINER_SIZE = 16;
+    private static final int[] AVAILABLE_SLOTS = IntStream.range(0, CONTAINER_SIZE).toArray();
     private int selectedSlot;
 
     public BlockDispenserBlockEntity(BlockPos pos, BlockState state) {
         super(BwtBlockEntities.blockDispenserBlockEntity, pos, state);
-        setHeldStacks(DefaultedList.ofSize(INVENTORY_SIZE, ItemStack.EMPTY));
+        setItems(NonNullList.withSize(CONTAINER_SIZE, ItemStack.EMPTY));
         selectedSlot = 0;
     }
 
@@ -40,11 +40,11 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     }
 
     public void setSelectedSlot(int slotToSelect) {
-        this.selectedSlot = Math.max(slotToSelect, 0) % INVENTORY_SIZE;
-        this.markDirty();
+        this.selectedSlot = Math.max(slotToSelect, 0) % CONTAINER_SIZE;
+        this.setChanged();
     }
 
-    private final PropertyDelegate propertyDelegate = new PropertyDelegate() {
+    private final ContainerData propertyDelegate = new ContainerData() {
         @Override
         public int get(int index) {
             return selectedSlot;
@@ -56,27 +56,27 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
         }
 
         @Override
-        public int size() {
+        public int getCount() {
             return 1;
         }
     };
 
     @Override
-    public DefaultedList<ItemStack> getItems() {
-        return getHeldStacks();
+    public NonNullList<ItemStack> getItems() {
+        return super.getItems();
     }
 
     @Override
-    public int size() {
-        return INVENTORY_SIZE;
+    public int getContainerSize() {
+        return CONTAINER_SIZE;
     }
 
     protected int findNextValidSlotIndex() {
-        int invSize = getHeldStacks().size();
+        int invSize = getItems().size();
         // Wrap around inventory, including a return to the selected slot
         for (int currentSlot = selectedSlot + 1; currentSlot <= invSize + selectedSlot; currentSlot++ )
         {
-            if (!getHeldStacks().get(currentSlot % invSize).isEmpty())
+            if (!getItems().get(currentSlot % invSize).isEmpty())
             {
                 return currentSlot % invSize;
             }
@@ -90,7 +90,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     }
 
     public ItemStack getCurrentItemToDispense() {
-        ItemStack itemStack = getHeldStacks().get(selectedSlot);
+        ItemStack itemStack = getItems().get(selectedSlot);
 
         if (!itemStack.isEmpty()) {
             return itemStack;
@@ -99,19 +99,19 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
         int newSlot = findNextValidSlotIndex();
         setSelectedSlot(newSlot);
 
-        return getHeldStacks().get(newSlot);
+        return getItems().get(newSlot);
     }
 
     public boolean hasRoomFor(ItemStack stack) {
         int count = stack.getCount();
-        for (ItemStack invStack : getHeldStacks()) {
+        for (ItemStack invStack : getItems()) {
             if (invStack.isEmpty()) {
                 return true;
             }
-            if (!ItemStack.areItemsAndComponentsEqual(invStack, stack)) {
+            if (!ItemStack.isSameItemSameComponents(invStack, stack)) {
                 continue;
             }
-            count -= (invStack.getMaxCount() - invStack.getCount());
+            count -= (invStack.getMaxStackSize() - invStack.getCount());
             if (count <= 0) {
                 return true;
             }
@@ -124,16 +124,16 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return ItemStack.EMPTY;
         }
 
-        int invSize = getHeldStacks().size();
+        int invSize = getItems().size();
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ )
         {
-            ItemStack invStack = getHeldStacks().get(currentSlot);
-            if (ItemStack.areItemsAndComponentsEqual(invStack, stack)) {
-                int space = invStack.getMaxCount() - invStack.getCount();
+            ItemStack invStack = getItems().get(currentSlot);
+            if (ItemStack.isSameItemSameComponents(invStack, stack)) {
+                int space = invStack.getMaxStackSize() - invStack.getCount();
                 int inserted = Math.min(space, stack.getCount());
-                invStack.increment(inserted);
-                setStack(currentSlot, invStack);
-                stack.decrement(inserted);
+                invStack.grow(inserted);
+                setItem(currentSlot, invStack);
+                stack.shrink(inserted);
             }
             if (stack.getCount() <= 0) {
                 return stack;
@@ -143,10 +143,10 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return stack;
         }
         for (int currentSlot = 0; currentSlot < invSize; currentSlot++ ) {
-            ItemStack invStack = getHeldStacks().get(currentSlot);
+            ItemStack invStack = getItems().get(currentSlot);
             if (invStack.isEmpty()) {
-                invStack = stack.copyAndEmpty();
-                setStack(currentSlot, invStack);
+                invStack = stack.copyAndClear();
+                setItem(currentSlot, invStack);
             }
             if (stack.getCount() <= 0) {
                 return stack;
@@ -160,18 +160,18 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
             return ItemStack.EMPTY;
         }
 
-        int invSize = getHeldStacks().size();
+        int invSize = getItems().size();
         for (int currentSlot = selectedSlot; currentSlot < invSize + selectedSlot; currentSlot++ )
         {
-            ItemStack invStack = getHeldStacks().get(currentSlot % invSize);
+            ItemStack invStack = getItems().get(currentSlot % invSize);
             if (invStack.isEmpty()) {
                 continue;
             }
-            else if (invStack.isOf(item)) {
+            else if (invStack.is(item)) {
                 int available = invStack.getCount();
                 int removed = Math.min(count, available);
-                invStack.decrement(removed);
-                setStack(currentSlot % invSize, invStack);
+                invStack.shrink(removed);
+                setItem(currentSlot % invSize, invStack);
                 count -= removed;
             }
             if (count <= 0) {
@@ -186,45 +186,45 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements N
     //getDisplayName will Provide its name which is normally shown at the top
 
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
         //We provide *this* to the screenHandler as our class Implements Inventory
         //Only the Server has the Inventory at the start, this will be synced to the client in the ScreenHandler
         return new BlockDispenserScreenHandler(syncId, playerInventory, this, propertyDelegate);
     }
 
     @Override
-    public Text getDisplayName() {
-        return Text.translatable(getCachedState().getBlock().getTranslationKey());
+    public Component getDisplayName() {
+        return Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
     @Override
-    public void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
-        super.readNbt(nbt, lookup);
-        Inventories.readNbt(nbt, this.getHeldStacks(), lookup);
+    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
+        super.loadAdditional(nbt, lookup);
+        ContainerHelper.loadAllItems(nbt, this.getItems(), lookup);
         this.selectedSlot = nbt.getInt("nextSlotToDispense");
     }
 
     @Override
-    public void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
-        super.writeNbt(nbt, lookup);
-        Inventories.writeNbt(nbt, this.getHeldStacks(), lookup);
+    public void saveAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
+        super.saveAdditional(nbt, lookup);
+        ContainerHelper.saveAllItems(nbt, this.getItems(), lookup);
         nbt.putInt("nextSlotToDispense", selectedSlot);
     }
 
     // SidedInventory, to disable extraction
 
     @Override
-    public int[] getAvailableSlots(Direction side) {
+    public int[] getSlotsForFace(Direction side) {
         return AVAILABLE_SLOTS;
     }
 
     @Override
-    public boolean canInsert(int slot, ItemStack stack, @Nullable Direction dir) {
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
         return true;
     }
 
     @Override
-    public boolean canExtract(int slot, ItemStack stack, Direction dir) {
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
         return false;
     }
 }

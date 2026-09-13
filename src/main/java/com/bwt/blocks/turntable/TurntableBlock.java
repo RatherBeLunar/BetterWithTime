@@ -4,81 +4,79 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
-import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityTicker;
-import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.BlockHitResult;
 
-public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBase {
+public class TurntableBlock extends BaseEntityBlock implements MechPowerBlockBase {
     public static final int turntableTickRate = 10;
 
-    public static final IntProperty TICK_SETTING = IntProperty.of("tick_setting", 0, 3);
-    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final IntegerProperty TICK_SETTING = IntegerProperty.create("tick_setting", 0, 3);
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    public TurntableBlock(Settings settings) {
+    public TurntableBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(MECH_POWERED, false).with(POWERED, false).with(TICK_SETTING, 0));
+        registerDefaultState(defaultBlockState().setValue(MECH_POWERED, false).setValue(POWERED, false).setValue(TICK_SETTING, 0));
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(TICK_SETTING, MECH_POWERED, POWERED);
     }
 
     @Override
-    public BlockRenderType getRenderType(BlockState state) {
-        return BlockRenderType.MODEL;
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
     }
 
     @Override
-    protected MapCodec<? extends BlockWithEntity> getCodec() {
+    protected MapCodec<? extends BaseEntityBlock> codec() {
         return null;
     }
 
     @Nullable
     @Override
-    public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new TurntableBlockEntity(pos, state);
     }
 
     @Override
-    public void onPlaced(World world, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
-        schedulePowerUpdate(state, world, pos);
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
-        if (!player.getMainHandStack().isEmpty()) {
-            return ActionResult.PASS;
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
+        if (!player.getMainHandItem().isEmpty()) {
+            return InteractionResult.PASS;
         }
-        world.setBlockState(pos, state.with(TICK_SETTING, (state.get(TICK_SETTING) + 1) % 4));
-        world.playSound(null, pos, BwtSoundEvents.TURNTABLE_SETTING_CLICK,
-                SoundCategory.BLOCKS, 0.25f, 1);
-        return ActionResult.SUCCESS;
+        level.setBlockAndUpdate(pos, state.setValue(TICK_SETTING, (state.getValue(TICK_SETTING) + 1) % 4));
+        level.playSound(null, pos, BwtSoundEvents.TURNTABLE_SETTING_CLICK,
+                SoundSource.BLOCKS, 0.25f, 1);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -91,46 +89,46 @@ public class TurntableBlock extends BlockWithEntity implements MechPowerBlockBas
         return direction -> false;
     }
 
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        boolean redstonePowered = world.isReceivingRedstonePower(pos);
-        boolean mechPowered = isReceivingMechPower(world, state, pos);
+    public BlockState getPowerStates(BlockState state, Level level, BlockPos pos) {
+        boolean redstonePowered = level.hasNeighborSignal(pos);
+        boolean mechPowered = isReceivingMechPower(level, state, pos);
         BlockState updatedState = state;
-        updatedState = updatedState.with(POWERED, redstonePowered);
-        updatedState = updatedState.with(MECH_POWERED, mechPowered);
+        updatedState = updatedState.setValue(POWERED, redstonePowered);
+        updatedState = updatedState.setValue(MECH_POWERED, mechPowered);
         return updatedState;
     }
 
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
         // Compute new state but don't update yet
-        BlockState newState = getPowerStates(state, world, pos);
+        BlockState newState = getPowerStates(state, level, pos);
         // If block just turned on
-        if (newState.get(POWERED) != state.get(POWERED) || newState.get(MECH_POWERED) != state.get(MECH_POWERED)) {
-            world.scheduleBlockTick(pos, this, turntableTickRate);
+        if (newState.getValue(POWERED) != state.getValue(POWERED) || newState.getValue(MECH_POWERED) != state.getValue(MECH_POWERED)) {
+            level.scheduleTick(pos, this, turntableTickRate);
         }
     }
 
     @Override
-    public void neighborUpdate(BlockState state, World world, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (world.isClient) {
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+        if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, world, pos);
+        schedulePowerUpdate(state, level, pos);
     }
 
     @Override
-    public void scheduledTick(BlockState blockState, ServerWorld world, BlockPos pos, Random random) {
-        BlockState updatedState = getPowerStates(blockState, world, pos);
-        world.setBlockState(pos, updatedState);
+    public void tick(BlockState blockState, ServerLevel level, BlockPos pos, RandomSource random) {
+        BlockState updatedState = getPowerStates(blockState, level, pos);
+        level.setBlockAndUpdate(pos, updatedState);
     }
 
     @Nullable
-    protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(World world, BlockEntityType<A> givenType) {
-        return world.isClient ? null : BlockWithEntity.validateTicker(givenType, BwtBlockEntities.turntableBlockEntity, TurntableBlockEntity::tick);
+    protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
+        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.turntableBlockEntity, TurntableBlockEntity::tick);
     }
 
     @Nullable
     @Override
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
-        return TurntableBlock.validateTicker(world, type);
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
+        return TurntableBlock.validateTicker(level, type);
     }
 }

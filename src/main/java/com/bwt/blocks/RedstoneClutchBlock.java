@@ -1,52 +1,52 @@
 package com.bwt.blocks;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.BooleanProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class RedstoneClutchBlock extends GearBoxBlock {
-    public static final BooleanProperty POWERED = Properties.POWERED;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
 
-    public RedstoneClutchBlock(Settings settings) {
+    public RedstoneClutchBlock(Properties settings) {
         super(settings);
-        setDefaultState(getDefaultState().with(POWERED, false));
+        registerDefaultState(defaultBlockState().setValue(POWERED, false));
     }
 
     @Override
-    public void appendProperties(StateManager.Builder<Block, BlockState> builder) {
-        super.appendProperties(builder);
+    public void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(POWERED);
     }
 
     @Override
     public boolean isMechPowered(BlockState blockState) {
-        return super.isMechPowered(blockState) && !blockState.get(POWERED);
+        return super.isMechPowered(blockState) && !blockState.getValue(POWERED);
     }
 
     @Override
-    public BlockState getPowerStates(BlockState state, World world, BlockPos pos) {
-        return super.getPowerStates(state, world, pos).with(POWERED, world.isReceivingRedstonePower(pos));
+    public BlockState getPowerStates(BlockState state, Level level, BlockPos pos) {
+        return super.getPowerStates(state, level, pos).setValue(POWERED, level.hasNeighborSignal(pos));
     }
 
     @Override
-    public void schedulePowerUpdate(BlockState state, World world, BlockPos pos) {
+    public void schedulePowerUpdate(BlockState state, Level level, BlockPos pos) {
         // Compute new state but don't update yet
-        BlockState newState = getPowerStates(state, world, pos);
-        boolean isRedstonePowered = newState.get(POWERED);
-        boolean wasRedstonePowered = state.get(POWERED);
+        BlockState newState = getPowerStates(state, level, pos);
+        boolean isRedstonePowered = newState.getValue(POWERED);
+        boolean wasRedstonePowered = state.getValue(POWERED);
         boolean isReceivingMechPower = super.isMechPowered(newState);
         boolean wasReceivingMechPower = super.isMechPowered(state);
         // If block just turned on
         if ((!isRedstonePowered && wasRedstonePowered) || (isReceivingMechPower && !wasReceivingMechPower)) {
-            world.scheduleBlockTick(pos, this, turnOnTickRate);
+            level.scheduleTick(pos, this, turnOnTickRate);
         }
         // If block just turned off
         else if ((isRedstonePowered && !wasRedstonePowered) || (!isReceivingMechPower && wasReceivingMechPower)) {
-            world.scheduleBlockTick(pos, this, turnOffTickRate);
+            level.scheduleTick(pos, this, turnOffTickRate);
         }
     }
 }
