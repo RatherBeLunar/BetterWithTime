@@ -35,7 +35,6 @@ public class SoulUrnItem extends Item implements ProjectileItem {
             SoulUrnProjectileEntity soulUrnProjectileEntity = new SoulUrnProjectileEntity(level, user);
             soulUrnProjectileEntity.setItem(itemStack);
             soulUrnProjectileEntity.shootFromRotation(user, user.getXRot(), user.getYRot(), 0.0F, 1.5F, 1.0F);
-            soulUrnProjectileEntity.moveTo(user.position(), user.getYRot(), 0.0F);
             level.addFreshEntity(soulUrnProjectileEntity);
         }
 
