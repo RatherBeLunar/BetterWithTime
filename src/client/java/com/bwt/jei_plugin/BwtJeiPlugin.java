@@ -52,8 +52,6 @@ public class BwtJeiPlugin implements IModPlugin {
     @Nullable
     private IRecipeCategory<RecipeHolder<KilnRecipe>> kilnCategory;
     @Nullable
-    private SoulForgeCategory soulForgeCategory;
-    @Nullable
     private IRecipeCategory<RecipeHolder<HopperFilterRecipe>> hopperSoulCategory;
     @Nullable
     private IRecipeCategory<RecipeHolder<HopperFilterRecipe>> hopperFilteringCategory;
@@ -61,18 +59,14 @@ public class BwtJeiPlugin implements IModPlugin {
     private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_ID = Comparator.comparing(RecipeHolder::id);
     private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_GROUP = Comparator.comparing(holder -> holder.value().getGroup());
     private static final Comparator<RecipeHolder<? extends CraftingRecipe>> BY_CATEGORY = Comparator.comparing(holder -> holder.value().category());
-    private static final Comparator<RecipeHolder<? extends CraftingRecipe>> BY_CATEGORY_REDSTONE_FIRST = (o1, o2) -> {
-        if (o1.value().category().equals(CraftingBookCategory.REDSTONE) && !o2.value().category().equals(CraftingBookCategory.REDSTONE)) {
-            return -1;
+    private static final List<CraftingBookCategory> CUSTOM_CATEGORY_ORDER = List.of(CraftingBookCategory.REDSTONE, CraftingBookCategory.EQUIPMENT, CraftingBookCategory.BUILDING, CraftingBookCategory.MISC);
+    private static final Comparator<RecipeHolder<? extends CraftingRecipe>> BY_CATEGORY_REDSTONE_FIRST = Comparator.comparing(o -> {
+        int index = CUSTOM_CATEGORY_ORDER.indexOf(o.value().category());
+        if (index == -1) {
+            index = 100;
         }
-        if (o1.value().category().equals(CraftingBookCategory.EQUIPMENT) && !o2.value().category().equals(CraftingBookCategory.EQUIPMENT)) {
-            return -1;
-        }
-        if (o1.value().category().equals(CraftingBookCategory.BUILDING) && !o2.value().category().equals(CraftingBookCategory.BUILDING)) {
-            return -1;
-        }
-        return BY_ID.compare(o1, o2);
-    };
+        return index;
+    });
 
     @Override
     public @NotNull ResourceLocation getPluginUid() {

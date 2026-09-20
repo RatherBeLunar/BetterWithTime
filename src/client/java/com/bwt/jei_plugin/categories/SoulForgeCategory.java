@@ -10,6 +10,9 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import mezz.jei.api.gui.placement.HorizontalAlignment;
+import mezz.jei.api.gui.placement.VerticalAlignment;
+import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
@@ -28,17 +31,14 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
     public static final RecipeType<SoulForgeRecipe> TYPE =
             RecipeType.create(Id.MOD_ID, "soul_forge", SoulForgeRecipe.class);
 
-    protected ICraftingGridHelper craftingGridHelper;
-
     public SoulForgeCategory(IGuiHelper guiHelper) {
         super(
-                116,
+                134,
                 72,
                 Component.translatable("emi.category.bwt.soul_forge"),
                 guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BwtBlocks.soulForgeBlock)),
                 null
         );
-        craftingGridHelper = guiHelper.createCraftingGridHelper();
     }
 
     @Override
@@ -53,20 +53,30 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, SoulForgeRecipe recipe, IFocusGroup focusGroup) {
-        int width = getWidth(recipe);
-        int height = getHeight(recipe);
+        int width = getRecipeGridWidth(recipe);
+        int height = getRecipeGridHeight(recipe);
         createAndSetIngredients(builder, recipe.getIngredients(), width, height);
-        craftingGridHelper.createAndSetOutputs(builder, List.of(recipe.getResultItem(getRegistryAccess())));
+        List<ItemStack> outputs = List.of(recipe.getResultItem(getRegistryAccess()));
+        IRecipeSlotBuilder outputSlot = builder.addOutputSlot(113, 28)
+                .setOutputSlotBackground();
+        outputSlot.addIngredients(VanillaTypes.ITEM_STACK, outputs);
     }
 
-    public int getWidth(SoulForgeRecipe recipe) {
+    @Override
+    public void createRecipeExtras(IRecipeExtrasBuilder builder, SoulForgeRecipe recipe, IFocusGroup focuses) {
+        super.createRecipeExtras(builder, recipe, focuses);
+        builder.addRecipeArrowWidget()
+                .setPosition(79, 0, getWidth() - 61, getHeight(), HorizontalAlignment.LEFT, VerticalAlignment.CENTER);
+    }
+
+    public int getRecipeGridWidth(SoulForgeRecipe recipe) {
         if (recipe instanceof SoulForgeShapedRecipe shapedRecipe) {
             return shapedRecipe.getWidth();
         }
         return 0;
     }
 
-    public int getHeight(SoulForgeRecipe recipe) {
+    public int getRecipeGridHeight(SoulForgeRecipe recipe) {
         if (recipe instanceof SoulForgeShapedRecipe shapedRecipe) {
             return shapedRecipe.getHeight();
         }
