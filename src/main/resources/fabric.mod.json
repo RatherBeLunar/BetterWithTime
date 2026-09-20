@@ -41,7 +41,10 @@
 			"com.bwt.BetterWithTimeDataGenerator"
 		],
 		"emi": [
-          "com.bwt.emi.BwtEmiPlugin"
+          	"com.bwt.emi.BwtEmiPlugin"
+		],
+		"jei_mod_plugin": [
+			"com.bwt.jei_plugin.BwtJeiPlugin"
 		]
 	},
 	"accessWidener" : "bwt.accesswidener",
