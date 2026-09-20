@@ -36,7 +36,8 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
                 134,
                 72,
                 Component.translatable("emi.category.bwt.soul_forge"),
-                guiHelper.createDrawableIngredient(VanillaTypes.ITEM_STACK, new ItemStack(BwtBlocks.soulForgeBlock)),
+                guiHelper,
+                BwtBlocks.soulForgeBlock,
                 null
         );
     }
