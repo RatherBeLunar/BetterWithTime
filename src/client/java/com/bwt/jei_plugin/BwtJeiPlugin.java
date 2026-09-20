@@ -1,6 +1,7 @@
 package com.bwt.jei_plugin;
 
 import com.bwt.jei_plugin.categories.MillStoneCategory;
+import com.bwt.jei_plugin.categories.SawCategory;
 import com.bwt.jei_plugin.categories.SoulForgeCategory;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.cooking_pots.CauldronRecipe;
@@ -9,7 +10,6 @@ import com.bwt.recipes.cooking_pots.StokedCauldronRecipe;
 import com.bwt.recipes.cooking_pots.StokedCrucibleRecipe;
 import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
 import com.bwt.recipes.kiln.KilnRecipe;
-import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import com.bwt.recipes.saw.SawRecipe;
 import com.bwt.recipes.turntable.TurntableRecipe;
 import com.bwt.utils.Id;
@@ -19,6 +19,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IModInfoRegistration;
+import mezz.jei.api.registration.IModIngredientRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
@@ -83,7 +84,8 @@ public class BwtJeiPlugin implements IModPlugin {
         IGuiHelper guiHelper = jeiHelpers.getGuiHelper();
         registration.addRecipeCategories(
                 new SoulForgeCategory(guiHelper),
-                new MillStoneCategory(guiHelper)
+                new MillStoneCategory(guiHelper),
+                new SawCategory(guiHelper)
         );
     }
 
@@ -91,6 +93,7 @@ public class BwtJeiPlugin implements IModPlugin {
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(SoulForgeCategory.TYPE, sortRecipes(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, BY_CATEGORY_REDSTONE_FIRST.thenComparing(BY_ID)));
         registration.addRecipes(MillStoneCategory.TYPE, sortRecipes(BwtRecipes.MILL_STONE_RECIPE_TYPE, BY_ID));
+        registration.addRecipes(SawCategory.TYPE, sortRecipes(BwtRecipes.SAW_RECIPE_TYPE, BY_ID));
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> List<T> sortRecipes(RecipeType<T> type, Comparator<? super RecipeHolder<T>> comparator) {

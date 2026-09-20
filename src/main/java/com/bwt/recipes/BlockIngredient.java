@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -12,11 +13,14 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optional<Block> optionalBlock) implements CustomIngredient {
     public static final Serializer SERIALIZER = new Serializer();
@@ -42,9 +46,20 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
                 || optionalBlock.filter(block::equals).isPresent();
     }
 
+    public List<Block> getMatchingBlocks() {
+        return Stream.concat(
+                this.optionalBlockTagKey
+                        .map(BuiltInRegistries.BLOCK::getTagOrEmpty)
+                        .map(blocks -> StreamSupport.stream(blocks.spliterator(), false))
+                        .orElse(Stream.of())
+                        .map(Holder::value),
+                this.optionalBlock.stream()
+        ).toList();
+    }
+
     @Override
     public List<ItemStack> getMatchingStacks() {
-        return List.of();
+        return getMatchingBlocks().stream().map(Block::asItem).map(Item::getDefaultInstance).toList();
     }
 
     @Override

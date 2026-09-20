@@ -5,10 +5,8 @@ import com.bwt.utils.Id;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
-import mezz.jei.api.gui.drawable.IDrawableBuilder;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import mezz.jei.api.gui.widgets.IDrawableWidget;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 
@@ -31,7 +29,7 @@ public abstract class BwtRecipeCategoryBase<T> implements IRecipeCategory<T> {
 	private final IDrawableStatic background;
 	private final IDrawable icon;
 	private final Component localizedName;
-	private final IGuiHelper guiHelper;
+	protected final IGuiHelper guiHelper;
 	private final int width;
 	private final int height;
 
@@ -50,7 +48,7 @@ public abstract class BwtRecipeCategoryBase<T> implements IRecipeCategory<T> {
 		FULL_GEAR = guiHelper.createDrawable(WIDGETS, 14, 0, 14, 14);
 	}
 
-	public IDrawable getAnimatedRecipeGearWidget(int animationTime) {
+	public IDrawable getAnimatedGearDrawable(int animationTime) {
 		IDrawableAnimated animatedFill = guiHelper.createAnimatedDrawable(FULL_GEAR, animationTime, IDrawableAnimated.StartDirection.BOTTOM, false);
 		return new DrawableCombined(EMPTY_GEAR, animatedFill);
 	}

@@ -1,14 +1,12 @@
 package com.bwt.jei_plugin.categories;
 
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
 import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import com.bwt.utils.Id;
 
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
@@ -70,7 +68,7 @@ public class MillStoneCategory extends BwtRecipeCategoryBase<MillStoneRecipe> {
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, MillStoneRecipe recipe, IFocusGroup focuses) {
         super.createRecipeExtras(builder, recipe, focuses);
-        builder.addDrawableWidget(getAnimatedRecipeGearWidget(40))
+        builder.addDrawableWidget(getAnimatedGearDrawable(40))
                 .setPosition(60, 0, getWidth() - 61, getHeight(), HorizontalAlignment.LEFT, VerticalAlignment.TOP);
         builder.addRecipeArrowWidget()
                 .setPosition(62, 0, getWidth() - 61, getHeight(), HorizontalAlignment.LEFT, VerticalAlignment.BOTTOM);
