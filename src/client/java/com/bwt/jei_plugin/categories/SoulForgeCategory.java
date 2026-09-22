@@ -48,11 +48,6 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
     }
 
     @Override
-    public void draw(SoulForgeRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX, double mouseY) {
-        super.draw(recipe, slotsView, gui, mouseX, mouseY);
-    }
-
-    @Override
     public void setRecipe(IRecipeLayoutBuilder builder, SoulForgeRecipe recipe, IFocusGroup focusGroup) {
         int width = getRecipeGridWidth(recipe);
         int height = getRecipeGridHeight(recipe);

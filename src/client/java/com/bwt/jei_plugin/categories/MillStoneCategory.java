@@ -50,11 +50,6 @@ public class MillStoneCategory extends BwtRecipeCategoryBase<MillStoneRecipe> {
     }
 
     @Override
-    public void draw(MillStoneRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX, double mouseY) {
-        super.draw(recipe, slotsView, gui, mouseX, mouseY);
-    }
-
-    @Override
     public void setRecipe(IRecipeLayoutBuilder builder, MillStoneRecipe recipe, IFocusGroup focusGroup) {
         int width = getRecipeGridWidth(recipe);
         int height = 1;

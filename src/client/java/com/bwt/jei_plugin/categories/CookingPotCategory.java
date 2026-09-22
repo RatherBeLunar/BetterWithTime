@@ -40,11 +40,6 @@ public abstract class CookingPotCategory<T extends AbstractCookingPotRecipe> ext
     }
 
     @Override
-    public void draw(T recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX, double mouseY) {
-        super.draw(recipe, slotsView, gui, mouseX, mouseY);
-    }
-
-    @Override
     public void setRecipe(IRecipeLayoutBuilder builder, T recipe, IFocusGroup focusGroup) {
         Iterator<IngredientWithCount> ingredientIterator = recipe.getIngredientsWithCount().iterator();
         Iterator<ItemStack> outputIterator = recipe.getResults().iterator();

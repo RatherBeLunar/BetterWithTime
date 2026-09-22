@@ -48,11 +48,6 @@ public class SawCategory extends BwtRecipeCategoryBase<SawRecipe> {
     }
 
     @Override
-    public void draw(SawRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics gui, double mouseX, double mouseY) {
-        super.draw(recipe, slotsView, gui, mouseX, mouseY);
-    }
-
-    @Override
     public void setRecipe(IRecipeLayoutBuilder builder, SawRecipe recipe, IFocusGroup focusGroup) {
         IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 6);
         inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks());

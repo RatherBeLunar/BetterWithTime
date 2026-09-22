@@ -22,14 +22,15 @@ import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @JeiPlugin
 public class BwtJeiPlugin implements IModPlugin {
-    @Nullable
-    private IRecipeCategory<RecipeHolder<TurntableRecipe>> turntableCategory;
     @Nullable
     private IRecipeCategory<RecipeHolder<KilnRecipe>> kilnCategory;
     @Nullable
@@ -72,7 +73,8 @@ public class BwtJeiPlugin implements IModPlugin {
                 new StokedCauldronCategory(guiHelper),
                 new CrucibleCategory(guiHelper),
                 new StokedCrucibleCategory(guiHelper),
-                new StokedCrucibleReclaimCategory(guiHelper)
+                new StokedCrucibleReclaimCategory(guiHelper),
+                new TurntableCategory(guiHelper)
         );
     }
 
@@ -96,6 +98,7 @@ public class BwtJeiPlugin implements IModPlugin {
                         .filter(stokedCrucibleRecipe -> stokedCrucibleRecipe.getCategory().equals(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM))
                         .toList()
         );
+        registration.addRecipes(TurntableCategory.TYPE, getTurnTableRecipesSorted());
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<RecipeHolder<T>> streamRecipes(RecipeType<T> type) {
@@ -108,5 +111,51 @@ public class BwtJeiPlugin implements IModPlugin {
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<T> sortRecipes(RecipeType<T> type, Comparator<? super RecipeHolder<T>> comparator) {
         return streamRecipes(type).sorted(comparator).map(RecipeHolder::value);
+    }
+
+    private static List<TurntableRecipe> getTurnTableRecipesSorted() {
+        ArrayList<TurntableRecipe> unsorted = streamRecipes(BwtRecipes.TURNTABLE_RECIPE_TYPE).map(RecipeHolder::value).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<TurntableRecipe> sorted = new ArrayList<>();
+        while (!unsorted.isEmpty()) {
+            TurntableRecipe chainOrigin = unsorted.removeFirst();
+            sorted.add(chainOrigin);
+            addPreviousInChain(unsorted, sorted, chainOrigin);
+            addNextInChain(unsorted, sorted, chainOrigin);
+        }
+        return sorted;
+    }
+
+    private static void addNextInChain(ArrayList<TurntableRecipe> unsorted, ArrayList<TurntableRecipe> sorted, TurntableRecipe chainOrigin) {
+        Optional<TurntableRecipe> optionalNextInChain = unsorted.stream().filter(r -> r.getIngredient().test(chainOrigin.getOutput())).findFirst();
+        int index = sorted.indexOf(chainOrigin);
+        if (optionalNextInChain.isEmpty()) {
+            return;
+        }
+        TurntableRecipe nextInChain = optionalNextInChain.get();
+        unsorted.remove(nextInChain);
+        if (index > -1) {
+            sorted.add(index + 1, nextInChain);
+        }
+        else {
+            sorted.add(nextInChain);
+        }
+        addNextInChain(unsorted, sorted, nextInChain);
+    }
+
+    private static void addPreviousInChain(ArrayList<TurntableRecipe> unsorted, ArrayList<TurntableRecipe> sorted, TurntableRecipe chainOrigin) {
+        Optional<TurntableRecipe> optionalPreviousInChain = unsorted.stream().filter(r -> chainOrigin.getIngredient().test(r.getOutput())).findFirst();
+        int index = sorted.indexOf(chainOrigin);
+        if (optionalPreviousInChain.isEmpty()) {
+            return;
+        }
+        TurntableRecipe previousInChain = optionalPreviousInChain.get();
+        unsorted.remove(previousInChain);
+        if (index > -1) {
+            sorted.add(index, previousInChain);
+        }
+        else {
+            sorted.add(previousInChain);
+        }
+        addPreviousInChain(unsorted, sorted, previousInChain);
     }
 }
