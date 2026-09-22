@@ -34,8 +34,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -63,8 +65,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     public final InventoryStorage inventoryWrapper = InventoryStorage.of(inventory, null);
 
 
-    public final AbstractCookingPotRecipeType unstokedRecipeType;
-    public final AbstractCookingPotRecipeType stokedRecipeType;
+    public final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> unstokedRecipeType;
+    public final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> stokedRecipeType;
 
     protected final ContainerData propertyDelegate = new ContainerData() {
         @Override
@@ -90,8 +92,8 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     public AbstractCookingPotBlockEntity(
             BlockEntityType<? extends AbstractCookingPotBlockEntity> blockEntityType,
-            AbstractCookingPotRecipeType unstokedRecipeType,
-            AbstractCookingPotRecipeType stokedRecipeType,
+            AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> unstokedRecipeType,
+            AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> stokedRecipeType,
             BlockPos pos,
             BlockState state
     ) {
@@ -172,10 +174,17 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         }
 
         RecipeManager recipeManager = level.getRecipeManager();
-        AbstractCookingPotRecipeType recipeTypeToGet = fireDataCluster.isStoked() ? stokedRecipeType : unstokedRecipeType;
-
         CookingPotRecipeInput recipeInput = new CookingPotRecipeInput(inventory.getItems());
-        List<RecipeHolder<AbstractCookingPotRecipe>> matches = recipeManager.getRecipesFor(recipeTypeToGet, recipeInput, level);
+
+        if (fireDataCluster.isStoked()) {
+            cookMatches(fireDataCluster, recipeManager.getRecipesFor(stokedRecipeType, recipeInput, level));
+        }
+        else {
+            cookMatches(fireDataCluster, recipeManager.getRecipesFor(unstokedRecipeType, recipeInput, level));
+        }
+    }
+
+    protected <R extends AbstractCookingPotRecipe> void cookMatches(FireDataCluster fireDataCluster, List<RecipeHolder<R>> matches) {
         if (matches.isEmpty()) {
             if (cookProgressTime != 0) {
                 cookProgressTime = 0;
@@ -235,7 +244,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
     private static void explode(Level level, BlockPos pos, int stokedExplosivesCount) {
         level.destroyBlock(pos, true);
-        float explosionStrength = Math.min(Math.max(stokedExplosivesCount / 6.4f, 2f), 10f);
+        float explosionStrength = Math.clamp(stokedExplosivesCount / 6.4f, 2f, 10f);
         level.explode(null, pos.getX(), pos.getY(), pos.getZ(), explosionStrength, true, Level.ExplosionInteraction.BLOCK);
     }
 
@@ -342,15 +351,15 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     }
 
     // Pick up items from above like a hopper
-    public static void onEntityCollided(Entity entity, AbstractCookingPotBlockEntity blockEntity) {
+    public void onEntityCollided(Entity entity) {
         ItemStack itemStack;
         if (entity instanceof ItemEntity itemEntity && !(itemStack = itemEntity.getItem()).isEmpty()) {
             int count = itemStack.getCount();
             try (Transaction transaction = Transaction.openOuter()) {
-                long inserted = StorageUtil.insertStacking(blockEntity.inventoryWrapper.getSlots(), ItemVariant.of(itemStack), count, transaction);
+                long inserted = StorageUtil.insertStacking(this.inventoryWrapper.getSlots(), ItemVariant.of(itemStack), count, transaction);
                 itemEntity.setItem(itemEntity.getItem().copyWithCount((int) (count - inserted)));
                 transaction.commit();
-                blockEntity.inventory.setChanged();
+                this.inventory.setChanged();
             }
         }
     }

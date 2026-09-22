@@ -36,13 +36,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecipeInput> {
-    protected final AbstractCookingPotRecipeType type;
+    protected final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type;
     protected final String group;
     protected final CookingPotRecipeCategory category;
     final NonNullList<IngredientWithCount> ingredients;
     protected final NonNullList<ItemStack> results;
 
-    public AbstractCookingPotRecipe(AbstractCookingPotRecipeType type, String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
+    public AbstractCookingPotRecipe(AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type, String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
         this.type = type;
         this.group = group;
         this.category = category;

@@ -1,4 +1,4 @@
 package com.bwt.recipes.cooking_pots;
 
-public class CrucibleRecipeType extends AbstractCookingPotRecipeType {
+public class CrucibleRecipeType implements AbstractCookingPotRecipeType<CrucibleRecipe> {
 }

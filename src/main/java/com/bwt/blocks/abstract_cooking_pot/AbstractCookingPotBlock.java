@@ -152,7 +152,7 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
         }
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof AbstractCookingPotBlockEntity cookingPotBlockEntity) {
-            AbstractCookingPotBlockEntity.onEntityCollided(entity, cookingPotBlockEntity);
+            cookingPotBlockEntity.onEntityCollided(entity);
         }
     }
 
