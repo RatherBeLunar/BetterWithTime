@@ -4,7 +4,6 @@ import com.bwt.jei_plugin.categories.*;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.cooking_pots.*;
 import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
-import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.recipes.turntable.TurntableRecipe;
 import com.bwt.utils.Id;
 import mezz.jei.api.IModPlugin;
@@ -31,8 +30,6 @@ import java.util.stream.Stream;
 
 @JeiPlugin
 public class BwtJeiPlugin implements IModPlugin {
-    @Nullable
-    private IRecipeCategory<RecipeHolder<KilnRecipe>> kilnCategory;
     @Nullable
     private IRecipeCategory<RecipeHolder<HopperFilterRecipe>> hopperSoulCategory;
     @Nullable
@@ -61,6 +58,33 @@ public class BwtJeiPlugin implements IModPlugin {
         modAliasRegistration.addModAliases(Id.MOD_ID, "betterwithtime", "better with time");
     }
 
+//    @Override
+//    public void registerIngredients(IModIngredientRegistration registration) {
+//        IModPlugin.super.registerIngredients(registration);
+//        BlockRenderer blockRenderer = new BlockRenderer();
+//        BlockIngredientHelper blockHelper = new BlockIngredientHelper();
+//        ClientLevel level = Minecraft.getInstance().level;
+//        List<Block> blocks;
+//        if (level == null) {
+//            blocks = List.of();
+//        }
+//        else {
+//            blocks = level
+//                    .registryAccess()
+//                    .lookupOrThrow(Registries.BLOCK)
+//                    .listElements()
+//                    .map(Holder.Reference::value)
+//                    .toList();
+//        }
+//        registration.register(
+//                BwtIngredientTypes.BLOCK_INGREDIENT,
+//                blocks,
+//                blockHelper,
+//                blockRenderer,
+//                Block.CODEC.codec()
+//        );
+//    }
+
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IJeiHelpers jeiHelpers = registration.getJeiHelpers();
@@ -74,7 +98,8 @@ public class BwtJeiPlugin implements IModPlugin {
                 new CrucibleCategory(guiHelper),
                 new StokedCrucibleCategory(guiHelper),
                 new StokedCrucibleReclaimCategory(guiHelper),
-                new TurntableCategory(guiHelper)
+                new TurntableCategory(guiHelper),
+                new KilnCategory(guiHelper)
         );
     }
 
@@ -99,6 +124,7 @@ public class BwtJeiPlugin implements IModPlugin {
                         .toList()
         );
         registration.addRecipes(TurntableCategory.TYPE, getTurnTableRecipesSorted());
+        registration.addRecipes(KilnCategory.TYPE, sortRecipes(BwtRecipes.KILN_RECIPE_TYPE, BY_GROUP.thenComparing(BY_ID)).toList());
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<RecipeHolder<T>> streamRecipes(RecipeType<T> type) {
