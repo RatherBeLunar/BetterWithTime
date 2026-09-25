@@ -7,8 +7,6 @@ import com.bwt.utils.Id;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -16,7 +14,6 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeType;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -28,8 +25,6 @@ public class SawCategory extends BwtRecipeCategoryBase<SawRecipe> {
     public static final RecipeType<SawRecipe> TYPE =
             RecipeType.create(Id.MOD_ID, "saw", SawRecipe.class);
 
-    protected ICraftingGridHelper craftingGridHelper;
-
     public SawCategory(IGuiHelper guiHelper) {
         super(
                 140,
@@ -39,7 +34,6 @@ public class SawCategory extends BwtRecipeCategoryBase<SawRecipe> {
                 BwtBlocks.sawBlock,
                 null
         );
-        craftingGridHelper = guiHelper.createCraftingGridHelper();
     }
 
     @Override

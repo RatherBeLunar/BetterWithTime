@@ -7,7 +7,6 @@ import com.bwt.utils.Id;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -26,8 +25,6 @@ public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
     public static final RecipeType<TurntableRecipe> TYPE =
             RecipeType.create(Id.MOD_ID, "turntable", TurntableRecipe.class);
 
-    protected ICraftingGridHelper craftingGridHelper;
-
     public TurntableCategory(IGuiHelper guiHelper) {
         super(
                 140,
@@ -37,7 +34,6 @@ public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
                 BwtBlocks.turntableBlock,
                 null
         );
-        craftingGridHelper = guiHelper.createCraftingGridHelper();
     }
 
     @Override

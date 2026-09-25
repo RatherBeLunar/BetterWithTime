@@ -1,7 +1,6 @@
 package com.bwt.jei_plugin.categories;
 
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.recipes.cooking_pots.CauldronRecipe;
 import com.bwt.recipes.cooking_pots.CrucibleRecipe;
 import com.bwt.utils.Id;
 import mezz.jei.api.helpers.IGuiHelper;

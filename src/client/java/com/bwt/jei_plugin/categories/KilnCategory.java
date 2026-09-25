@@ -1,6 +1,5 @@
 package com.bwt.jei_plugin.categories;
 
-import com.bwt.blocks.BwtBlocks;
 import com.bwt.jei_plugin.DrawableCombined;
 import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.utils.Id;
@@ -11,7 +10,6 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.gui.ingredient.ICraftingGridHelper;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -32,8 +30,6 @@ public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
     public static final RecipeType<KilnRecipe> TYPE =
             RecipeType.create(Id.MOD_ID, "kiln", KilnRecipe.class);
 
-    protected ICraftingGridHelper craftingGridHelper;
-
     public KilnCategory(IGuiHelper guiHelper) {
         super(
                 140,
@@ -43,7 +39,6 @@ public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
                 Blocks.BRICKS,
                 null
         );
-        craftingGridHelper = guiHelper.createCraftingGridHelper();
     }
 
     @Override
