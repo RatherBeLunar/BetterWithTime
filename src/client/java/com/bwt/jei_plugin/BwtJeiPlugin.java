@@ -10,7 +10,6 @@ import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import mezz.jei.api.registration.IModInfoRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -19,7 +18,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -30,11 +28,6 @@ import java.util.stream.Stream;
 
 @JeiPlugin
 public class BwtJeiPlugin implements IModPlugin {
-    @Nullable
-    private IRecipeCategory<RecipeHolder<HopperFilterRecipe>> hopperSoulCategory;
-    @Nullable
-    private IRecipeCategory<RecipeHolder<HopperFilterRecipe>> hopperFilteringCategory;
-
     private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_ID = Comparator.comparing(RecipeHolder::id);
     private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_GROUP = Comparator.comparing(holder -> holder.value().getGroup());
     private static final Comparator<RecipeHolder<? extends CraftingRecipe>> BY_CATEGORY = Comparator.comparing(holder -> holder.value().category());
@@ -58,33 +51,6 @@ public class BwtJeiPlugin implements IModPlugin {
         modAliasRegistration.addModAliases(Id.MOD_ID, "betterwithtime", "better with time");
     }
 
-//    @Override
-//    public void registerIngredients(IModIngredientRegistration registration) {
-//        IModPlugin.super.registerIngredients(registration);
-//        BlockRenderer blockRenderer = new BlockRenderer();
-//        BlockIngredientHelper blockHelper = new BlockIngredientHelper();
-//        ClientLevel level = Minecraft.getInstance().level;
-//        List<Block> blocks;
-//        if (level == null) {
-//            blocks = List.of();
-//        }
-//        else {
-//            blocks = level
-//                    .registryAccess()
-//                    .lookupOrThrow(Registries.BLOCK)
-//                    .listElements()
-//                    .map(Holder.Reference::value)
-//                    .toList();
-//        }
-//        registration.register(
-//                BwtIngredientTypes.BLOCK_INGREDIENT,
-//                blocks,
-//                blockHelper,
-//                blockRenderer,
-//                Block.CODEC.codec()
-//        );
-//    }
-
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
         IJeiHelpers jeiHelpers = registration.getJeiHelpers();
@@ -99,7 +65,9 @@ public class BwtJeiPlugin implements IModPlugin {
                 new StokedCrucibleCategory(guiHelper),
                 new StokedCrucibleReclaimCategory(guiHelper),
                 new TurntableCategory(guiHelper),
-                new KilnCategory(guiHelper)
+                new KilnCategory(guiHelper),
+                new HopperFilteringCategory(guiHelper),
+                new HopperSoulBottlingCategory(guiHelper)
         );
     }
 
@@ -125,6 +93,10 @@ public class BwtJeiPlugin implements IModPlugin {
         );
         registration.addRecipes(TurntableCategory.TYPE, getTurnTableRecipesSorted());
         registration.addRecipes(KilnCategory.TYPE, sortRecipes(BwtRecipes.KILN_RECIPE_TYPE, BY_GROUP.thenComparing(BY_ID)).toList());
+        List<HopperFilterRecipe> hopperFilterRecipes = sortRecipes(BwtRecipes.HOPPER_FILTER_RECIPE_TYPE, BY_GROUP.thenComparing(BY_ID)).toList();
+        HopperSoulBottlingCategory.processFilterRecipes(hopperFilterRecipes);
+        registration.addRecipes(HopperFilteringCategory.TYPE, hopperFilterRecipes);
+        registration.addRecipes(HopperSoulBottlingCategory.TYPE, sortRecipes(BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE, BY_GROUP.thenComparing(BY_ID)).toList());
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<RecipeHolder<T>> streamRecipes(RecipeType<T> type) {
