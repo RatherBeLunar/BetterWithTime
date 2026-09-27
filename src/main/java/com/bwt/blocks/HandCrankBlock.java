@@ -118,7 +118,7 @@ public class HandCrankBlock extends Block {
         }
         if (clickTimer >= 7) {
             level.setBlockAndUpdate(pos, state.setValue(CLICK_TIMER, 0));
-            playClick(level, pos);
+            playEndingClick(level, pos);
             return;
         }
         playClick(level, pos);
@@ -156,6 +156,10 @@ public class HandCrankBlock extends Block {
 
     public void playClick(Level level, BlockPos pos) {
         level.playSound(null, pos, BwtSoundEvents.HAND_CRANK_CLICK, SoundSource.BLOCKS, 1.0f,  2.0f);
+    }
+
+    public void playEndingClick(Level level, BlockPos pos) {
+        level.playSound(null, pos, BwtSoundEvents.HAND_CRANK_CLICK, SoundSource.BLOCKS, 1.0f,  0.75f);
     }
 
     public void breakWithDrop(Level level, BlockPos pos) {

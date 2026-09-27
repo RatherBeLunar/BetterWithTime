@@ -14,6 +14,7 @@ public class BwtSoundEvents implements ModInitializer {
     public static final SoundEvent MECH_CREAK = register("block.mech.creak");
     public static final SoundEvent ANCHOR_RETRACT = register("block.anchor.retract");
     public static final SoundEvent BELLOWS_COMPRESS = register("block.bellows.compress");
+    public static final SoundEvent BELLOWS_DECOMPRESS = register("block.bellows.decompress");
     public static final SoundEvent COMPANION_CUBE_WHINE = register("block.companion_cube.whine");
     public static final SoundEvent COMPANION_CUBE_DEATH = register("block.companion_cube.death");
     public static final SoundEvent GEAR_BOX_ACTIVATE = register("block.gear_box.activate");
@@ -24,8 +25,13 @@ public class BwtSoundEvents implements ModInitializer {
     public static final SoundEvent BLOOD_WOOD_MOAN = register("block.blood_wood_log.moan");
     public static final SoundEvent SOUL_CONVERSION = register("block.generic.soul_conversion");
     public static final SoundEvent MILL_STONE_GRIND = register("block.mill_stone.grind");
+    public static final SoundEvent MILL_STONE_IDLE = register("block.mill_stone.idle");
+    public static final SoundEvent MILL_STONE_INVALID = register("block.mill_stone.invalid");
     public static final SoundEvent TURNTABLE_SETTING_CLICK = register("block.turntable.setting_click");
     public static final SoundEvent TURNTABLE_TURNING_CLICK = register("block.turntable.turning_click");
+    public static final SoundEvent SAW_INITIALIZE = register("block.saw.init");
+    public static final SoundEvent SAW_CUT = register("block.saw.cut");
+    public static final SoundEvent SAW_DEPOWERED = register("block.saw.depowered");
     public static final SoundEvent WOLF_DUNG_PRODUCTION = register("entity.wolf.dung.production");
     public static final SoundEvent WOLF_DUNG_EFFORT = register("entity.wolf.dung.effort");
     public static final SoundEvent DYNAMITE_THROW = register("entity.dynamite.throw");

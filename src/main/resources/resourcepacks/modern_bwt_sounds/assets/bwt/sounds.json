@@ -2,14 +2,20 @@
   "block.mech.bang": {
     "subtitle": "bwt.subtitles.block.mech.bang",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name":"minecart/base", "pitch":1.8}
+    ],
+    "replace": "true"
   },
   "block.mech.explode": {
     "subtitle": "bwt.subtitles.block.mech.explode",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name":"mob/zombie/woodbreak", "pitch":0.5},
+      {"name":"mob/zombie/woodbreak", "pitch":0.55},
+      {"name":"mob/zombie/woodbreak", "pitch":0.6},
+      {"name":"mob/zombie/woodbreak", "pitch":0.65},
+      {"name":"mob/zombie/woodbreak", "pitch":0.7}
+    ],
+    "replace": "true"
   },
   "block.mech.creak": {
     "subtitle": "bwt.subtitles.block.mech.creak",
@@ -26,14 +32,17 @@
   "block.bellows.compress": {
     "subtitle": "bwt.subtitles.block.bellows.compress",
     "sounds": [
-      "block/chest/close3"
-    ]
+      {"name":"mob/breeze/shoot", "pitch":3}
+    ],
+    "replace": "true"
   },
   "block.bellows.decompress": {
     "subtitle": "bwt.subtitles.block.bellows.decompress",
     "sounds": [
-      "block/chest/close3"
-    ]
+      {"name":"mob/breeze/inhale1", "pitch":4},
+      {"name":"mob/breeze/inhale2", "pitch":4}
+    ],
+    "replace": "true"
   },
   "block.detector.click": {
     "subtitle": "bwt.subtitles.block.detector.click",
@@ -83,47 +92,82 @@
       "mob/wolf/death"
     ]
   },
-  "block.companion_cube.whine": {
-    "subtitle": "bwt.subtitles.block.companion_cube.whine",
-    "sounds": [
-      "mob/wolf/whine"
-    ]
-  },
   "block.generic.soul_conversion": {
     "subtitle": "bwt.subtitles.block.generic.soul_conversion",
     "sounds": [
-      "mob/ghast/moan1",
-      "mob/ghast/moan2",
-      "mob/ghast/moan3",
-      "mob/ghast/moan4",
-      "mob/ghast/moan5",
-      "mob/ghast/moan6",
-      "mob/ghast/moan7"
-    ]
+      {"name": "enchant/soulspeed/soulspeed1", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed2", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed3", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed4", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed5", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed6", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed7", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed8", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed9", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed10", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed11", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed12", "pitch": 0.66},
+      {"name": "enchant/soulspeed/soulspeed13", "pitch": 0.66}
+    ],
+    "replace": "true"
   },
   "block.mill_stone.grind": {
     "subtitle": "bwt.subtitles.block.mill_stone.grind",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name": "minecart/base", "pitch": 0.6},
+      {"name": "minecart/base", "pitch": 0.608},
+      {"name": "minecart/base", "pitch": 0.616},
+      {"name": "minecart/base", "pitch": 0.624},
+      {"name": "minecart/base", "pitch": 0.632},
+      {"name": "minecart/base", "pitch": 0.640},
+      {"name": "minecart/base", "pitch": 0.648},
+      {"name": "minecart/base", "pitch": 0.656},
+      {"name": "minecart/base", "pitch": 0.664},
+      {"name": "minecart/base", "pitch": 0.672},
+      {"name": "minecart/base", "pitch": 0.680}
+    ],
+    "replace": "true"
   },
   "block.mill_stone.idle": {
     "subtitle": "bwt.subtitles.block.mill_stone.idle",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name": "minecart/base", "pitch": 0.5},
+      {"name": "minecart/base", "pitch": 0.51},
+      {"name": "minecart/base", "pitch": 0.52},
+      {"name": "minecart/base", "pitch": 0.53},
+      {"name": "minecart/base", "pitch": 0.54},
+      {"name": "minecart/base", "pitch": 0.55},
+      {"name": "minecart/base", "pitch": 0.56},
+      {"name": "minecart/base", "pitch": 0.57},
+      {"name": "minecart/base", "pitch": 0.58},
+      {"name": "minecart/base", "pitch": 0.59},
+      {"name": "minecart/base", "pitch": 0.60}
+    ],
+    "replace": "true"
   },
   "block.mill_stone.invalid": {
     "subtitle": "bwt.subtitles.block.mill_stone.invalid",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name": "minecart/base", "pitch": 1.25},
+      {"name": "minecart/base", "pitch": 1.26},
+      {"name": "minecart/base", "pitch": 1.27},
+      {"name": "minecart/base", "pitch": 1.28},
+      {"name": "minecart/base", "pitch": 1.29},
+      {"name": "minecart/base", "pitch": 1.30},
+      {"name": "minecart/base", "pitch": 1.31},
+      {"name": "minecart/base", "pitch": 1.32},
+      {"name": "minecart/base", "pitch": 1.33},
+      {"name": "minecart/base", "pitch": 1.34},
+      {"name": "minecart/base", "pitch": 1.35}
+    ],
+    "replace": "true"
   },
   "block.turntable.setting_click": {
     "subtitle": "bwt.subtitles.block.turntable.setting_click",
     "sounds": [
-      "random/click"
-    ]
+      {"name": "random/click", "pitch": 1.2}
+    ],
+    "replace": "true"
   },
   "block.turntable.turning_click": {
     "subtitle": "bwt.subtitles.block.turntable.turning_click",
@@ -134,24 +178,34 @@
   "block.saw.cut": {
     "subtitle": "bwt.subtitles.block.saw.cut",
     "sounds": [
-      {"name": "bwt:mechanical/bang", "pitch": 1}
-    ]
+      {"name": "minecart/base", "pitch": 2},
+      {"name": "minecart/base", "pitch": 1.95}
+    ],
+    "replace": "true"
   },
   "block.saw.init": {
     "subtitle": "bwt.subtitles.block.saw.init",
     "sounds": [
-      {"name": "bwt:mechanical/bang", "pitch": 1}
-    ]
+      {"name":"minecart/base", "pitch":1.5}
+    ],
+    "replace": "true"
   },
   "block.saw.depowered": {
     "subtitle": "bwt.subtitles.block.saw.depowered",
-    "sounds": []
+    "sounds": [
+      {"name":"minecart/base", "pitch":0.5}
+    ],
+    "replace": "true"
   },
   "entity.wolf.dung.production": {
     "subtitle": "bwt.subtitles.entity.wolf.dung.production",
     "sounds": [
-      "bwt:mechanical/bang"
-    ]
+      {"name": "random/explode1", "pitch": 1.5},
+      {"name": "random/explode2", "pitch": 1.5},
+      {"name": "random/explode3", "pitch": 1.5},
+      {"name": "random/explode4", "pitch": 1.5}
+    ],
+    "replace": "true"
   },
   "entity.wolf.dung.effort": {
     "subtitle": "bwt.subtitles.entity.wolf.dung.effort",
@@ -186,12 +240,6 @@
     "subtitle": "bwt.subtitles.entity.mining_charge.prime",
     "sounds": [
       "random/fuse"
-    ]
-  },
-  "entity.soul_urn.throw": {
-    "subtitle": "bwt.subtitles.entity.soul_urn.throw",
-    "sounds": [
-      "random/bow"
     ]
   }
 }

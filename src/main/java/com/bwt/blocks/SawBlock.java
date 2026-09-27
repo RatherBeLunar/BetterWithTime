@@ -135,6 +135,12 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
         super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
         scheduleUpdateIfRequired(level, state, pos);
+        BlockPos targetPos = pos.relative(state.getValue(FACING));
+        BlockState targetState = level.getBlockState(targetPos);
+
+        if (!targetState.is(BlockTags.AIR) && targetPos.equals(sourcePos) && isMechPowered(state)) {
+            level.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1f);
+        }
     }
 
     @Override
@@ -150,10 +156,13 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             level.setBlockAndUpdate(pos, state.setValue(MECH_POWERED, bReceivingPower));
 
             if (bReceivingPower) {
-                playBangSound(level, pos);
+                level.playSound(null, pos, BwtSoundEvents.SAW_INITIALIZE, SoundSource.BLOCKS, 1f, 1);
                 // the saw doesn't cut on the update in which it is powered, so check if another
                 // update is required
                 scheduleUpdateIfRequired(level, state, pos);
+            }
+            else {
+                level.playSound(null, pos, BwtSoundEvents.SAW_DEPOWERED, SoundSource.BLOCKS, 1f, 1);
             }
         }
         else if (bOn) {
@@ -175,7 +184,9 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
                 .intersects(livingEntity.getLocalBoundsForPose(entity.getPose()).move(livingEntity.position()))) {
 
             DamageSource damageSource = BwtDamageTypes.of(level, BwtDamageTypes.SAW_DAMAGE_TYPE);
-            livingEntity.hurt(damageSource, 4.0f);
+            if (livingEntity.hurt(damageSource, 4.0f)) {
+                level.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1);
+            }
         }
     }
 
@@ -251,12 +262,10 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             }
             if (targetState.is(BwtBlockTags.SAW_BREAKS_NO_DROPS)) {
                 level.destroyBlock(targetPos, false);
-                playBangSound(level, pos);
                 return;
             }
             if (targetState.is(BwtBlockTags.SAW_BREAKS_DROPS_LOOT)) {
                 level.destroyBlock(targetPos, true);
-                playBangSound(level, pos);
                 return;
             }
             if (!targetState.is(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
@@ -286,7 +295,6 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         else {
             level.destroyBlock(targetPos, false);
         }
-        playBangSound(level, pos);
 
         targetState.getOptionalValue(BlockStateProperties.SLAB_TYPE).filter(property -> property.equals(SlabType.DOUBLE)).ifPresent((property) ->
             results.forEach(stack -> stack.setCount(stack.getCount() * 2))
@@ -298,7 +306,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     public void breakSaw(Level level, BlockPos pos) {
         dropItemsOnBreak(level, pos);
         level.destroyBlock(pos, false);
-        playBangSound(level, pos, 1);
+        level.playSound(null, pos, BwtSoundEvents.MECH_EXPLODE, SoundSource.BLOCKS, 1f, 1f);
     }
 
     @Override
