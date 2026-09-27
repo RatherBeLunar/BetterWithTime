@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock implements ICaughtFireBlock {
+public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
     protected static final AABB BOTTOM_SHAPE = new AABB(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
@@ -213,10 +213,5 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock im
             case SOUTH -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.NORTH);
             case WEST -> state.setValue(FACE, AttachFace.WALL).setValue(FACING, Direction.EAST);
         };
-    }
-    @Override
-    public boolean onCaughtFire(BlockState state, Level level, BlockPos pos, @Nullable Direction direction, @Nullable LivingEntity igniter) {
-        prime(level, pos, state, igniter);
-        return true;
     }
 }

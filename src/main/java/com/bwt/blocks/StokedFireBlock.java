@@ -1,6 +1,5 @@
 package com.bwt.blocks;
 
-import com.bwt.blocks.mining_charge.ICaughtFireBlock;
 import com.mojang.serialization.MapCodec;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import net.minecraft.core.BlockPos;
@@ -142,9 +141,6 @@ public class StokedFireBlock extends BaseFireBlock {
             Block block = blockState.getBlock();
             if (block instanceof TntBlock) {
                 TntBlock.explode(level, pos);
-            }
-            if (block instanceof ICaughtFireBlock caught) {
-                caught.onCaughtFire(blockState, level, pos, null, null);
             }
         }
     }
