@@ -6,7 +6,7 @@ public class Id {
     public static final String MOD_ID = "bwt";
 
     public static final ResourceLocation PROGRAMMER_ART_PACK_ID = Id.of("bwt_programmer_art");
-    public static final ResourceLocation MODERNIZED_SOUNDS_PACK_ID = Id.of("modern_bwt_sounds");
+    public static final ResourceLocation LEGACY_SOUNDS_PACK_ID = Id.of("legacy_bwt_sounds");
 
     public static ResourceLocation of(String id) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);

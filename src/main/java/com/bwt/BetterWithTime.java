@@ -210,9 +210,9 @@ public class BetterWithTime implements ModInitializer {
         );
 
 		ResourceManagerHelper.registerBuiltinResourcePack(
-				Id.MODERNIZED_SOUNDS_PACK_ID,
+				Id.LEGACY_SOUNDS_PACK_ID,
 				FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
-				Component.literal("Modernized Sounds Pack"),
+				Component.literal("Legacy Sounds Pack"),
 				ResourcePackActivationType.NORMAL
 		);
 	}

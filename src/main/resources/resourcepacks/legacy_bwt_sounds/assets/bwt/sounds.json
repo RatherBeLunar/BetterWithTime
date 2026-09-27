@@ -1,0 +1,109 @@
+{
+  "block.mech.bang": {
+    "subtitle": "bwt.subtitles.block.mech.bang",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  },
+  "block.mech.explode": {
+    "subtitle": "bwt.subtitles.block.mech.explode",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  },
+  "block.mech.creak": {
+    "subtitle": "bwt.subtitles.block.mech.creak",
+    "sounds": [
+      "block/chest/open"
+    ]
+  },
+  "block.anchor.retract": {
+    "subtitle": "bwt.subtitles.block.anchor.retract",
+    "sounds": [
+      "random/pop"
+    ]
+  },
+  "block.bellows.compress": {
+    "subtitle": "bwt.subtitles.block.bellows.compress",
+    "sounds": [
+      "block/chest/close3"
+    ],
+    "replace": "true"
+  },
+  "block.bellows.decompress": {
+    "subtitle": "bwt.subtitles.block.bellows.decompress",
+    "sounds": [
+      "block/chest/close3"
+    ],
+    "replace": "true"
+  },
+  "block.generic.soul_conversion": {
+    "subtitle": "bwt.subtitles.block.generic.soul_conversion",
+    "sounds": [
+      "mob/ghast/moan1",
+      "mob/ghast/moan2",
+      "mob/ghast/moan3",
+      "mob/ghast/moan4",
+      "mob/ghast/moan5",
+      "mob/ghast/moan6",
+      "mob/ghast/moan7"
+    ],
+    "replace": "true"
+  },
+  "block.mill_stone.grind": {
+    "subtitle": "bwt.subtitles.block.mill_stone.grind",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  },
+  "block.mill_stone.idle": {
+    "subtitle": "bwt.subtitles.block.mill_stone.idle",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  },
+  "block.mill_stone.invalid": {
+    "subtitle": "bwt.subtitles.block.mill_stone.invalid",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  },
+  "block.turntable.setting_click": {
+    "subtitle": "bwt.subtitles.block.turntable.setting_click",
+    "sounds": [
+      "random/click"
+    ],
+    "replace": "true"
+  },
+  "block.saw.cut": {
+    "subtitle": "bwt.subtitles.block.saw.cut",
+    "sounds": [
+      {"name": "bwt:mechanical/bang", "pitch": 1}
+    ],
+    "replace": "true"
+  },
+  "block.saw.init": {
+    "subtitle": "bwt.subtitles.block.saw.init",
+    "sounds": [
+      {"name": "bwt:mechanical/bang", "pitch": 1}
+    ],
+    "replace": "true"
+  },
+  "block.saw.depowered": {
+    "subtitle": "bwt.subtitles.block.saw.depowered",
+    "sounds": [],
+    "replace": "true"
+  },
+  "entity.wolf.dung.production": {
+    "subtitle": "bwt.subtitles.entity.wolf.dung.production",
+    "sounds": [
+      "bwt:mechanical/bang"
+    ],
+    "replace": "true"
+  }
+}
