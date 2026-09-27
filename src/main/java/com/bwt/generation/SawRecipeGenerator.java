@@ -83,7 +83,7 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
                     .ifPresent(stairs -> SawRecipe.JsonBuilder.create(stairs).result(sidingBlock).result(mouldingBlock).save(exporter));
             BuiltInRegistries.BLOCK.getOptional(baseId.withSuffix("_slab"))
                     .ifPresent(slab -> SawRecipe.JsonBuilder.create(slab).result(mouldingBlock, 2).save(exporter));
-            SawRecipe.JsonBuilder.create(columnBlock).result(sidingBlock).result(cornerBlock, 2).save(exporter);
+            SawRecipe.JsonBuilder.create(columnBlock).result(cornerBlock, 2).save(exporter);
             SawRecipe.JsonBuilder.create(pedestalBlock).result(mouldingBlock, 2).save(exporter);
             SawRecipe.JsonBuilder.create(tableBlock).result(mouldingBlock).save(exporter);
         }
