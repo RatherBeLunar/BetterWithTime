@@ -51,9 +51,6 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
             return;
         }
         emitGearBoxParticles(level, pos, random);
-        if (random.nextInt(4) == 0) {
-            playMechSound(level, pos);
-        }
     }
 
     @Override
@@ -136,10 +133,6 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         this.updatePowerTransfer(level, state, pos);
-    }
-
-    private void playMechSound(Level level, BlockPos pos) {
-        level.playLocalSound(pos, BwtSoundEvents.MILL_STONE_GRIND, SoundSource.BLOCKS, 0.125f,  1.25F, false);
     }
 
     private void emitGearBoxParticles(Level level, BlockPos pos, RandomSource random) {

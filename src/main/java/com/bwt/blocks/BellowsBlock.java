@@ -97,11 +97,12 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
             return;
         }
         level.setBlockAndUpdate(pos, state.setValue(MECH_POWERED, isReceivingMechPower));
-        level.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundSource.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
         if (isReceivingMechPower) {
+            level.playSound(null, pos, BwtSoundEvents.BELLOWS_COMPRESS, SoundSource.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
             stokeFire(level, pos, state);
         }
         else {
+            level.playSound(null, pos, BwtSoundEvents.BELLOWS_DECOMPRESS, SoundSource.BLOCKS, 0.25f, random.nextFloat() * 0.1f + 0.2f);
             liftEntities(level, pos);
         }
     }
