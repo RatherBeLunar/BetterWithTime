@@ -26,12 +26,12 @@ public abstract class EggEntityMixin extends ThrowableItemProjectile {
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At("TAIL"))
-    public void bwt$init1(Level level, LivingEntity owner, CallbackInfo ci) {
+    public void bwt$init1(Level level, LivingEntity livingEntity, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDD)V", at = @At("TAIL"))
-    public void bwt$init2(Level level, double x, double y, double z, CallbackInfo ci) {
+    public void bwt$init2(Level level, double d, double e, double f, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 

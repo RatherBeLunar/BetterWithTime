@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 @Mixin(EntityGetter.class)
 public interface EntityVoxelShapeCollisionMixin {
     @ModifyReturnValue(method = "getEntityCollisions", at = @At("TAIL"))
-    default List<VoxelShape> bwt$getEntityCollisions(List<VoxelShape> original, Entity entity, @Local List<Entity> list) {
+    default List<VoxelShape> bwt$getEntityCollisions(List<VoxelShape> original, Entity entity, @Local(name = "list") List<Entity> list) {
         if (list.stream().noneMatch(entity1 -> entity1 instanceof VoxelShapedEntity)) {
             return original;
         }

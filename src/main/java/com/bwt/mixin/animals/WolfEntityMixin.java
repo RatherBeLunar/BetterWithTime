@@ -53,14 +53,14 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
-        nbt.putBoolean("IsFed", this.bwt$isFed());
+    public void bwt$writeCustomDataToNbt(CompoundTag compoundTag, CallbackInfo ci) {
+        compoundTag.putBoolean("IsFed", this.bwt$isFed());
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
-        if (nbt.contains("IsFed")) {
-            this.bwt$setIsFed(nbt.getBoolean("IsFed"));
+    public void bwt$readCustomDataFromNbt(CompoundTag compoundTag, CallbackInfo ci) {
+        if (compoundTag.contains("IsFed")) {
+            this.bwt$setIsFed(compoundTag.getBoolean("IsFed"));
         }
     }
 
@@ -83,8 +83,8 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    public void interactMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
-        ItemStack itemStack = player.getItemInHand(hand);
+    public void interactMob(Player player, InteractionHand interactionHand, CallbackInfoReturnable<InteractionResult> cir) {
+        ItemStack itemStack = player.getItemInHand(interactionHand);
         if (!this.isBaby() && this.isTame() && this.isFood(itemStack) && !bwt$isFed()) {
             if (this.level().isClientSide()) {
                 cir.setReturnValue(InteractionResult.CONSUME);
@@ -99,12 +99,12 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "isFood", at = @At("HEAD"), cancellable = true)
-    public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
-        if (stack.is(BwtItems.kibbleItem)) {
+    public void isBreedingItem(ItemStack itemStack, CallbackInfoReturnable<Boolean> cir) {
+        if (itemStack.is(BwtItems.kibbleItem)) {
             cir.setReturnValue(true);
             return;
         }
-        if (stack.is(Items.ROTTEN_FLESH) || stack.is(BwtItems.wolfChopItem) || stack.is(BwtItems.cookedWolfChopItem)) {
+        if (itemStack.is(Items.ROTTEN_FLESH) || itemStack.is(BwtItems.wolfChopItem) || itemStack.is(BwtItems.cookedWolfChopItem)) {
             cir.setReturnValue(false);
         }
     }

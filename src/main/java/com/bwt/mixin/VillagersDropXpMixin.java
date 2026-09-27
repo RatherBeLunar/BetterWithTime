@@ -17,7 +17,7 @@ public abstract class VillagersDropXpMixin extends AbstractVillager {
     }
 
     @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/npc/VillagerType;)V", at = @At("TAIL"))
-    void bwt$villagerInit(EntityType<? extends Villager> entityType, Level level, VillagerType type, CallbackInfo ci) {
+    void bwt$villagerInit(EntityType<? extends Villager> entityType, Level level, VillagerType villagerType, CallbackInfo ci) {
         this.xpReward = 50;
     }
 }

@@ -47,24 +47,24 @@ public class SpawnerMossyCobbleMixin {
     }
 
     @Inject(method = "serverTick", at = @At("HEAD"))
-    protected void bwt$createMossyCobblestone(ServerLevel level, BlockPos pos, CallbackInfo ci) {
-        if (level.random.nextInt(1200) != 0) {
+    protected void bwt$createMossyCobblestone(ServerLevel serverLevel, BlockPos blockPos, CallbackInfo ci) {
+        if (serverLevel.random.nextInt(1200) != 0) {
             return;
         }
         BlockPos randomPos = new BlockPos(
-                pos.getX() + level.random.nextIntBetweenInclusive(-4, 4),
-                pos.getY() + level.random.nextIntBetweenInclusive(-1, 4),
-                pos.getZ() + level.random.nextIntBetweenInclusive(-4, 4)
+                blockPos.getX() + serverLevel.random.nextIntBetweenInclusive(-4, 4),
+                blockPos.getY() + serverLevel.random.nextIntBetweenInclusive(-1, 4),
+                blockPos.getZ() + serverLevel.random.nextIntBetweenInclusive(-4, 4)
         );
-        BlockState blockState = level.getBlockState(randomPos);
+        BlockState blockState = serverLevel.getBlockState(randomPos);
         if (blockState.isAir()) {
             return;
         }
         MobSpawnerConversionRecipeInput recipeInput = new MobSpawnerConversionRecipeInput(blockState.getBlock());
-        Optional<MobSpawnerConversionRecipe> recipe = level.getRecipeManager().getRecipeFor(
+        Optional<MobSpawnerConversionRecipe> recipe = serverLevel.getRecipeManager().getRecipeFor(
                 BwtRecipes.MOB_SPAWNER_CONVERSION_RECIPE_TYPE,
                 recipeInput,
-                level
+                serverLevel
         ).map(RecipeHolder::value);
         if (recipe.isEmpty()) {
             return;
@@ -72,6 +72,6 @@ public class SpawnerMossyCobbleMixin {
 
         Block blockToPlace = recipe.get().getResult();
         BlockState newState = copyProperties(blockState, blockToPlace);
-        level.setBlockAndUpdate(randomPos, newState);
+        serverLevel.setBlockAndUpdate(randomPos, newState);
     }
 }

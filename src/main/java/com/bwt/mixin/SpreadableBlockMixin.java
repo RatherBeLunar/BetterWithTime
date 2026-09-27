@@ -15,8 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class SpreadableBlockMixin {
 
     @Inject(method = "randomTick", at = @At("TAIL"))
-    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        SpreadHandler.randomTick(state, level, pos, random);
+    public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource randomSource, CallbackInfo ci) {
+        SpreadHandler.randomTick(blockState, serverLevel, blockPos, randomSource);
     }
 
 }

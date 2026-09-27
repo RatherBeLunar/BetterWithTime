@@ -42,7 +42,7 @@ public abstract class ShapedRecipeDimensionsMixin {
             if (pattern.isEmpty()) {
                 return DataResult.error(() -> "Invalid pattern: empty pattern not allowed");
             }
-            int i = pattern.get(0).length();
+            int i = pattern.getFirst().length();
             for (String string : pattern) {
                 if (string.length() > 4) {
                     return DataResult.error(() -> "Invalid pattern: too many columns, 4 is maximum");
