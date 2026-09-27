@@ -21,7 +21,6 @@ public class HopperSoulBottlingCategory extends HopperCategoryBase<SoulBottlingR
     public static final RecipeType<SoulBottlingRecipe> TYPE =
             RecipeType.create(Id.MOD_ID, "soul_bottling", SoulBottlingRecipe.class);
 
-    static List<HopperFilterRecipe> filterRecipes = List.of();
     static ArrayList<ItemStack> inputs = new ArrayList<>();
     static ArrayList<ItemStack> filters = new ArrayList<>();
     static ArrayList<ItemStack> outputs = new ArrayList<>();
