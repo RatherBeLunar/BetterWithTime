@@ -33,11 +33,11 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
     }
 
     @Inject(method = "getFlow", at = @At(value = "HEAD"), cancellable = true)
-    public void bwt$getVelocity(BlockGetter blockGetter, BlockPos blockPos, FluidState fluidState, CallbackInfoReturnable<Vec3> cir) {
-        if (!fluidState.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
+    public void bwt$getVelocity(BlockGetter level, BlockPos pos, FluidState state, CallbackInfoReturnable<Vec3> cir) {
+        if (!state.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
             return;
         }
-        BlockState belowState = blockGetter.getBlockState(blockPos.below());
+        BlockState belowState = level.getBlockState(pos.below());
         if (!belowState.is(BwtBlocks.aqueductBlock)) {
             return;
         }
@@ -49,7 +49,7 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
             if (!isFlowingFromDirection) {
                 continue;
             }
-            double v = fluidState.getOwnHeight();
+            double v = state.getOwnHeight();
             xVelocity += direction.getOpposite().getStepX() * v;
             zVelocity += direction.getOpposite().getStepZ() * v;
         }
@@ -58,22 +58,22 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
     }
 
     @Inject(method = "getNewLiquid", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/material/FlowingFluid;getDropOff(Lnet/minecraft/world/level/LevelReader;)I"), cancellable = true)
-    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true, name = "level") Level level, @Local(argsOnly = true, name = "blockPos") BlockPos blockPos, @Local(argsOnly = true, name = "blockState") BlockState blockState, @Local int i, @Local int k) {
+    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int i, @Local int k) {
         if (!this.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
             return;
         }
         if (k <= 0 || !this.isSame(this)) {
             return;
         }
-        if (!level.getBlockState(blockPos.below()).is(BwtBlocks.aqueductBlock)) {
+        if (!level.getBlockState(pos.below()).is(BwtBlocks.aqueductBlock)) {
             return;
         }
-        int thisLevel = blockState.getFluidState().getAmount();
+        int thisLevel = state.getFluidState().getAmount();
 
         ArrayList<Integer> normalFlowingInNeighborLevels = new ArrayList<>();
         ArrayList<Integer> aqueductSupportedNeighborLevels = new ArrayList<>();
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            BlockPos neighborPos = blockPos.relative(direction);
+            BlockPos neighborPos = pos.relative(direction);
             FluidState neighborFluidState = level.getFluidState(neighborPos);
             if (!neighborFluidState.getType().isSame(this)) {
                 continue;
@@ -81,7 +81,7 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
             BlockState neighborSupportingBlockState = level.getBlockState(neighborPos.below());
             // If supported by an aqueduct, only accept neighbor flow if that neighbor isn't getting flow from *this* block
             if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock)) {
-                level.neighborShapeChanged(Direction.UP, blockState, neighborPos.below(), neighborPos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                level.neighborShapeChanged(Direction.UP, state, neighborPos.below(), neighborPos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
                 neighborSupportingBlockState = level.getBlockState(neighborPos.below());
                 if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock) && !neighborSupportingBlockState.getValue(AqueductBlock.FACING_PROPERTIES.get(direction.getOpposite()))) {
                     aqueductSupportedNeighborLevels.add(neighborFluidState.getAmount());

@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(SugarCaneBlock.class)
 public abstract class SugarCanePlantOnMixin {
     @Inject(method = "canSurvive", at = @At("HEAD"), cancellable = true)
-    public void canPlaceAt(BlockState blockState, LevelReader levelReader, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-        if (levelReader.getBlockState(blockPos.below()).is(BwtBlocks.soilPlanterBlock)) {
+    public void canPlaceAt(BlockState state, LevelReader level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        if (level.getBlockState(pos.below()).is(BwtBlocks.soilPlanterBlock)) {
             cir.setReturnValue(true);
         }
     }

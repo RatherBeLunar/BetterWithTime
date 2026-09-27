@@ -33,20 +33,20 @@ public abstract class AlterGroundTreeDecoratorMixin {
 
 
     @Inject(method = "placeBlockAt", at = @At("HEAD"), cancellable = true)
-    private void bwt$setColumn(TreeDecorator.Context context, BlockPos blockPos, CallbackInfo ci) {
+    private void bwt$setColumn(TreeDecorator.Context generator, BlockPos origin, CallbackInfo ci) {
         for (int i = 2; i >= -3; --i) {
-            BlockPos aboveOrigin = blockPos.above(i);
-            if (isSoilBlock(context.level(), aboveOrigin)) {
-                context.setBlock(aboveOrigin, getProvider().getState(context.random(), blockPos));
+            BlockPos blockPos = origin.above(i);
+            if (isSoilBlock(generator.level(), blockPos)) {
+                generator.setBlock(blockPos, getProvider().getState(generator.random(), origin));
                 break;
             }
 
-            if (isSoilSlab(context.level(), aboveOrigin)) {
-                context.setBlock(aboveOrigin, BwtBlocks.podzolSlabBlock.defaultBlockState());
+            if (isSoilSlab(generator.level(), blockPos)) {
+                generator.setBlock(blockPos, BwtBlocks.podzolSlabBlock.defaultBlockState());
                 break;
             }
 
-            if (!context.isAir(aboveOrigin) && i < 0) {
+            if (!generator.isAir(blockPos) && i < 0) {
                 break;
             }
         }

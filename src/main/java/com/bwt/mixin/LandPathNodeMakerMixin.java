@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(WalkNodeEvaluator.class)
 public class LandPathNodeMakerMixin {
     @Inject(method = "getPathTypeFromState", at = @At(value = "HEAD"), cancellable = true)
-    private static void bwt$getCommonNodeType(BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<PathType> cir) {
-        if (blockGetter.getBlockState(blockPos).is(BwtBlocks.vineTrapBlock)) {
+    private static void bwt$getCommonNodeType(BlockGetter level, BlockPos pos, CallbackInfoReturnable<PathType> cir) {
+        if (level.getBlockState(pos).is(BwtBlocks.vineTrapBlock)) {
             cir.setReturnValue(PathType.TRAPDOOR);
         }
     }

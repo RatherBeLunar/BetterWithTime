@@ -27,8 +27,8 @@ public abstract class FlowerBlockOffsetMixin extends StateHolder<Block, BlockSta
     }
 
     @Inject(method="getOffset", at = @At("HEAD"), cancellable = true)
-    public void getModelOffset(BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<Vec3> cir) {
-        if (this.getBlock() instanceof FlowerBlock && blockGetter.getBlockState(blockPos.below()).is(BwtBlockTags.VASES)) {
+    public void getModelOffset(BlockGetter level, BlockPos pos, CallbackInfoReturnable<Vec3> cir) {
+        if (this.getBlock() instanceof FlowerBlock && level.getBlockState(pos.below()).is(BwtBlockTags.VASES)) {
             cir.setReturnValue(Vec3.ZERO);
         }
     }

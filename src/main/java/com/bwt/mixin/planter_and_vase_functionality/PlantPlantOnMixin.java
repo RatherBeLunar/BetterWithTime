@@ -15,10 +15,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(BushBlock.class)
 public abstract class PlantPlantOnMixin {
     @Inject(method = "mayPlaceOn", at = @At("HEAD"), cancellable = true)
-    public void canPlantOnTop(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CallbackInfoReturnable<Boolean> cir) {
-        boolean result = blockState.is(BlockTags.DIRT) || blockState.is(BwtBlockTags.CROPS_CAN_PLANT_ON);
+    public void canPlantOnTop(BlockState floor, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+        boolean result = floor.is(BlockTags.DIRT) || floor.is(BwtBlockTags.CROPS_CAN_PLANT_ON);
         if ((BushBlock)((Object) this) instanceof FlowerBlock) {
-            result = result || blockState.is(BwtBlockTags.VASES);
+            result = result || floor.is(BwtBlockTags.VASES);
         }
         cir.setReturnValue(result);
     }
