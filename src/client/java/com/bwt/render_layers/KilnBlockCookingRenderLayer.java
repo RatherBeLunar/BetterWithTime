@@ -11,11 +11,12 @@ import net.minecraft.Util;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.TriState;
 
 public class KilnBlockCookingRenderLayer {
     private static final Function<ResourceLocation, RenderType> KILN_COOKING_RENDER_FUNCTION = Util.memoize(
             texture -> {
-                RenderStateShard.TextureStateShard texture2 = new RenderStateShard.TextureStateShard(texture, false, false);
+                RenderStateShard.TextureStateShard texture2 = new RenderStateShard.TextureStateShard(texture, TriState.FALSE, false);
                 return RenderType.create(
                         "kiln_cooking",
                         DefaultVertexFormat.BLOCK,

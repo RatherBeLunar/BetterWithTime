@@ -1,12 +1,15 @@
 package com.bwt.recipes.hopper_filter;
 
-import com.bwt.blocks.BwtBlocks;
-import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -22,14 +25,8 @@ import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public record HopperFilterRecipe(
@@ -42,12 +39,7 @@ public record HopperFilterRecipe(
         ItemStack byproduct
 ) implements Recipe<HopperFilterRecipeInput> {
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.hopperBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<HopperFilterRecipe> getSerializer() {
         return BwtRecipes.HOPPER_FILTER_RECIPE_SERIALIZER;
     }
 
@@ -57,17 +49,12 @@ public record HopperFilterRecipe(
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<HopperFilterRecipe> getType() {
         return BwtRecipes.HOPPER_FILTER_RECIPE_TYPE;
     }
 
@@ -87,12 +74,27 @@ public record HopperFilterRecipe(
 
     @Override
     public ItemStack assemble(HopperFilterRecipeInput input, HolderLookup.Provider lookup) {
-        return getResultItem(lookup);
+        return result;
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider wrapperLookup) {
-        return result;
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return switch (this.category) {
+            case BUILDING -> RecipeBookCategories.CRAFTING_BUILDING_BLOCKS;
+            case REDSTONE -> RecipeBookCategories.CRAFTING_REDSTONE;
+            case EQUIPMENT -> RecipeBookCategories.CRAFTING_EQUIPMENT;
+            case MISC -> RecipeBookCategories.CRAFTING_MISC;
+        };
     }
 
     public static class Serializer implements RecipeSerializer<HopperFilterRecipe> {
@@ -103,10 +105,10 @@ public record HopperFilterRecipe(
                         CraftingBookCategory.CODEC.fieldOf("category")
                                 .orElse(CraftingBookCategory.MISC)
                                 .forGetter(recipe -> recipe.category),
-                        Ingredient.CODEC_NONEMPTY
+                        Ingredient.CODEC
                                 .fieldOf("ingredient")
                                 .forGetter(HopperFilterRecipe::ingredient),
-                        Ingredient.CODEC_NONEMPTY
+                        Ingredient.CODEC
                                 .fieldOf("filter")
                                 .forGetter(HopperFilterRecipe::filter),
                         Codec.INT.fieldOf("soulCount")
@@ -119,8 +121,15 @@ public record HopperFilterRecipe(
                                 .forGetter(HopperFilterRecipe::byproduct)
                 ).apply(instance, HopperFilterRecipe::new)
         );
-        public static final StreamCodec<RegistryFriendlyByteBuf, HopperFilterRecipe> PACKET_CODEC = StreamCodec.of(
-                HopperFilterRecipe.Serializer::write, HopperFilterRecipe.Serializer::read
+        public static final StreamCodec<RegistryFriendlyByteBuf, HopperFilterRecipe> PACKET_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, HopperFilterRecipe::group,
+                CraftingBookCategory.STREAM_CODEC, HopperFilterRecipe::getCategory,
+                Ingredient.CONTENTS_STREAM_CODEC, HopperFilterRecipe::ingredient,
+                Ingredient.CONTENTS_STREAM_CODEC, HopperFilterRecipe::filter,
+                ByteBufCodecs.INT, HopperFilterRecipe::soulCount,
+                ItemStack.STREAM_CODEC, HopperFilterRecipe::result,
+                ItemStack.STREAM_CODEC, HopperFilterRecipe::byproduct,
+                HopperFilterRecipe::new
         );
 
         public Serializer() {
@@ -134,27 +143,6 @@ public record HopperFilterRecipe(
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, HopperFilterRecipe> streamCodec() {
             return PACKET_CODEC;
-        }
-
-        public static HopperFilterRecipe read(RegistryFriendlyByteBuf buf) {
-            String group = buf.readUtf();
-            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
-            Ingredient ingredient = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
-            Ingredient filter = Ingredient.CONTENTS_STREAM_CODEC.decode(buf);
-            int soulCount = buf.readVarInt();
-            ItemStack result = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-            ItemStack byproduct = ItemStack.OPTIONAL_STREAM_CODEC.decode(buf);
-            return new HopperFilterRecipe(group, category, ingredient, filter, soulCount, result, byproduct);
-        }
-
-        public static void write(RegistryFriendlyByteBuf buf, HopperFilterRecipe recipe) {
-            buf.writeUtf(recipe.group);
-            buf.writeEnum(recipe.category);
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.ingredient);
-            Ingredient.CONTENTS_STREAM_CODEC.encode(buf, recipe.filter);
-            buf.writeVarInt(recipe.soulCount);
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, recipe.result);
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(buf, recipe.byproduct);
         }
     }
 
@@ -172,17 +160,6 @@ public record HopperFilterRecipe(
             return new HopperFilterRecipe.JsonBuilder();
         }
 
-        protected boolean isDefaultRecipe;
-        public JsonBuilder markDefault() {
-            this.isDefaultRecipe = true;
-            return this;
-        }
-        public void addToDefaults(ResourceLocation recipeId) {
-            if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
-            }
-        }
-
         public HopperFilterRecipe.JsonBuilder category(CraftingBookCategory category) {
             this.category = category;
             return this;
@@ -194,7 +171,7 @@ public record HopperFilterRecipe(
         }
 
         public HopperFilterRecipe.JsonBuilder ingredient(ItemStack itemStack) {
-            return this.ingredient(Ingredient.of(itemStack));
+            return this.ingredient(Ingredient.of(itemStack.getItem()));
         }
 
         public HopperFilterRecipe.JsonBuilder ingredient(Item item) {
@@ -207,11 +184,6 @@ public record HopperFilterRecipe(
         }
 
         public HopperFilterRecipe.JsonBuilder filter(Item filter) {
-            this.filter = Ingredient.of(filter);
-            return this;
-        }
-
-        public HopperFilterRecipe.JsonBuilder filter(TagKey<Item> filter) {
             this.filter = Ingredient.of(filter);
             return this;
         }
@@ -267,7 +239,7 @@ public record HopperFilterRecipe(
         public void save(RecipeOutput exporter) {
             this.save(
                     exporter,
-                    Id.of("filter_" + RecipeProvider.getItemName(this.ingredient.getItems()[0].getItem()))
+                    Id.of("filter_" + RecipeProvider.getItemName(this.ingredient.items().getFirst().value()))
             );
         }
 
@@ -276,10 +248,13 @@ public record HopperFilterRecipe(
             this.save(exporter, Id.of(recipePath));
         }
 
-        @Override
         public void save(RecipeOutput exporter, ResourceLocation recipeId) {
-            addToDefaults(recipeId);
-            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+            save(exporter, ResourceKey.create(Registries.RECIPE, recipeId));
+        }
+
+        @Override
+        public void save(RecipeOutput recipeOutput, ResourceKey<Recipe<?>> resourceKey) {
+            Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             HopperFilterRecipe hopperFilterRecipe = new HopperFilterRecipe(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
@@ -289,7 +264,7 @@ public record HopperFilterRecipe(
                     this.result,
                     this.byproduct
             );
-            exporter.accept(recipeId, hopperFilterRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, hopperFilterRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

@@ -2,6 +2,7 @@ package com.bwt.blocks;
 
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.RadiusAroundBlockStream;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -27,14 +28,14 @@ import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class BellowsBlock extends Block implements MechPowerBlockBase {
-    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    public static final EnumProperty<Direction>FACING = HorizontalDirectionalBlock.FACING;
     public static final float compressedHeight = 11;
     protected static final int tickRate = 37;
 
@@ -83,11 +84,11 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
         if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     @Override

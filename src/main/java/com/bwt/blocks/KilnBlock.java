@@ -6,6 +6,8 @@ import com.bwt.recipes.kiln.KilnRecipe;
 import com.bwt.recipes.kiln.KilnRecipeInput;
 import com.bwt.utils.FireDataCluster;
 import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookOverlay;
+import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -24,7 +26,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -51,7 +52,10 @@ public class KilnBlock extends Block {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(level, pos, state, placer, itemStack);
-        Optional<KilnRecipe> recipe = getRecipe(level, level.getBlockState(pos.above()));
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Optional<KilnRecipe> recipe = getRecipe(serverLevel, level.getBlockState(pos.above()));
         recipe.ifPresent(kilnRecipe -> scheduleUpdateBasedOnCookState(level, pos, kilnRecipe));
     }
 
@@ -102,18 +106,21 @@ public class KilnBlock extends Block {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         if (neighborPos.equals(pos.below()) && !neighborState.is(BwtBlocks.stokedFireBlock)) {
             // we don't have a stoked fire beneath us, so revert to regular brick
             return Blocks.BRICKS.defaultBlockState();
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource);
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
-        Optional<KilnRecipe> recipe = getRecipe(level, level.getBlockState(pos.above()));
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean bl) {
+        super.neighborChanged(state, level, pos, block, orientation, bl);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Optional<KilnRecipe> recipe = getRecipe(serverLevel, level.getBlockState(pos.above()));
         if (recipe.isPresent()) {
             scheduleUpdateBasedOnCookState(level, pos, recipe.get());
         }
@@ -125,16 +132,16 @@ public class KilnBlock extends Block {
     }
 
     protected void scheduleUpdateBasedOnCookState(Level level, BlockPos pos, KilnRecipe recipe) {
-        int iTickRate = computeTickRateBasedOnFireFactor(level, pos);
+        int tickRate = computeTickRateBasedOnFireFactor(level, pos);
 
-        iTickRate *= recipe.getCookingTime();
+        tickRate *= recipe.getCookingTime();
 
-        level.scheduleTick(pos, this, iTickRate);
+        level.scheduleTick(pos, this, tickRate);
     }
 
-    private Optional<KilnRecipe> getRecipe(Level level, BlockState cookingBlockState) {
+    private Optional<KilnRecipe> getRecipe(ServerLevel level, BlockState cookingBlockState) {
         KilnRecipeInput recipeInput = new KilnRecipeInput(cookingBlockState.getBlock());
-        return level.getRecipeManager().getRecipeFor(
+        return level.recipeAccess().getRecipeFor(
                 BwtRecipes.KILN_RECIPE_TYPE,
                 recipeInput,
                 level
@@ -148,7 +155,7 @@ public class KilnBlock extends Block {
         if (drops.isEmpty()) {
             return;
         }
-        ItemStack firstDrop = drops.get(0);
+        ItemStack firstDrop = drops.getFirst();
         firstDrop.applyComponents(components.filter(componentType -> firstDrop.getComponents().has(componentType)));
         Containers.dropContents(level, cookingBlockPos, drops);
     }
@@ -191,15 +198,11 @@ public class KilnBlock extends Block {
         if (blockAboveState.is(BlockTags.AIR)) {
             return;
         }
-        Optional<KilnRecipe> recipe = getRecipe(level, blockAboveState);
-        if (recipe.isEmpty()) {
-            return;
-        }
         if (!checkKilnIntegrity(level, pos)) {
             return;
         }
 
-        if (!blockAboveState.isSolidRender(level, pos)) {
+        if (!blockAboveState.isSolidRender()) {
             for (int count = 0; count < 2; count++) {
                 double xPos = pos.getX() + random.nextDouble();
                 double yPos = pos.getY() + 1d + (random.nextDouble() * 0.75d);

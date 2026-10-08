@@ -65,7 +65,7 @@ public class CanvasItem extends HangingEntityItem {
             }
 
             itemStack.shrink(1);
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         } else {
             return InteractionResult.CONSUME;
         }

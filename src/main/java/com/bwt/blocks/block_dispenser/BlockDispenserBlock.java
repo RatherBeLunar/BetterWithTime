@@ -9,7 +9,7 @@ import com.bwt.blocks.mining_charge.MiningChargeBlock;
 import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.MiningChargeEntity;
 import com.bwt.items.BwtItems;
-import com.bwt.mixin.accessors.DecoratedPotPatternsAccessorMixin;
+import com.bwt.mixin.accessor.DecoratedPotPatternsAccessorMixin;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipe;
 import com.bwt.recipes.block_dispenser_clump.BlockDispenserClumpRecipeInput;
 import com.bwt.recipes.BwtRecipes;
@@ -55,6 +55,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
@@ -128,16 +129,13 @@ public class BlockDispenserBlock extends DispenserBlock {
                 Items.BAMBOO_CHEST_RAFT
         ).forEach(item -> registerItemDispenseBehavior(item, boatDispenserBehavior));
 
-        MinecartDispenserBehavior minecartDispenserBehavior = new MinecartDispenserBehavior();
-        Stream.of(
-                Items.MINECART,
-                Items.CHEST_MINECART,
-                Items.COMMAND_BLOCK_MINECART,
-                Items.COMMAND_BLOCK_MINECART,
-                Items.FURNACE_MINECART,
-                Items.HOPPER_MINECART,
-                Items.TNT_MINECART
-        ).forEach(item -> registerItemDispenseBehavior(item, minecartDispenserBehavior));
+        registerItemDispenseBehavior(Items.MINECART, new MinecartDispenserBehavior(EntityType.MINECART));
+        registerItemDispenseBehavior(Items.CHEST_MINECART, new MinecartDispenserBehavior(EntityType.CHEST_MINECART));
+        registerItemDispenseBehavior(Items.COMMAND_BLOCK_MINECART, new MinecartDispenserBehavior(EntityType.COMMAND_BLOCK_MINECART));
+        registerItemDispenseBehavior(Items.COMMAND_BLOCK_MINECART, new MinecartDispenserBehavior(EntityType.COMMAND_BLOCK_MINECART));
+        registerItemDispenseBehavior(Items.FURNACE_MINECART, new MinecartDispenserBehavior(EntityType.FURNACE_MINECART));
+        registerItemDispenseBehavior(Items.HOPPER_MINECART, new MinecartDispenserBehavior(EntityType.HOPPER_MINECART));
+        registerItemDispenseBehavior(Items.TNT_MINECART, new MinecartDispenserBehavior(EntityType.TNT_MINECART));
 
         registerVanillaAndBDProjectileBehaviors(
                 BwtItems.dynamiteItem,
@@ -175,9 +173,9 @@ public class BlockDispenserBlock extends DispenserBlock {
                     BlockPos blockPos = pointer.pos().relative(direction);
                     pointer.level().neighborShapeChanged(
                             direction.getOpposite(),
-                            pointer.state(),
                             blockPos,
                             pointer.pos(),
+                            pointer.state(),
                             Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS),
                             511
                     );
@@ -283,12 +281,12 @@ public class BlockDispenserBlock extends DispenserBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
         if (level.isClientSide) {
             return;
         }
-        if (state.getValue(TRIGGERED) != isReceivingPower(level, pos, state.getValue(FACING))) {
-            level.scheduleTick(pos, this, tickRate);
+        if (blockState.getValue(TRIGGERED) != isReceivingPower(level, blockPos, blockState.getValue(FACING))) {
+            level.scheduleTick(blockPos, this, tickRate);
         }
     }
 
@@ -318,22 +316,22 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
     }
 
-    public void dispenseBlockOrItem(ServerLevel level, BlockState state, BlockPos pos) {
-        BlockDispenserBlockEntity blockEntity = ((BlockDispenserBlockEntity) level.getBlockEntity(pos));
+    public void dispenseBlockOrItem(ServerLevel serverLevel, BlockState state, BlockPos pos) {
+        BlockDispenserBlockEntity blockEntity = ((BlockDispenserBlockEntity) serverLevel.getBlockEntity(pos));
         if (blockEntity == null) {
             return;
         }
 
         BlockPos targetPos = pos.relative(state.getValue(FACING));
-        BlockState targetState = level.getBlockState(targetPos);
+        BlockState targetState = serverLevel.getBlockState(targetPos);
 
         ItemStack stackToPlace = blockEntity.getCurrentItemToDispense();
         if (stackToPlace.isEmpty()) {
             return;
         }
 
-        BlockSource blockPointer = new BlockSource(level, pos, state, blockEntity);
-        DispenseItemBehavior dispenserBehavior = this.getDispenseBehaviorForItem(level, targetState, blockEntity, stackToPlace);
+        BlockSource blockPointer = new BlockSource(serverLevel, pos, state, blockEntity);
+        DispenseItemBehavior dispenserBehavior = this.getDispenseBehaviorForItem(serverLevel, targetState, blockEntity, stackToPlace);
         if (dispenserBehavior != DispenseItemBehavior.NOOP) {
             ItemStack takenOut = dispenserBehavior.dispense(blockPointer, stackToPlace);
             blockEntity.take(takenOut.getItem(), takenOut.getCount());
@@ -352,7 +350,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         Optional<? extends Entity> optionalEntity = this.getInhaleableEntity(level, targetPos);
         if (optionalEntity.isPresent()) {
             Entity entity = optionalEntity.get();
-            inhaleEntity(blockEntity, entity);
+            inhaleEntity(level, blockEntity, entity);
             return;
         }
 
@@ -369,7 +367,7 @@ public class BlockDispenserBlock extends DispenserBlock {
         blockEntity.insert(inhaledItems.copy());
     }
 
-    protected DispenseItemBehavior getDispenseBehaviorForItem(Level level, BlockState targetState, BlockDispenserBlockEntity entity, ItemStack stack) {
+    protected DispenseItemBehavior getDispenseBehaviorForItem(ServerLevel serverLevel, BlockState targetState, BlockDispenserBlockEntity entity, ItemStack stack) {
         // Block Behavior. Block items will not clump
         if (stack.getItem() instanceof BlockItem blockItem) {
             if (!targetState.is(BlockTags.REPLACEABLE)) {
@@ -383,10 +381,10 @@ public class BlockDispenserBlock extends DispenserBlock {
         }
 
         BlockDispenserClumpRecipeInput recipeInput = new BlockDispenserClumpRecipeInput(entity.getItems());
-        Optional<BlockDispenserClumpRecipe> match = level.getRecipeManager().getRecipeFor(
+        Optional<BlockDispenserClumpRecipe> match = serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.BLOCK_DISPENSER_CLUMP_RECIPE_TYPE,
                 recipeInput,
-                level
+                serverLevel
         ).map(RecipeHolder::value);
 
         if (match.isEmpty()) {
@@ -417,15 +415,15 @@ public class BlockDispenserBlock extends DispenserBlock {
         return entities.stream().findAny();
     }
 
-    protected <T extends Entity> void inhaleEntity(BlockDispenserBlockEntity blockEntity, T entity) {
+    protected <T extends Entity> void inhaleEntity(ServerLevel serverLevel, BlockDispenserBlockEntity blockEntity, T entity) {
         EntityInhaleBehavior entityInhaleBehavior = ENTITY_INHALE_BEHAVIORS.get(entity.getType());
         ItemStack inhaledItems = entityInhaleBehavior.getInhaledItems(entity).copy();
         if (!blockEntity.hasRoomFor(inhaledItems)) {
             return;
         }
-        entityInhaleBehavior.inhale(entity);
+        entityInhaleBehavior.inhale(serverLevel, entity);
         blockEntity.insert(inhaledItems);
-        entityInhaleBehavior.getDroppedItems(entity).forEach(entity::spawnAtLocation);
+        entityInhaleBehavior.getDroppedItems(entity).forEach(stack -> entity.spawnAtLocation(serverLevel, stack));
     }
 
     protected BlockInhaleBehavior getInhaleBehaviorForItem(BlockState targetState) {

@@ -12,6 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -47,8 +49,8 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        level.scheduleTick(pos, this, tickRate);
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        scheduledTickAccess.scheduleTick(pos, this, tickRate);
         return state;
     }
 
@@ -147,8 +149,8 @@ public class DetectorLogicBlock extends AirBlock {
             BlockState neighborState = level.getBlockState(targetPos);
             if (neighborState.is(BwtBlocks.detectorBlock) && neighborState.getValue(DetectorBlock.FACING).equals(direction.getOpposite())) {
                 numDetectorsUpdated += 1;
-                level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
-                level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
+                level.neighborShapeChanged(direction.getOpposite(), targetPos, pos, state, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                level.neighborChanged(neighborState, targetPos, state.getBlock(), null, false);
             }
         }
         return numDetectorsUpdated;

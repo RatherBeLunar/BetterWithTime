@@ -14,13 +14,9 @@ public class ColumnBlock extends DecorativeBlock {
         super(settings, fullBlock);
     }
 
-    public static ColumnBlock ofBlock(Block fullBlock) {
-        return new ColumnBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static ColumnBlock ofWoodBlock(Block woodBlock) {
-        ColumnBlock columnBlock = ofBlock(woodBlock);
-        columnBlock.isWood = true;
+    public static ColumnBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        ColumnBlock columnBlock = new ColumnBlock(properties, fullBlock);
+        columnBlock.isWood = isWood;
         return columnBlock;
     }
 

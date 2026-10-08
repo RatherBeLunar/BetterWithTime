@@ -32,9 +32,4 @@ public abstract class RectangularEntity extends Entity {
         EntityRectDimensions dimensions = this.getRectDimensions();
         return dimensions.getBoxAt(position(), getYRot()).move(0, -1 * (dimensions.height() / 2), 0);
     }
-
-    @Override
-    public AABB getBoundingBoxForCulling() {
-        return super.getBoundingBoxForCulling();
-    }
 }

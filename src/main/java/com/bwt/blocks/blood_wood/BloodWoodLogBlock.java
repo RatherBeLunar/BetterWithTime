@@ -140,8 +140,8 @@ public class BloodWoodLogBlock extends RotatedPillarBlock {
                 // split
                 Direction[] growthDirections = new Direction[2];
 
-                for (int iTempCount = 0; iTempCount < 2; iTempCount++) {
-                    growthDirections[iTempCount] = Direction.DOWN;
+                for (int i = 0; i < 2; i++) {
+                    growthDirections[i] = Direction.DOWN;
 
                     Direction targetFacing = randomHorizontalDirection(random);
 
@@ -158,7 +158,7 @@ public class BloodWoodLogBlock extends RotatedPillarBlock {
                     }
 
                     if (attemptToGrowIntoBlock(serverLevel, targetPos, iTargetGrowthDirection)) {
-                        growthDirections[iTempCount] = targetFacing;
+                        growthDirections[i] = targetFacing;
                     }
                 }
 

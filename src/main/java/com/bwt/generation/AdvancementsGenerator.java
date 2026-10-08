@@ -21,11 +21,14 @@ import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.advancements.critereon.SummonedEntityTrigger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -41,12 +44,15 @@ import java.util.function.Consumer;
 public class AdvancementsGenerator extends FabricAdvancementProvider {
     public static final ResourceLocation background = Id.mc("textures/gui/advancements/backgrounds/adventure.png");
 
-    public AdvancementsGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
-        super(output, registryLookup);
+    public AdvancementsGenerator(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> provider) {
+        super(output, provider);
     }
 
     @Override
-    public void generateAdvancement(HolderLookup.Provider registryLookup, Consumer<AdvancementHolder> consumer) {
+    public void generateAdvancement(HolderLookup.Provider provider, Consumer<AdvancementHolder> consumer) {
+        HolderGetter<EntityType<?>> entityHolderGetter = provider.lookupOrThrow(Registries.ENTITY_TYPE);
+        HolderGetter<Item> itemHolderGetter = provider.lookupOrThrow(Registries.ITEM);
+
         AdvancementHolder rootAdvancement = Advancement.Builder.advancement()
                 .display(
                         BwtBlocks.companionCubeBlock,
@@ -81,7 +87,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                         true,
                         false
                 )
-                .addCriterion("placed_windmill", SummonedEntityTrigger.TriggerInstance.summonedEntity(EntityPredicate.Builder.entity().of(BwtEntities.windmillEntity)))
+                .addCriterion("placed_windmill", SummonedEntityTrigger.TriggerInstance.summonedEntity(EntityPredicate.Builder.entity().of(entityHolderGetter, BwtEntities.windmillEntity)))
                 .save(consumer, Id.MOD_ID + "/placed_windmill");
 
         AdvancementHolder cauldronAdvancement = blockPlacedAdvancement(
@@ -110,6 +116,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                 "Build and power a saw in pursuit of finer wood pieces"
         ).parent(tannedLeatherAdvancement).save(consumer, Id.MOD_ID + "/placed_saw");
         AdvancementHolder cornerAdvancement = itemTagAdvancement(
+                itemHolderGetter,
                 BwtBlocks.cornerBlocks.stream().filter(cornerBlock -> cornerBlock.fullBlock == Blocks.OAK_PLANKS).findFirst().orElseThrow(),
                 BwtItemTags.WOODEN_CORNER_BLOCKS,
                 "Cut my Block Into Pieces",
@@ -163,7 +170,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                         true,
                         false
                 )
-                .addCriterion("placed_water_wheel", SummonedEntityTrigger.TriggerInstance.summonedEntity(EntityPredicate.Builder.entity().of(BwtEntities.waterWheelEntity)))
+                .addCriterion("placed_water_wheel", SummonedEntityTrigger.TriggerInstance.summonedEntity(EntityPredicate.Builder.entity().of(entityHolderGetter, BwtEntities.waterWheelEntity)))
                 .save(consumer, Id.MOD_ID + "/placed_water_wheel");
         AdvancementHolder kilnAdvancement = itemAdvancement(
                 Blocks.BRICKS,
@@ -216,7 +223,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
         return itemAdvancement(item, title, description, item);
     }
 
-    public Advancement.Builder itemTagAdvancement(ItemLike displayItem, TagKey<Item> itemTag, String title, String description) {
+    public Advancement.Builder itemTagAdvancement(HolderGetter<Item> itemHolderGetter, ItemLike displayItem, TagKey<Item> itemTag, String title, String description) {
         return Advancement.Builder.advancement()
                 .display(
                         displayItem, // The display icon
@@ -228,7 +235,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
                         true, // Announce to chat
                         false // Hidden in the advancement tab
                 )
-                .addCriterion("got_" + itemTag.location().getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(BwtItemTags.WOODEN_CORNER_BLOCKS)));
+                .addCriterion("got_" + itemTag.location().getPath(), InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(itemHolderGetter, BwtItemTags.WOODEN_CORNER_BLOCKS)));
     }
 
     public Advancement.Builder blockPlacedAdvancement(Block block, String title, String description, Criterion<?> criterion) {
@@ -258,7 +265,7 @@ public class AdvancementsGenerator extends FabricAdvancementProvider {
             LocationPredicate.Builder neighborStatePredicate
     ) {
         LootItemCondition.Builder thisCondition = LootItemBlockStatePropertyCondition.hasBlockStateProperties(block);
-        LootItemCondition.Builder neighborCondition = LocationCheck.checkLocation(neighborStatePredicate, new BlockPos(direction.getNormal()));
+        LootItemCondition.Builder neighborCondition = LocationCheck.checkLocation(neighborStatePredicate, new BlockPos(direction.getUnitVec3i()));
         Criterion<ItemUsedOnLocationTrigger.TriggerInstance> criterion = ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(thisCondition, neighborCondition);
         return blockPlacedAdvancement(block, title, description, criterion);
     }

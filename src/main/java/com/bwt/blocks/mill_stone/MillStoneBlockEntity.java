@@ -17,6 +17,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
@@ -103,18 +104,18 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         playSound(level, pos, status);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
         if (!state.is(BwtBlocks.millStoneBlock) || !state.getValue(MillStoneBlock.MECH_POWERED)) {
             return;
         }
         MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getItems());
-        List<RecipeHolder<MillStoneRecipe>> matches = level.getRecipeManager().getRecipesFor(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, level);
+        List<RecipeHolder<MillStoneRecipe>> matches = OrderedRecipeMatcher.getRecipesFor(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, serverLevel).toList();
         if (matches.isEmpty()) {
             if (blockEntity.isEmpty()) {
-                blockEntity.playSoundChance(level, pos, InventoryStatus.EMPTY);
+                blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.EMPTY);
             }
             else {
-                blockEntity.playSoundChance(level, pos, InventoryStatus.GRINDING);
+                blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.GRINDING);
             }
             if (blockEntity.grindProgressTime != 0) {
                 blockEntity.grindProgressTime = 0;
@@ -124,7 +125,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         }
 
         blockEntity.grindProgressTime += 1;
-        blockEntity.playSoundChance(level, pos, InventoryStatus.WORKING);
+        blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.WORKING);
         if (blockEntity.grindProgressTime >= timeToGrind) {
             blockEntity.grindProgressTime = 0;
             blockEntity.setChanged();
@@ -134,7 +135,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         }
 
         // Get the first recipe and grind it
-        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getItems(), match -> blockEntity.completeRecipe(match, level, pos));
+        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getItems(), match -> blockEntity.completeRecipe(match, serverLevel, pos));
     }
 
     public boolean completeRecipe(MillStoneRecipe recipe, Level level, BlockPos pos) {

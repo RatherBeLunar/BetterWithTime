@@ -1,13 +1,19 @@
 package com.bwt.recipes.cooking_pots;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.SharedRecipeProvider;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.utils.Id;
 import java.util.List;
+
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -17,18 +23,17 @@ public class StokedCrucibleRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.crucibleBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends AbstractCookingPotRecipe> getSerializer() {
         return BwtRecipes.STOKED_CRUCIBLE_RECIPE_SERIALIZER;
     }
 
     public static class JsonBuilder extends AbstractCookingPotRecipe.JsonBuilder<StokedCrucibleRecipe> {
-        public static StokedCrucibleRecipe.JsonBuilder create() {
-            return (StokedCrucibleRecipe.JsonBuilder) new StokedCrucibleRecipe.JsonBuilder().category(RecipeCategory.MISC);
+        protected JsonBuilder(SharedRecipeProvider recipeProvider) {
+            super(recipeProvider);
+        }
+
+        public static StokedCrucibleRecipe.JsonBuilder create(SharedRecipeProvider recipeProvider) {
+            return (StokedCrucibleRecipe.JsonBuilder) new StokedCrucibleRecipe.JsonBuilder(recipeProvider).category(RecipeCategory.MISC);
         }
 
         @Override
@@ -38,7 +43,7 @@ public class StokedCrucibleRecipe extends AbstractCookingPotRecipe {
 
         @Override
         public void save(RecipeOutput exporter) {
-            this.save(exporter, Id.of("smelt_" + RecipeProvider.getItemName(ingredients.get(0).getMatchingStacks().get(0).getItem()) + "_in_crucible"));
+            this.save(exporter, ResourceKey.create(Registries.RECIPE, Id.of("smelt_" + RecipeProvider.getItemName(ingredients.getFirst().getMatchingItems().getFirst().value()) + "_in_crucible")));
         }
     }
 }

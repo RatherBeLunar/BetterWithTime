@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -163,8 +164,8 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         return filterInventory.getTheItem().getItem();
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
-        if (level.isClientSide || !state.is(BwtBlocks.hopperBlock)) {
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
+        if (serverLevel.isClientSide || !state.is(BwtBlocks.hopperBlock)) {
             return;
         }
 
@@ -181,7 +182,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
                 blockEntity.itemDropCooldown += 1;
 
                 if (blockEntity.itemDropCooldown >= MechHopperBlockEntity.ITEM_DROP_COOLDOWN) {
-                    blockEntity.attemptToEjectStack(level, pos);
+                    blockEntity.attemptToEjectStack(serverLevel, pos);
                     blockEntity.itemDropCooldown = 0;
                 }
             }
@@ -197,7 +198,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (blockEntity.soulCount > 0) {
             // souls can only be trapped if there's a soul sand filter on the hopper
             if (blockEntity.getFilterItem().equals(Items.SOUL_SAND)) {
-                bottleSouls(level, blockEntity);
+                bottleSouls(serverLevel, blockEntity);
             }
             else {
                 blockEntity.soulCount = 0;
@@ -205,21 +206,21 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
     }
 
-    protected static void bottleSouls(Level level, MechHopperBlockEntity blockEntity) {
-        BlockState blockBelowState = level.getBlockState(blockEntity.getBlockPos().below());
+    protected static void bottleSouls(ServerLevel serverLevel, MechHopperBlockEntity blockEntity) {
+        BlockState blockBelowState = serverLevel.getBlockState(blockEntity.getBlockPos().below());
 
         SoulBottlingRecipeInput recipeInput = new SoulBottlingRecipeInput(blockBelowState.getBlock());
-        Optional<SoulBottlingRecipe> optionalRecipe = level.getRecipeManager().getRecipeFor(
+        Optional<SoulBottlingRecipe> optionalRecipe = serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE,
                 recipeInput,
-                level
+                serverLevel
         ).map(RecipeHolder::value);
 
         // If unpowered, we just need to check for explosions
         // Otherwise, nothing happens while unpowered
         if (blockEntity.mechPower <= 0) {
             if (blockEntity.soulCount >= SOUL_STORAGE_LIMIT) {
-                soulOverloadExplode(level, blockEntity);
+                soulOverloadExplode(serverLevel, blockEntity);
             }
             return;
         }
@@ -238,8 +239,8 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
 
         // Powered + enough souls + bottle found? Convert
-        level.removeBlock(blockEntity.getBlockPos().below(), false);
-        Containers.dropItemStack(level, blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY() - 1, blockEntity.getBlockPos().getZ(), recipe.getResult());
+        serverLevel.removeBlock(blockEntity.getBlockPos().below(), false);
+        Containers.dropItemStack(serverLevel, blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY() - 1, blockEntity.getBlockPos().getZ(), recipe.getResult());
 
         // the rest of the souls escape (if any remain)
         blockEntity.soulCount = 0;
@@ -322,21 +323,18 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     // Pick up items from above
-    public void onEntityCollided(Level level, Entity entity) {
+    public void onEntityCollided(ServerLevel serverLevel, Entity entity) {
         if (this.itemPickupCooldown > 0) {
             return;
         }
         if (entity instanceof ItemEntity itemEntity) {
-            pickupItemEntity(level, itemEntity);
+            pickupItemEntity(serverLevel, itemEntity);
         }
     }
 
-    protected Optional<HopperFilterRecipe> getMatchingRecipe(ItemStack itemStack) {
+    protected Optional<HopperFilterRecipe> getMatchingRecipe(ServerLevel serverLevel, ItemStack itemStack) {
         HopperFilterRecipeInput recipeInput = new HopperFilterRecipeInput(getFilterItem(), itemStack);
-        if (level == null) {
-            return Optional.empty();
-        }
-        return level.getRecipeManager().getRecipeFor(
+        return serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.HOPPER_FILTER_RECIPE_TYPE,
                 recipeInput,
                 level
@@ -347,15 +345,15 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         return MechHopperBlock.filterMap.getOrDefault(getFilterItem(), s -> true).test(itemStack);
     }
 
-    protected void pickupItemEntity(Level level, ItemEntity itemEntity) {
+    protected void pickupItemEntity(ServerLevel serverLevel, ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
         if (itemStack.isEmpty()) {
             return;
         }
 
-        Optional<HopperFilterRecipe> optionalRecipe = getMatchingRecipe(itemStack);
+        Optional<HopperFilterRecipe> optionalRecipe = getMatchingRecipe(serverLevel, itemStack);
         if (optionalRecipe.isPresent()) {
-            processRecipe(level, itemEntity, optionalRecipe.get(), itemStack);
+            processRecipe(serverLevel, itemEntity, optionalRecipe.get(), itemStack);
             return;
         }
 
@@ -512,7 +510,10 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
         // Don't process recipes via hoppers.
         // Enforce filter checks
-        return getMatchingRecipe(stack).isEmpty() && passesFilter(stack);
+        if (level instanceof ServerLevel serverLevel && getMatchingRecipe(serverLevel, stack).isPresent()) {
+            return false;
+        }
+        return passesFilter(stack);
     }
 
     @Override

@@ -166,7 +166,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         BlockPos newPos = RopeBlock.getBottomRopePos(level, pos).below();
         BlockState newState = level.getBlockState(newPos);
         boolean flag = !isMoving && validRopeConnector(newState);
-        return newPos.getY() > level.getMinBuildHeight() && (newState.canBeReplaced() || flag) && newPos.above().getY() > level.getMinBuildHeight();
+        return level.isInsideBuildHeight(newPos.getY()) && (newState.canBeReplaced() || flag) && level.isInsideBuildHeight(newPos.above().getY());
     }
 
     private void goUp(Level level, BlockPos pos) {

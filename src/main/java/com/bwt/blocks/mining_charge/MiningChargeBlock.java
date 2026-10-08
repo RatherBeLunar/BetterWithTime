@@ -22,10 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
@@ -33,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -102,23 +100,23 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         return state;
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.hasNeighborSignal(pos)) {
-            level.scheduleTick(pos, this, 1);
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.hasNeighborSignal(blockPos)) {
+            level.scheduleTick(blockPos, this, 1);
         }
-        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
+        if (level.isClientSide || !level.getBlockState(blockPos).is(this)) {
             return;
         }
-        if (canSurvive(state, level, pos)) {
+        if (canSurvive(blockState, level, blockPos)) {
             return;
         }
-        dropResources(state, level, pos);
-        level.removeBlock(pos, notify);
+        dropResources(blockState, level, blockPos);
+        level.removeBlock(blockPos, notify);
     }
 
     @Override

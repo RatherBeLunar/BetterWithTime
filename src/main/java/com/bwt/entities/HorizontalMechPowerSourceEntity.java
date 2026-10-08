@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
@@ -153,13 +154,13 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
         if (placementBlockedByBlock()) {
             if(player != null) {
-                player.sendSystemMessage(blockBlockedErrorMessage);
+                player.displayClientMessage(blockBlockedErrorMessage, true);
             }
             return false;
         }
         if (placementBlockedByEntity()) {
             if(player != null) {
-                player.sendSystemMessage(entityBlockedErrorMessage);
+                player.displayClientMessage(entityBlockedErrorMessage, true);
             }
             return false;
         }
@@ -289,11 +290,16 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.level().isClientSide || this.isRemoved()) {
+    public boolean hurtClient(DamageSource damageSource) {
+        return !this.isInvulnerableToBase(damageSource) && !this.isRemoved();
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        if (this.isRemoved()) {
             return true;
         }
-        if (this.isInvulnerableTo(source)) {
+        if (this.isInvulnerableToBase(source)) {
             return false;
         }
         this.setDamageWobbleSide(-this.getDamageWobbleSide());
@@ -314,8 +320,10 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     public void destroyWithDrop() {
         if (isRemoved()) return;
-        spawnAtLocation(getPickResult(), 0.5f);
-        kill();
+        if (level() instanceof ServerLevel serverLevel) {
+            spawnAtLocation(serverLevel, getPickResult(), 0.5f);
+            kill(serverLevel);
+        }
     }
 
     @Override

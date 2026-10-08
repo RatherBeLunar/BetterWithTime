@@ -4,7 +4,7 @@ import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.entities.PickUpBreedingItemWhileSittingGoal;
 import com.bwt.entities.WolfIsFedAccess;
 import com.bwt.items.BwtItems;
-import com.bwt.mixin.accessors.MobEntityAccessorMixin;
+import com.bwt.mixin.accessor.MobEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;

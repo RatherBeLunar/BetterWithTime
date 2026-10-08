@@ -3,11 +3,16 @@ package com.bwt.recipes.kiln;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -29,10 +34,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -55,12 +56,7 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.kilnBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<KilnRecipe> getSerializer() {
         return BwtRecipes.KILN_RECIPE_SERIALIZER;
     }
 
@@ -68,12 +64,6 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
     public boolean matches(KilnRecipeInput input, Level level) {
         return this.ingredient.test(input.block());
     }
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
 
     public BlockIngredient getIngredient() {
         return ingredient;
@@ -88,12 +78,12 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
     }
 
     @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<KilnRecipe> getType() {
         return BwtRecipes.KILN_RECIPE_TYPE;
     }
 
@@ -113,12 +103,27 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
 
     @Override
     public ItemStack assemble(KilnRecipeInput input, HolderLookup.Provider lookup) {
-        return getResultItem(lookup);
+        return drops.getFirst();
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
-        return drops.get(0);
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return switch (this.category) {
+            case BUILDING -> RecipeBookCategories.CRAFTING_BUILDING_BLOCKS;
+            case REDSTONE -> RecipeBookCategories.CRAFTING_REDSTONE;
+            case EQUIPMENT -> RecipeBookCategories.CRAFTING_EQUIPMENT;
+            case MISC -> RecipeBookCategories.CRAFTING_MISC;
+        };
     }
 
     public static class Serializer implements RecipeSerializer<KilnRecipe> {
@@ -141,9 +146,15 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
                                 .forGetter(KilnRecipe::getDrops)
                 ).apply(instance, KilnRecipe::new)
         );
-        public static final StreamCodec<RegistryFriendlyByteBuf, KilnRecipe> PACKET_CODEC = StreamCodec.of(
-                Serializer::write, Serializer::read
+        public static final StreamCodec<RegistryFriendlyByteBuf, KilnRecipe> PACKET_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, KilnRecipe::group,
+                CraftingBookCategory.STREAM_CODEC, KilnRecipe::getCategory,
+                BlockIngredient.CONTENTS_STREAM_CODEC, KilnRecipe::getIngredient,
+                ByteBufCodecs.INT, KilnRecipe::getCookingTime,
+                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), KilnRecipe::getDrops,
+                KilnRecipe::new
         );
+
 
         public Serializer() {}
 
@@ -155,23 +166,6 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, KilnRecipe> streamCodec() {
             return PACKET_CODEC;
-        }
-
-        protected static KilnRecipe read(RegistryFriendlyByteBuf buf) {
-            String group = buf.readUtf();
-            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
-            BlockIngredient ingredient = BlockIngredient.Serializer.read(buf);
-            int cookingTime = buf.readVarInt();
-            List<ItemStack> drops = ItemStack.LIST_STREAM_CODEC.decode(buf);
-            return new KilnRecipe(group, category, ingredient, cookingTime, drops);
-        }
-
-        protected static void write(RegistryFriendlyByteBuf buf, KilnRecipe recipe) {
-            buf.writeUtf(recipe.group);
-            buf.writeEnum(recipe.category);
-            BlockIngredient.Serializer.write(buf, recipe.ingredient);
-            buf.writeVarInt(recipe.cookingTime);
-            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getDrops());
         }
     }
 
@@ -186,15 +180,15 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
 
         public static JsonBuilder create(Block input) {
             JsonBuilder obj = new JsonBuilder();
-            obj.ingredient = BlockIngredient.fromBlock(input);
+            obj.ingredient = BlockIngredient.of(input);
             obj.fromBlockName = BuiltInRegistries.BLOCK.getKey(input).getPath();
             obj.cookingTime = KilnRecipe.DEFAULT_COOKING_TIME;
             return obj;
         }
 
-        public static JsonBuilder create(TagKey<Block> inputTag) {
+        public static JsonBuilder create(HolderGetter<Block> blocks, TagKey<Block> inputTag) {
             JsonBuilder obj = new JsonBuilder();
-            obj.ingredient = BlockIngredient.fromTag(inputTag);
+            obj.ingredient = BlockIngredient.of(blocks.getOrThrow(inputTag));
             obj.fromBlockName = inputTag.location().getPath();
             obj.cookingTime = KilnRecipe.DEFAULT_COOKING_TIME;
             return obj;
@@ -248,20 +242,9 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
             return this;
         }
 
-        protected boolean isDefaultRecipe;
-        public JsonBuilder markDefault() {
-            this.isDefaultRecipe = true;
-            return this;
-        }
-        public void addToDefaults(ResourceLocation recipeId) {
-            if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
-            }
-        }
-
         @Override
         public Item getResult() {
-            return drops.get(0).getItem();
+            return drops.getFirst().getItem();
         }
 
         @Override
@@ -274,10 +257,13 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
             this.save(exporter, Id.of(recipePath));
         }
 
+        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+            this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
+        }
+
         @Override
-        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
-            this.addToDefaults(recipeId);
-            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+        public void save(RecipeOutput recipeOutput, ResourceKey<Recipe<?>> resourceKey) {
+            Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             KilnRecipe kilnRecipe = new KilnRecipe(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
@@ -285,7 +271,7 @@ public class KilnRecipe implements Recipe<KilnRecipeInput> {
                     this.cookingTime,
                     this.drops
             );
-            exporter.accept(recipeId, kilnRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, kilnRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

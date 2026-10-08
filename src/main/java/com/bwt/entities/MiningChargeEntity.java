@@ -25,6 +25,7 @@ import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.SimpleExplosionDamageCalculator;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
@@ -113,8 +114,8 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
         this.setFuse(i);
         if (i <= 0) {
             this.discard();
-            if (!this.level().isClientSide) {
-                this.explode();
+            if (level() instanceof ServerLevel serverLevel) {
+                this.explode(serverLevel);
             }
         } else {
             this.updateInWaterStateAndDoFluidPushing();
@@ -135,25 +136,23 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
         }
     }
 
-    private void explode() {
+    private void explode(ServerLevel serverLevel) {
 //        this.getWorld().createExplosion(this, this.getX(), this.getY(), this.getZ(), 6.0f, World.ExplosionSourceType.NONE);
-        createMiningChargeExplosion(6.0f);
+        createMiningChargeExplosion(serverLevel, 6.0f);
     }
 
-    public void createMiningChargeExplosion(float power) {
-        Explosion.BlockInteraction destructionType = level().getGameRules().getBoolean(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
+    public void createMiningChargeExplosion(ServerLevel serverLevel, float power) {
+        Explosion.BlockInteraction destructionType = serverLevel.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
         Vec3 offsetPos = this.blockPosition().relative(getNearestViewDirection().getOpposite()).getCenter();
         Explosion explosion = new MiningChargeExplosion(
-                level(),
+                serverLevel,
                 this,
+                Explosion.getDefaultDamageSource(serverLevel, this),
+                null,
                 offsetPos,
-                Explosion.getDefaultDamageSource(level(), this),
                 power,
                 false,
                 destructionType,
-                ParticleTypes.EXPLOSION,
-                ParticleTypes.EXPLOSION_EMITTER,
-                SoundEvents.GENERIC_EXPLODE
         );
         explosion.explode();
         explosion.finalizeExplosion(true);

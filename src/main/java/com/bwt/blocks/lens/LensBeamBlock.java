@@ -10,9 +10,7 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,9 +19,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -86,16 +87,16 @@ public class LensBeamBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         // If any neighbor the beam is facing into is solid, it's a terminus
-        return state.setValue(TERMINUS, LensBeamHelper.anyNeighborNotPropagable(level, pos, state));
+        return state.setValue(TERMINUS, LensBeamHelper.anyNeighborNotPropagable(levelReader, pos, state));
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
         Vec3i vec = sourcePos.subtract(pos);
-        Direction direction = Direction.fromDelta(vec.getX(), vec.getY(), vec.getZ());
+        Direction direction = Direction.getApproximateNearest(vec.getX(), vec.getY(), vec.getZ());
         if (direction == null) {
             return;
         }

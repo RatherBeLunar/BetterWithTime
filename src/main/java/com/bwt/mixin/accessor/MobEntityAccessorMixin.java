@@ -1,4 +1,4 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.GoalSelector;

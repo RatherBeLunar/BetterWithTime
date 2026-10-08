@@ -2,18 +2,18 @@ package com.bwt.blocks;
 
 import com.bwt.utils.Id;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import net.minecraft.core.Registry;
+
+import com.bwt.utils.RegistrationBase;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.BlockFamilies;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.WoodType;
 
 public abstract class MaterialInheritedBlock extends Block {
@@ -29,6 +29,32 @@ public abstract class MaterialInheritedBlock extends Block {
         return isWood;
     }
 
+    public static void registerMaterialBlock(
+            ArrayList<SidingBlock> sidingBlocks,
+            ArrayList<MouldingBlock> mouldingBlocks,
+            ArrayList<CornerBlock> cornerBlocks,
+            ArrayList<ColumnBlock> columnBlocks,
+            ArrayList<PedestalBlock> pedestalBlocks,
+            ArrayList<TableBlock> tableBlocks,
+            Block planksBlock,
+            boolean wood
+    ) {
+        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(planksBlock);
+        String sidingId = blockId.getPath() + "_siding";
+        String mouldingId = blockId.getPath() + "_moulding";
+        String cornerId = blockId.getPath() + "_corner";
+        String columnId = blockId.getPath() + "_column";
+        String pedestalId = blockId.getPath() + "_pedestal";
+        String tableId = blockId.getPath() + "_table";
+        BlockBehaviour.Properties blockProperties = Properties.ofFullCopy(planksBlock);
+        sidingBlocks.add(RegistrationBase.registerBlockWithItem(sidingId, properties -> SidingBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+        mouldingBlocks.add(RegistrationBase.registerBlockWithItem(mouldingId, properties -> MouldingBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+        cornerBlocks.add(RegistrationBase.registerBlockWithItem(cornerId, properties -> CornerBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+        columnBlocks.add(RegistrationBase.registerBlockWithItem(columnId, properties -> ColumnBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+        pedestalBlocks.add(RegistrationBase.registerBlockWithItem(pedestalId, properties -> PedestalBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+        tableBlocks.add(RegistrationBase.registerBlockWithItem(tableId, properties -> TableBlock.ofBlock(properties, planksBlock, wood), blockProperties));
+    }
+
     public static void registerMaterialBlocks(
             ArrayList<SidingBlock> sidingBlocks,
             ArrayList<MouldingBlock> mouldingBlocks,
@@ -37,22 +63,15 @@ public abstract class MaterialInheritedBlock extends Block {
             ArrayList<PedestalBlock> pedestalBlocks,
             ArrayList<TableBlock> tableBlocks
     ) {
-        Stream.concat(
+        var woodTypeBlocks = Stream.concat(
             WoodType.values()
                     .map(woodType -> BuiltInRegistries.BLOCK.getOptional(Id.mc(woodType.name() + "_planks")))
                     .filter(Optional::isPresent)
                     .map(Optional::get),
             Stream.of(Blocks.BAMBOO_MOSAIC)
-        )
-                .forEach(block -> {
-            sidingBlocks.add(SidingBlock.ofWoodBlock(block));
-            mouldingBlocks.add(MouldingBlock.ofWoodBlock(block));
-            cornerBlocks.add(CornerBlock.ofWoodBlock(block));
-            columnBlocks.add(ColumnBlock.ofWoodBlock(block));
-            pedestalBlocks.add(PedestalBlock.ofWoodBlock(block));
-            tableBlocks.add(TableBlock.ofWoodBlock(block));
-        });
-        List<BlockFamily> blockFamilies = List.of(
+        ).map(block -> new Tuple<>(block, true));
+
+        var nonWoodFamilyBlocks = Stream.of(
                 BlockFamilies.COBBLESTONE,
                 BlockFamilies.STONE,
                 BlockFamilies.STONE_BRICK,
@@ -73,41 +92,22 @@ public abstract class MaterialInheritedBlock extends Block {
                 BlockFamilies.PRISMARINE,
                 BlockFamilies.END_STONE_BRICKS,
                 BlockFamilies.PURPUR
-        );
-        blockFamilies.stream().map(BlockFamily::getBaseBlock).forEach(block -> {
-            sidingBlocks.add(SidingBlock.ofBlock(block));
-            mouldingBlocks.add(MouldingBlock.ofBlock(block));
-            cornerBlocks.add(CornerBlock.ofBlock(block));
-            columnBlocks.add(ColumnBlock.ofBlock(block));
-            pedestalBlocks.add(PedestalBlock.ofBlock(block));
-            tableBlocks.add(TableBlock.ofBlock(block));
+        ).map(BlockFamily::getBaseBlock).map(block -> new Tuple<>(block, false));
+
+        Stream.concat(woodTypeBlocks, nonWoodFamilyBlocks).forEach(value -> {
+            Block block = value.getA();
+            boolean isWood = value.getB();
+
+            registerMaterialBlock(
+                    sidingBlocks,
+                    mouldingBlocks,
+                    cornerBlocks,
+                    columnBlocks,
+                    pedestalBlocks,
+                    tableBlocks,
+                    block,
+                    isWood
+            );
         });
-        for (int i = 0; i < sidingBlocks.size(); i++) {
-            SidingBlock sidingBlock = sidingBlocks.get(i);
-            MouldingBlock mouldingBlock = mouldingBlocks.get(i);
-            CornerBlock cornerBlock = cornerBlocks.get(i);
-            ColumnBlock columnBlock = columnBlocks.get(i);
-            PedestalBlock pedestalBlock = pedestalBlocks.get(i);
-            TableBlock tableBlock = tableBlocks.get(i);
-            ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(sidingBlock.fullBlock);
-            ResourceLocation sidingId = Id.of(blockId.getPath() + "_siding");
-            ResourceLocation mouldingId = Id.of(blockId.getPath() + "_moulding");
-            ResourceLocation cornerId = Id.of(blockId.getPath() + "_corner");
-            ResourceLocation columnId = Id.of(blockId.getPath() + "_column");
-            ResourceLocation pedestalId = Id.of(blockId.getPath() + "_pedestal");
-            ResourceLocation tableId = Id.of(blockId.getPath() + "_table");
-            Registry.register(BuiltInRegistries.BLOCK, sidingId, sidingBlock);
-            Registry.register(BuiltInRegistries.BLOCK, mouldingId, mouldingBlock);
-            Registry.register(BuiltInRegistries.BLOCK, cornerId, cornerBlock);
-            Registry.register(BuiltInRegistries.BLOCK, columnId, columnBlock);
-            Registry.register(BuiltInRegistries.BLOCK, pedestalId, pedestalBlock);
-            Registry.register(BuiltInRegistries.BLOCK, tableId, tableBlock);
-            Registry.register(BuiltInRegistries.ITEM, sidingId, new BlockItem(sidingBlock, new Item.Properties()));
-            Registry.register(BuiltInRegistries.ITEM, mouldingId, new BlockItem(mouldingBlock, new Item.Properties()));
-            Registry.register(BuiltInRegistries.ITEM, cornerId, new BlockItem(cornerBlock, new Item.Properties()));
-            Registry.register(BuiltInRegistries.ITEM, columnId, new BlockItem(columnBlock, new Item.Properties()));
-            Registry.register(BuiltInRegistries.ITEM, pedestalId, new BlockItem(pedestalBlock, new Item.Properties()));
-            Registry.register(BuiltInRegistries.ITEM, tableId, new BlockItem(tableBlock, new Item.Properties()));
-        }
     }
 }

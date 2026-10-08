@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Containers;
@@ -54,8 +55,8 @@ public class TurntableBlockEntity extends BlockEntity {
         nbt.putInt("craftingTurnCounter", craftingTurnCounter);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
-        if (level.isClientSide) {
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
+        if (serverLevel.isClientSide) {
             return;
         }
         if (!state.is(BwtBlocks.turntableBlock) || !state.getValue(TurntableBlock.MECH_POWERED)) {
@@ -66,39 +67,39 @@ public class TurntableBlockEntity extends BlockEntity {
 
         blockEntity.rotationTickCounter++;
         if (blockEntity.rotationTickCounter >= ticksToRotate[tickSetting]) {
-            level.playSound(null, pos, BwtSoundEvents.TURNTABLE_TURNING_CLICK, SoundSource.BLOCKS, 0.05f, 1f);
+            serverLevel.playSound(null, pos, BwtSoundEvents.TURNTABLE_TURNING_CLICK, SoundSource.BLOCKS, 0.05f, 1f);
             blockEntity.rotationTickCounter = 0;
-            rotateTurnTable(level, pos, state, blockEntity);
+            rotateTurnTable(serverLevel, pos, state, blockEntity);
         }
     }
 
-    protected static void rotateTurnTable(Level level, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
+    protected static void rotateTurnTable(ServerLevel serverLevel, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
         Rotation rotation = state.getValue(TurntableBlock.POWERED) ? Rotation.CLOCKWISE_90 : Rotation.COUNTERCLOCKWISE_90;
-        List<BlockPosAndState> blocksToRotate = getBlocksToRotate(level, pos);
-        List<BlockPosAndState> attachedBlocksBeingRotated = getAttachedBlocksBeingRotated(level, blocksToRotate);
-        List<BlockPosAndState> attachedBlockDestinations = getAttachedBlockDestinations(level, pos, attachedBlocksBeingRotated, rotation);
-        pickUpAttachedBlocks(level, attachedBlocksBeingRotated, attachedBlockDestinations);
-        rotateCentralColumnBlocks(level, blocksToRotate, blockEntity, rotation);
-        placeRotatedAttachedBlocks(level, attachedBlocksBeingRotated, attachedBlockDestinations, rotation);
+        List<BlockPosAndState> blocksToRotate = getBlocksToRotate(serverLevel, pos);
+        List<BlockPosAndState> attachedBlocksBeingRotated = getAttachedBlocksBeingRotated(serverLevel, blocksToRotate);
+        List<BlockPosAndState> attachedBlockDestinations = getAttachedBlockDestinations(serverLevel, pos, attachedBlocksBeingRotated, rotation);
+        pickUpAttachedBlocks(serverLevel, attachedBlocksBeingRotated, attachedBlockDestinations);
+        rotateCentralColumnBlocks(serverLevel, blocksToRotate, blockEntity, rotation);
+        placeRotatedAttachedBlocks(serverLevel, attachedBlocksBeingRotated, attachedBlockDestinations, rotation);
         // Notify neighbors of the rotation
-        state.updateNeighbourShapes(level, pos, Block.UPDATE_NEIGHBORS);
+        state.updateNeighbourShapes(serverLevel, pos, Block.UPDATE_NEIGHBORS);
     }
 
-    protected static List<BlockPosAndState> getBlocksToRotate(Level level, BlockPos turntablePos) {
-        RecipeManager recipeManager = level.getRecipeManager();
+    protected static List<BlockPosAndState> getBlocksToRotate(ServerLevel serverLevel, BlockPos turntablePos) {
+        RecipeManager recipeManager = serverLevel.recipeAccess();
 
         List<BlockPosAndState> blocksToRotate = new ArrayList<>();
         for (int j = 1; j <= blocksAboveToRotate; j++) {
             BlockPos blockAbovePos = turntablePos.above(j);
-            BlockState blockAboveState = level.getBlockState(blockAbovePos);
+            BlockState blockAboveState = serverLevel.getBlockState(blockAbovePos);
             if (blockAboveState.is(BlockTags.AIR)) {
                 break;
             }
-            if (!CanRotateHelper.canRotate(level, blockAbovePos, blockAboveState)) {
+            if (!CanRotateHelper.canRotate(serverLevel, blockAbovePos, blockAboveState)) {
                 break;
             }
 
-            BlockEntity blockAboveEntity = level.getBlockEntity(blockAbovePos);
+            BlockEntity blockAboveEntity = serverLevel.getBlockEntity(blockAbovePos);
             blocksToRotate.add(new BlockPosAndState(blockAbovePos, blockAboveState, blockAboveEntity));
 
             // Crafting
@@ -106,7 +107,7 @@ public class TurntableBlockEntity extends BlockEntity {
             boolean recipeExistsForBlock = recipeManager.getRecipeFor(
                     BwtRecipes.TURNTABLE_RECIPE_TYPE,
                     recipeInput,
-                    level
+                    serverLevel
             ).isPresent();
 
             if (recipeExistsForBlock) {
@@ -114,7 +115,7 @@ public class TurntableBlockEntity extends BlockEntity {
                 break;
             }
             // The < check here is just a minor optimization, so we don't need to check propagation unnecessarily
-            if (!VerticalBlockAttachmentHelper.canPropagateRotationUpwards(level, blockAbovePos, blockAboveState)) {
+            if (!VerticalBlockAttachmentHelper.canPropagateRotationUpwards(serverLevel, blockAbovePos, blockAboveState)) {
                 break;
             }
         }
@@ -143,7 +144,7 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockPos centralColumnPos = new BlockPos(turntablePos.getX(), attachedPos.getY(), turntablePos.getZ());
 
             Vec3i directionVector = attachedPos.subtract(centralColumnPos);
-            Direction direction = Direction.fromDelta(directionVector.getX(), 0, directionVector.getZ());
+            Direction direction = Direction.getApproximateNearest(directionVector.getX(), 0, directionVector.getZ());
             BlockPos attachedDestinationPos = centralColumnPos.relative(rotation.equals(Rotation.CLOCKWISE_90) ? Objects.requireNonNull(direction).getClockWise() : Objects.requireNonNull(direction).getCounterClockWise());
             return BlockPosAndState.of(level, attachedDestinationPos);
         }).toList();
@@ -175,8 +176,8 @@ public class TurntableBlockEntity extends BlockEntity {
         }
     }
 
-    protected static void rotateCentralColumnBlocks(Level level, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, Rotation rotation) {
-        RecipeManager recipeManager = level.getRecipeManager();
+    protected static void rotateCentralColumnBlocks(ServerLevel serverLevel, List<BlockPosAndState> blocksToRotate, TurntableBlockEntity blockEntity, Rotation rotation) {
+        RecipeManager recipeManager = serverLevel.recipeAccess();
         boolean recipeFound = false;
 
         for (BlockPosAndState blockToRotate : blocksToRotate) {
@@ -185,24 +186,24 @@ public class TurntableBlockEntity extends BlockEntity {
             BlockEntity blockToRotateEntity = blockToRotate.blockEntity();
 
             BlockState rotatedState = blockToRotateState.rotate(rotation);
-            RotationProcessHelper.processRotation(level, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
+            RotationProcessHelper.processRotation(serverLevel, blockToRotatePos, blockToRotateState, rotatedState, blockToRotateEntity);
 
             // Crafting
             TurntableRecipeInput recipeInput = new TurntableRecipeInput(blockToRotateState.getBlock());
             Optional<TurntableRecipe> recipe = recipeManager.getRecipeFor(
                     BwtRecipes.TURNTABLE_RECIPE_TYPE,
                     recipeInput,
-                    level
+                    serverLevel
             ).map(RecipeHolder::value);
 
             if (recipe.isPresent()) {
                 recipeFound = true;
                 blockEntity.craftingTurnCounter += 1;
-                level.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockToRotatePos, Block.getId(blockToRotateState));
+                serverLevel.levelEvent(LevelEvent.PARTICLES_DESTROY_BLOCK, blockToRotatePos, Block.getId(blockToRotateState));
                 if (blockEntity.craftingTurnCounter >= TurntableBlockEntity.turnsToCraft) {
                     blockEntity.craftingTurnCounter = 0;
-                    level.setBlockAndUpdate(blockToRotatePos, recipe.get().getOutput().defaultBlockState());
-                    Containers.dropContents(level, blockToRotatePos, recipe.get().getDrops());
+                    serverLevel.setBlockAndUpdate(blockToRotatePos, recipe.get().getOutput().defaultBlockState());
+                    Containers.dropContents(serverLevel, blockToRotatePos, recipe.get().getDrops());
                 }
             }
         }

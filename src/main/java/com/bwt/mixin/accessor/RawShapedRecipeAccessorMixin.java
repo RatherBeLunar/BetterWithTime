@@ -1,4 +1,4 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import com.mojang.serialization.DataResult;
 import org.spongepowered.asm.mixin.Mixin;

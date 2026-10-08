@@ -4,7 +4,10 @@ import com.bwt.tags.BwtEntityTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.ChestBoat;
+
 import java.util.concurrent.CompletableFuture;
 
 public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvider {
@@ -24,10 +27,18 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
                 .add(EntityType.HOPPER_MINECART)
                 .add(EntityType.SPAWNER_MINECART)
                 .add(EntityType.TNT_MINECART)
-                .add(EntityType.BOAT)
-                .add(EntityType.CHEST_BOAT)
                 .add(EntityType.ARMOR_STAND)
                 .add(EntityType.ITEM_FRAME)
-                .add(EntityType.GLOW_ITEM_FRAME);
+                .add(EntityType.GLOW_ITEM_FRAME)
+                .add(EntityType.ACACIA_CHEST_BOAT)
+                .add(EntityType.BIRCH_CHEST_BOAT)
+                .add(EntityType.CHERRY_CHEST_BOAT)
+                .add(EntityType.DARK_OAK_CHEST_BOAT)
+                .add(EntityType.JUNGLE_CHEST_BOAT)
+                .add(EntityType.MANGROVE_CHEST_BOAT)
+                .add(EntityType.OAK_CHEST_BOAT)
+                .add(EntityType.PALE_OAK_CHEST_BOAT)
+                .add(EntityType.SPRUCE_CHEST_BOAT)
+                .addTag(EntityTypeTags.BOAT);
     }
 }

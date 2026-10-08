@@ -2,7 +2,7 @@
 
 # Better With Time
 
-Better With Time is a **tech-focused** adaptation of the [Better Than Wolves](https://github.com/BTW-Community/BTW-Public) mod for modern versions of Minecraft (1.21+). Though not as direct of an inspiration, it also shares many similarities with [Better With Mods](https://www.curseforge.com/minecraft/mc-mods/bwm-suite).
+Better With Time is a **tech-focused** adaptation of the [Better Than Wolves](https://modrinth.com/mod/btwce) mod for modern versions of Minecraft (1.21+). Though not as direct of an inspiration, it also shares many similarities with [Better With Mods](https://www.curseforge.com/minecraft/mc-mods/bwm-suite).
 
 Better Than Wolves pioneered many technical blocks, items, and mechanics that overhauled the way players build, automate, and farm resources. Better With Time seeks to bring that classic, 2011-2012 experience to the modern Minecraft environment.
 

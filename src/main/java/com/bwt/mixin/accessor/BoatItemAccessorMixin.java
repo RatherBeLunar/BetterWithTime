@@ -1,6 +1,7 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
 import net.minecraft.world.item.BoatItem;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -8,8 +9,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(BoatItem.class)
 public interface BoatItemAccessorMixin {
     @Accessor
-    Boat.Type getType();
-
-    @Accessor
-    boolean getHasChest();
+    EntityType<? extends AbstractBoat> getEntityType();
 }

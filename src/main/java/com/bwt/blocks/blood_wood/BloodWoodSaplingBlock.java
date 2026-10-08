@@ -33,9 +33,12 @@ public class BloodWoodSaplingBlock extends SaplingBlock {
         if (!(placer instanceof Player playerEntity) || !level.dimensionType().ultraWarm()) {
             return;
         }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
         List<ZombifiedPiglin> list = level.getEntitiesOfClass(ZombifiedPiglin.class, playerEntity.getBoundingBox().inflate(16.0));
         list.forEach(piglin -> piglin.setTarget(playerEntity));
-        PiglinAi.angerNearbyPiglins(playerEntity, false);
+        PiglinAi.angerNearbyPiglins(serverLevel, playerEntity, false);
     }
 
     @Override

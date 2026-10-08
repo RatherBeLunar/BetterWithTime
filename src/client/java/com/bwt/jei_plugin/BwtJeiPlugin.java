@@ -104,7 +104,7 @@ public class BwtJeiPlugin implements IModPlugin {
         if (level == null) {
             return Stream.of();
         }
-        return level.getRecipeManager().getAllRecipesFor(type).stream();
+        return level.recipeAccess().getAllRecipesFor(type).stream();
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<T> sortRecipes(RecipeType<T> type, Comparator<? super RecipeHolder<T>> comparator) {

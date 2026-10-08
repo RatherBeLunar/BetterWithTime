@@ -1,13 +1,17 @@
 package com.bwt.recipes.mill_stone;
 
-import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.SharedRecipeProvider;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
-import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -27,11 +31,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 
 public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
@@ -48,12 +47,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.millStoneBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<MillStoneRecipe> getSerializer() {
         return BwtRecipes.MILL_STONE_RECIPE_SERIALIZER;
     }
 
@@ -71,12 +65,6 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         return true;
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> defaultedList = NonNullList.create();
         defaultedList.addAll(this.ingredients.stream().map(IngredientWithCount::toVanilla).toList());
@@ -92,12 +80,12 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
     }
 
     @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<MillStoneRecipe> getType() {
         return BwtRecipes.MILL_STONE_RECIPE_TYPE;
     }
 
@@ -117,12 +105,27 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
 
     @Override
     public ItemStack assemble(MillStoneRecipeInput input, HolderLookup.Provider lookup) {
-        return getResultItem(lookup);
+        return results.getFirst();
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider wrapperLookup) {
-        return results.get(0);
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return switch (this.category) {
+            case BUILDING -> RecipeBookCategories.CRAFTING_BUILDING_BLOCKS;
+            case REDSTONE -> RecipeBookCategories.CRAFTING_REDSTONE;
+            case EQUIPMENT -> RecipeBookCategories.CRAFTING_EQUIPMENT;
+            case MISC -> RecipeBookCategories.CRAFTING_MISC;
+        };
     }
 
     public static class Serializer implements RecipeSerializer<MillStoneRecipe> {
@@ -133,7 +136,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
                         CraftingBookCategory.CODEC.fieldOf("category")
                                 .orElse(CraftingBookCategory.MISC)
                                 .forGetter(recipe -> recipe.category),
-                        IngredientWithCount.Serializer.DISALLOW_EMPTY_CODEC.codec()
+                        IngredientWithCount.Serializer.CODEC.codec()
                                 .listOf()
                                 .fieldOf("ingredients")
                                 .forGetter(recipe -> recipe.ingredients),
@@ -143,8 +146,12 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
                                 .forGetter(MillStoneRecipe::getResults)
                 ).apply(instance, MillStoneRecipe::new)
         );
-        public static final StreamCodec<RegistryFriendlyByteBuf, MillStoneRecipe> PACKET_CODEC = StreamCodec.of(
-                Serializer::write, Serializer::read
+        public static final StreamCodec<RegistryFriendlyByteBuf, MillStoneRecipe> PACKET_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, MillStoneRecipe::group,
+                CraftingBookCategory.STREAM_CODEC, MillStoneRecipe::getCategory,
+                IngredientWithCount.Serializer.PACKET_CODEC.apply(ByteBufCodecs.list()), MillStoneRecipe::getIngredientsWithCount,
+                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), MillStoneRecipe::getResults,
+                MillStoneRecipe::new
         );
 
         public Serializer() {
@@ -159,29 +166,10 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         public StreamCodec<RegistryFriendlyByteBuf, MillStoneRecipe> streamCodec() {
             return PACKET_CODEC;
         }
-
-        public static MillStoneRecipe read(RegistryFriendlyByteBuf buf) {
-            String group = buf.readUtf();
-            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
-            int ingredientsSize = buf.readVarInt();
-            NonNullList<IngredientWithCount> ingredients = NonNullList.withSize(ingredientsSize, IngredientWithCount.EMPTY);
-            ingredients.replaceAll(ignored -> IngredientWithCount.Serializer.read(buf));
-            List<ItemStack> results = ItemStack.LIST_STREAM_CODEC.decode(buf);
-            return new MillStoneRecipe(group, category, ingredients, results);
-        }
-
-        public static void write(RegistryFriendlyByteBuf buf, MillStoneRecipe recipe) {
-            buf.writeUtf(recipe.group);
-            buf.writeEnum(recipe.category);
-            buf.writeVarInt(recipe.ingredients.size());
-            for (IngredientWithCount ingredient : recipe.ingredients) {
-                IngredientWithCount.Serializer.write(buf, ingredient);
-            }
-            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getResults());
-        }
     }
 
     public static class JsonBuilder implements RecipeBuilder {
+        protected final SharedRecipeProvider recipeProvider;
         protected CraftingBookCategory category = CraftingBookCategory.MISC;
         protected final NonNullList<IngredientWithCount> ingredients = NonNullList.create();
         protected final NonNullList<ItemStack> results = NonNullList.create();
@@ -189,8 +177,12 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         @Nullable
         protected String group;
 
-        public static JsonBuilder create() {
-            return new JsonBuilder();
+        protected JsonBuilder(SharedRecipeProvider recipeProvider) {
+            this.recipeProvider = recipeProvider;
+        }
+
+        public static JsonBuilder create(SharedRecipeProvider recipeProvider) {
+            return new JsonBuilder(recipeProvider);
         }
 
         public JsonBuilder category(CraftingBookCategory category) {
@@ -211,8 +203,8 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         }
 
         public JsonBuilder ingredient(ItemStack itemStack) {
-            this.unlockedBy(RecipeProvider.getHasName(itemStack.getItem()), RecipeProvider.has(itemStack.getItem()));
-            return this.ingredient(IngredientWithCount.fromStack(itemStack));
+            this.unlockedBy(RecipeProvider.getHasName(itemStack.getItem()), recipeProvider.has(itemStack.getItem()));
+            return this.ingredient(IngredientWithCount.of(itemStack));
         }
 
         public JsonBuilder ingredient(Item item, int count) {
@@ -254,28 +246,17 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
             return this;
         }
 
-        protected boolean isDefaultRecipe;
-        public JsonBuilder markDefault() {
-            this.isDefaultRecipe = true;
-            return this;
-        }
-        public void addToDefaults(ResourceLocation recipeId) {
-            if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
-            }
-        }
-
         @Override
         public Item getResult() {
-            return results.get(0).getItem();
+            return results.getFirst().getItem();
         }
 
         @Override
         public void save(RecipeOutput exporter) {
             this.save(exporter,
-                    RecipeProvider.getItemName(results.get(0).getItem())
+                    RecipeProvider.getItemName(results.getFirst().getItem())
                     + "_from_milling_"
-                    + RecipeProvider.getItemName(this.ingredients.get(0).getMatchingStacks().get(0).getItem())
+                    + RecipeProvider.getItemName(this.ingredients.getFirst().getMatchingStacks().getFirst().getItem())
             );
         }
 
@@ -284,11 +265,14 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
             this.save(exporter, Id.of(recipePath));
         }
 
+        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+            this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
+        }
+
         @Override
-        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
-            this.validate(recipeId);
-            this.addToDefaults(recipeId);
-            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+        public void save(RecipeOutput recipeOutput, ResourceKey<Recipe<?>> resourceKey) {
+            this.validate(resourceKey);
+            Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             this.criteria.forEach(advancementBuilder::addCriterion);
             MillStoneRecipe millStoneRecipe = new MillStoneRecipe(
                     Objects.requireNonNullElse(this.group, ""),
@@ -296,12 +280,12 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
                     this.ingredients,
                     this.results
             );
-            exporter.accept(recipeId, millStoneRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, millStoneRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
 
-        private void validate(ResourceLocation recipeId) {
+        private void validate(ResourceKey<Recipe<?>> recipeId) {
             if (this.criteria.isEmpty()) {
-                throw new IllegalStateException("No way of obtaining recipe " + recipeId);
+                throw new IllegalStateException("No way of obtaining recipe " + recipeId.location());
             }
         }
     }

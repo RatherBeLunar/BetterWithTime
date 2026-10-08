@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -39,11 +40,11 @@ public class CanvasEntity extends Painting {
     }
 
     @Override
-    public void dropItem(@Nullable Entity breaker) {
-        if (this.level().getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+    public void dropItem(ServerLevel serverLevel, @Nullable Entity breaker) {
+        if (serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
             this.playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
             if (!(breaker instanceof Player playerEntity && playerEntity.hasInfiniteMaterials())) {
-                this.spawnAtLocation(BwtItems.canvasItem);
+                this.spawnAtLocation(serverLevel, BwtItems.canvasItem);
             }
         }
     }
@@ -51,7 +52,7 @@ public class CanvasEntity extends Painting {
     public static Optional<CanvasEntity> placeCanvas(Level level, BlockPos pos, Direction facing) {
         CanvasEntity canvasEntity = new CanvasEntity(level, pos);
         List<Holder<PaintingVariant>> paintingVariants = new ArrayList<>();
-        level.registryAccess().registryOrThrow(Registries.PAINTING_VARIANT).getTagOrEmpty(BwtPaintingVariantTags.CANVAS_PLACEABLE).forEach(paintingVariants::add);
+        level.registryAccess().lookupOrThrow(Registries.PAINTING_VARIANT).getTagOrEmpty(BwtPaintingVariantTags.CANVAS_PLACEABLE).forEach(paintingVariants::add);
         if (paintingVariants.isEmpty()) {
             return Optional.empty();
         }

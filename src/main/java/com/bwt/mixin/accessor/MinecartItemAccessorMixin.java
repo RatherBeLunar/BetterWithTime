@@ -1,4 +1,4 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.item.MinecartItem;

@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -124,11 +125,11 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
 
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
         if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {

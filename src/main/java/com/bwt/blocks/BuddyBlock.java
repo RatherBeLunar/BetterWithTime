@@ -14,6 +14,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
+import org.jetbrains.annotations.Nullable;
 
 
 public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand {
@@ -52,9 +54,9 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
         if (!level.isClientSide()
-                && !state.getValue(POWERED)
+                && !blockState.getValue(POWERED)
                 && !level.getBlockState(sourcePos).is(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
                 && !level.getBlockTicks().willTickThisTick(pos, this)
         ) {
@@ -62,9 +64,9 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
             // that they are notifying of the original change. Not doing so causes problems
             // with some blocks (like ladders) that haven't finished initializing their state
             // on placement when they send out the notification
-            level.scheduleTick(pos, this, 1);
+            level.scheduleTick(blockPos, this, 1);
         }
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
+        super.neighborChanged(blockState, level, blockPos, sourceBlock, sourcePos, notify);
     }
 
     @Override

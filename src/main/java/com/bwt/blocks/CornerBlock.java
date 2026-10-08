@@ -42,13 +42,9 @@ public class CornerBlock extends MiniBlock {
         this.registerDefaultState(this.defaultBlockState().setValue(ORIENTATION, 0));
     }
 
-    public static CornerBlock ofBlock(Block fullBlock) {
-        return new CornerBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static CornerBlock ofWoodBlock(Block woodBlock) {
-        CornerBlock cornerBlock = ofBlock(woodBlock);
-        cornerBlock.isWood = true;
+    public static CornerBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        CornerBlock cornerBlock = new CornerBlock(properties, fullBlock);
+        cornerBlock.isWood = isWood;
         return cornerBlock;
     }
 

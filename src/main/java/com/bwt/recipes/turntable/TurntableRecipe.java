@@ -1,13 +1,17 @@
 package com.bwt.recipes.turntable;
 
-import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -29,10 +33,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -52,24 +52,14 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.turntableBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<TurntableRecipe> getSerializer() {
         return BwtRecipes.TURNTABLE_RECIPE_SERIALIZER;
     }
+
 
     @Override
     public boolean matches(TurntableRecipeInput input, Level level) {
         return this.ingredient.test(input.block());
-    }
-
-
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
     }
 
 
@@ -85,12 +75,12 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
     }
 
     @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<TurntableRecipe> getType() {
         return BwtRecipes.TURNTABLE_RECIPE_TYPE;
     }
 
@@ -110,36 +100,57 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
 
     @Override
     public ItemStack assemble(TurntableRecipeInput input, HolderLookup.Provider lookup) {
-        return getResultItem(lookup);
+        return output.asItem().getDefaultInstance();
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
-        return output.asItem().getDefaultInstance();
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return switch (this.category) {
+            case BUILDING -> RecipeBookCategories.CRAFTING_BUILDING_BLOCKS;
+            case REDSTONE -> RecipeBookCategories.CRAFTING_REDSTONE;
+            case EQUIPMENT -> RecipeBookCategories.CRAFTING_EQUIPMENT;
+            case MISC -> RecipeBookCategories.CRAFTING_MISC;
+        };
     }
 
     public static class Serializer implements RecipeSerializer<TurntableRecipe> {
         protected static final MapCodec<TurntableRecipe> CODEC = RecordCodecBuilder.mapCodec(
                 instance->instance.group(
                         Codec.STRING.optionalFieldOf("group", "")
-                                .forGetter(recipe -> recipe.group),
+                                .forGetter(TurntableRecipe::group),
                         CraftingBookCategory.CODEC.fieldOf("category")
                                 .orElse(CraftingBookCategory.MISC)
-                                .forGetter(recipe -> recipe.category),
+                                .forGetter(TurntableRecipe::getCategory),
                         BlockIngredient.Serializer.CODEC
                                 .fieldOf("ingredient")
-                                .forGetter(recipe -> recipe.ingredient),
-                        ResourceLocation.CODEC
+                                .forGetter(TurntableRecipe::getIngredient),
+                        BuiltInRegistries.BLOCK
+                                .byNameCodec()
                                 .fieldOf("output")
-                                .forGetter(recipe -> BuiltInRegistries.BLOCK.getKey(recipe.output)),
+                                .forGetter(TurntableRecipe::getOutput),
                         ItemStack.STRICT_CODEC
                                 .listOf()
                                 .fieldOf("drops")
                                 .forGetter(TurntableRecipe::getDrops)
-                ).apply(instance, (group, category, ingredient, outputId, drops) -> new TurntableRecipe(group, category, ingredient, BuiltInRegistries.BLOCK.get(outputId), drops))
+                ).apply(instance, TurntableRecipe::new)
         );
-        public static final StreamCodec<RegistryFriendlyByteBuf, TurntableRecipe> PACKET_CODEC = StreamCodec.of(
-                Serializer::write, Serializer::read
+        public static final StreamCodec<RegistryFriendlyByteBuf, TurntableRecipe> PACKET_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8, TurntableRecipe::group,
+                CraftingBookCategory.STREAM_CODEC, TurntableRecipe::getCategory,
+                BlockIngredient.CONTENTS_STREAM_CODEC, TurntableRecipe::getIngredient,
+                ByteBufCodecs.fromCodecWithRegistries(BuiltInRegistries.BLOCK.byNameCodec()), TurntableRecipe::getOutput,
+                ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), TurntableRecipe::getDrops,
+                TurntableRecipe::new
         );
 
         public Serializer() {}
@@ -152,23 +163,6 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, TurntableRecipe> streamCodec() {
             return PACKET_CODEC;
-        }
-
-        public static TurntableRecipe read(RegistryFriendlyByteBuf buf) {
-            String group = buf.readUtf();
-            CraftingBookCategory category = buf.readEnum(CraftingBookCategory.class);
-            BlockIngredient ingredient = BlockIngredient.Serializer.read(buf);
-            Block output = BuiltInRegistries.BLOCK.get(buf.readResourceLocation());
-            List<ItemStack> drops = ItemStack.LIST_STREAM_CODEC.decode(buf);
-            return new TurntableRecipe(group, category, ingredient, output, drops);
-        }
-
-        public static void write(RegistryFriendlyByteBuf buf, TurntableRecipe recipe) {
-            buf.writeUtf(recipe.group);
-            buf.writeEnum(recipe.category);
-            BlockIngredient.Serializer.write(buf, recipe.ingredient);
-            buf.writeResourceLocation(BuiltInRegistries.BLOCK.getKey(recipe.output));
-            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getDrops());
         }
     }
 
@@ -183,18 +177,22 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
 
         public static JsonBuilder create(Block input, Block output) {
             JsonBuilder obj = new JsonBuilder();
-            obj.ingredient = BlockIngredient.fromBlock(input);
+            obj.ingredient = BlockIngredient.of(input);
             obj.fromBlockName = BuiltInRegistries.BLOCK.getKey(input).getPath();
             obj.output = output;
             return obj;
         }
 
-        public static JsonBuilder create(TagKey<Block> inputTag, Block output) {
+        public static JsonBuilder create(HolderSet<Block> blocks, String fromBlockName, Block output) {
             JsonBuilder obj = new JsonBuilder();
-            obj.ingredient = BlockIngredient.fromTag(inputTag);
-            obj.fromBlockName = inputTag.location().getPath();
+            obj.ingredient = BlockIngredient.of(blocks);
+            obj.fromBlockName = fromBlockName;
             obj.output = output;
             return obj;
+        }
+
+        public static JsonBuilder create(HolderSet<Block> blocks, TagKey<Block> inputTag, Block output) {
+            return create(blocks, inputTag.location().getPath(), output);
         }
 
         public JsonBuilder category(CraftingBookCategory category) {
@@ -240,17 +238,6 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
             return this;
         }
 
-        protected boolean isDefaultRecipe;
-        public JsonBuilder markDefault() {
-            this.isDefaultRecipe = true;
-            return this;
-        }
-        public void addToDefaults(ResourceLocation recipeId) {
-            if(this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
-            }
-        }
-
         @Override
         public Item getResult() {
             return output.asItem();
@@ -266,10 +253,13 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
             this.save(exporter, Id.of(recipePath));
         }
 
+        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+            this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
+        }
+
         @Override
-        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
-            this.addToDefaults(recipeId);
-            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+        public void save(RecipeOutput recipeOutput, ResourceKey<Recipe<?>> resourceKey) {
+            Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             TurntableRecipe turntableRecipe = new TurntableRecipe(
                     Objects.requireNonNullElse(this.group, ""),
                     this.category,
@@ -277,7 +267,7 @@ public class TurntableRecipe implements Recipe<TurntableRecipeInput> {
                     this.output,
                     this.drops
             );
-            exporter.accept(recipeId, turntableRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, turntableRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

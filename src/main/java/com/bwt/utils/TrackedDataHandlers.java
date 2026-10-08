@@ -10,13 +10,19 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
+import java.util.Objects;
 
 public class TrackedDataHandlers implements ModInitializer {
     public static final EntityDataSerializer<Map<Vec3i, BlockState>> blockStateMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, BlockState> decode(RegistryFriendlyByteBuf buf) {
-            return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, innerBuf -> Block.BLOCK_STATE_REGISTRY.byId(innerBuf.readInt()));
+        public @NotNull Map<Vec3i, BlockState> decode(RegistryFriendlyByteBuf buf) {
+            return buf.readMap(
+                    RegistryFriendlyByteBuf::readBlockPos,
+                    innerBuf -> Objects.requireNonNull(Block.BLOCK_STATE_REGISTRY.byId(innerBuf.readInt()))
+            );
         }
 
         @Override
@@ -26,7 +32,7 @@ public class TrackedDataHandlers implements ModInitializer {
     });
     public static final EntityDataSerializer<Map<Vec3i, CompoundTag>> blockEntityMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, CompoundTag> decode(RegistryFriendlyByteBuf buf) {
+        public @NotNull Map<Vec3i, CompoundTag> decode(RegistryFriendlyByteBuf buf) {
             return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, RegistryFriendlyByteBuf::readNbt);
         }
 

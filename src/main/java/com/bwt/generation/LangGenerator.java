@@ -215,7 +215,7 @@ public class LangGenerator extends FabricLanguageProvider {
     }
 
     protected void addSubtitle(SoundEvent soundEvent, String value, TranslationBuilder translationBuilder) {
-        translationBuilder.add(soundEvent.getLocation().withPrefix("subtitles."), value);
+        translationBuilder.add(soundEvent.location().withPrefix("subtitles."), value);
     }
 
     protected void addTagName(TagKey<?> tagKey, String value, TranslationBuilder translationBuilder) {

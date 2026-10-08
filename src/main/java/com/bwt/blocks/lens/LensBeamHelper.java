@@ -10,11 +10,13 @@ import java.util.Map;
 import java.util.stream.Stream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,7 +38,7 @@ public class LensBeamHelper {
         return !list.isEmpty();
     }
 
-    protected static int getRemainingRange(Level level, BlockPos pos, Direction direction) {
+    protected static int getRemainingRange(ServerLevel level, BlockPos pos, Direction direction) {
         BlockPos.MutableBlockPos mutable = pos.mutable();
         int distanceFromLens = 0;
         int maxRange = level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
@@ -57,7 +59,7 @@ public class LensBeamHelper {
         return maxRange - distanceFromLens;
     }
 
-    public static void fireBeam(Level level, BlockPos lensPos, BlockState lensState) {
+    public static void fireBeam(ServerLevel level, BlockPos lensPos, BlockState lensState) {
         propagateBeam(level, lensPos, lensState, lensState.getValue(LensBlock.FACING), level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE));
     }
 
@@ -156,7 +158,7 @@ public class LensBeamHelper {
         }
     }
 
-    public static boolean anyNeighborNotPropagable(LevelAccessor level, BlockPos pos, BlockState state) {
+    public static boolean anyNeighborNotPropagable(LevelReader level, BlockPos pos, BlockState state) {
         return streamFacingDirections(state).map(Map.Entry::getKey)
                 .map(pos::relative)
                 .map(level::getBlockState)

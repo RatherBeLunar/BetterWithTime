@@ -96,7 +96,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         //Blood wood blocks don't burn
         getOrCreateTagBuilder(ItemTags.NON_FLAMMABLE_WOOD).add(
-                BwtBlocks.bloodWoodBlocks.saplingItem,
+                BwtBlocks.bloodWoodBlocks.saplingBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.buttonBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.fenceBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.fenceGateBlock.asItem(),

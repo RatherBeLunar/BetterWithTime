@@ -46,7 +46,7 @@ public class DefaultBlockInhaleBehavior implements BlockInhaleBehavior {
                 return drop.get();
             }
             if (!drops.isEmpty()) {
-                bestCandidate = drops.get(0);
+                bestCandidate = drops.getFirst();
             }
         }
         return bestCandidate;

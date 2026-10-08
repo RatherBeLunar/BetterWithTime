@@ -7,36 +7,44 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.ExplosionDamageCalculator;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class MiningChargeExplosion extends Explosion {
+public class MiningChargeExplosion extends ServerExplosion {
     public static final LootItemCondition LOOT_CONDITION = LootItemEntityPropertyCondition.hasProperties(
             LootContext.EntityTarget.THIS,
             EntityPredicate.Builder.entity().of(BwtEntities.miningChargeEntity)
     ).build();
 
-    protected final Level level;
+    protected final ServerLevel level;
     protected final ExplosionDamageCalculator behavior;
     protected final MiningChargeEntity miningChargeEntity;
     protected final DamageSource damageSource;
 
-    public MiningChargeExplosion(Level level, @NotNull MiningChargeEntity entity, Vec3 pos, DamageSource damageSource, float power, boolean createFire, BlockInteraction destructionType, ParticleOptions particle, ParticleOptions emitterParticle, Holder<SoundEvent> soundEvent) {
-        super(level, entity, damageSource, null, pos.x, pos.y, pos.z, power, createFire, destructionType, particle, emitterParticle, soundEvent);
-        this.level = level;
-        this.behavior = new EntityBasedExplosionDamageCalculator(entity);
+    public MiningChargeExplosion(
+            ServerLevel serverLevel,
+            @Nullable MiningChargeEntity entity,
+            @Nullable DamageSource damageSource,
+            @Nullable ExplosionDamageCalculator explosionDamageCalculator,
+            Vec3 vec3,
+            float power,
+            boolean fire
+    ) {
+        super(serverLevel, entity, damageSource, explosionDamageCalculator, vec3, power, fire, Level.ExplosionInteraction.TNT);
+        this.level = serverLevel;
+        this.behavior = explosionDamageCalculator;
         this.miningChargeEntity = entity;
         this.damageSource = damageSource;
     }

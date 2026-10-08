@@ -1,13 +1,28 @@
 package com.bwt.utils;
 
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.DependantName;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.flag.FeatureFlag;
+import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.food.FoodProperties;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.JukeboxSong;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.*;
+import net.minecraft.world.item.enchantment.Enchantable;
+import net.minecraft.world.item.enchantment.Repairable;
+import net.minecraft.world.item.equipment.Equippable;
+
+import java.util.Objects;
 
 public class LockableItemSettings extends Item.Properties {
     protected boolean locked = false;
@@ -17,10 +32,14 @@ public class LockableItemSettings extends Item.Properties {
         return this;
     }
 
+    public LockableItemSettings food(FoodProperties foodProperties) {
+        return this.food(foodProperties, Consumables.DEFAULT_FOOD);
+    }
+
     @Override
-    public LockableItemSettings food(FoodProperties foodComponent) {
+    public LockableItemSettings food(FoodProperties foodComponent, Consumable consumable) {
         if (locked) return this;
-        return (LockableItemSettings) super.food(foodComponent);
+        return (LockableItemSettings) super.food(foodComponent, consumable);
     }
 
     @Override
@@ -76,4 +95,60 @@ public class LockableItemSettings extends Item.Properties {
         if (locked) return this;
         return (LockableItemSettings) super.attributes(attributeModifiersComponent);
     }
+
+    public LockableItemSettings useCooldown(float f) {
+        if (locked) return this;
+        return (LockableItemSettings) super.useCooldown(f);
+    }
+
+    public LockableItemSettings enchantable(int i) {
+        if (locked) return this;
+        return (LockableItemSettings) super.enchantable(i);
+    }
+
+    public LockableItemSettings repairable(Item item) {
+        if (locked) return this;
+        return (LockableItemSettings) super.repairable(item);
+    }
+
+    public LockableItemSettings repairable(TagKey<Item> tagKey) {
+        if (locked) return this;
+        return (LockableItemSettings) super.repairable(tagKey);
+    }
+
+    public LockableItemSettings equippable(EquipmentSlot equipmentSlot) {
+        if (locked) return this;
+        return (LockableItemSettings) super.equippable(equipmentSlot);
+    }
+
+    public LockableItemSettings equippableUnswappable(EquipmentSlot equipmentSlot) {
+        if (locked) return this;
+        return (LockableItemSettings) super.equippableUnswappable(equipmentSlot);
+    }
+
+    public LockableItemSettings setId(ResourceKey<Item> resourceKey) {
+        if (locked) return this;
+        return (LockableItemSettings) super.setId(resourceKey);
+    }
+
+    public LockableItemSettings overrideDescription(String string) {
+        if (locked) return this;
+        return (LockableItemSettings) super.overrideDescription(string);
+    }
+
+    public LockableItemSettings useBlockDescriptionPrefix() {
+        if (locked) return this;
+        return (LockableItemSettings) super.useBlockDescriptionPrefix();
+    }
+
+    public LockableItemSettings useItemDescriptionPrefix() {
+        if (locked) return this;
+        return (LockableItemSettings) super.useItemDescriptionPrefix();
+    }
+
+    public LockableItemSettings overrideModel(ResourceLocation resourceLocation) {
+        if (locked) return this;
+        return (LockableItemSettings) super.overrideModel(resourceLocation);
+    }
+
 }

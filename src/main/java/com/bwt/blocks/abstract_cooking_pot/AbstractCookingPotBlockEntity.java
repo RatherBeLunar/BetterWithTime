@@ -25,6 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -132,22 +133,22 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         return Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
-        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(level, pos);
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
+        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(serverLevel, pos);
         boolean isStoked = fireDataCluster.isStoked();
         if (isStoked != blockEntity.isStoked) {
             blockEntity.isStoked = isStoked;
             blockEntity.setChanged();
         }
         if (state.getValue(AbstractCookingPotBlock.TIP_DIRECTION) == Direction.UP) {
-            blockEntity.cookItems(level, pos, fireDataCluster);
+            blockEntity.cookItems(serverLevel, pos, fireDataCluster);
         }
         else {
-            blockEntity.dumpItems(level, pos, state);
+            blockEntity.dumpItems(serverLevel, pos, state);
         }
     }
 
-    protected void cookItems(Level level, BlockPos pos, FireDataCluster fireDataCluster) {
+    protected void cookItems(ServerLevel serverLevel, BlockPos pos, FireDataCluster fireDataCluster) {
         if (!fireDataCluster.anyFirePresent()) {
             if (cookProgressTime != 0) {
                 cookProgressTime = 0;
@@ -168,19 +169,18 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                     .reduce(Integer::sum)
                     .orElse(0);
             if (stokedExplosivesCount > 0) {
-                explode(level, pos, stokedExplosivesCount);
+                explode(serverLevel, pos, stokedExplosivesCount);
                 return;
             }
         }
 
-        RecipeManager recipeManager = level.getRecipeManager();
         CookingPotRecipeInput recipeInput = new CookingPotRecipeInput(inventory.getItems());
 
         if (fireDataCluster.isStoked()) {
-            cookMatches(fireDataCluster, recipeManager.getRecipesFor(stokedRecipeType, recipeInput, level));
+            cookMatches(fireDataCluster, OrderedRecipeMatcher.getRecipesFor(stokedRecipeType, recipeInput, serverLevel).toList());
         }
         else {
-            cookMatches(fireDataCluster, recipeManager.getRecipesFor(unstokedRecipeType, recipeInput, level));
+            cookMatches(fireDataCluster, OrderedRecipeMatcher.getRecipesFor(unstokedRecipeType, recipeInput, serverLevel).toList());
         }
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
         Vec3 entityPos = dumpPosAndState.pos().getCenter().subtract(0, 0.25f, 0);
         ItemEntity itemEntity = new ItemEntity(level, entityPos.x, entityPos.y, entityPos.z, itemStack.copyWithCount(stackSizeToDump));
-        Vec3 itemVelocity = Vec3.atLowerCornerOf(facing.getNormal()).scale(0.1);
+        Vec3 itemVelocity = Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.1);
         itemEntity.setDeltaMovement(itemVelocity);
         itemEntity.setPickUpDelay(10);
 
@@ -309,11 +309,9 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                     if (itemVariant == null) {
                         continue;
                     }
-                    if (itemVariant.getItem().hasCraftingRemainingItem()) {
-                        Item remainder = itemVariant.getItem().getCraftingRemainingItem();
-                        if (remainder != null) {
-                            remaindersAndResults.add(new ItemStack(remainder, (int) countToSpend));
-                        }
+                    ItemStack remainder = itemVariant.getItem().getCraftingRemainder();
+                    if (!remainder.isEmpty()) {
+                        remaindersAndResults.add(remainder.copyWithCount((int) countToSpend));
                     }
                     long taken = inventoryWrapper.extract(itemVariant, countToSpend, transaction);
                     countToSpend -= taken;

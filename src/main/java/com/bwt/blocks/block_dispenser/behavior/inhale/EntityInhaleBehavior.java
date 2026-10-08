@@ -2,11 +2,12 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.accessors.ArmorStandAccessorMixin;
+import com.bwt.mixin.accessor.ArmorStandAccessorMixin;
 import com.bwt.utils.DyeUtils;
 import java.util.stream.Stream;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -33,13 +34,13 @@ public interface EntityInhaleBehavior {
     default boolean canInhale(Entity entity) {
         return true;
     }
-    void inhale(Entity entity);
+    void inhale(ServerLevel serverLevel, Entity entity);
 
     EntityInhaleBehavior NOOP = new EntityInhaleBehavior() {
         @Override
         public boolean canInhale(Entity entity) {return false;}
         @Override
-        public void inhale(Entity entity) {}
+        public void inhale(ServerLevel serverLevel, Entity entity) {}
     };
 
     static void registerBehaviors() {
@@ -50,7 +51,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 Wolf wolf = ((Wolf) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
                 wolf.playSound(SoundEvents.WOLF_DEATH, 0.4f, wolf.getVoicePitch());
@@ -75,7 +76,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Chicken chicken)) {
                     return;
                 }
@@ -103,7 +104,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 Sheep sheep = ((Sheep) entity);
                 sheep.playSound(SoundEvents.SHEEP_HURT, 0.4f, sheep.getVoicePitch());
             }
@@ -127,11 +128,11 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof AbstractMinecart minecart)) {
                     return;
                 }
-                minecart.kill();
+                minecart.kill(serverLevel);
             }
 
             @Override
@@ -159,11 +160,11 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Boat boat)) {
                     return;
                 }
-                boat.kill();
+                boat.kill(serverLevel);
             }
 
             @Override
@@ -173,15 +174,34 @@ public interface EntityInhaleBehavior {
                 return itemStack;
             }
         };
-        Stream.of(EntityType.BOAT, EntityType.CHEST_BOAT).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
+        Stream.of(
+                EntityType.OAK_BOAT,
+                EntityType.SPRUCE_BOAT,
+                EntityType.BIRCH_BOAT,
+                EntityType.JUNGLE_BOAT,
+                EntityType.DARK_OAK_BOAT,
+                EntityType.ACACIA_BOAT,
+                EntityType.CHERRY_BOAT,
+                EntityType.MANGROVE_BOAT,
+                EntityType.BAMBOO_RAFT,
+                EntityType.OAK_CHEST_BOAT,
+                EntityType.SPRUCE_CHEST_BOAT,
+                EntityType.BIRCH_CHEST_BOAT,
+                EntityType.JUNGLE_CHEST_BOAT,
+                EntityType.DARK_OAK_CHEST_BOAT,
+                EntityType.ACACIA_CHEST_BOAT,
+                EntityType.CHERRY_CHEST_BOAT,
+                EntityType.MANGROVE_CHEST_BOAT,
+                EntityType.BAMBOO_CHEST_RAFT
+        ).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ARMOR_STAND, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof ArmorStand armorStand)) {
                     return;
                 }
-                armorStand.kill();
+                armorStand.kill(serverLevel);
             }
 
             @Override
@@ -207,11 +227,11 @@ public interface EntityInhaleBehavior {
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof ItemFrame itemFrame)) {
                     return;
                 }
-                itemFrame.kill();
+                itemFrame.kill(serverLevel);
             }
 
             @Override
@@ -234,11 +254,11 @@ public interface EntityInhaleBehavior {
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.GLOW_ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof GlowItemFrame itemFrame)) {
                     return;
                 }
-                itemFrame.kill();
+                itemFrame.kill(serverLevel);
             }
 
             @Override
@@ -261,11 +281,11 @@ public interface EntityInhaleBehavior {
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.PAINTING, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Painting painting)) {
                     return;
                 }
-                painting.kill();
+                painting.kill(serverLevel);
             }
 
             @Override

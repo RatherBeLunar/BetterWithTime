@@ -1,12 +1,16 @@
 package com.bwt.recipes.cooking_pots;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.SharedRecipeProvider;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import java.util.List;
+
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
@@ -21,13 +25,17 @@ public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends AbstractCookingPotRecipe> getSerializer() {
         return BwtRecipes.STOKED_CAULDRON_RECIPE_SERIALIZER;
     }
 
     public static class JsonBuilder extends AbstractCookingPotRecipe.JsonBuilder<StokedCauldronRecipe> {
-        public static StokedCauldronRecipe.JsonBuilder create() {
-            return (StokedCauldronRecipe.JsonBuilder) new StokedCauldronRecipe.JsonBuilder().category(RecipeCategory.MISC);
+        protected JsonBuilder(SharedRecipeProvider recipeProvider) {
+            super(recipeProvider);
+        }
+
+        public static StokedCauldronRecipe.JsonBuilder create(SharedRecipeProvider recipeProvider) {
+            return (StokedCauldronRecipe.JsonBuilder) new StokedCauldronRecipe.JsonBuilder(recipeProvider).category(RecipeCategory.MISC);
         }
 
         @Override
@@ -37,7 +45,7 @@ public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
 
         @Override
         public void save(RecipeOutput exporter) {
-            this.save(exporter, RecipeProvider.getItemName(results.get(0).getItem()) + "_from_stoked_cauldron");
+            this.save(exporter, RecipeProvider.getItemName(results.getFirst().getItem()) + "_from_stoked_cauldron");
         }
     }
 }

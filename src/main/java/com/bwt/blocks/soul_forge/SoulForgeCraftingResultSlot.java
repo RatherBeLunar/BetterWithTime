@@ -4,13 +4,16 @@ import com.bwt.recipes.BwtRecipes;
 import com.bwt.utils.OrderedRecipeMatcher;
 import java.util.List;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 
 public class SoulForgeCraftingResultSlot extends ResultSlot {
     private final CraftingContainer input;

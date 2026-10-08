@@ -13,7 +13,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SidingBlock extends MiniBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.FACING;
+    public static final EnumProperty<Direction>FACING = BlockStateProperties.FACING;
     protected static final AABB BOTTOM_SHAPE = new AABB(0.0, 0.0, 0.0, 16.0, 8.0, 16.0);
 
     protected static final List<VoxelShape> COLLISION_SHAPES = Arrays.stream(Direction.values())
@@ -37,13 +37,9 @@ public class SidingBlock extends MiniBlock {
         this.registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH).setValue(WATERLOGGED, false));
     }
 
-    public static SidingBlock ofBlock(Block fullBlock) {
-        return new SidingBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static SidingBlock ofWoodBlock(Block woodBlock) {
-        SidingBlock sidingBlock = ofBlock(woodBlock);
-        sidingBlock.isWood = true;
+    public static SidingBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        SidingBlock sidingBlock = new SidingBlock(properties, fullBlock);
+        sidingBlock.isWood = isWood;
         return sidingBlock;
     }
 

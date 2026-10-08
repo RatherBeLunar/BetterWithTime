@@ -1,20 +1,18 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-import org.spongepowered.asm.mixin.gen.Invoker;
 
+import java.util.List;
 import java.util.Map;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 
-@Mixin(ShapelessRecipeBuilder.class)
-public interface ShapelessRecipeJsonBuilderAccessorMixin {
+@Mixin(ShapedRecipeBuilder.class)
+public interface ShapedRecipeJsonBuilderAccessorMixin {
     @Accessor
     RecipeCategory getCategory();
     @Accessor
@@ -22,11 +20,13 @@ public interface ShapelessRecipeJsonBuilderAccessorMixin {
     @Accessor
     int getCount();
     @Accessor
-    NonNullList<Ingredient> getIngredients();
+    List<String> getRows();
+    @Accessor
+    Map<Character, Ingredient> getKey();
+    @Accessor
+    Map<String, Criterion<?>> getCriteria();
     @Accessor
     String getGroup();
     @Accessor
-    Map<String, Criterion<?>> getCriteria();
-    @Invoker("ensureValid")
-    void accessValidate(ResourceLocation recipeId);
+    boolean getShowNotification();
 }

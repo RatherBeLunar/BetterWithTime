@@ -44,7 +44,7 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
                     .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {
-            return droppedStacks.get(0);
+            return droppedStacks.getFirst();
         }
         return ItemStack.EMPTY;
     }

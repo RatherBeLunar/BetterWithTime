@@ -1,4 +1,4 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;

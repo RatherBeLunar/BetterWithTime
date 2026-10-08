@@ -23,8 +23,7 @@ public class CompanionCubeBlock extends SimpleFacingBlock {
     }
 
     public void addHearts(Level level, BlockPos pos) {
-        for( int tempCount = 0; tempCount < 7; tempCount++)
-        {
+        for(int tempCount = 0; tempCount < 7; tempCount++) {
             double d = level.random.nextGaussian() * 0.02D;
             double d1 = level.random.nextGaussian() * 0.02D;
             double d2 = level.random.nextGaussian() * 0.02D;

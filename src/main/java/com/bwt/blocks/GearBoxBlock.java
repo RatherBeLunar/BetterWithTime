@@ -3,6 +3,7 @@ package com.bwt.blocks;
 import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
+import net.minecraft.world.level.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -16,9 +17,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.PipeBlock;
@@ -118,7 +116,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         if (pos.north().equals(neighborPos)) {
             return state.trySetValue(NORTH, (neighborState.is(BwtBlocks.axleBlock) || neighborState.is(BwtBlocks.axlePowerSourceBlock)) && neighborState.getValue(AxleBlock.AXIS).equals(Direction.Axis.Z));
         }
@@ -194,8 +192,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     private void emitGearBoxParticles(Level level, BlockPos pos, RandomSource random) {
-        for ( int iTempCount = 0; iTempCount < 5; iTempCount++ )
-        {
+        for (int i = 0; i < 5; i++) {
             float smokeX = (float)pos.getX() + random.nextFloat();
             float smokeY = (float)pos.getY() + random.nextFloat() * 0.5F + 1.0F;
             float smokeZ = (float)pos.getZ() + random.nextFloat();

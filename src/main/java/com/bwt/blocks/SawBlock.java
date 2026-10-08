@@ -32,6 +32,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.SlabType;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -132,13 +133,12 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean bl) {
         scheduleUpdateIfRequired(level, state, pos);
         BlockPos targetPos = pos.relative(state.getValue(FACING));
         BlockState targetState = level.getBlockState(targetPos);
 
-        if (!targetState.is(BlockTags.AIR) && targetPos.equals(sourcePos) && isMechPowered(state)) {
+        if (!targetState.is(BlockTags.AIR) && isMechPowered(state)) {
             level.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1f);
         }
     }
@@ -184,7 +184,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
                 .intersects(livingEntity.getLocalBoundsForPose(entity.getPose()).move(livingEntity.position()))) {
 
             DamageSource damageSource = BwtDamageTypes.of(level, BwtDamageTypes.SAW_DAMAGE_TYPE);
-            if (livingEntity.hurt(damageSource, 4.0f)) {
+            if (livingEntity.hurtOrSimulate(damageSource, 4.0f)) {
                 level.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1);
             }
         }
@@ -250,10 +250,13 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
 
         SawRecipeInput recipeInput = new SawRecipeInput(targetState.getBlock());
-        Optional<SawRecipe> recipe = level.getRecipeManager().getRecipeFor(
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        Optional<SawRecipe> recipe = serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.SAW_RECIPE_TYPE,
                 recipeInput,
-                level
+                serverLevel
         ).map(RecipeHolder::value);
         // Cutting
         if (recipe.isEmpty()) {
@@ -261,15 +264,15 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
                 return;
             }
             if (targetState.is(BwtBlockTags.SAW_BREAKS_NO_DROPS)) {
-                level.destroyBlock(targetPos, false);
+                serverLevel.destroyBlock(targetPos, false);
                 return;
             }
             if (targetState.is(BwtBlockTags.SAW_BREAKS_DROPS_LOOT)) {
-                level.destroyBlock(targetPos, true);
+                serverLevel.destroyBlock(targetPos, true);
                 return;
             }
             if (!targetState.is(BwtBlockTags.SURVIVES_SAW_BLOCK)) {
-                breakSaw(level, pos);
+                breakSaw(serverLevel, pos);
             }
             return;
         }
@@ -283,24 +286,24 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
 
         if (blockIngredient.test(BwtBlocks.companionCubeBlock)) {
-            level.playSound(null, pos, BwtSoundEvents.COMPANION_CUBE_DEATH, SoundSource.BLOCKS, 1, 1);
+            serverLevel.playSound(null, pos, BwtSoundEvents.COMPANION_CUBE_DEATH, SoundSource.BLOCKS, 1, 1);
             if (state.getValue(FACING).getAxis().isHorizontal()) {
-                results.get(0).setCount(1);
-                level.setBlockAndUpdate(targetPos, BwtBlocks.companionSlabBlock.defaultBlockState());
+                results.getFirst().setCount(1);
+                serverLevel.setBlockAndUpdate(targetPos, BwtBlocks.companionSlabBlock.defaultBlockState());
             }
             else {
-                level.destroyBlock(targetPos, false);
+                serverLevel.destroyBlock(targetPos, false);
             }
         }
         else {
-            level.destroyBlock(targetPos, false);
+            serverLevel.destroyBlock(targetPos, false);
         }
 
         targetState.getOptionalValue(BlockStateProperties.SLAB_TYPE).filter(property -> property.equals(SlabType.DOUBLE)).ifPresent((property) ->
             results.forEach(stack -> stack.setCount(stack.getCount() * 2))
         );
 
-        Containers.dropContents(level, targetPos, NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
+        Containers.dropContents(serverLevel, targetPos, NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
 
     public void breakSaw(Level level, BlockPos pos) {

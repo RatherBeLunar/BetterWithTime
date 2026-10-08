@@ -1,5 +1,8 @@
 package com.bwt.blocks;
 
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -27,13 +30,9 @@ public class TableBlock extends DecorativeBlock {
         registerDefaultState(defaultBlockState().setValue(SUPPORT, true));
     }
 
-    public static TableBlock ofBlock(Block fullBlock) {
-        return new TableBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static TableBlock ofWoodBlock(Block woodBlock) {
-        TableBlock tableBlock = ofBlock(woodBlock);
-        tableBlock.isWood = true;
+    public static TableBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        TableBlock tableBlock = new TableBlock(properties, fullBlock);
+        tableBlock.isWood = isWood;
         return tableBlock;
     }
 
@@ -59,11 +58,11 @@ public class TableBlock extends DecorativeBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos).setValue(SUPPORT,
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        return super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource).setValue(SUPPORT,
             Arrays.stream(Direction.Axis.values())
                     .filter(Direction.Axis::isHorizontal)
-                    .noneMatch(axis -> level.getBlockState(pos.relative(axis, 1)).is(this) && level.getBlockState(pos.relative(axis, -1)).is(this))
+                    .noneMatch(axis -> levelReader.getBlockState(pos.relative(axis, 1)).is(this) && levelReader.getBlockState(pos.relative(axis, -1)).is(this))
         );
     }
 }

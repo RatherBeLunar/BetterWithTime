@@ -1,4 +1,4 @@
-package com.bwt.mixin.accessors;
+package com.bwt.mixin.accessor;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.inventory.TransientCraftingContainer;
