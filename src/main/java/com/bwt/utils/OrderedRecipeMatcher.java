@@ -1,6 +1,9 @@
 package com.bwt.utils;
 
 import com.bwt.mixin.accessor.RecipeManagerAccessorMixin;
+import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.soul_forge.SoulForgeRecipe;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -15,33 +18,35 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class OrderedRecipeMatcher {
-    public static Optional<? extends RecipeHolder<? extends CraftingRecipe>> getFirstRecipeOfMultipleTypes(
+    public static Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> getFirstRecipeForSoulForge(
             ServerLevel serverLevel,
-            CraftingInput input,
-            List<RecipeType<? extends CraftingRecipe>> recipeTypes
+            CraftingInput input
     ) {
-        RecipeManager recipeManager = serverLevel.getServer().recipeAccess();
-        for (RecipeType<? extends CraftingRecipe> recipeType: recipeTypes) {
-            Optional<? extends RecipeHolder<? extends CraftingRecipe>> optionalResult = recipeManager.getRecipeFor(recipeType, input, serverLevel);
-            if (optionalResult.isPresent()) {
-                return optionalResult;
-            }
+        RecipeManager recipeManager = serverLevel.getServer().getRecipeManager();
+
+        Optional<RecipeHolder<SoulForgeRecipe>> resultA = recipeManager.getRecipeFor(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, input, serverLevel);
+        if (resultA.isPresent()) {
+            return Either.left(resultA);
         }
-        return Optional.empty();
+        Optional<RecipeHolder<CraftingRecipe>> resultB = recipeManager.getRecipeFor(RecipeType.CRAFTING, input, serverLevel);
+        return Either.right(resultB);
     }
 
-    public static NonNullList<ItemStack> getRemainingStacks(
+    public static NonNullList<ItemStack> getRemainingStacksForSoulForge(
             Level level,
-            CraftingInput input,
-            List<RecipeType<? extends CraftingRecipe>> recipeTypes
+            CraftingInput input
     ) {
         if (!(level instanceof ServerLevel serverLevel)) {
             return CraftingRecipe.defaultCraftingReminder(input);
         }
 
-        Optional<? extends RecipeHolder<? extends CraftingRecipe>> optional = getFirstRecipeOfMultipleTypes(serverLevel, input, recipeTypes);
-        if (optional.isPresent()) {
-            return optional.get().value().getRemainingItems(input);
+        Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> either = getFirstRecipeForSoulForge(serverLevel, input);
+        Optional<NonNullList<ItemStack>> optionalRemainingItems = either.map(
+                optional -> optional.map(holder -> holder.value().getRemainingItems(input)),
+                optional -> optional.map(holder -> holder.value().getRemainingItems(input))
+        );
+        if (optionalRemainingItems.isPresent()) {
+            return optionalRemainingItems.get();
         } else {
             NonNullList<ItemStack> defaultedList = NonNullList.withSize(input.size(), ItemStack.EMPTY);
 

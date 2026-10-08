@@ -1,12 +1,11 @@
 package com.bwt.recipes.soul_forge;
 
-import com.bwt.mixin.BaseCraftingGridRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
 
-public interface SoulForgeRecipe extends BaseCraftingGridRecipe {
+public interface SoulForgeRecipe extends Recipe<CraftingInput> {
     @Override
     RecipeSerializer<? extends SoulForgeRecipe> getSerializer();
 

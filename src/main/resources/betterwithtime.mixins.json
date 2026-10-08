@@ -5,7 +5,6 @@
   "mixins": [
     "AlterGroundTreeDecoratorMixin",
     "AqueductFlowableFluidMixin",
-    "BaseCraftingGridRecipe",
     "DetectorRailMixin",
     "EggEntityMixin",
     "EntityVoxelShapeCollisionMixin",
@@ -29,8 +28,6 @@
     "accessor.MobEntityAccessorMixin",
     "accessor.RawShapedRecipeAccessorMixin",
     "accessor.RecipeManagerAccessorMixin",
-    "accessor.ShapedRecipeJsonBuilderAccessorMixin",
-    "accessor.ShapelessRecipeJsonBuilderAccessorMixin",
     "animals.BabyAnimalJumpHeightMixin",
     "animals.ChickenEntityMixin",
     "animals.CowEntityMixin",

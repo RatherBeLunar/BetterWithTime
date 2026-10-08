@@ -2,23 +2,18 @@ package com.bwt.blocks.soul_forge;
 
 import com.bwt.BetterWithTime;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.soul_forge.SoulForgeRecipe;
 import com.bwt.utils.OrderedRecipeMatcher;
+import com.mojang.datafixers.util.Either;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.player.StackedContents;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.Blocks;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.item.crafting.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -53,30 +48,24 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
             ServerLevel serverLevel,
             Player player,
             CraftingContainer craftingContainer,
-            ResultContainer resultContainer,
-            @Nullable RecipeHolder<CraftingRecipe> recipeHolder
+            ResultContainer resultContainer
     ) {
         if (serverLevel.isClientSide) {
             return;
         }
         CraftingInput craftingRecipeInput = craftingContainer.asCraftInput();
         ServerPlayer serverPlayerEntity = (ServerPlayer)player;
-        ItemStack itemStack = ItemStack.EMPTY;
-        Optional<? extends RecipeHolder<? extends CraftingRecipe>> optional = OrderedRecipeMatcher.getFirstRecipeOfMultipleTypes(
+        Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> either = OrderedRecipeMatcher.getFirstRecipeForSoulForge(
                 serverLevel,
-                craftingRecipeInput,
-                List.of(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, RecipeType.CRAFTING)
+                craftingRecipeInput
         );
-        if (optional.isPresent()) {
-            RecipeHolder<? extends CraftingRecipe> recipeEntry = optional.get();
-            CraftingRecipe craftingRecipe = recipeEntry.value();
-            if (resultContainer.setRecipeUsed(serverPlayerEntity, recipeEntry)) {
-                ItemStack itemStack2 = craftingRecipe.assemble(craftingRecipeInput, serverLevel.registryAccess());
-                if (itemStack2.isItemEnabled(serverLevel.enabledFeatures())) {
-                    itemStack = itemStack2;
-                }
-            }
-        }
+        ItemStack itemStack = either.map(
+                optional -> optional.filter(soulForgeRecipeHolder -> resultContainer.setRecipeUsed(serverPlayerEntity, soulForgeRecipeHolder)),
+                optional -> optional.filter(craftingRecipeHolder -> resultContainer.setRecipeUsed(serverPlayerEntity, craftingRecipeHolder))
+        )
+                .map(recipeHolder -> recipeHolder.value().assemble(craftingRecipeInput, serverLevel.registryAccess()))
+                .filter(stack -> stack.isItemEnabled(serverLevel.enabledFeatures()))
+                .orElse(ItemStack.EMPTY);
 
         resultContainer.setItem(0, itemStack);
         abstractContainerMenu.setRemoteSlot(0, itemStack);
@@ -89,7 +78,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
         if (!this.placingRecipe) {
             this.access.execute((level, blockPos) -> {
                 if (level instanceof ServerLevel serverLevel) {
-                    slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots, null);
+                    slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots);
                 }
             });
         }
@@ -103,7 +92,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
     @Override
     public void finishPlacingRecipe(ServerLevel serverLevel, RecipeHolder<CraftingRecipe> recipeHolder) {
         this.placingRecipe = false;
-        slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots, recipeHolder);
+        slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots);
     }
 
     @Override
