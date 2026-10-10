@@ -310,12 +310,16 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
                         Items.WARPED_FUNGUS_ON_A_STICK,
                         Items.DRIED_KELP,
-                        Items.CREEPER_BANNER_PATTERN,
                         Items.FLOWER_BANNER_PATTERN,
-                        Items.PIGLIN_BANNER_PATTERN,
-                        Items.GLOBE_BANNER_PATTERN,
+                        Items.CREEPER_BANNER_PATTERN,
+                        Items.SKULL_BANNER_PATTERN,
                         Items.MOJANG_BANNER_PATTERN,
-                        Items.SKULL_BANNER_PATTERN
+                        Items.GLOBE_BANNER_PATTERN,
+                        Items.PIGLIN_BANNER_PATTERN,
+                        Items.FLOW_BANNER_PATTERN,
+                        Items.GUSTER_BANNER_PATTERN,
+                        Items.FIELD_MASONED_BANNER_PATTERN,
+                        Items.BORDURE_INDENTED_BANNER_PATTERN
                 );
 
         getOrCreateTagBuilder(BwtItemTags.PASSES_IRON_BARS_FILTER)
@@ -473,12 +477,16 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.MUSHROOM_STEW,
                         Items.SHIELD,
                         Items.TOTEM_OF_UNDYING,
-                        Items.CREEPER_BANNER_PATTERN,
                         Items.FLOWER_BANNER_PATTERN,
-                        Items.PIGLIN_BANNER_PATTERN,
-                        Items.GLOBE_BANNER_PATTERN,
+                        Items.CREEPER_BANNER_PATTERN,
+                        Items.SKULL_BANNER_PATTERN,
                         Items.MOJANG_BANNER_PATTERN,
-                        Items.SKULL_BANNER_PATTERN
+                        Items.GLOBE_BANNER_PATTERN,
+                        Items.PIGLIN_BANNER_PATTERN,
+                        Items.FLOW_BANNER_PATTERN,
+                        Items.GUSTER_BANNER_PATTERN,
+                        Items.FIELD_MASONED_BANNER_PATTERN,
+                        Items.BORDURE_INDENTED_BANNER_PATTERN
                 );
     }
 }

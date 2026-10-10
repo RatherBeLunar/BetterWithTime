@@ -1,7 +1,5 @@
-package com.bwt.models;
+package com.bwt.rendering.mech_hopper;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
@@ -16,7 +14,7 @@ public class MechHopperFillModel extends Model {
     protected final ModelPart flat;
 
     public MechHopperFillModel(ModelPart root) {
-        super(RenderType::entityTranslucentCull);
+        super(root, RenderType::itemEntityTranslucentCull);
         this.root = root;
         this.flat = root.getChild("flat");
     }
@@ -33,10 +31,5 @@ public class MechHopperFillModel extends Model {
     public static LayerDefinition getTexturedModelData() {
         MeshDefinition modelData = getModelData();
         return LayerDefinition.create(modelData, 16, 16);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-        this.root.render(matrices, vertices, light, overlay, color);
     }
 }

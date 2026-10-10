@@ -313,17 +313,21 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             return true;
         }
         if (this.getDamageWobbleStrength() > 40.0f) {
-            destroyWithDrop();
+            destroyWithDrop(serverLevel);
         }
         return true;
     }
 
     public void destroyWithDrop() {
-        if (isRemoved()) return;
         if (level() instanceof ServerLevel serverLevel) {
-            spawnAtLocation(serverLevel, getPickResult(), 0.5f);
-            kill(serverLevel);
+            destroyWithDrop(serverLevel);
         }
+    }
+
+    public void destroyWithDrop(ServerLevel serverLevel) {
+        if (isRemoved()) return;
+        spawnAtLocation(serverLevel, getPickResult(), 0.5f);
+        kill(serverLevel);
     }
 
     @Override
@@ -339,10 +343,12 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         if (!powered && hostBlockState.is(BwtBlocks.axlePowerSourceBlock)) {
             level.removeBlock(pos, false);
             level.setBlockAndUpdate(pos, BwtBlocks.axleBlock.defaultBlockState()
+                    .setValue(AxleBlock.WATERLOGGED, hostBlockState.getValue(AxleBlock.WATERLOGGED))
                     .setValue(AxleBlock.AXIS, hostBlockState.getValue(AxleBlock.AXIS)));
         }
         if (powered && hostBlockState.is(BwtBlocks.axleBlock)) {
             level.setBlockAndUpdate(pos, BwtBlocks.axlePowerSourceBlock.defaultBlockState()
+                    .setValue(AxleBlock.WATERLOGGED, hostBlockState.getValue(AxleBlock.WATERLOGGED))
                     .setValue(AxleBlock.AXIS, hostBlockState.getValue(AxleBlock.AXIS)));
         }
     }
@@ -354,6 +360,6 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     @Override
     protected void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(rotationSpeed, nbt.getFloat("rotationSpeed"));
+        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, nbt.getFloat("rotationSpeed"));
     }
 }

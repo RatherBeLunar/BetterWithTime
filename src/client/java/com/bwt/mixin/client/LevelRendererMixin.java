@@ -3,23 +3,17 @@ package com.bwt.mixin.client;
 import com.bwt.render_layers.KilnBlockCookingRenderLayer;
 import com.bwt.utils.KilnBlockCookProgressSetter;
 import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookingInfo;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.client.Camera;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderBuffers;
+import net.minecraft.client.renderer.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -28,12 +22,9 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(LevelRenderer.class)
-public abstract class WorldRendererMixin implements KilnBlockCookProgressSetter {
+public abstract class LevelRendererMixin implements KilnBlockCookProgressSetter {
     @Unique
     private final Long2ObjectMap<KilnBlockCookingInfo> kilnBlockCookingInfos = new Long2ObjectOpenHashMap<>();
-
-    @Accessor
-    public abstract int getTicks();
 
     @Accessor
     public abstract RenderBuffers getRenderBuffers();
@@ -69,25 +60,15 @@ public abstract class WorldRendererMixin implements KilnBlockCookProgressSetter 
         this.kilnBlockCookingInfos.remove(pos.asLong());
     }
     
-    @Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiling/ProfilerFiller;popPush(Ljava/lang/String;)V", ordinal = 12))
-    public void betterWithTime$render(
-            DeltaTracker tickCounter,
-            boolean renderBlockOutline,
-            Camera camera,
-            GameRenderer gameRenderer,
-            LightTexture lightmapTextureManager,
-            Matrix4f matrix4f,
-            Matrix4f matrix4f2,
-            CallbackInfo ci,
-            @Local PoseStack poseStack
-    ) {
+    @Inject(method = "renderBlockDestroyAnimation", at = @At(value = "HEAD"))
+    public void bwt$renderKilnCookingProgressAnimation(PoseStack poseStack, Camera camera, MultiBufferSource.BufferSource bufferSource, CallbackInfo ci) {
+        Vec3 cameraPos = camera.getPosition();
+        double cameraX = cameraPos.x();
+        double cameraY = cameraPos.y();
+        double cameraZ = cameraPos.z();
 
         for (Long2ObjectMap.Entry<KilnBlockCookingInfo> entry : this.kilnBlockCookingInfos.long2ObjectEntrySet()) {
             BlockPos blockPos = BlockPos.of(entry.getLongKey());
-            Vec3 cameraPos = camera.getPosition();
-            double cameraX = cameraPos.x();
-            double cameraY = cameraPos.y();
-            double cameraZ = cameraPos.z();
             double distX = blockPos.getX() - cameraX;
             double distY = blockPos.getY() - cameraY;
             double distZ = blockPos.getZ() - cameraZ;

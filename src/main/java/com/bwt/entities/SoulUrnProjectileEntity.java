@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -22,12 +23,12 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
         super(entityType, level);
     }
 
-    public SoulUrnProjectileEntity(Level level, LivingEntity owner) {
-        super(BwtEntities.soulUrnProjectileEntity, owner, level);
+    public SoulUrnProjectileEntity(Level level, LivingEntity owner, ItemStack itemStack) {
+        super(BwtEntities.soulUrnProjectileEntity, owner, level, itemStack);
     }
 
-    public SoulUrnProjectileEntity(Level level, double x, double y, double z) {
-        super(BwtEntities.soulUrnProjectileEntity, x, y, z, level);
+    public SoulUrnProjectileEntity(Level level, double x, double y, double z, ItemStack itemStack) {
+        super(BwtEntities.soulUrnProjectileEntity, x, y, z, level, itemStack);
     }
 
     @Override

@@ -1,7 +1,4 @@
-/*
- * Decompiled with CFR 0.2.1 (FabricMC 53fa44c9).
- */
-package com.bwt.models;
+package com.bwt.rendering.mech_hopper;
 
 import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;

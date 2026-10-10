@@ -21,6 +21,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.EntityType;
@@ -58,7 +59,6 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
             setIsMovingUp(source.getY() < targetY);
             setPos(source.getX() + 0.5, source.getY(), source.getZ() + 0.5);
         }
-        this.noCulling = true;
         setPulleyPos(pulley);
     }
 
@@ -329,7 +329,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
         return false;
     }
 
-    private void reconstruct() {
+    private void reconstruct(ServerLevel serverLevel) {
         BlockPos pos = getPulleyPos().below(getPulleyPos().getY() - getTargetY());
 
         int retries = 0;
@@ -342,11 +342,11 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
                 BlockPos blockPos = pos.offset(entry.getKey());
                 BlockState state = entry.getValue();
                 if (state.canSurvive(level(), blockPos)) {
-                    if (level().setBlock(blockPos, state, Block.UPDATE_ALL)) {
-                        ((ServerLevel) this.level()).getChunkSource().broadcast(this, new ClientboundBlockUpdatePacket(blockPos, this.level().getBlockState(blockPos)));
+                    if (serverLevel.setBlock(blockPos, state, Block.UPDATE_ALL)) {
+                        serverLevel.getChunkSource().broadcast(this, new ClientboundBlockUpdatePacket(blockPos, serverLevel.getBlockState(blockPos)));
                     }
                     if (blockEntities.containsKey(entry.getKey())) {
-                        BlockEntity blockEntity = level().getBlockEntity(blockPos);
+                        BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
                         if (blockEntity != null) {
                             CompoundTag tag = blockEntities.get(entry.getKey());
                             blockEntity.loadWithComponents(tag, registryAccess());
@@ -366,25 +366,25 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
         }
 
         if (retries > 0) {
-            blocks.forEach((blockPos, state) -> this.spawnAtLocation(state.getBlock()));
+            blocks.forEach((blockPos, state) -> this.spawnAtLocation(serverLevel, state.getBlock()));
         }
         setBlockMap(blocks);
     }
 
     private boolean done() {
-        if (level().isClientSide) {
+        if (!(level() instanceof ServerLevel serverLevel)) {
             return false;
         }
-        BlockEntity blockEntity = level().getBlockEntity(getPulleyPos());
+        BlockEntity blockEntity = serverLevel.getBlockEntity(getPulleyPos());
         if (blockEntity instanceof PulleyBlockEntity pulleyBlockEntity) {
-            if (!pulleyBlockEntity.onJobCompleted(level(), getPulleyPos(), level().getBlockState(getPulleyPos()), isMovingUp(), getTargetY())) {
-                reconstruct();
+            if (!pulleyBlockEntity.onJobCompleted(serverLevel, getPulleyPos(), serverLevel.getBlockState(getPulleyPos()), isMovingUp(), getTargetY())) {
+                reconstruct(serverLevel);
                 return true;
             }
             return false;
         }
         // The block entity has been lost, abort
-        reconstruct();
+        reconstruct(serverLevel);
         this.discard();
         return true;
     }
@@ -427,5 +427,14 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
             }
         });
         return !blocked.isEmpty();
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float f) {
+        if (!this.isInvulnerableToBase(damageSource)) {
+            this.markHurt();
+        }
+
+        return false;
     }
 }

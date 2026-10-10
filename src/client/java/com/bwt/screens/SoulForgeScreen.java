@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeBookComponent;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -59,17 +60,17 @@ public class SoulForgeScreen
         } else {
             super.render(context, mouseX, mouseY, delta);
             this.recipeBook.render(context, mouseX, mouseY, delta);
-            this.recipeBook.renderGhostRecipe(context, this.leftPos, this.topPos, true, delta);
+            this.recipeBook.renderGhostRecipe(context, true);
         }
         this.renderTooltip(context, mouseX, mouseY);
-        this.recipeBook.renderTooltip(context, this.leftPos, this.topPos, mouseX, mouseY);
+        this.recipeBook.renderTooltip(context, mouseX, mouseY, this.hoveredSlot);
     }
 
     @Override
     protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
         int i = this.leftPos;
         int j = (this.height - this.imageHeight) / 2;
-        context.blit(TEXTURE, i, j, 0, 0, this.imageWidth, this.imageHeight);
+        context.blit(RenderType::guiTextured, TEXTURE, i, j, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
     }
 
     @Override
@@ -104,11 +105,6 @@ public class SoulForgeScreen
     @Override
     public void recipesUpdated() {
         this.recipeBook.recipesUpdated();
-    }
-
-    @Override
-    public RecipeBookComponent getRecipeBookComponent() {
-        return this.recipeBook;
     }
 }
 

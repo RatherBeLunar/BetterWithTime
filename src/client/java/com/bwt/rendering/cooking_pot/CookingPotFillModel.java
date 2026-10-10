@@ -1,4 +1,4 @@
-package com.bwt.models;
+package com.bwt.rendering.cooking_pot;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -16,7 +16,7 @@ public class CookingPotFillModel extends Model {
     protected final ModelPart flat;
 
     public CookingPotFillModel(ModelPart root) {
-        super(RenderType::entityTranslucentCull);
+        super(root, RenderType::itemEntityTranslucentCull);
         this.root = root;
         this.flat = root.getChild("flat");
     }
@@ -33,10 +33,5 @@ public class CookingPotFillModel extends Model {
     public static LayerDefinition getTexturedModelData() {
         MeshDefinition modelData = getModelData();
         return LayerDefinition.create(modelData, 16, 16);
-    }
-
-    @Override
-    public void renderToBuffer(PoseStack matrices, VertexConsumer vertices, int light, int overlay, int color) {
-        this.root.render(matrices, vertices, light, overlay, color);
     }
 }

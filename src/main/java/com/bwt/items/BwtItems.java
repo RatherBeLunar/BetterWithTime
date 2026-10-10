@@ -56,7 +56,7 @@ public class BwtItems extends RegistrationBase implements ModInitializer {
             )
     );
 	public static final DyeItem dungItem = registerItem("dung", DungItem::new);
-	public static final Item dynamiteItem = registerItem("dynamite", DynamiteItem::new);
+	public static final Item dynamiteItem = registerItem("dynamite", DynamiteItem::new, new Item.Properties().useCooldown(1.0f));
 //	public static final Item enderSpectaclesItem = Registry.register(Registries.ITEM, Id.of("ender_spectacles"), new EnderSpectaclesItem(new Item.Settings()));
 	public static final Item fabricItem = registerItem("fabric");
 	public static final Item filamentItem = registerItem("filament");

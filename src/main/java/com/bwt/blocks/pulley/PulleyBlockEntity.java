@@ -297,7 +297,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         return fails.isEmpty();
     }
 
-    public boolean onJobCompleted(Level level, BlockPos pulleyPos, BlockState pulleyState, boolean up, int targetY) {
+    public boolean onJobCompleted(ServerLevel level, BlockPos pulleyPos, BlockState pulleyState, boolean up, int targetY) {
         BlockPos ropePos = new BlockPos(pulleyPos.getX(), targetY - (up ? 1 : 0), pulleyPos.getZ());
         BlockState state = level.getBlockState(ropePos);
         BlockState defaultRopeState = BwtBlocks.ropeBlock.defaultBlockState();

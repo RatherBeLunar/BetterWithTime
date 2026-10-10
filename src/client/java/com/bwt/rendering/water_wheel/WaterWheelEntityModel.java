@@ -1,6 +1,7 @@
-package com.bwt.models;
+package com.bwt.rendering.water_wheel;
 
 import com.bwt.entities.WaterWheelEntity;
+import com.bwt.rendering.horizontal_mech_power_source.HorizontalMechPowerSourceEntityModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.geom.ModelPart;
@@ -12,7 +13,7 @@ import net.minecraft.client.model.geom.builders.PartDefinition;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<WaterWheelEntity> {
+public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<WaterWheelRenderState> {
     protected static final int numBlades = 8;
     protected static final float strutDistanceFromCenter = 30.0f;
     private static final int strutLength = (int)( ( WaterWheelEntity.height * 8.0f ) - (strutDistanceFromCenter / 2.0f));
@@ -28,7 +29,7 @@ public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<
     private final List<ModelPart> struts = new ArrayList<>();
 
     public WaterWheelEntityModel(ModelPart modelPart) {
-        super();
+        super(modelPart);
         for (int bladeIdx = 0; bladeIdx < numBlades; bladeIdx++) {
             blades.add(modelPart.getChild("blade" + bladeIdx));
             struts.add(modelPart.getChild("strut" + bladeIdx));
@@ -70,7 +71,7 @@ public class WaterWheelEntityModel extends HorizontalMechPowerSourceEntityModel<
     }
 
     @Override
-    public void render(WaterWheelEntity entity, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
+    public void render(WaterWheelRenderState renderState, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
         blades.forEach(blade -> blade.render(poseStack, vertexConsumer, light, uv, color));
         struts.forEach(blade -> blade.render(poseStack, vertexConsumer, light, uv, color));
     }

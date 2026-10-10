@@ -1,11 +1,9 @@
-/*
- * Decompiled with CFR 0.2.1 (FabricMC 53fa44c9).
- */
-package com.bwt.models;
+package com.bwt.rendering.cooking_pot;
 
 import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
+import com.bwt.rendering.mech_hopper.MechHopperFillModel;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.EnvType;

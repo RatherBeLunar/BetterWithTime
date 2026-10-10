@@ -1,4 +1,4 @@
-package com.bwt.models;
+package com.bwt.rendering.unfired_decorated_pot;
 
 import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 @Environment(value= EnvType.CLIENT)
@@ -54,7 +55,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         Direction facing = unfiredDecoratedPotBlockEntity.getHorizontalFacing();
         poseStack.translate(0.5, 0.5, 0.5);
 
-        var rotationalSherds = unfiredDecoratedPotBlockEntity.getRotationalSherds();
+        List<Optional<Item>> rotationalSherds = unfiredDecoratedPotBlockEntity.getRotationalSherds();
         for (Optional<Item> sherd : rotationalSherds) {
             if (sherd.isEmpty()) {
                 facing = facing.getClockWise();

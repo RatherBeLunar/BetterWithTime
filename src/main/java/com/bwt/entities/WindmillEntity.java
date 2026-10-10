@@ -65,6 +65,10 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
         sailColors.forEach(bladeColor -> builder.define(bladeColor, DyeColor.WHITE.getId()));
     }
 
+    public List<DyeColor> getSailColors() {
+        return sailColors.stream().map(entityData::get).map(DyeColor::byId).toList();
+    }
+
     public DyeColor getSailColor(int index) {
         return DyeColor.byId(entityData.get(sailColors.get(index)));
     }
