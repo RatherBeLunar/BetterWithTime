@@ -9,7 +9,6 @@ import com.bwt.blocks.crucible.CrucibleScreenHandler;
 import com.bwt.blocks.mech_hopper.MechHopperBlock;
 import com.bwt.blocks.mech_hopper.MechHopperScreenHandler;
 import com.bwt.blocks.mill_stone.MillStoneScreenHandler;
-import com.bwt.blocks.mining_charge.MiningChargeExplosion;
 import com.bwt.blocks.pulley.PulleyScreenHandler;
 import com.bwt.blocks.soul_forge.SoulForgeScreenHandler;
 import com.bwt.blocks.turntable.CanRotateHelper;
@@ -18,6 +17,7 @@ import com.bwt.blocks.turntable.RotationProcessHelper;
 import com.bwt.blocks.turntable.VerticalBlockAttachmentHelper;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
+import com.bwt.entities.MiningChargeEntity;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
@@ -42,6 +42,7 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.flag.FeatureFlags;
@@ -61,6 +62,7 @@ import net.minecraft.world.level.storage.loot.functions.EnchantedCountIncreaseFu
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.functions.SmeltItemFunction;
 import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
@@ -178,8 +180,9 @@ public class BetterWithTime implements ModInitializer {
 				tableBuilder.withPool(poolBuilder);
 			}
 			if (key.equals(Blocks.COBBLESTONE.getLootTable().orElse(null))) {
-				tableBuilder.modifyPools(builder -> builder.conditionally(new InvertedLootItemCondition(MiningChargeExplosion.LOOT_CONDITION)))
-						.withPool(LootPool.lootPool().conditionally(MiningChargeExplosion.LOOT_CONDITION).add(LootItem.lootTableItem(Items.GRAVEL)));
+                LootItemCondition miningChargeCondition = MiningChargeEntity.getLootCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE));
+				tableBuilder.modifyPools(builder -> builder.conditionally(new InvertedLootItemCondition(miningChargeCondition)))
+						.withPool(LootPool.lootPool().conditionally(miningChargeCondition).add(LootItem.lootTableItem(Items.GRAVEL)));
 			}
 		});
 

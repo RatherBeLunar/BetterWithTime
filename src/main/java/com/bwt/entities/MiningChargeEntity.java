@@ -2,31 +2,30 @@ package com.bwt.entities;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
-import com.bwt.blocks.mining_charge.MiningChargeExplosion;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.protocol.game.ClientboundExplodePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.TraceableEntity;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.SimpleExplosionDamageCalculator;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +54,13 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
         this.setPos(position);
 //        setYaw(getYaw());
         this.causingEntity = igniter;
+    }
+
+    public static LootItemCondition getLootCondition(HolderGetter<EntityType<?>> holderGetter) {
+        return LootItemEntityPropertyCondition.hasProperties(
+                LootContext.EntityTarget.THIS,
+                EntityPredicate.Builder.entity().of(holderGetter, BwtEntities.miningChargeEntity)
+        ).build();
     }
 
     @Override
@@ -142,29 +148,18 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
     }
 
     public void createMiningChargeExplosion(ServerLevel serverLevel, float power) {
-        Explosion.BlockInteraction destructionType = serverLevel.getGameRules().getBoolean(GameRules.RULE_TNT_EXPLOSION_DROP_DECAY) ? Explosion.BlockInteraction.DESTROY_WITH_DECAY : Explosion.BlockInteraction.DESTROY;
         Vec3 offsetPos = this.blockPosition().relative(getNearestViewDirection().getOpposite()).getCenter();
-        Explosion explosion = new MiningChargeExplosion(
-                serverLevel,
+        serverLevel.explode(
                 this,
-                Explosion.getDefaultDamageSource(serverLevel, this),
+                serverLevel.damageSources().explosion(this, this.getOwner()),
                 null,
-                offsetPos,
+                offsetPos.x(),
+                offsetPos.y(),
+                offsetPos.z(),
                 power,
                 false,
-                destructionType,
+                Level.ExplosionInteraction.TNT
         );
-        explosion.explode();
-        explosion.finalizeExplosion(true);
-        if (level() instanceof ServerLevel serverLevel) {
-            if (!explosion.interactsWithBlocks()) {
-                explosion.clearToBlow();
-            }
-            for (ServerPlayer serverPlayerEntity : serverLevel.players()) {
-                if (!(serverPlayerEntity.distanceToSqr(getX(), getY(), getZ()) < 4096.0)) continue;
-                serverPlayerEntity.connection.send(new ClientboundExplodePacket(getX(), getY(), getZ(), power, explosion.getToBlow(), explosion.getHitPlayers().get(serverPlayerEntity), explosion.getBlockInteraction(), explosion.getSmallExplosionParticles(), explosion.getLargeExplosionParticles(), explosion.getExplosionSound()));
-            }
-        }
     }
 
     @Override
@@ -200,5 +195,10 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
     @Override
     public double getEyeY() {
         return 0.15f;
+    }
+
+    @Override
+    public final boolean hurtServer(ServerLevel serverLevel, DamageSource damageSource, float f) {
+        return false;
     }
 }
