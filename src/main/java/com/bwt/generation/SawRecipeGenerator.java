@@ -73,7 +73,7 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
                 if (!logBlock.equals(Blocks.AIR)) {
                     SawRecipe.JsonBuilder.create(logBlock).result(planksBlock, 4).result(dustItem, 2).save(output);
                 }
-                Block strippedBlock = BuiltInRegistries.BLOCK.get(Id.of(logIshId.getNamespace(), "stripped_" + logIshId.getPath())).map(Holder.Reference::value).orElse(Blocks.AIR);;
+                Block strippedBlock = BuiltInRegistries.BLOCK.get(Id.of(logIshId.getNamespace(), "stripped_" + logIshId.getPath())).map(Holder.Reference::value).orElse(Blocks.AIR);
                 if (!strippedBlock.equals(Blocks.AIR)) {
                     SawRecipe.JsonBuilder.create(strippedBlock).result(planksBlock, 4).result(dustItem, 2).save(output);
                 }

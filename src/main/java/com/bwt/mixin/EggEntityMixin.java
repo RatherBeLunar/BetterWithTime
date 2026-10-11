@@ -25,18 +25,18 @@ public abstract class EggEntityMixin extends ThrowableItemProjectile {
         this.chickenSpawned = false;
     }
 
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;)V", at = @At("TAIL"))
-    public void bwt$init1(Level level, LivingEntity owner, CallbackInfo ci) {
-        this.chickenSpawned = false;
-    }
-
-    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDD)V", at = @At("TAIL"))
-    public void bwt$init2(Level level, double x, double y, double z, CallbackInfo ci) {
-        this.chickenSpawned = false;
-    }
-
     @Inject(method = "<init>(Lnet/minecraft/world/entity/EntityType;Lnet/minecraft/world/level/Level;)V", at = @At("TAIL"))
-    public void bwt$init3(EntityType<ThrownEgg> entityType, Level level, CallbackInfo ci) {
+    public void bwt$init1(EntityType<? extends ThrownEgg> entityType, Level level, CallbackInfo ci) {
+        this.chickenSpawned = false;
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
+    public void bwt$init2(Level level, LivingEntity livingEntity, ItemStack itemStack, CallbackInfo ci) {
+        this.chickenSpawned = false;
+    }
+
+    @Inject(method = "<init>(Lnet/minecraft/world/level/Level;DDDLnet/minecraft/world/item/ItemStack;)V", at = @At("TAIL"))
+    public void bwt$init3(Level level, double d, double e, double f, ItemStack itemStack, CallbackInfo ci) {
         this.chickenSpawned = false;
     }
 

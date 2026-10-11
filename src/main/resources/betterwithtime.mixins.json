@@ -23,7 +23,6 @@
     "accessor.DecoratedPotPatternsAccessorMixin",
     "accessor.DyeItemAccessorMixin",
     "accessor.IngredientValuesAccessorMixin",
-    "accessor.MinecartItemAccessorMixin",
     "accessor.MobEntityAccessorMixin",
     "accessor.RawShapedRecipeAccessorMixin",
     "accessor.RecipeManagerAccessorMixin",
