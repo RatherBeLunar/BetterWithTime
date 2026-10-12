@@ -1,5 +1,5 @@
 {
-  "parent": "bwt:item/composite_bow",
+  "parent": "minecraft:item/bow",
   "textures": {
     "layer0": "bwt:item/composite_bow_pulling_0"
   }
