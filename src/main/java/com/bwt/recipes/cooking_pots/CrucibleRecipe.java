@@ -20,11 +20,6 @@ public class CrucibleRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.crucibleBlock);
-    }
-
-    @Override
     public RecipeSerializer<? extends AbstractCookingPotRecipe> getSerializer() {
         return BwtRecipes.CRUCIBLE_RECIPE_SERIALIZER;
     }

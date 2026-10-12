@@ -5,9 +5,11 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
@@ -239,7 +241,7 @@ public record HopperFilterRecipe(
         public void save(RecipeOutput exporter) {
             this.save(
                     exporter,
-                    Id.of("filter_" + RecipeProvider.getItemName(this.ingredient.items().getFirst().value()))
+                    Id.of("filter_" + RecipeProvider.getItemName(this.ingredient.items().map(Holder::value).findFirst().orElse(Items.AIR)))
             );
         }
 

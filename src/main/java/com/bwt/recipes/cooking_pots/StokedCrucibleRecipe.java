@@ -43,7 +43,7 @@ public class StokedCrucibleRecipe extends AbstractCookingPotRecipe {
 
         @Override
         public void save(RecipeOutput exporter) {
-            this.save(exporter, ResourceKey.create(Registries.RECIPE, Id.of("smelt_" + RecipeProvider.getItemName(ingredients.getFirst().getMatchingItems().getFirst().value()) + "_in_crucible")));
+            this.save(exporter, ResourceKey.create(Registries.RECIPE, Id.of("smelt_" + RecipeProvider.getItemName(ingredients.getFirst().getFirstMatchingItem()) + "_in_crucible")));
         }
     }
 }

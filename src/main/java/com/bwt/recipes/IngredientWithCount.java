@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.display.SlotDisplay;
 
@@ -103,16 +104,19 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     }
 
     @Override
-    public List<Holder<Item>> getMatchingItems() {
+    public Stream<Holder<Item>> getMatchingItems() {
         return ingredient.items();
     }
 
-    public List<ItemStack> getMatchingStacks() {
-        return ingredient.items().stream()
+    public Stream<ItemStack> getMatchingStacks() {
+        return ingredient.items()
                 .map(Holder::value)
                 .map(item -> new ItemStack(item, count))
-                .filter(this::test)
-                .toList();
+                .filter(this::test);
+    }
+
+    public Item getFirstMatchingItem() {
+        return getMatchingItems().map(Holder::value).findFirst().orElse(Items.AIR);
     }
 
     @Override

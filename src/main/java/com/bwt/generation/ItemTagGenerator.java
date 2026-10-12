@@ -179,7 +179,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         getOrCreateTagBuilder(BwtItemTags.PASSES_SLATS_FILTER)
                 .addTag(BwtItemTags.PASSES_WICKER_FILTER)
-                .forceAddTag(ItemTags.TRIM_TEMPLATES)
                 .add(
                         // Arcane scrolls
                         BwtItems.fabricItem,
@@ -197,11 +196,30 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.STRING,
 
                         Items.PRISMARINE_SHARD,
-                        Items.DRIED_KELP
+                        Items.DRIED_KELP,
+                        // Trim templates
+                        Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.VEX_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WILD_ARMOR_TRIM_SMITHING_TEMPLATE
                 );
 
         getOrCreateTagBuilder(BwtItemTags.PASSES_GRATE_FILTER)
-                .forceAddTag(ItemTags.FLOWERS)
+                .forceAddTag(ConventionalItemTags.FLOWERS)
                 .add(
                         Items.APPLE,
                         Items.GOLDEN_APPLE,
@@ -329,7 +347,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ItemTags.SAPLINGS)
                 .forceAddTag(ItemTags.SIGNS)
                 .forceAddTag(ItemTags.DECORATED_POT_SHERDS)
-                .forceAddTag(ItemTags.TRIM_TEMPLATES)
                 .add(
                         BwtItems.armorPlateItem,
                         Items.ARROW,
@@ -428,7 +445,27 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.ECHO_SHARD,
                         Items.PHANTOM_MEMBRANE,
                         Items.DRAGON_BREATH,
-                        Items.RABBIT_FOOT
+                        Items.RABBIT_FOOT,
+
+                        // Trim templates
+                        Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.VEX_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WILD_ARMOR_TRIM_SMITHING_TEMPLATE
                 );
 
 

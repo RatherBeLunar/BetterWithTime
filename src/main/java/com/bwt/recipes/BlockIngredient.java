@@ -22,6 +22,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -81,8 +82,12 @@ public record BlockIngredient(HolderSet<Block> values) implements CustomIngredie
     }
 
     @Override
-    public List<Holder<Item>> getMatchingItems() {
-        return getMatchingBlocks().stream().map(Holder::value).map(Block::asItem).map(Holder::direct).toList();
+    public Stream<Holder<Item>> getMatchingItems() {
+        return getMatchingBlocks().stream().map(Holder::value).map(Block::asItem).map(Holder::direct);
+    }
+
+    public Item getFirstMatchingItem() {
+        return getMatchingItems().map(Holder::value).findFirst().orElse(Items.AIR);
     }
 
     @Override

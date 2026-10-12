@@ -71,7 +71,7 @@ public class WaterWheelEntity extends HorizontalMechPowerSourceEntity {
 
     protected float getCounterClockwiseRotationVelocity() {
         Level level = level();
-        Vec3i facingVector = getDirection().getNormal();
+        Vec3i facingVector = getDirection().getUnitVec3i();
         float velocity = BlockPos.betweenClosedStream(getBoundingBox())
             .map(blockPos -> {
                FluidState fluidState = level.getFluidState(blockPos);

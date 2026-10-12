@@ -31,6 +31,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -143,7 +144,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
     }
 
     @Override
-    protected AABB makeBoundingBox() {
+    protected AABB makeBoundingBox(Vec3 position) {
         return AABB.encapsulatingFullBlocks(
                 new BlockPos(
                     getBlockMap().keySet().stream().mapToInt(Vec3i::getX).min().orElse(0),
@@ -155,7 +156,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
                     getBlockMap().keySet().stream().mapToInt(Vec3i::getY).max().orElse(0),
                     getBlockMap().keySet().stream().mapToInt(Vec3i::getZ).max().orElse(0)
                 )
-        ).move(position()).move(-0.5, 0, -0.5);
+        ).move(position).move(-0.5, 0, -0.5);
     }
 
 

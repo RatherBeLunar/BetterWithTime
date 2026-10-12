@@ -34,7 +34,7 @@ public class GrothedNetherrackBlock extends Block {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return Blocks.NETHERRACK.getCloneItemStack(level, pos, state);
+    protected ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+        return Blocks.NETHERRACK.defaultBlockState().getCloneItemStack(levelReader, blockPos, bl);
     }
 }

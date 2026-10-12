@@ -20,11 +20,11 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
     @Override
     public ItemStack getInhaledItems(BlockSource blockPointer) {
         HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = blockPointer.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        BlockState state = blockPointer.level().getBlockState(blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING)));
-        if (!(state.getBlock() instanceof CropBlock cropBlock)) {
+        BlockState cropBlockState = blockPointer.level().getBlockState(blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING)));
+        if (!(cropBlockState.getBlock() instanceof CropBlock cropBlock)) {
             return ItemStack.EMPTY;
         }
-        int age = cropBlock.getAge(state);
+        int age = cropBlock.getAge(cropBlockState);
         int maxAge = cropBlock.getMaxAge();
         if (age < maxAge) {
             return ItemStack.EMPTY;
@@ -37,10 +37,10 @@ public class CropInhaleBehavior implements BlockInhaleBehavior {
         LootParams.Builder builder = new LootParams.Builder(blockPointer.level())
                 .withParameter(LootContextParams.ORIGIN, blockPointer.pos().getCenter())
                 .withParameter(LootContextParams.TOOL, toolStack);
-        List<ItemStack> droppedStacks = state.getDrops(builder);
+        List<ItemStack> droppedStacks = cropBlockState.getDrops(builder);
         if (droppedStacks.size() > 1) {
             return droppedStacks.stream()
-                    .filter(dropStack -> !dropStack.getItem().equals(cropBlock.getCloneItemStack(blockPointer.level(), blockPointer.pos(), state).getItem()))
+                    .filter(dropStack -> !dropStack.getItem().equals(cropBlockState.getCloneItemStack(blockPointer.level(), blockPointer.pos(), false).getItem()))
                     .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {

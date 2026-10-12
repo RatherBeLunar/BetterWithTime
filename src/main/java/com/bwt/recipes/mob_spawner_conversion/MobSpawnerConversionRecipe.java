@@ -6,10 +6,12 @@ import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import org.jetbrains.annotations.Nullable;
@@ -165,7 +167,7 @@ public record MobSpawnerConversionRecipe(String group, CraftingBookCategory cate
 
         @Override
         public Item getResult() {
-            return ingredient.getMatchingItems().getFirst().value();
+            return ingredient.getMatchingItems().findFirst().map(Holder::value).orElse(Items.AIR);
         }
 
         @Override

@@ -73,11 +73,6 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-
-    @Override
     protected boolean triggerEvent(BlockState state, Level level, BlockPos pos, int type, int data) {
         super.triggerEvent(state, level, pos, type, data);
         BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -214,10 +209,10 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return level.getBlockEntity(pos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
+    protected ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+        return levelReader.getBlockEntity(blockPos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
                 ? unfiredDecoratedPotBlockEntity.asStack()
-                : super.getCloneItemStack(level, pos, state);
+                : super.getCloneItemStack(levelReader, blockPos, blockState, bl);
     }
 
     @Override

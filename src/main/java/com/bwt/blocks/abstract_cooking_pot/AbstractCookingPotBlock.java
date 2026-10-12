@@ -68,11 +68,6 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-
-    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return COLLISION_SHAPES.get(state.getValue(TIP_DIRECTION).get3DDataValue());
     }

@@ -35,7 +35,7 @@ public class AmethystInhaleBehavior implements BlockInhaleBehavior {
         List<ItemStack> droppedStacks = state.getDrops(builder);
         if (droppedStacks.size() > 1) {
             return droppedStacks.stream()
-                    .filter(dropStack -> !dropStack.getItem().equals(state.getBlock().getCloneItemStack(blockPointer.level(), blockPointer.pos(), state).getItem()))
+                    .filter(dropStack -> !dropStack.getItem().equals(state.getCloneItemStack(blockPointer.level(), blockPointer.pos(), true).getItem()))
                     .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {

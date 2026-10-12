@@ -45,7 +45,7 @@ public abstract class CookingPotCategory<T extends AbstractCookingPotRecipe> ext
                 IRecipeSlotBuilder inputSlot = builder.addInputSlot(x * 18 + 1, y * 18 + 1).setStandardSlotBackground();
                 if (ingredientIterator.hasNext()) {
                     IngredientWithCount ingredient = ingredientIterator.next();
-                    inputSlot.addIngredients(VanillaTypes.ITEM_STACK, ingredient.getMatchingStacks());
+                    inputSlot.addIngredients(VanillaTypes.ITEM_STACK, ingredient.getMatchingStacks().toList());
                 }
                 IRecipeSlotBuilder outputSlot = builder.addOutputSlot(x * 18 + 110, y * 18 + 1).setStandardSlotBackground();
                 if (outputIterator.hasNext()) {

@@ -103,7 +103,7 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
 
     public void updateNeighbors(Level level, BlockPos pos, BlockState state) {
         BlockPos outputPos = pos.relative(state.getValue(FACING));
-        level.neighborChanged(outputPos, this, pos);
-        level.updateNeighborsAtExceptFromFacing(outputPos, this, state.getValue(FACING).getOpposite());
+        level.neighborChanged(outputPos, this, null);
+        level.updateNeighborsAtExceptFromFacing(outputPos, this, state.getValue(FACING).getOpposite(), null);
     }
 }

@@ -149,7 +149,7 @@ public class KilnBlock extends Block {
     }
 
     private void cookBlock(Level level, BlockPos cookingBlockPos, BlockState cookingBlockState, KilnRecipe recipe) {
-        DataComponentMap components = cookingBlockState.getBlock().getCloneItemStack(level, cookingBlockPos, cookingBlockState).getComponents();
+        DataComponentMap components = cookingBlockState.getCloneItemStack(level, cookingBlockPos, true).getComponents();
         level.destroyBlock(cookingBlockPos, false);
         NonNullList<ItemStack> drops = NonNullList.of(ItemStack.EMPTY, recipe.getDrops().stream().map(ItemStack::copy).toArray(ItemStack[]::new));
         if (drops.isEmpty()) {
@@ -187,8 +187,8 @@ public class KilnBlock extends Block {
     }
 
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return Blocks.BRICKS.getCloneItemStack(level, pos, state);
+    protected ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+        return Blocks.BRICKS.defaultBlockState().getCloneItemStack(levelReader, blockPos, bl);
     }
 
     @Override

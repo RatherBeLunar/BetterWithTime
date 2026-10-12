@@ -4,10 +4,7 @@ import com.bwt.items.BwtItems;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Ghast;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
@@ -65,7 +62,7 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
             return;
         }
 
-        Ghast ghastEntity = EntityType.GHAST.create(this.level());
+        Ghast ghastEntity = EntityType.GHAST.create(this.level(), EntitySpawnReason.TRIGGERED);
         if (ghastEntity != null) {
             float yaw = (this.getYRot() + 180.0F) % 360F;
             ghastEntity.moveTo(this.getX(), this.getY(), this.getZ(), yaw, 0.0F);

@@ -96,59 +96,63 @@ public class LockableItemSettings extends Item.Properties {
         return (LockableItemSettings) super.attributes(attributeModifiersComponent);
     }
 
+    @Override
     public LockableItemSettings useCooldown(float f) {
         if (locked) return this;
         return (LockableItemSettings) super.useCooldown(f);
     }
 
+    @Override
     public LockableItemSettings enchantable(int i) {
         if (locked) return this;
         return (LockableItemSettings) super.enchantable(i);
     }
 
+    @Override
     public LockableItemSettings repairable(Item item) {
         if (locked) return this;
         return (LockableItemSettings) super.repairable(item);
     }
 
+    @Override
     public LockableItemSettings repairable(TagKey<Item> tagKey) {
         if (locked) return this;
         return (LockableItemSettings) super.repairable(tagKey);
     }
 
+    @Override
     public LockableItemSettings equippable(EquipmentSlot equipmentSlot) {
         if (locked) return this;
         return (LockableItemSettings) super.equippable(equipmentSlot);
     }
 
+    @Override
     public LockableItemSettings equippableUnswappable(EquipmentSlot equipmentSlot) {
         if (locked) return this;
         return (LockableItemSettings) super.equippableUnswappable(equipmentSlot);
     }
 
+    @Override
     public LockableItemSettings setId(ResourceKey<Item> resourceKey) {
         if (locked) return this;
         return (LockableItemSettings) super.setId(resourceKey);
     }
 
+    @Override
     public LockableItemSettings overrideDescription(String string) {
         if (locked) return this;
         return (LockableItemSettings) super.overrideDescription(string);
     }
 
+    @Override
     public LockableItemSettings useBlockDescriptionPrefix() {
         if (locked) return this;
         return (LockableItemSettings) super.useBlockDescriptionPrefix();
     }
 
+    @Override
     public LockableItemSettings useItemDescriptionPrefix() {
         if (locked) return this;
         return (LockableItemSettings) super.useItemDescriptionPrefix();
     }
-
-    public LockableItemSettings overrideModel(ResourceLocation resourceLocation) {
-        if (locked) return this;
-        return (LockableItemSettings) super.overrideModel(resourceLocation);
-    }
-
 }

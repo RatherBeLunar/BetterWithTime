@@ -149,10 +149,10 @@ public class LensBeamHelper {
                 boolean facingIntoNeighbor = targetState.getValue(LensBeamBlock.FACING_PROPERTIES.get(direction)) && !neighborPosAndState.state().is(BlockTags.AIR);
                 boolean detectorFacingIntoBeam = neighborPosAndState.state().is(BwtBlocks.detectorBlock) && neighborPosAndState.state().getValue(DetectorBlock.FACING).equals(direction.getOpposite());
                 if (detectorFacingIntoBeam || (facingIntoNeighbor && terminusModified)) {
-                    level.neighborChanged(neighborPosAndState.state(), neighborPosAndState.pos(), newState.getBlock(), targetPos, false);
+                    level.neighborChanged(neighborPosAndState.state(), neighborPosAndState.pos(), newState.getBlock(), null, false);
                 }
                 if (facingIntoNeighbor && terminusModified) {
-                    level.neighborShapeChanged(direction.getOpposite(), newState, neighborPosAndState.pos(), targetPos, Block.UPDATE_CLIENTS, 512);
+                    level.neighborShapeChanged(direction.getOpposite(), neighborPosAndState.pos(), targetPos, newState, Block.UPDATE_CLIENTS, 512);
                 }
             }
         }

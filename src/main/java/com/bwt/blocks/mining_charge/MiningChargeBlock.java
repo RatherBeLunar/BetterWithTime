@@ -174,18 +174,19 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
             }
         }
         player.awardStat(Stats.ITEM_USED.get(item));
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     public void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
-        if (!level.isClientSide) {
-            BlockPos blockPos = hit.getBlockPos();
-            Entity entity = projectile.getOwner();
-            if (projectile.isOnFire() && projectile.mayInteract(level, blockPos)) {
-                prime(level, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-                level.removeBlock(blockPos, false);
-            }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        BlockPos blockPos = hit.getBlockPos();
+        Entity entity = projectile.getOwner();
+        if (projectile.isOnFire() && projectile.mayInteract(serverLevel, blockPos)) {
+            prime(serverLevel, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+            serverLevel.removeBlock(blockPos, false);
         }
     }
 

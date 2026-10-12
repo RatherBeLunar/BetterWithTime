@@ -40,7 +40,7 @@ public class RopeItem extends BlockItem {
             do {
                 mutablePos.move(Direction.DOWN);
                 placementContext = BlockPlaceContext.at(placementContext, mutablePos, Direction.DOWN);
-            } while (level.getBlockState(mutablePos).is(BwtBlocks.ropeBlock) && mutablePos.getY() > level.getMinBuildHeight());
+            } while (level.getBlockState(mutablePos).is(BwtBlocks.ropeBlock) && level.isInsideBuildHeight(mutablePos.getY()));
 
             return this.place(placementContext);
         }

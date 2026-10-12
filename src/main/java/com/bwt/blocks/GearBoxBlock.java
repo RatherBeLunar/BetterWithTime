@@ -4,6 +4,7 @@ import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.world.level.*;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBase, RotateWithEmptyHand {
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
@@ -156,11 +158,11 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bl) {
         if (level.isClientSide) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {

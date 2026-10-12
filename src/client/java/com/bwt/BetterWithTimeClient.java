@@ -29,7 +29,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
@@ -40,6 +39,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.item.ItemProperties;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.GrassColor;
@@ -76,11 +76,11 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CAULDRON_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CRUCIBLE_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
-        BuiltinItemRendererRegistry.INSTANCE.register(
+		SpecialModelRenderers.ID_MAPPER.put(
                 BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
                 (stack, mode, matrices, vertexConsumers, light, overlay) -> {
                     renderUnfiredDecoratedPot.readFrom(stack);
-                    Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
+                    Minecraft.getInstance().getBlockEntityRenderDispatcher().render(renderUnfiredDecoratedPot, matrices, vertexConsumers);
                 });
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
 				BwtBlocks.lightBlockBlock,
@@ -115,24 +115,12 @@ public class BetterWithTimeClient implements ClientModInitializer {
 			if (view == null || pos == null) {
 				return GrassColor.getDefaultColor();
 			}
-            Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
-			if (biomeEntry == null) {
-				return GrassColor.getDefaultColor();
-			}
-			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
-		}, BwtBlocks.grassPlanterBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassPlanterBlock);
-
-		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-			if (view == null || pos == null) {
-				return GrassColor.getDefaultColor();
-			}
 			Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
 			if (biomeEntry == null) {
 				return GrassColor.getDefaultColor();
 			}
 			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
-		}, BwtBlocks.grassSlabBlock);
+		}, BwtBlocks.grassPlanterBlock, BwtBlocks.grassSlabBlock);
 		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassSlabBlock);
 
 		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {

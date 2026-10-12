@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
@@ -44,16 +45,17 @@ public class LensBeamGlassBlock extends LensBeamBlock {
         if (!(state.getBlock() instanceof LensBeamBlock lensBeamBlock) || state.equals(oldState)) {
             return;
         }
-        for (Map.Entry<Direction, BooleanProperty> entry : FACING_PROPERTIES.entrySet()) {
-            Direction direction = entry.getKey();
-            BooleanProperty facingProperty = entry.getValue();
-            BlockState neighborState = level.getBlockState(pos.relative(direction.getOpposite()));
-            if (!LensBeamHelper.isValidInputBeamOrLens(neighborState, direction)) {
-                state = state.setValue(facingProperty, false);
-            }
-            else {
-                int range = LensBeamHelper.getRemainingRange(level, pos, direction);
-                LensBeamHelper.propagateBeam(level, pos, state, direction, range);
+        if (level instanceof ServerLevel serverLevel) {
+            for (Map.Entry<Direction, BooleanProperty> entry : FACING_PROPERTIES.entrySet()) {
+                Direction direction = entry.getKey();
+                BooleanProperty facingProperty = entry.getValue();
+                BlockState neighborState = serverLevel.getBlockState(pos.relative(direction.getOpposite()));
+                if (!LensBeamHelper.isValidInputBeamOrLens(neighborState, direction)) {
+                    state = state.setValue(facingProperty, false);
+                } else {
+                    int range = LensBeamHelper.getRemainingRange(serverLevel, pos, direction);
+                    LensBeamHelper.propagateBeam(level, pos, state, direction, range);
+                }
             }
         }
         if (LensBeamHelper.streamFacingDirections(state).findAny().isEmpty()) {
@@ -72,7 +74,7 @@ public class LensBeamGlassBlock extends LensBeamBlock {
     }
 
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    protected boolean propagatesSkylightDown(BlockState blockState) {
         return true;
     }
 

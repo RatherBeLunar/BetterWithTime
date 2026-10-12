@@ -94,7 +94,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
                 itemStack.shrink(1);
             }
             this.bwt$feed(itemStack);
-            cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+            cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }
 

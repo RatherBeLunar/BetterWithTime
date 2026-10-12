@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -185,15 +186,15 @@ public class HandCrankBlock extends Block {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide || !level.getBlockState(blockPos).is(this)) {
             return;
         }
-        if (canSurvive(state, level, pos)) {
+        if (canSurvive(blockState, level, blockPos)) {
             return;
         }
-        dropResources(state, level, pos);
-        level.removeBlock(pos, notify);
+        dropResources(blockState, level, blockPos);
+        level.removeBlock(blockPos, notify);
     }
 
     @Override

@@ -516,7 +516,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("column")
                     .unlockedBy(RecipeProvider.getHasName(mouldingBlock), recipeProvider.has(mouldingBlock))
                     .save(output);
-            EmiDefaultsGenerator.addDefaultRecipe(columnBlock);
 
             recipeProvider.shaped(RecipeCategory.BUILDING_BLOCKS, pedestalBlock, 6)
                     .pattern(" s ")
@@ -527,7 +526,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("pedestal")
                     .unlockedBy(RecipeProvider.getHasName(sidingBlock), recipeProvider.has(sidingBlock))
                     .save(output);
-            EmiDefaultsGenerator.addDefaultRecipe(pedestalBlock);
 
             recipeProvider.shaped(RecipeCategory.BUILDING_BLOCKS, tableBlock, 4)
                     .pattern("sss")
@@ -538,7 +536,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                     .group("table")
                     .unlockedBy(RecipeProvider.getHasName(mouldingBlock), recipeProvider.has(mouldingBlock))
                     .save(output);
-            EmiDefaultsGenerator.addDefaultRecipe(tableBlock);
         }
 
         recipeProvider.shaped(RecipeCategory.MISC, BwtBlocks.hopperBlock)
@@ -551,7 +548,6 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .define('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
                 .unlockedBy("has_wooden_corner", recipeProvider.has(BwtItemTags.WOODEN_CORNER_BLOCKS))
                 .save(output, "mech_hopper");
-        EmiDefaultsGenerator.addDefaultRecipe(BwtBlocks.hopperBlock);
     }
 
     private void generateTier4Recipes(RecipeProvider recipeProvider, RecipeOutput output) {

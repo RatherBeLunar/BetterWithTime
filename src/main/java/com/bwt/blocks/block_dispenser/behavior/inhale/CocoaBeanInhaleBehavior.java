@@ -20,11 +20,11 @@ public class CocoaBeanInhaleBehavior implements BlockInhaleBehavior {
     @Override
     public ItemStack getInhaledItems(BlockSource blockPointer) {
         HolderLookup.RegistryLookup<Enchantment> enchantmentRegistry = blockPointer.level().registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
-        BlockState state = blockPointer.level().getBlockState(blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING)));
-        if (!(state.getBlock() instanceof CocoaBlock cocoaBlock)) {
+        BlockState cocoaBlockState = blockPointer.level().getBlockState(blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING)));
+        if (!(cocoaBlockState.getBlock() instanceof CocoaBlock)) {
             return ItemStack.EMPTY;
         }
-        int age = state.getValue(CocoaBlock.AGE);
+        int age = cocoaBlockState.getValue(CocoaBlock.AGE);
         int maxAge = CocoaBlock.MAX_AGE;
         if (age < maxAge) {
             return ItemStack.EMPTY;
@@ -37,10 +37,10 @@ public class CocoaBeanInhaleBehavior implements BlockInhaleBehavior {
         LootParams.Builder builder = new LootParams.Builder(blockPointer.level())
                 .withParameter(LootContextParams.ORIGIN, blockPointer.pos().getCenter())
                 .withParameter(LootContextParams.TOOL, toolStack);
-        List<ItemStack> droppedStacks = state.getDrops(builder);
+        List<ItemStack> droppedStacks = cocoaBlockState.getDrops(builder);
         if (droppedStacks.size() > 1) {
             return droppedStacks.stream()
-                    .filter(dropStack -> !dropStack.getItem().equals(cocoaBlock.getCloneItemStack(blockPointer.level(), blockPointer.pos(), state).getItem()))
+                    .filter(dropStack -> !dropStack.getItem().equals(cocoaBlockState.getCloneItemStack(blockPointer.level(), blockPointer.pos(), false).getItem()))
                     .findAny().orElse(ItemStack.EMPTY);
         }
         else if (droppedStacks.size() == 1) {
@@ -53,7 +53,7 @@ public class CocoaBeanInhaleBehavior implements BlockInhaleBehavior {
     public void inhale(BlockSource blockPointer) {
         BlockPos facingPos = blockPointer.pos().relative(blockPointer.state().getValue(BlockDispenserBlock.FACING));
         BlockState facingState = blockPointer.level().getBlockState(facingPos);
-        if (!(facingState.getBlock() instanceof CocoaBlock cocoaBlock)) {
+        if (!(facingState.getBlock() instanceof CocoaBlock)) {
             return;
         }
         int age = facingState.getValue(CocoaBlock.AGE);

@@ -140,8 +140,8 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
             }
             BlockPos targetPos = pos.relative(direction);
             BlockState neighborState = level.getBlockState(targetPos);
-            level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 511);
-            level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
+            level.neighborShapeChanged(direction.getOpposite(), targetPos, pos, state, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 511);
+            level.neighborChanged(neighborState, targetPos, state.getBlock(), null, false);
         }
     }
 }

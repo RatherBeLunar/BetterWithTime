@@ -93,6 +93,11 @@ public class LensBeamBlock extends Block {
     }
 
     @Override
+    protected void updateIndirectNeighbourShapes(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos, int i, int j) {
+        super.updateIndirectNeighbourShapes(blockState, levelAccessor, blockPos, i, j);
+    }
+
+    @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
         super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
         Vec3i vec = sourcePos.subtract(pos);

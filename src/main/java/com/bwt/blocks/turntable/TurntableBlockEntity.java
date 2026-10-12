@@ -227,7 +227,7 @@ public class TurntableBlockEntity extends BlockEntity {
             if (attachedPositions.contains(destination.pos()) || destination.state().canBeReplaced()) {
                 BlockState attachedStateRotated = attachedState.rotate(rotation);
                 level.setBlockAndUpdate(destination.pos(), attachedStateRotated);
-                attachedStateRotated.getBlock().setPlacedBy(level, destination.pos(), attachedStateRotated, null, attachedStateRotated.getBlock().getCloneItemStack(level, destination.pos(), attachedStateRotated));
+                attachedStateRotated.getBlock().setPlacedBy(level, destination.pos(), attachedStateRotated, null, attachedStateRotated.getCloneItemStack(level, destination.pos(), true));
                 if (attachedBlockEntity != null) {
                     ((MovableBlockEntityMixin) attachedBlockEntity).setPos(destination.pos());
                     attachedBlockEntity.setBlockState(attachedStateRotated);

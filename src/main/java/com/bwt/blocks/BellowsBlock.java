@@ -133,10 +133,7 @@ public class BellowsBlock extends Block implements MechPowerBlockBase {
         );
         list.stream().filter(Entity::isPushable).forEach(entity -> {
             entity.setOnGround(false);
-            entity.setPos(entity.getX(), pos.getY() + 1, entity.getZ());
-            if(entity instanceof ServerPlayer){
-                ((ServerPlayer) entity).connection.send(new ClientboundTeleportEntityPacket(entity));
-            }
+            entity.teleportTo(entity.getX(), pos.getY() + 1, entity.getZ());
         });
     }
 

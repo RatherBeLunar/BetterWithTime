@@ -20,11 +20,6 @@ public class StokedCauldronRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.cauldronBlock);
-    }
-
-    @Override
     public RecipeSerializer<? extends AbstractCookingPotRecipe> getSerializer() {
         return BwtRecipes.STOKED_CAULDRON_RECIPE_SERIALIZER;
     }

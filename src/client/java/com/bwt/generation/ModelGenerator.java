@@ -10,23 +10,25 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import com.google.common.collect.ImmutableList;
+import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
+import net.minecraft.client.color.item.GrassColorSource;
+import net.minecraft.client.renderer.special.DecoratedPotSpecialRenderer;
 import net.minecraft.core.Direction;
-import net.minecraft.data.models.BlockModelGenerators;
-import net.minecraft.data.models.ItemModelGenerators;
-import net.minecraft.data.models.blockstates.Condition;
-import net.minecraft.data.models.blockstates.MultiPartGenerator;
-import net.minecraft.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.data.models.blockstates.PropertyDispatch;
-import net.minecraft.data.models.blockstates.Variant;
-import net.minecraft.data.models.blockstates.VariantProperties;
-import net.minecraft.data.models.model.ModelLocationUtils;
-import net.minecraft.data.models.model.ModelTemplate;
-import net.minecraft.data.models.model.ModelTemplates;
-import net.minecraft.data.models.model.TextureMapping;
-import net.minecraft.data.models.model.TextureSlot;
-import net.minecraft.data.models.model.TexturedModel;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.blockstates.Condition;
+import net.minecraft.client.data.models.blockstates.MultiPartGenerator;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.blockstates.PropertyDispatch;
+import net.minecraft.client.data.models.blockstates.Variant;
+import net.minecraft.client.data.models.blockstates.VariantProperties;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.ModelTemplate;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureMapping;
+import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
@@ -49,7 +51,7 @@ public class ModelGenerator extends FabricModelProvider {
         generateCompanionBlocks(blockStateModelGenerator);
         generateBloodWoodBlocks(blockStateModelGenerator);
         generateStokedFireBlock(blockStateModelGenerator);
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.sawBlock, ModelLocationUtils.getModelLocation(BwtBlocks.sawBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.sawBlock, ModelLocationUtils.getModelLocation(BwtBlocks.sawBlock));
         BwtBlocks.sidingBlocks.forEach(sidingBlock -> generateSidingBlock(blockStateModelGenerator, sidingBlock));
         BwtBlocks.mouldingBlocks.forEach(mouldingBlock -> generateMouldingBlock(blockStateModelGenerator, mouldingBlock));
         BwtBlocks.cornerBlocks.forEach(cornerBlock -> generateCornerBlock(blockStateModelGenerator, cornerBlock));
@@ -60,9 +62,9 @@ public class ModelGenerator extends FabricModelProvider {
         BwtBlocks.woolSlabBlocks.forEach((dyeColor, woolSlab) -> generateWoolSlab(blockStateModelGenerator, dyeColor, woolSlab));
         blockStateModelGenerator.createActiveRail(BwtBlocks.stoneDetectorRailBlock);
         blockStateModelGenerator.createActiveRail(BwtBlocks.obsidianDetectorRailBlock);
-        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.slatsBlock);
-        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.grateBlock);
-        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.wickerPaneBlock);
+        blockStateModelGenerator.registerSimpleFlatItemModel(BwtBlocks.slatsBlock);
+        blockStateModelGenerator.registerSimpleFlatItemModel(BwtBlocks.grateBlock);
+        blockStateModelGenerator.registerSimpleFlatItemModel(BwtBlocks.wickerPaneBlock);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(
                         BwtBlocks.cauldronBlock,
@@ -133,7 +135,8 @@ public class ModelGenerator extends FabricModelProvider {
                 .with(BlockModelGenerators.createHorizontalFacingDispatch())
         );
 
-        blockStateModelGenerator.skipAutoItemBlock(BwtBlocks.unfiredDecoratedPotBlockWithSherds);
+        // TODO figured out unfiredDecoratedPotBlockWithSherds
+//        blockStateModelGenerator.generateSimpleSpecialItemModel(BwtBlocks.unfiredDecoratedPotBlockWithSherds, new DecoratedPotSpecialRenderer.Unbaked());
         for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredFlowerPotBlock}) {
             blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(unfiredPotteryBlock)
                     .with(PropertyDispatch.property(UnfiredPotteryBlock.COOKING)
@@ -152,6 +155,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.soilPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soilPlanterBlock)));
         blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.soulSandPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soulSandPlanterBlock)));
         blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(BwtBlocks.grassPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.grassPlanterBlock)));
+        blockStateModelGenerator.registerSimpleTintedItemModel(BwtBlocks.grassPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.grassPlanterBlock), new GrassColorSource());
         ResourceLocation buddyBlockModelId = TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
                 .create(BwtBlocks.buddyBlock, blockStateModelGenerator.modelOutput);
         ResourceLocation buddyBlockPoweredModelId = TexturedModel.createDefault(block -> new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block, "_side_powered")).put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front_powered")).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side_powered")), ModelTemplates.CUBE_ORIENTABLE)
@@ -163,7 +167,7 @@ public class ModelGenerator extends FabricModelProvider {
         );
         TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
                 .create(BwtBlocks.soapBlock, blockStateModelGenerator.modelOutput);
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.soapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soapBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.soapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.soapBlock));
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.ropeCoilBlock, TexturedModel.COLUMN);
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.paddingBlock, TexturedModel.CUBE);
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.wickerBlock, TexturedModel.CUBE);
@@ -193,35 +197,35 @@ public class ModelGenerator extends FabricModelProvider {
                 )
         );
 
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.aqueductBlock, ModelLocationUtils.getModelLocation(BwtBlocks.aqueductBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.anchorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.anchorBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.axleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.axleBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.creativePowerSouceBlock, ModelLocationUtils.getModelLocation(BwtBlocks.creativePowerSouceBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.blockDispenserBlock, ModelLocationUtils.getModelLocation(BwtBlocks.blockDispenserBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.cauldronBlock, ModelLocationUtils.getModelLocation(BwtBlocks.cauldronBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.crucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.crucibleBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.detectorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.detectorBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.gearBoxBlock, ModelLocationUtils.getModelLocation(BwtBlocks.gearBoxBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.screwPumpBlock, ModelLocationUtils.getModelLocation(BwtBlocks.screwPumpBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.redstoneClutchBlock, ModelLocationUtils.getModelLocation(BwtBlocks.redstoneClutchBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.handCrankBlock, ModelLocationUtils.getModelLocation(BwtBlocks.handCrankBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.hibachiBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hibachiBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.hopperBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hopperBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.lensBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lensBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.lightBlockBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lightBlockBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.millStoneBlock, ModelLocationUtils.getModelLocation(BwtBlocks.millStoneBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.obsidianPressurePlateBlock, ModelLocationUtils.getModelLocation(BwtBlocks.obsidianPressurePlateBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.pulleyBlock, ModelLocationUtils.getModelLocation(BwtBlocks.pulleyBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.turntableBlock, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_0"));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.bellowsBlock, ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredDecoratedPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredDecoratedPotBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredCrucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredCrucibleBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredPlanterBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredVaseBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredVaseBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredUrnBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredUrnBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.unfiredFlowerPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredFlowerPotBlock));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.vineTrapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock));
-        blockStateModelGenerator.createSimpleFlatItemModel(BwtBlocks.urnBlock.asItem());
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.aqueductBlock, ModelLocationUtils.getModelLocation(BwtBlocks.aqueductBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.anchorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.anchorBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.axleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.axleBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.creativePowerSouceBlock, ModelLocationUtils.getModelLocation(BwtBlocks.creativePowerSouceBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.blockDispenserBlock, ModelLocationUtils.getModelLocation(BwtBlocks.blockDispenserBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.cauldronBlock, ModelLocationUtils.getModelLocation(BwtBlocks.cauldronBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.crucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.crucibleBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.detectorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.detectorBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.gearBoxBlock, ModelLocationUtils.getModelLocation(BwtBlocks.gearBoxBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.screwPumpBlock, ModelLocationUtils.getModelLocation(BwtBlocks.screwPumpBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.redstoneClutchBlock, ModelLocationUtils.getModelLocation(BwtBlocks.redstoneClutchBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.handCrankBlock, ModelLocationUtils.getModelLocation(BwtBlocks.handCrankBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.hibachiBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hibachiBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.hopperBlock, ModelLocationUtils.getModelLocation(BwtBlocks.hopperBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.lensBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lensBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.lightBlockBlock, ModelLocationUtils.getModelLocation(BwtBlocks.lightBlockBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.millStoneBlock, ModelLocationUtils.getModelLocation(BwtBlocks.millStoneBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.obsidianPressurePlateBlock, ModelLocationUtils.getModelLocation(BwtBlocks.obsidianPressurePlateBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.pulleyBlock, ModelLocationUtils.getModelLocation(BwtBlocks.pulleyBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.turntableBlock, ModelLocationUtils.getModelLocation(BwtBlocks.turntableBlock, "_0"));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.bellowsBlock, ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredDecoratedPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredDecoratedPotBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredCrucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredCrucibleBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredPlanterBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredPlanterBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredVaseBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredVaseBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredUrnBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredUrnBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.unfiredFlowerPotBlock, ModelLocationUtils.getModelLocation(BwtBlocks.unfiredFlowerPotBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.vineTrapBlock, ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock));
+        blockStateModelGenerator.registerSimpleFlatItemModel(BwtBlocks.urnBlock.asItem());
     }
 
     @Override
@@ -283,7 +287,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.woodProvider(BwtBlocks.bloodWoodBlocks.logBlock).logWithHorizontal(BwtBlocks.bloodWoodBlocks.logBlock).wood(BwtBlocks.bloodWoodBlocks.woodBlock);
         blockStateModelGenerator.woodProvider(BwtBlocks.bloodWoodBlocks.strippedLogBlock).logWithHorizontal(BwtBlocks.bloodWoodBlocks.strippedLogBlock).wood(BwtBlocks.bloodWoodBlocks.strippedWoodBlock);
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.bloodWoodBlocks.leavesBlock, TexturedModel.LEAVES);
-        blockStateModelGenerator.createPlant(BwtBlocks.bloodWoodBlocks.saplingBlock, BwtBlocks.bloodWoodBlocks.pottedSaplingBlock, BlockModelGenerators.TintState.NOT_TINTED);
+        blockStateModelGenerator.createPlantWithDefaultItem(BwtBlocks.bloodWoodBlocks.saplingBlock, BwtBlocks.bloodWoodBlocks.pottedSaplingBlock, BlockModelGenerators.PlantType.NOT_TINTED);
         blockStateModelGenerator.family(BwtBlocks.bloodWoodBlocks.blockFamily.getBaseBlock()).generateFor(BwtBlocks.bloodWoodBlocks.blockFamily);
     }
 
@@ -313,7 +317,7 @@ public class ModelGenerator extends FabricModelProvider {
                 , ModelTemplates.SLAB_TOP
         ).create(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(BlockModelGenerators.createSlab(BwtBlocks.companionSlabBlock, companionSlabBottom, companionSlabTop, companionCubeModelId));
-        blockStateModelGenerator.delegateItemModel(BwtBlocks.companionSlabBlock, companionSlabBottom);
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.companionSlabBlock, companionSlabBottom);
     }
 
     private void generateStokedFireBlock(BlockModelGenerators blockStateModelGenerator) {
@@ -494,7 +498,7 @@ public class ModelGenerator extends FabricModelProvider {
                                 Variant.variant().with(VariantProperties.MODEL, identifier6).with(VariantProperties.Y_ROT, VariantProperties.Rotation.R90)
                         )
         );
-        blockStateModelGenerator.createSimpleFlatItemModel(pane);
+        blockStateModelGenerator.registerSimpleFlatItemModel(pane);
     }
 
     public static void generateSidingBlock(BlockModelGenerators blockStateModelGenerator, SidingBlock sidingBlock) {
@@ -510,7 +514,7 @@ public class ModelGenerator extends FabricModelProvider {
                         ).with(VariantProperties.UV_LOCK, true)
                 ).with(BlockModelGenerators.createFacingDispatch())
         );
-        blockStateModelGenerator.delegateItemModel(sidingBlock, ModelLocationUtils.getModelLocation(sidingBlock));
+        blockStateModelGenerator.registerSimpleItemModel(sidingBlock, ModelLocationUtils.getModelLocation(sidingBlock));
     }
 
     public static void generateMouldingBlock(BlockModelGenerators blockStateModelGenerator, MouldingBlock mouldingBlock) {
@@ -520,7 +524,7 @@ public class ModelGenerator extends FabricModelProvider {
         ResourceLocation horizontalId = horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         ResourceLocation verticalId = verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(mouldingBlock).with(createMouldingOrientationMap(horizontalId, verticalId)));
-        blockStateModelGenerator.delegateItemModel(mouldingBlock, horizontalId);
+        blockStateModelGenerator.registerSimpleItemModel(mouldingBlock, horizontalId);
     }
 
     public static void generateCornerBlock(BlockModelGenerators blockStateModelGenerator, CornerBlock cornerBlock) {
@@ -536,7 +540,7 @@ public class ModelGenerator extends FabricModelProvider {
                         ).with(VariantProperties.UV_LOCK, true)
                 ).with(createCornerOrientationMap())
         );
-        blockStateModelGenerator.delegateItemModel(cornerBlock, ModelLocationUtils.getModelLocation(cornerBlock));
+        blockStateModelGenerator.registerSimpleItemModel(cornerBlock, ModelLocationUtils.getModelLocation(cornerBlock));
     }
 
     public static void generateColumnBlock(BlockModelGenerators blockStateModelGenerator, ColumnBlock columnBlock) {
@@ -544,7 +548,7 @@ public class ModelGenerator extends FabricModelProvider {
         ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/column")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
         model.create(columnBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(columnBlock, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(columnBlock)).with(VariantProperties.UV_LOCK, true)));
-        blockStateModelGenerator.delegateItemModel(columnBlock, ModelLocationUtils.getModelLocation(columnBlock));
+        blockStateModelGenerator.registerSimpleItemModel(columnBlock, ModelLocationUtils.getModelLocation(columnBlock));
     }
 
     public static void generatePedestalBlock(BlockModelGenerators blockStateModelGenerator, PedestalBlock pedestalBlock) {
@@ -563,7 +567,7 @@ public class ModelGenerator extends FabricModelProvider {
                         .select(Direction.UP, Variant.variant())
                 )
         );
-        blockStateModelGenerator.delegateItemModel(pedestalBlock, ModelLocationUtils.getModelLocation(pedestalBlock));
+        blockStateModelGenerator.registerSimpleItemModel(pedestalBlock, ModelLocationUtils.getModelLocation(pedestalBlock));
     }
 
     public static void generateTableBlock(BlockModelGenerators blockStateModelGenerator, TableBlock tableBlock) {
@@ -687,6 +691,7 @@ public class ModelGenerator extends FabricModelProvider {
                                         .select(false, Variant.variant().with(VariantProperties.MODEL, grassSlab))
                         )
         );
+        blockStateModelGenerator.registerSimpleTintedItemModel(BwtBlocks.grassSlabBlock, ModelLocationUtils.getModelLocation(BwtBlocks.grassSlabBlock), new GrassColorSource());
         //Mycelium Slab
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.multiVariant(BwtBlocks.myceliumSlabBlock)

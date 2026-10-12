@@ -4,6 +4,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public abstract class RectangularEntity extends Entity {
     public RectangularEntity(EntityType<?> type, Level level) {
@@ -28,8 +29,8 @@ public abstract class RectangularEntity extends Entity {
     }
 
     @Override
-    protected AABB makeBoundingBox() {
+    protected AABB makeBoundingBox(Vec3 position) {
         EntityRectDimensions dimensions = this.getRectDimensions();
-        return dimensions.getBoxAt(position(), getYRot()).move(0, -1 * (dimensions.height() / 2), 0);
+        return dimensions.getBoxAt(position, getYRot()).move(0, -1 * (dimensions.height() / 2), 0);
     }
 }

@@ -256,7 +256,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
             this.save(exporter,
                     RecipeProvider.getItemName(results.getFirst().getItem())
                     + "_from_milling_"
-                    + RecipeProvider.getItemName(this.ingredients.getFirst().getMatchingStacks().getFirst().getItem())
+                    + RecipeProvider.getItemName(this.ingredients.getFirst().getFirstMatchingItem())
             );
         }
 

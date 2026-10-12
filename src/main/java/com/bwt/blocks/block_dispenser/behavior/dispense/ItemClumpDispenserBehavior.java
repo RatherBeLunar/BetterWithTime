@@ -22,13 +22,13 @@ public class ItemClumpDispenserBehavior extends BlockDispenserBehavior {
     @Override
     protected ItemStack execute(BlockSource pointer, ItemStack stack) {
         this.setSuccess(false);
-        Item item = recipe.block().getItem();
+        Item item = recipe.block().asItem();
         if (item instanceof BlockItem blockItem) {
             Direction direction = pointer.state().getValue(DispenserBlock.FACING);
             BlockPos blockPos = pointer.pos().relative(direction);
 
             try {
-                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.level(), blockPos, direction, recipe.block().copy(), direction);
+                BlockDispenserPlacementContext context = new BlockDispenserPlacementContext(pointer.level(), blockPos, direction, recipe.block().asItem().getDefaultInstance(), direction);
                 setSuccess(blockItem.place(context).consumesAction());
             } catch (Exception exception) {
                 LOGGER.error("Error trying to place block at {}", blockPos, exception);
