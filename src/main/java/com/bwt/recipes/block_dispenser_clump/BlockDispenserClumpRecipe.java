@@ -176,8 +176,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
     }
 
     public static class JsonBuilder implements RecipeBuilder {
-        protected Ingredient item;
-        protected int count = 1;
+        protected IngredientWithCount ingredient;
         protected Block block;
         protected CraftingBookCategory category = CraftingBookCategory.MISC;
 
@@ -198,18 +197,17 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
             return this;
         }
 
-        public JsonBuilder ingredient(Ingredient ingredient) {
-            this.item = ingredient;
+        public JsonBuilder ingredient(IngredientWithCount ingredient) {
+            this.ingredient = ingredient;
             return this;
+        }
+
+        public JsonBuilder ingredient(Item item, int count) {
+            return this.ingredient(IngredientWithCount.of(item, count));
         }
 
         public JsonBuilder ingredient(Item item) {
-            return this.ingredient(Ingredient.of(item));
-        }
-
-        public JsonBuilder count(int count) {
-            this.count = count;
-            return this;
+            return this.ingredient(item, 1);
         }
 
         public JsonBuilder output(Block block) {
@@ -236,7 +234,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
 
         @Override
         public void save(RecipeOutput exporter) {
-            this.save(exporter, block.getName() + "_clump");
+            this.save(exporter, BuiltInRegistries.BLOCK.getKey(block).getPath() + "_clump");
         }
 
         @Override
@@ -253,7 +251,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
             Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             this.criteria.forEach(advancementBuilder::addCriterion);
             BlockDispenserClumpRecipe blockDispenserClumpRecipe = this.getRecipeFactory().create(
-                    new IngredientWithCount(item, count),
+                    this.ingredient,
                     this.block,
                     this.category
             );

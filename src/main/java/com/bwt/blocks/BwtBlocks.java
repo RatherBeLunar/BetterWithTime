@@ -63,7 +63,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
                     .forceSolidOn()
                     .requiresCorrectToolForDrops()
     );
-	public static final AxleBlock axleBlock = registerBlock(
+	public static final AxleBlock axleBlock = registerBlockWithItem(
             "axle",
             AxleBlock::new,
             BlockBehaviour.Properties.of()
@@ -358,7 +358,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
                     .mapColor(MapColor.COLOR_BROWN)
                     .sound(SoundType.GRASS)
     );
-	public static final RopeBlock ropeBlock = registerBlockWithItem(
+	public static final RopeBlock ropeBlock = registerBlock(
             "rope",
             RopeBlock::new,
             BlockBehaviour.Properties.of()

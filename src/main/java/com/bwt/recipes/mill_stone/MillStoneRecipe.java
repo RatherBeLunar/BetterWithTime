@@ -36,14 +36,14 @@ import net.minecraft.world.level.Level;
 public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
     protected final String group;
     protected final CraftingBookCategory category;
-    final NonNullList<IngredientWithCount> ingredients;
-    protected final NonNullList<ItemStack> results;
+    final List<IngredientWithCount> ingredients;
+    protected final List<ItemStack> results;
 
     public MillStoneRecipe(String group, CraftingBookCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
         this.group = group;
         this.category = category;
-        this.ingredients = NonNullList.of(IngredientWithCount.EMPTY, ingredients.toArray(new IngredientWithCount[0]));
-        this.results = NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
+        this.ingredients = ingredients;
+        this.results = results;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         return defaultedList;
     }
 
-    public NonNullList<IngredientWithCount> getIngredientsWithCount() {
+    public List<IngredientWithCount> getIngredientsWithCount() {
         return ingredients;
     }
 

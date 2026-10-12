@@ -37,7 +37,8 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
             }
 
             private void createHighEfficiencyBlockFamilyRecipe(RecipeOutput output, BlockFamily blockFamily, BlockFamily.Variant variant, Function<Block, SoulForgeRecipeBuilder> builder) {
-                Optional.of(blockFamily.get(variant))
+                // Do not listen to the IDE saying this should be Optional.of(). It can definitely return null
+                Optional.ofNullable(blockFamily.get(variant))
                         .ifPresent(result -> builder.apply(result)
                                 .group(blockFamily.getRecipeGroupPrefix().map(group -> group + "_" + variant.getRecipeGroup()).orElse(null))
                                 .save(output, highEfficiencyId(result))

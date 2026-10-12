@@ -97,22 +97,22 @@ public class LensBeamBlock extends Block {
         super.updateIndirectNeighbourShapes(blockState, levelAccessor, blockPos, i, j);
     }
 
-    @Override
-    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
-        Vec3i vec = sourcePos.subtract(pos);
-        Direction direction = Direction.getApproximateNearest(vec.getX(), vec.getY(), vec.getZ());
-        if (direction == null) {
-            return;
-        }
-        if (!state.getValue(FACING_PROPERTIES.get(direction))) {
-            return;
-        }
-        int range = LensBeamHelper.getRemainingRange(level, pos, direction);
-        if (range > 0 && !LensBeamHelper.anyEntitiesIntersecting(level, pos)) {
-            LensBeamHelper.propagateBeam(level, pos, state, direction, range);
-        }
-    }
+//    @Override
+//    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+//        super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
+//        Vec3i vec = sourcePos.subtract(pos);
+//        Direction direction = Direction.getApproximateNearest(vec.getX(), vec.getY(), vec.getZ());
+//        if (direction == null) {
+//            return;
+//        }
+//        if (!state.getValue(FACING_PROPERTIES.get(direction))) {
+//            return;
+//        }
+//        int range = LensBeamHelper.getRemainingRange(level, pos, direction);
+//        if (range > 0 && !LensBeamHelper.anyEntitiesIntersecting(level, pos)) {
+//            LensBeamHelper.propagateBeam(level, pos, state, direction, range);
+//        }
+//    }
 
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {

@@ -36,7 +36,6 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     );
 
     public static final Serializer SERIALIZER = new Serializer();
-    public static final IngredientWithCount EMPTY = new IngredientWithCount(Ingredient.of(), 0);
 
     public static IngredientWithCount of(ItemStack stack) {
         return new IngredientWithCount(Ingredient.of(stack.getItem()), stack.getCount());

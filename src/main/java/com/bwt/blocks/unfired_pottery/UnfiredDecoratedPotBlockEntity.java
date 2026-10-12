@@ -105,6 +105,10 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
         return List.of(sherds.front(), sherds.right(), sherds.back(), sherds.left());
     }
 
+    public PotDecorations getPotDecorations() {
+        return new PotDecorations(sherds.front(), sherds.right(), sherds.back(), sherds.left());
+    }
+
     public void setRotationalSherds(List<Optional<Item>> rotationalSherds) {
         setSherds(new PotDecorations(rotationalSherds.get(2), rotationalSherds.get(3), rotationalSherds.get(1), rotationalSherds.get(0)));
     }

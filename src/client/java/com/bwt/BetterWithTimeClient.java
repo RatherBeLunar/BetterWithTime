@@ -2,9 +2,7 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.BwtEntities;
-import com.bwt.items.BwtItems;
 import com.bwt.rendering.broadhead_arrow.BroadheadArrowEntityRenderer;
 import com.bwt.rendering.canvas.CanvasRenderer;
 import com.bwt.rendering.cooking_pot.CookingPotEntityRenderer;
@@ -16,6 +14,7 @@ import com.bwt.rendering.mining_charge.MiningChargeEntityRenderer;
 import com.bwt.rendering.moving_rope_platform.MovingRopeEntityRenderer;
 import com.bwt.rendering.rotted_arrow.RottedArrowEntityRenderer;
 import com.bwt.rendering.unfired_decorated_pot.UnfiredDecoratedPotBlockEntityRenderer;
+import com.bwt.rendering.unfired_decorated_pot.UnfiredDecoratedPotSpecialRenderer;
 import com.bwt.rendering.water_wheel.WaterWheelEntityModel;
 import com.bwt.rendering.water_wheel.WaterWheelEntityRenderer;
 import com.bwt.rendering.windmill.WindmillEntityModel;
@@ -32,15 +31,12 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.biome.Biome;
@@ -52,8 +48,6 @@ public class BetterWithTimeClient implements ClientModInitializer {
 	public static final ModelLayerLocation MECH_HOPPER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
 	public static final ModelLayerLocation CAULDRON_FILL_LAYER = new ModelLayerLocation(Id.of("cauldron_fill"), "main");
 	public static final ModelLayerLocation CRUCIBLE_FILL_LAYER = new ModelLayerLocation(Id.of("crucible_fill"), "main");
-
-    private final UnfiredDecoratedPotBlockEntity renderUnfiredDecoratedPot = new UnfiredDecoratedPotBlockEntity(BlockPos.ZERO, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState());
 
 	@Override
 	public void onInitializeClient() {
@@ -77,11 +71,9 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityModelLayerRegistry.registerModelLayer(CAULDRON_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CRUCIBLE_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
 		SpecialModelRenderers.ID_MAPPER.put(
-                BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
-                (stack, mode, matrices, vertexConsumers, light, overlay) -> {
-                    renderUnfiredDecoratedPot.readFrom(stack);
-                    Minecraft.getInstance().getBlockEntityRenderDispatcher().render(renderUnfiredDecoratedPot, matrices, vertexConsumers);
-                });
+                Id.of("unfired_decorated_pot_with_sherds"),
+				UnfiredDecoratedPotSpecialRenderer.Unbaked.MAP_CODEC
+		);
 		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.lensBeamGlassBlock,
@@ -121,21 +113,6 @@ public class BetterWithTimeClient implements ClientModInitializer {
 			}
 			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
 		}, BwtBlocks.grassPlanterBlock, BwtBlocks.grassSlabBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassSlabBlock);
-
-		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
-			if (livingEntity == null) {
-				return 0.0F;
-			}
-			return livingEntity.getMainHandItem() != itemStack ? 0.0F : (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
-		});
-
-		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
-			if (livingEntity == null) {
-				return 0.0F;
-			}
-			return livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
-		});
 
 		ClientPlayNetworking.registerGlobalReceiver(KilnBlockCookingProgressPayload.ID, (payload, context) ->
 			context.client().execute(() -> {

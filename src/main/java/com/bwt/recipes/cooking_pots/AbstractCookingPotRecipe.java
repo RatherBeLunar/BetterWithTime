@@ -43,15 +43,15 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
     protected final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type;
     protected final String group;
     protected final CookingPotRecipeCategory category;
-    final NonNullList<IngredientWithCount> ingredients;
-    protected final NonNullList<ItemStack> results;
+    final List<IngredientWithCount> ingredients;
+    protected final List<ItemStack> results;
 
     public AbstractCookingPotRecipe(AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type, String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
         this.type = type;
         this.group = group;
         this.category = category;
-        this.ingredients = NonNullList.of(IngredientWithCount.EMPTY, ingredients.toArray(new IngredientWithCount[0]));
-        this.results = NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
+        this.ingredients = ingredients;
+        this.results = results;
     }
 
     @Override
@@ -59,7 +59,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         return ingredients.stream().allMatch(input::matches);
     }
 
-    public NonNullList<IngredientWithCount> getIngredientsWithCount() {
+    public List<IngredientWithCount> getIngredientsWithCount() {
         return ingredients;
     }
 

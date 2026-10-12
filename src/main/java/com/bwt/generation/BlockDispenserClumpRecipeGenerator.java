@@ -20,11 +20,11 @@ public class BlockDispenserClumpRecipeGenerator extends FabricRecipeProvider {
         return new RecipeProvider(registryLookup, output) {
             @Override
             public void buildRecipes() {
-                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.CLAY_BALL).count(4).output(Blocks.CLAY).save(output);
-                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.SNOWBALL).count(4).output(Blocks.SNOW_BLOCK).save(output);
-                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_IRON).count(9).output(Blocks.RAW_IRON_BLOCK).save(output);
-                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_GOLD).count(9).output(Blocks.RAW_GOLD_BLOCK).save(output);
-                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_COPPER).count(9).output(Blocks.RAW_COPPER_BLOCK).save(output);
+                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.CLAY_BALL, 4).output(Blocks.CLAY).save(output);
+                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.SNOWBALL, 4).output(Blocks.SNOW_BLOCK).save(output);
+                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_IRON, 9).output(Blocks.RAW_IRON_BLOCK).save(output);
+                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_GOLD, 9).output(Blocks.RAW_GOLD_BLOCK).save(output);
+                BlockDispenserClumpRecipe.JsonBuilder.create().ingredient(Items.RAW_COPPER, 9).output(Blocks.RAW_COPPER_BLOCK).save(output);
             }
         };
     }

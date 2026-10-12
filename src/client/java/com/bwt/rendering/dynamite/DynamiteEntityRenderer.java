@@ -5,10 +5,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -16,13 +18,13 @@ import net.minecraft.world.item.ItemStack;
 
 @Environment(value= EnvType.CLIENT)
 public class DynamiteEntityRenderer extends EntityRenderer<DynamiteEntity, DynamiteRenderState> {
-    private final ItemRenderer itemRenderer;
     private final float scale;
     private final boolean lit;
+    private final ItemModelResolver itemModelResolver;
 
     public DynamiteEntityRenderer(EntityRendererProvider.Context ctx, float scale, boolean lit) {
         super(ctx);
-        this.itemRenderer = ctx.getItemRenderer();
+        this.itemModelResolver = ctx.getItemModelResolver();
         this.scale = scale;
         this.lit = lit;
     }
@@ -45,18 +47,12 @@ public class DynamiteEntityRenderer extends EntityRenderer<DynamiteEntity, Dynam
         poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
         poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
         int overlay = (renderState.fuse / 5 % 2 == 0) ? OverlayTexture.pack(OverlayTexture.u(1.0f), 10) : OverlayTexture.NO_OVERLAY;
-        if (renderState.itemModel != null) {
-            this.itemRenderer.render(
-                    renderState.itemStack,
-                    ItemDisplayContext.GROUND,
-                    false,
-                    poseStack,
-                    multiBufferSource,
-                    light,
-                    overlay,
-                    renderState.itemModel
-            );
-        }
+        renderState.item.render(
+                poseStack,
+                multiBufferSource,
+                light,
+                overlay
+        );
         poseStack.popPose();
         super.render(renderState, poseStack, multiBufferSource, light);
     }
@@ -69,9 +65,7 @@ public class DynamiteEntityRenderer extends EntityRenderer<DynamiteEntity, Dynam
     @Override
     public void extractRenderState(DynamiteEntity entity, DynamiteRenderState entityRenderState, float f) {
         super.extractRenderState(entity, entityRenderState, f);
+        this.itemModelResolver.updateForNonLiving(entityRenderState.item, entity.getItem(), ItemDisplayContext.GROUND, entity);
         entityRenderState.fuse = entity.getFuse();
-        ItemStack itemStack = entity.getItem();
-        entityRenderState.itemStack = itemStack;
-        entityRenderState.itemModel = !itemStack.isEmpty() ? this.itemRenderer.getModel(itemStack, entity.level(), null, entity.getId()) : null;
     }
 }

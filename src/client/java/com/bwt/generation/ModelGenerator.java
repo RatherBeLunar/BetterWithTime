@@ -237,6 +237,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(BwtItems.broadheadArrowItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.canvasItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.coalDustItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateBow(BwtItems.compositeBowItem);
         itemModelGenerator.generateFlatItem(BwtItems.concentratedHellfireItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.cementBucketItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, ModelTemplates.FLAT_ITEM);

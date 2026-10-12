@@ -55,9 +55,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.5",
-		"minecraft": "1.21.1",
+		"minecraft": "1.21.4",
 		"java": ">=21",
-		"fabric-api": ">=0.116.17+1.21.1"
+		"fabric-api": ">=0.119.4+1.21.4"
 	},
 	"suggests": {
 		"emi": ">=1.1.24+1.21.1+fabric"
