@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "i": {
-      "item": "minecraft:iron_ingot"
-    },
-    "p": {
-      "item": "minecraft:stone_pressure_plate"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "i": "minecraft:iron_ingot",
+    "p": "minecraft:stone_pressure_plate",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     "i i",

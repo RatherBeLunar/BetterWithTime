@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:companion_cube"
-      }
+      "ingredient": "bwt:companion_cube"
     }
   ],
   "results": [

@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:blood_wood_planks_corner"
+    "values": "bwt:blood_wood_planks_corner"
   }
 }

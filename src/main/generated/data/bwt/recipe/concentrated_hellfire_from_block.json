@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "concentrated_hellfire",
   "ingredients": [
-    {
-      "item": "bwt:concentrated_hellfire_block"
-    }
+    "bwt:concentrated_hellfire_block"
   ],
   "result": {
     "count": 9,

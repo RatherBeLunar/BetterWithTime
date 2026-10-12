@@ -3,12 +3,8 @@
   "category": "redstone",
   "group": "wooden_fence_gate",
   "key": {
-    "m": {
-      "item": "bwt:jungle_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:jungle_planks_siding"
-    }
+    "m": "bwt:jungle_planks_moulding",
+    "s": "bwt:jungle_planks_siding"
   },
   "pattern": [
     "msm",

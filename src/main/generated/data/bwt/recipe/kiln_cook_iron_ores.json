@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:iron_ores"
+    "values": "#minecraft:iron_ores"
   }
 }

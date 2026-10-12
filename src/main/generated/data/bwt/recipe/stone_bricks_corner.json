@@ -3,9 +3,7 @@
   "category": "building",
   "group": "corners",
   "key": {
-    "X": {
-      "item": "bwt:stone_bricks_moulding"
-    }
+    "X": "bwt:stone_bricks_moulding"
   },
   "pattern": [
     "XXXX"

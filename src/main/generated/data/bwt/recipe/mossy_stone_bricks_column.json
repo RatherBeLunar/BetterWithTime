@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:mossy_stone_bricks_moulding"
-    }
+    "#": "bwt:mossy_stone_bricks_moulding"
   },
   "pattern": [
     "#",

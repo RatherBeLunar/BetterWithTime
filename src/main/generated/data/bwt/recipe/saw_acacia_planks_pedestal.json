@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:acacia_planks_pedestal"
+    "values": "bwt:acacia_planks_pedestal"
   }
 }

@@ -2,15 +2,23 @@ package com.bwt.generation;
 
 import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.IngredientWithCount;
+import com.bwt.utils.Id;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 public abstract class SharedRecipeProvider extends RecipeProvider {
     protected final HolderGetter<Item> items;

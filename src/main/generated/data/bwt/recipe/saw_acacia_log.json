@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:acacia_log"
+    "values": "minecraft:acacia_log"
   }
 }

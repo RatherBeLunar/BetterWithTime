@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:golden_chestplate"
-      }
+      "ingredient": "minecraft:golden_chestplate"
     }
   ],
   "results": [

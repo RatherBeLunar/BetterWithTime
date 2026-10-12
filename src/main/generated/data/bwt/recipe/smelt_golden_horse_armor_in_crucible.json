@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:golden_horse_armor"
-      }
+      "ingredient": "minecraft:golden_horse_armor"
     }
   ],
   "results": [

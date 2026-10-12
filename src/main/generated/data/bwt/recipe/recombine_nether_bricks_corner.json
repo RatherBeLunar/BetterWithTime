@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:nether_bricks_corner"
-    },
-    {
-      "item": "bwt:nether_bricks_corner"
-    }
+    "bwt:nether_bricks_corner",
+    "bwt:nether_bricks_corner"
   ],
   "result": {
     "count": 1,

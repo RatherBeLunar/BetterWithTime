@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:bamboo_fence"
+    "values": "minecraft:bamboo_fence"
   }
 }

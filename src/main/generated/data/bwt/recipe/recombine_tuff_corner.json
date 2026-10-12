@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:tuff_corner"
-    },
-    {
-      "item": "bwt:tuff_corner"
-    }
+    "bwt:tuff_corner",
+    "bwt:tuff_corner"
   ],
   "result": {
     "count": 1,

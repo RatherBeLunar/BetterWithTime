@@ -3,55 +3,23 @@
   "category": "building",
   "group": "vases",
   "ingredients": [
-    {
-      "item": "minecraft:green_dye"
-    },
+    "minecraft:green_dye",
     [
-      {
-        "item": "bwt:vase_white"
-      },
-      {
-        "item": "bwt:vase_light_gray"
-      },
-      {
-        "item": "bwt:vase_gray"
-      },
-      {
-        "item": "bwt:vase_black"
-      },
-      {
-        "item": "bwt:vase_brown"
-      },
-      {
-        "item": "bwt:vase_red"
-      },
-      {
-        "item": "bwt:vase_orange"
-      },
-      {
-        "item": "bwt:vase_yellow"
-      },
-      {
-        "item": "bwt:vase_lime"
-      },
-      {
-        "item": "bwt:vase_cyan"
-      },
-      {
-        "item": "bwt:vase_light_blue"
-      },
-      {
-        "item": "bwt:vase_blue"
-      },
-      {
-        "item": "bwt:vase_purple"
-      },
-      {
-        "item": "bwt:vase_magenta"
-      },
-      {
-        "item": "bwt:vase_pink"
-      }
+      "bwt:vase_white",
+      "bwt:vase_light_gray",
+      "bwt:vase_gray",
+      "bwt:vase_black",
+      "bwt:vase_brown",
+      "bwt:vase_red",
+      "bwt:vase_orange",
+      "bwt:vase_yellow",
+      "bwt:vase_lime",
+      "bwt:vase_cyan",
+      "bwt:vase_light_blue",
+      "bwt:vase_blue",
+      "bwt:vase_purple",
+      "bwt:vase_magenta",
+      "bwt:vase_pink"
     ]
   ],
   "result": {

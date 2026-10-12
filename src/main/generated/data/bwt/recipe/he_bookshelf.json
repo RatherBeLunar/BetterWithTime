@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "key": {
-    "b": {
-      "item": "minecraft:book"
-    },
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "b": "minecraft:book",
+    "s": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "sss",

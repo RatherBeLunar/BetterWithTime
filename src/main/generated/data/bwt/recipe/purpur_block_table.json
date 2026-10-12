@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:purpur_block_moulding"
-    },
-    "s": {
-      "item": "bwt:purpur_block_siding"
-    }
+    "m": "bwt:purpur_block_moulding",
+    "s": "bwt:purpur_block_siding"
   },
   "pattern": [
     "sss",

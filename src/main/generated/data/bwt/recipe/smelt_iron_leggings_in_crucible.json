@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:iron_leggings"
-      }
+      "ingredient": "minecraft:iron_leggings"
     }
   ],
   "results": [

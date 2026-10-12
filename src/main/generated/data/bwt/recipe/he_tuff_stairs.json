@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "building",
   "key": {
-    "m": {
-      "item": "bwt:tuff_moulding"
-    }
+    "m": "bwt:tuff_moulding"
   },
   "pattern": [
     "m ",

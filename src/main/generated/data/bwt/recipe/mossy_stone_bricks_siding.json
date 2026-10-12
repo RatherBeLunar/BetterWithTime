@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:mossy_stone_bricks"
-    }
+    "X": "minecraft:mossy_stone_bricks"
   },
   "pattern": [
     "XXXX"

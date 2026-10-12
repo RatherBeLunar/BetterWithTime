@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:mangrove_log"
+    "values": "minecraft:mangrove_log"
   }
 }

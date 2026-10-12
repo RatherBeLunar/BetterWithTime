@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:purple_wool"
-      }
+      "ingredient": "minecraft:purple_wool"
     },
     {
-      "ingredient": {
-        "item": "bwt:potash"
-      }
+      "ingredient": "bwt:potash"
     }
   ],
   "results": [

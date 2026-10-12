@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:acacia_planks_siding"
+    "values": "bwt:acacia_planks_siding"
   }
 }

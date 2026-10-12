@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:spruce_planks_moulding"
+    "values": "bwt:spruce_planks_moulding"
   }
 }

@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_planks"
+    "values": "minecraft:cherry_planks"
   }
 }

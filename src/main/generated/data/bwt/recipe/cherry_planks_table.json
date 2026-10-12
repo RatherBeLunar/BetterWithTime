@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:cherry_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:cherry_planks_siding"
-    }
+    "m": "bwt:cherry_planks_moulding",
+    "s": "bwt:cherry_planks_siding"
   },
   "pattern": [
     "sss",

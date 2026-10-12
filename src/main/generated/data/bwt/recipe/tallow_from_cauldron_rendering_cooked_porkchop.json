@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:cooked_porkchop"
-      }
+      "ingredient": "minecraft:cooked_porkchop"
     }
   ],
   "results": [

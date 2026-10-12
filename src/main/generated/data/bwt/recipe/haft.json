@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "bwt:glue"
-    },
-    "m": {
-      "tag": "bwt:wooden_moulding_blocks"
-    },
-    "s": {
-      "item": "bwt:strap"
-    }
+    "g": "bwt:glue",
+    "m": "#bwt:wooden_moulding_blocks",
+    "s": "bwt:strap"
   },
   "pattern": [
     "s",

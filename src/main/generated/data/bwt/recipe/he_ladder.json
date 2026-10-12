@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "m": {
-      "tag": "bwt:wooden_moulding_blocks"
-    }
+    "m": "#bwt:wooden_moulding_blocks"
   },
   "pattern": [
     "m m",

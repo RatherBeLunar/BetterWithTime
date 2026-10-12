@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:blood_wood_fence"
+    "values": "bwt:blood_wood_fence"
   }
 }

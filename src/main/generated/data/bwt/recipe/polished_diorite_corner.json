@@ -3,9 +3,7 @@
   "category": "building",
   "group": "corners",
   "key": {
-    "X": {
-      "item": "bwt:polished_diorite_moulding"
-    }
+    "X": "bwt:polished_diorite_moulding"
   },
   "pattern": [
     "XXXX"

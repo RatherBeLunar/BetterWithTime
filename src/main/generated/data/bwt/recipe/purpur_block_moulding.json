@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:purpur_block_siding"
-    }
+    "X": "bwt:purpur_block_siding"
   },
   "pattern": [
     "XXXX"

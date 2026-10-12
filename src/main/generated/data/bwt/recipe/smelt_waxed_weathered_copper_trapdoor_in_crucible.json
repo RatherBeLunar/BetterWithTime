@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:waxed_weathered_copper_trapdoor"
-      }
+      "ingredient": "minecraft:waxed_weathered_copper_trapdoor"
     }
   ],
   "results": [

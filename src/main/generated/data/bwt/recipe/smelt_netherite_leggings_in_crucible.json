@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:netherite_leggings"
-      }
+      "ingredient": "minecraft:netherite_leggings"
     }
   ],
   "results": [

@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "equipment",
   "key": {
-    "s": {
-      "item": "minecraft:netherite_ingot"
-    }
+    "s": "minecraft:netherite_ingot"
   },
   "pattern": [
     "ssss",

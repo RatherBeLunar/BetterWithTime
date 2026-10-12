@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 48,
-      "ingredient": {
-        "tag": "bwt:wooden_corner_blocks"
-      }
+      "ingredient": "#bwt:wooden_corner_blocks"
     }
   ],
   "results": [

@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 8,
-      "ingredient": {
-        "item": "bwt:hellfire_dust"
-      }
+      "ingredient": "bwt:hellfire_dust"
     }
   ],
   "results": [

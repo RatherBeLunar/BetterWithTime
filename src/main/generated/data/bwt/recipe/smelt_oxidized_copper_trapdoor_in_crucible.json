@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:oxidized_copper_trapdoor"
-      }
+      "ingredient": "minecraft:oxidized_copper_trapdoor"
     }
   ],
   "results": [

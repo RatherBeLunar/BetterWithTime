@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:mud_bricks"
-    },
-    "s": {
-      "item": "bwt:mud_bricks_siding"
-    }
+    "#": "minecraft:mud_bricks",
+    "s": "bwt:mud_bricks_siding"
   },
   "pattern": [
     " s ",

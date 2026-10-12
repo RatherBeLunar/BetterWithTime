@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "bwt:gear"
-    },
-    "s": {
-      "item": "minecraft:stone"
-    }
+    "g": "bwt:gear",
+    "s": "minecraft:stone"
   },
   "pattern": [
     "sss",

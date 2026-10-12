@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "tag": "bwt:wooden_corner_blocks"
-    }
+    "c": "#bwt:wooden_corner_blocks"
   },
   "pattern": [
     "c c",

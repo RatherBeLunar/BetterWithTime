@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:dark_oak_planks_corner"
-    },
-    {
-      "item": "bwt:dark_oak_planks_corner"
-    }
+    "bwt:dark_oak_planks_corner",
+    "bwt:dark_oak_planks_corner"
   ],
   "result": {
     "count": 1,

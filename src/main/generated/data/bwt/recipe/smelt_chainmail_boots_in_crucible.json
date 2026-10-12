@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:chainmail_boots"
-      }
+      "ingredient": "minecraft:chainmail_boots"
     }
   ],
   "results": [

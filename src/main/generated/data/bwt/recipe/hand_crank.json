@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "c": {
-      "tag": "minecraft:stone_crafting_materials"
-    },
-    "g": {
-      "item": "bwt:gear"
-    },
-    "s": {
-      "item": "minecraft:stick"
-    }
+    "c": "#minecraft:stone_crafting_materials",
+    "g": "bwt:gear",
+    "s": "minecraft:stick"
   },
   "pattern": [
     "  s",

@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:rose_bush"
-      }
+      "ingredient": "minecraft:rose_bush"
     }
   ],
   "results": [

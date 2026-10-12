@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:blood_wood_log"
+    "values": "bwt:blood_wood_log"
   }
 }

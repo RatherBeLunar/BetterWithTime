@@ -6,17 +6,22 @@ import com.bwt.recipes.soul_forge.SoulForgeRecipeBuilder;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
 import com.bwt.recipes.soul_forge.SoulForgeShapelessRecipe;
 import com.bwt.tags.BwtItemTags;
+import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.BlockFamilies;
 import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import java.util.Optional;
@@ -203,7 +208,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .pattern("ssss")
                         .define('s', Items.NETHERITE_INGOT)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_BLOCK)));
 
                 // Netherite Tools
                 sfShaped(RecipeCategory.TOOLS, BwtItems.netheriteMattockItem)
@@ -232,7 +237,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_PICKAXE)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_SHOVEL)
                         .pattern("s")
                         .pattern("h")
@@ -241,7 +246,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_SHOVEL)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_AXE)
                         .pattern("ss")
                         .pattern("sh")
@@ -250,7 +255,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_AXE)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_HOE)
                         .pattern("ss")
                         .pattern(" h")
@@ -259,7 +264,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_HOE)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_SWORD)
                         .pattern("s")
                         .pattern("s")
@@ -268,7 +273,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_SWORD)));
 
                 // Netherite armor
                 sfShaped(RecipeCategory.TOOLS, BwtItems.armorPlateItem)
@@ -286,7 +291,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('p', BwtItems.armorPlateItem)
                         .unlockedBy(RecipeProvider.getHasName(BwtItems.armorPlateItem), recipeProvider.has(BwtItems.armorPlateItem))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_HELMET)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_CHESTPLATE)
                         .pattern("p  p")
                         .pattern("ssss")
@@ -295,7 +300,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('p', BwtItems.armorPlateItem)
                         .unlockedBy(RecipeProvider.getHasName(BwtItems.armorPlateItem), recipeProvider.has(BwtItems.armorPlateItem))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_CHESTPLATE)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_LEGGINGS)
                         .pattern("ssss")
                         .pattern("pssp")
@@ -304,7 +309,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('p', BwtItems.armorPlateItem)
                         .unlockedBy(RecipeProvider.getHasName(BwtItems.armorPlateItem), recipeProvider.has(BwtItems.armorPlateItem))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_LEGGINGS)));
                 sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_BOOTS)
                         .pattern(" ss ")
                         .pattern(" ss ")
@@ -312,7 +317,7 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('s', Items.NETHERITE_INGOT)
                         .define('p', BwtItems.armorPlateItem)
                         .unlockedBy(RecipeProvider.getHasName(BwtItems.armorPlateItem), recipeProvider.has(BwtItems.armorPlateItem))
-                        .save(output);
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_BOOTS)));
 
                 sfShaped(RecipeCategory.REDSTONE, BwtBlocks.obsidianPressurePlateBlock)
                         .pattern("oooo")
@@ -416,6 +421,13 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
         };
     }
 
+    public static ResourceKey<Recipe<?>> keyOf(ResourceLocation resourceLocation) {
+        return ResourceKey.create(Registries.RECIPE, resourceLocation);
+    }
+
+    public static ResourceKey<Recipe<?>> keyOf(String id) {
+        return keyOf(Id.of(id));
+    }
 
     @Override
     public String getName() {

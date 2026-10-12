@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:acacia_planks"
+    "values": "minecraft:acacia_planks"
   }
 }

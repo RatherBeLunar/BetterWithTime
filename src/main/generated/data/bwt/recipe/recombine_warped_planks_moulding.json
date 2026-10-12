@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:warped_planks_moulding"
-    },
-    {
-      "item": "bwt:warped_planks_moulding"
-    }
+    "bwt:warped_planks_moulding",
+    "bwt:warped_planks_moulding"
   ],
   "result": {
     "count": 1,

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:polished_andesite"
-    }
+    "X": "minecraft:polished_andesite"
   },
   "pattern": [
     "XXXX"

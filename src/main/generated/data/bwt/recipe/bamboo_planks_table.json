@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:bamboo_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:bamboo_planks_siding"
-    }
+    "m": "bwt:bamboo_planks_moulding",
+    "s": "bwt:bamboo_planks_siding"
   },
   "pattern": [
     "sss",

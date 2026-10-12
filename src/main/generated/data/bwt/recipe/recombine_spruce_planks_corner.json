@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:spruce_planks_corner"
-    },
-    {
-      "item": "bwt:spruce_planks_corner"
-    }
+    "bwt:spruce_planks_corner",
+    "bwt:spruce_planks_corner"
   ],
   "result": {
     "count": 1,

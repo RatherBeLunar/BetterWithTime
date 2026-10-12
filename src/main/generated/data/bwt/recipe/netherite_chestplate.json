@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shaped",
   "category": "equipment",
   "key": {
-    "p": {
-      "item": "bwt:armor_plate"
-    },
-    "s": {
-      "item": "minecraft:netherite_ingot"
-    }
+    "p": "bwt:armor_plate",
+    "s": "minecraft:netherite_ingot"
   },
   "pattern": [
     "p  p",

@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:dark_oak_slab"
+    "values": "minecraft:dark_oak_slab"
   }
 }

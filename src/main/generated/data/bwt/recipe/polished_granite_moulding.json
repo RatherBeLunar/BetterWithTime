@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:polished_granite_siding"
-    }
+    "X": "bwt:polished_granite_siding"
   },
   "pattern": [
     "XXXX"

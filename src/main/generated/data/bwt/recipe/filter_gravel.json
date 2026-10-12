@@ -5,12 +5,8 @@
     "id": "minecraft:flint"
   },
   "category": "misc",
-  "filter": {
-    "item": "bwt:wicker"
-  },
-  "ingredient": {
-    "item": "minecraft:gravel"
-  },
+  "filter": "bwt:wicker",
+  "ingredient": "minecraft:gravel",
   "result": {
     "count": 1,
     "id": "minecraft:sand"

@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:poppy"
-      }
+      "ingredient": "minecraft:poppy"
     }
   ],
   "results": [

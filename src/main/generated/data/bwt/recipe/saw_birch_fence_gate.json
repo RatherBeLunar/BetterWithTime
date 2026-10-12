@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_fence_gate"
+    "values": "minecraft:birch_fence_gate"
   }
 }

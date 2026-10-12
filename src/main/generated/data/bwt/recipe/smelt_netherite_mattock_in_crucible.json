@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:netherite_mattock"
-      }
+      "ingredient": "bwt:netherite_mattock"
     }
   ],
   "results": [

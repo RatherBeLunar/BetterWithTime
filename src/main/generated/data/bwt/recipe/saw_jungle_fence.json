@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_fence"
+    "values": "minecraft:jungle_fence"
   }
 }

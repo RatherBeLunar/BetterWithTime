@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:sandstone_moulding"
-    }
+    "#": "bwt:sandstone_moulding"
   },
   "pattern": [
     "#",

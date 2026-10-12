@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:prismarine_siding"
-    }
+    "X": "bwt:prismarine_siding"
   },
   "pattern": [
     "XXXX"

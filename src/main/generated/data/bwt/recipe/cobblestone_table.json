@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:cobblestone_moulding"
-    },
-    "s": {
-      "item": "bwt:cobblestone_siding"
-    }
+    "m": "bwt:cobblestone_moulding",
+    "s": "bwt:cobblestone_siding"
   },
   "pattern": [
     "sss",

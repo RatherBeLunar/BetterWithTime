@@ -3,12 +3,8 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    {
-      "item": "bwt:oak_planks_siding"
-    },
-    {
-      "item": "bwt:oak_planks_siding"
-    }
+    "bwt:oak_planks_siding",
+    "bwt:oak_planks_siding"
   ],
   "result": {
     "count": 1,

@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:cod"
-      }
+      "ingredient": "minecraft:cod"
     }
   ],
   "results": [

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:bamboo_mosaic_stairs"
+    "values": "minecraft:bamboo_mosaic_stairs"
   }
 }

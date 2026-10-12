@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:netherite_hoe"
-      }
+      "ingredient": "minecraft:netherite_hoe"
     }
   ],
   "results": [

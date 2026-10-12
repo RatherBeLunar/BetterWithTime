@@ -2,21 +2,11 @@
   "type": "bwt:soul_forge_shaped",
   "category": "redstone",
   "key": {
-    "m": {
-      "item": "minecraft:mossy_cobblestone"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    },
-    "s": {
-      "item": "minecraft:stone"
-    },
-    "t": {
-      "item": "minecraft:redstone_torch"
-    },
-    "u": {
-      "item": "bwt:soul_urn"
-    }
+    "m": "minecraft:mossy_cobblestone",
+    "r": "minecraft:redstone",
+    "s": "minecraft:stone",
+    "t": "minecraft:redstone_torch",
+    "u": "bwt:soul_urn"
   },
   "pattern": [
     "mmmm",

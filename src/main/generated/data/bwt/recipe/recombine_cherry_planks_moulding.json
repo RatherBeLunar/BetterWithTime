@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:cherry_planks_moulding"
-    },
-    {
-      "item": "bwt:cherry_planks_moulding"
-    }
+    "bwt:cherry_planks_moulding",
+    "bwt:cherry_planks_moulding"
   ],
   "result": {
     "count": 1,

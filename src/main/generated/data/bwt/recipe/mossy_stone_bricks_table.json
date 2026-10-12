@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:mossy_stone_bricks_moulding"
-    },
-    "s": {
-      "item": "bwt:mossy_stone_bricks_siding"
-    }
+    "m": "bwt:mossy_stone_bricks_moulding",
+    "s": "bwt:mossy_stone_bricks_siding"
   },
   "pattern": [
     "sss",

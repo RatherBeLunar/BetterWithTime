@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:oak_planks"
+    "values": "minecraft:oak_planks"
   }
 }

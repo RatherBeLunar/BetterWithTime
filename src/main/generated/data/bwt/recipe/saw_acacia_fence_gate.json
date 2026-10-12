@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:acacia_fence_gate"
+    "values": "minecraft:acacia_fence_gate"
   }
 }

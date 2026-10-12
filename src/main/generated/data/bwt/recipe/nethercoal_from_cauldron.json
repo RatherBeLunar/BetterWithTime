@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:hellfire_dust"
-      }
+      "ingredient": "bwt:hellfire_dust"
     },
     {
-      "ingredient": {
-        "item": "bwt:coal_dust"
-      }
+      "ingredient": "bwt:coal_dust"
     }
   ],
   "results": [

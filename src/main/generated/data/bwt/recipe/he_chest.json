@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "s": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "sss",

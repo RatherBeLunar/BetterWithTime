@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:leather"
-      }
+      "ingredient": "minecraft:leather"
     }
   ],
   "results": [

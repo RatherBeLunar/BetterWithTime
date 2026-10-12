@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_crimson_stem"
+    "values": "minecraft:stripped_crimson_stem"
   }
 }

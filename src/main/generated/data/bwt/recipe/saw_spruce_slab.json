@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:spruce_slab"
+    "values": "minecraft:spruce_slab"
   }
 }

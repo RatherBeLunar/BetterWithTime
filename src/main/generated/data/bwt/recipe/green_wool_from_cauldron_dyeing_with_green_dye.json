@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:white_wool"
-      }
+      "ingredient": "minecraft:white_wool"
     },
     {
-      "ingredient": {
-        "item": "minecraft:green_dye"
-      }
+      "ingredient": "minecraft:green_dye"
     }
   ],
   "results": [

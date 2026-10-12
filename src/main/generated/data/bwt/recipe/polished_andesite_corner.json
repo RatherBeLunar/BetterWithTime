@@ -3,9 +3,7 @@
   "category": "building",
   "group": "corners",
   "key": {
-    "X": {
-      "item": "bwt:polished_andesite_moulding"
-    }
+    "X": "bwt:polished_andesite_moulding"
   },
   "pattern": [
     "XXXX"

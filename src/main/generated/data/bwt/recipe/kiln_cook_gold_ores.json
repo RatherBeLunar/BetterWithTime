@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:gold_ores"
+    "values": "#minecraft:gold_ores"
   }
 }

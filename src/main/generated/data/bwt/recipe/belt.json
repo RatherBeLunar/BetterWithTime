@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "s": {
-      "item": "bwt:strap"
-    }
+    "s": "bwt:strap"
   },
   "pattern": [
     " s ",

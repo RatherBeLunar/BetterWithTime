@@ -3,55 +3,23 @@
   "category": "building",
   "group": "wool_slabs",
   "ingredients": [
-    {
-      "item": "minecraft:light_gray_dye"
-    },
+    "minecraft:light_gray_dye",
     [
-      {
-        "item": "bwt:white_wool_slab"
-      },
-      {
-        "item": "bwt:gray_wool_slab"
-      },
-      {
-        "item": "bwt:black_wool_slab"
-      },
-      {
-        "item": "bwt:brown_wool_slab"
-      },
-      {
-        "item": "bwt:red_wool_slab"
-      },
-      {
-        "item": "bwt:orange_wool_slab"
-      },
-      {
-        "item": "bwt:yellow_wool_slab"
-      },
-      {
-        "item": "bwt:lime_wool_slab"
-      },
-      {
-        "item": "bwt:green_wool_slab"
-      },
-      {
-        "item": "bwt:cyan_wool_slab"
-      },
-      {
-        "item": "bwt:light_blue_wool_slab"
-      },
-      {
-        "item": "bwt:blue_wool_slab"
-      },
-      {
-        "item": "bwt:purple_wool_slab"
-      },
-      {
-        "item": "bwt:magenta_wool_slab"
-      },
-      {
-        "item": "bwt:pink_wool_slab"
-      }
+      "bwt:white_wool_slab",
+      "bwt:gray_wool_slab",
+      "bwt:black_wool_slab",
+      "bwt:brown_wool_slab",
+      "bwt:red_wool_slab",
+      "bwt:orange_wool_slab",
+      "bwt:yellow_wool_slab",
+      "bwt:lime_wool_slab",
+      "bwt:green_wool_slab",
+      "bwt:cyan_wool_slab",
+      "bwt:light_blue_wool_slab",
+      "bwt:blue_wool_slab",
+      "bwt:purple_wool_slab",
+      "bwt:magenta_wool_slab",
+      "bwt:pink_wool_slab"
     ]
   ],
   "result": {

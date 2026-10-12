@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:spruce_planks_moulding"
-    },
-    {
-      "item": "bwt:spruce_planks_moulding"
-    }
+    "bwt:spruce_planks_moulding",
+    "bwt:spruce_planks_moulding"
   ],
   "result": {
     "count": 1,

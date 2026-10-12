@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:iron_shovel"
-      }
+      "ingredient": "minecraft:iron_shovel"
     }
   ],
   "results": [

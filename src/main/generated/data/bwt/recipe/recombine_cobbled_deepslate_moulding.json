@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:cobbled_deepslate_moulding"
-    },
-    {
-      "item": "bwt:cobbled_deepslate_moulding"
-    }
+    "bwt:cobbled_deepslate_moulding",
+    "bwt:cobbled_deepslate_moulding"
   ],
   "result": {
     "count": 1,

@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 8,
-      "ingredient": {
-        "item": "bwt:wolf_chop"
-      }
+      "ingredient": "bwt:wolf_chop"
     }
   ],
   "results": [

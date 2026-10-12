@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:copper_ores"
+    "values": "#minecraft:copper_ores"
   }
 }

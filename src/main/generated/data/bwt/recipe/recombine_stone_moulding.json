@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:stone_moulding"
-    },
-    {
-      "item": "bwt:stone_moulding"
-    }
+    "bwt:stone_moulding",
+    "bwt:stone_moulding"
   ],
   "result": {
     "count": 1,

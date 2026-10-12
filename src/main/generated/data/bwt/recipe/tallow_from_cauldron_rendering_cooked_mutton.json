@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:cooked_mutton"
-      }
+      "ingredient": "minecraft:cooked_mutton"
     }
   ],
   "results": [

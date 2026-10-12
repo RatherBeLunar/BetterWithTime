@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:oak_stairs"
+    "values": "minecraft:oak_stairs"
   }
 }

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "mycelium_block",
   "key": {
-    "#": {
-      "item": "bwt:mycelium_slab"
-    }
+    "#": "bwt:mycelium_slab"
   },
   "pattern": [
     "#",

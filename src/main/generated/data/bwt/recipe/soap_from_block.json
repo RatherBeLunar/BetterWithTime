@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "soap",
   "ingredients": [
-    {
-      "item": "bwt:soap_block"
-    }
+    "bwt:soap_block"
   ],
   "result": {
     "count": 9,

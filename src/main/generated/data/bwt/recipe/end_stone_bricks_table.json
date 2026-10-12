@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:end_stone_bricks_moulding"
-    },
-    "s": {
-      "item": "bwt:end_stone_bricks_siding"
-    }
+    "m": "bwt:end_stone_bricks_moulding",
+    "s": "bwt:end_stone_bricks_siding"
   },
   "pattern": [
     "sss",

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:warped_planks_corner"
-    },
-    {
-      "item": "bwt:warped_planks_corner"
-    }
+    "bwt:warped_planks_corner",
+    "bwt:warped_planks_corner"
   ],
   "result": {
     "count": 1,

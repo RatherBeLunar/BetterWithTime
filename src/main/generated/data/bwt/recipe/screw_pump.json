@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "G": {
-      "item": "bwt:grate"
-    },
-    "S": {
-      "item": "bwt:screw"
-    },
-    "X": {
-      "item": "bwt:gear"
-    },
-    "g": {
-      "item": "bwt:glue"
-    },
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "G": "bwt:grate",
+    "S": "bwt:screw",
+    "X": "bwt:gear",
+    "g": "bwt:glue",
+    "s": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "gGg",

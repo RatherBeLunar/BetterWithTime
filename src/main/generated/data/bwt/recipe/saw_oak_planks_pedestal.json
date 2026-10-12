@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:oak_planks_pedestal"
+    "values": "bwt:oak_planks_pedestal"
   }
 }

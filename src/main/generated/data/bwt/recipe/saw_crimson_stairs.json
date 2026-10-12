@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:crimson_stairs"
+    "values": "minecraft:crimson_stairs"
   }
 }

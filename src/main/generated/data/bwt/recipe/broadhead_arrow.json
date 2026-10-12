@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "bwt:broadhead"
-    },
-    "f": {
-      "item": "minecraft:feather"
-    },
-    "m": {
-      "tag": "bwt:wooden_moulding_blocks"
-    }
+    "b": "bwt:broadhead",
+    "f": "minecraft:feather",
+    "m": "#bwt:wooden_moulding_blocks"
   },
   "pattern": [
     "b",

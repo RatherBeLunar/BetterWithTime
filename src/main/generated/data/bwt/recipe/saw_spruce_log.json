@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:spruce_log"
+    "values": "minecraft:spruce_log"
   }
 }

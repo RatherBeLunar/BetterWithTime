@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:sandstone_corner"
-    },
-    {
-      "item": "bwt:sandstone_corner"
-    }
+    "bwt:sandstone_corner",
+    "bwt:sandstone_corner"
   ],
   "result": {
     "count": 1,

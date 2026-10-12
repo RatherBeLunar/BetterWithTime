@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:cherry_planks_column"
+    "values": "bwt:cherry_planks_column"
   }
 }

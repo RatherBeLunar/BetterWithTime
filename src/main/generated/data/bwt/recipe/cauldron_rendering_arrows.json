@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 8,
-      "ingredient": {
-        "item": "minecraft:arrow"
-      }
+      "ingredient": "minecraft:arrow"
     }
   ],
   "results": [

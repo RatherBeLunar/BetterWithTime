@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:bone_meal"
-      }
+      "ingredient": "minecraft:bone_meal"
     }
   ],
   "results": [

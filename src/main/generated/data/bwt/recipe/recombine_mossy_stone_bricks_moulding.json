@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:mossy_stone_bricks_moulding"
-    },
-    {
-      "item": "bwt:mossy_stone_bricks_moulding"
-    }
+    "bwt:mossy_stone_bricks_moulding",
+    "bwt:mossy_stone_bricks_moulding"
   ],
   "result": {
     "count": 1,

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_stairs"
+    "values": "minecraft:jungle_stairs"
   }
 }

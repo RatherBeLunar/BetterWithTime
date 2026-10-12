@@ -3,9 +3,7 @@
   "category": "redstone",
   "group": "wooden_button",
   "ingredients": [
-    {
-      "item": "bwt:dark_oak_planks_corner"
-    }
+    "bwt:dark_oak_planks_corner"
   ],
   "result": {
     "count": 1,

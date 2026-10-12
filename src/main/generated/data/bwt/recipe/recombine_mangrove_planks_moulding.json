@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:mangrove_planks_moulding"
-    },
-    {
-      "item": "bwt:mangrove_planks_moulding"
-    }
+    "bwt:mangrove_planks_moulding",
+    "bwt:mangrove_planks_moulding"
   ],
   "result": {
     "count": 1,

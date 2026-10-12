@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:prismarine"
-    },
-    "s": {
-      "item": "bwt:prismarine_siding"
-    }
+    "#": "minecraft:prismarine",
+    "s": "bwt:prismarine_siding"
   },
   "pattern": [
     " s ",

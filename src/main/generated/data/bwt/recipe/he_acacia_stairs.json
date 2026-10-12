@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "m": {
-      "item": "bwt:acacia_planks_moulding"
-    }
+    "m": "bwt:acacia_planks_moulding"
   },
   "pattern": [
     "m ",

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:dark_oak_planks_moulding"
-    }
+    "#": "bwt:dark_oak_planks_moulding"
   },
   "pattern": [
     "#",

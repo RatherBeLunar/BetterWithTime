@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:cobblestone_corner"
-    },
-    {
-      "item": "bwt:cobblestone_corner"
-    }
+    "bwt:cobblestone_corner",
+    "bwt:cobblestone_corner"
   ],
   "result": {
     "count": 1,

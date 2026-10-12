@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:polished_diorite"
-    },
-    "s": {
-      "item": "bwt:polished_diorite_siding"
-    }
+    "#": "minecraft:polished_diorite",
+    "s": "bwt:polished_diorite_siding"
   },
   "pattern": [
     " s ",

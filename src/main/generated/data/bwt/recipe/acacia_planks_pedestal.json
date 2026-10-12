@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:acacia_planks"
-    },
-    "s": {
-      "item": "bwt:acacia_planks_siding"
-    }
+    "#": "minecraft:acacia_planks",
+    "s": "bwt:acacia_planks_siding"
   },
   "pattern": [
     " s ",

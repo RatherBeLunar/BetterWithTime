@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:copper_door"
-      }
+      "ingredient": "minecraft:copper_door"
     }
   ],
   "results": [

@@ -5,12 +5,8 @@
     "id": "bwt:hellfire_dust"
   },
   "category": "misc",
-  "filter": {
-    "item": "minecraft:soul_sand"
-  },
-  "ingredient": {
-    "item": "bwt:ground_netherrack"
-  },
+  "filter": "minecraft:soul_sand",
+  "ingredient": "bwt:ground_netherrack",
   "result": {},
   "soulCount": 1
 }

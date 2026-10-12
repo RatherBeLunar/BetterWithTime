@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:bamboo_planks_siding"
+    "values": "bwt:bamboo_planks_siding"
   }
 }

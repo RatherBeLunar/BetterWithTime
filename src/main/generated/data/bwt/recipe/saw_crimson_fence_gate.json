@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:crimson_fence_gate"
+    "values": "minecraft:crimson_fence_gate"
   }
 }

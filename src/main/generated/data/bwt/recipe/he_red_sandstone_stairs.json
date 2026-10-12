@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "building",
   "key": {
-    "m": {
-      "item": "bwt:red_sandstone_moulding"
-    }
+    "m": "bwt:red_sandstone_moulding"
   },
   "pattern": [
     "m ",

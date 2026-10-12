@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:lightning_rod"
-      }
+      "ingredient": "minecraft:lightning_rod"
     }
   ],
   "results": [

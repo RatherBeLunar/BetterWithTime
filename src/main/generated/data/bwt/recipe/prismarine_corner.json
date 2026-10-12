@@ -3,9 +3,7 @@
   "category": "building",
   "group": "corners",
   "key": {
-    "X": {
-      "item": "bwt:prismarine_moulding"
-    }
+    "X": "bwt:prismarine_moulding"
   },
   "pattern": [
     "XXXX"

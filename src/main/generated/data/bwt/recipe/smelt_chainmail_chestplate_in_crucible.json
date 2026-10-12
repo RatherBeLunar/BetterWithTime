@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:chainmail_chestplate"
-      }
+      "ingredient": "minecraft:chainmail_chestplate"
     }
   ],
   "results": [

@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:flint_and_steel"
-      }
+      "ingredient": "minecraft:flint_and_steel"
     }
   ],
   "results": [

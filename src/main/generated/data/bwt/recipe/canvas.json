@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shaped",
   "category": "misc",
   "key": {
-    "f": {
-      "item": "bwt:fabric"
-    },
-    "m": {
-      "tag": "bwt:wooden_moulding_blocks"
-    }
+    "f": "bwt:fabric",
+    "m": "#bwt:wooden_moulding_blocks"
   },
   "pattern": [
     "mmmm",

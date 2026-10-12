@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:mangrove_fence_gate"
+    "values": "minecraft:mangrove_fence_gate"
   }
 }

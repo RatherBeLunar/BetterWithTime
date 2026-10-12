@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 24,
-      "ingredient": {
-        "tag": "bwt:wooden_moulding_blocks"
-      }
+      "ingredient": "#bwt:wooden_moulding_blocks"
     }
   ],
   "results": [

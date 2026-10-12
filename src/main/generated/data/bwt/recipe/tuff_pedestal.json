@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:tuff"
-    },
-    "s": {
-      "item": "bwt:tuff_siding"
-    }
+    "#": "minecraft:tuff",
+    "s": "bwt:tuff_siding"
   },
   "pattern": [
     " s ",

@@ -5,14 +5,10 @@
   "ingredients": [
     {
       "count": 2,
-      "ingredient": {
-        "item": "bwt:flour"
-      }
+      "ingredient": "bwt:flour"
     },
     {
-      "ingredient": {
-        "item": "minecraft:cocoa_beans"
-      }
+      "ingredient": "minecraft:cocoa_beans"
     }
   ],
   "results": [

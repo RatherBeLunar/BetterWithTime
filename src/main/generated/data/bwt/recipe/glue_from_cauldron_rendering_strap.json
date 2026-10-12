@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 8,
-      "ingredient": {
-        "item": "bwt:strap"
-      }
+      "ingredient": "bwt:strap"
     }
   ],
   "results": [

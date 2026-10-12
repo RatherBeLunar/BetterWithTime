@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "bwt:concentrated_hellfire"
-    }
+    "#": "bwt:concentrated_hellfire"
   },
   "pattern": [
     "###",

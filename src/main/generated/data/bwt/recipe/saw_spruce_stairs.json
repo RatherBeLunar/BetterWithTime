@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:spruce_stairs"
+    "values": "minecraft:spruce_stairs"
   }
 }

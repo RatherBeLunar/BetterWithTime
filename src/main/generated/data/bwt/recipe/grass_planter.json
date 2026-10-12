@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "minecraft:bone_meal"
-    },
-    "g": {
-      "item": "minecraft:grass_block"
-    },
-    "p": {
-      "item": "bwt:planter"
-    }
+    "b": "minecraft:bone_meal",
+    "g": "minecraft:grass_block",
+    "p": "bwt:planter"
   },
   "pattern": [
     "g",

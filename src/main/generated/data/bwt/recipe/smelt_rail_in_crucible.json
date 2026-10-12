@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 8,
-      "ingredient": {
-        "item": "minecraft:rail"
-      }
+      "ingredient": "minecraft:rail"
     }
   ],
   "results": [

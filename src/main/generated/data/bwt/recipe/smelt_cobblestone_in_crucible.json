@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:cobblestone"
-      }
+      "ingredient": "minecraft:cobblestone"
     }
   ],
   "results": [

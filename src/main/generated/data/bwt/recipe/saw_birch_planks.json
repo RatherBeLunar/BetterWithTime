@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_planks"
+    "values": "minecraft:birch_planks"
   }
 }

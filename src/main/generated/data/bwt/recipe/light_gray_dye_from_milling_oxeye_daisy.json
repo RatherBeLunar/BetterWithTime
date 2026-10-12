@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:oxeye_daisy"
-      }
+      "ingredient": "minecraft:oxeye_daisy"
     }
   ],
   "results": [

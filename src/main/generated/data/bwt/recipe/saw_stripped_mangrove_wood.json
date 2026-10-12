@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_mangrove_wood"
+    "values": "minecraft:stripped_mangrove_wood"
   }
 }

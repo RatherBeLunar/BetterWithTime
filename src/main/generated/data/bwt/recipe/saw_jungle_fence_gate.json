@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_fence_gate"
+    "values": "minecraft:jungle_fence_gate"
   }
 }

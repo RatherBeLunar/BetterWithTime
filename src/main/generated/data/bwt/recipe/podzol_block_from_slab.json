@@ -3,9 +3,7 @@
   "category": "building",
   "group": "podzol_block",
   "key": {
-    "#": {
-      "item": "bwt:podzol_slab"
-    }
+    "#": "bwt:podzol_slab"
   },
   "pattern": [
     "#",

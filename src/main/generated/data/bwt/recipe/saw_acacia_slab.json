@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:acacia_slab"
+    "values": "minecraft:acacia_slab"
   }
 }

@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 2,
-      "ingredient": {
-        "item": "bwt:belt"
-      }
+      "ingredient": "bwt:belt"
     }
   ],
   "results": [

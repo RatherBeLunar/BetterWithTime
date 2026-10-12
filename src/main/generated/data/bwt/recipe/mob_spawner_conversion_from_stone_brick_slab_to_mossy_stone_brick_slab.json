@@ -2,7 +2,7 @@
   "type": "bwt:mob_spawner_conversion",
   "category": "misc",
   "ingredient": {
-    "block": "minecraft:stone_brick_slab"
+    "values": "minecraft:stone_brick_slab"
   },
   "result": "minecraft:mossy_stone_brick_slab"
 }

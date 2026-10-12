@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:granite"
-    }
+    "X": "minecraft:granite"
   },
   "pattern": [
     "XXXX"

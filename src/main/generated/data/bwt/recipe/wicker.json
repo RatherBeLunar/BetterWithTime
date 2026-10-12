@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "wicker",
   "key": {
-    "s": {
-      "item": "minecraft:sugar_cane"
-    }
+    "s": "minecraft:sugar_cane"
   },
   "pattern": [
     "ss",

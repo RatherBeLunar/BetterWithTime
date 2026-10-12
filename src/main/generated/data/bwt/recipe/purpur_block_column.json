@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:purpur_block_moulding"
-    }
+    "#": "bwt:purpur_block_moulding"
   },
   "pattern": [
     "#",

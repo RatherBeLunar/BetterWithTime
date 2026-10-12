@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:spruce_planks"
-    },
-    "s": {
-      "item": "bwt:spruce_planks_siding"
-    }
+    "#": "minecraft:spruce_planks",
+    "s": "bwt:spruce_planks_siding"
   },
   "pattern": [
     " s ",

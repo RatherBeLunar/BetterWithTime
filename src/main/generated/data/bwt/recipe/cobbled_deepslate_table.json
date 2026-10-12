@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:cobbled_deepslate_moulding"
-    },
-    "s": {
-      "item": "bwt:cobbled_deepslate_siding"
-    }
+    "m": "bwt:cobbled_deepslate_moulding",
+    "s": "bwt:cobbled_deepslate_siding"
   },
   "pattern": [
     "sss",

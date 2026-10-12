@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:polished_andesite_moulding"
-    }
+    "#": "bwt:polished_andesite_moulding"
   },
   "pattern": [
     "#",

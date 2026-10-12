@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:oak_planks_table"
+    "values": "bwt:oak_planks_table"
   }
 }

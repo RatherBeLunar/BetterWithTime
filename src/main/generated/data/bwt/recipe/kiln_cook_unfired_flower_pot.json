@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_flower_pot"
+    "values": "bwt:unfired_flower_pot"
   }
 }

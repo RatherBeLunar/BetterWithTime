@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:polished_andesite_moulding"
-    },
-    "s": {
-      "item": "bwt:polished_andesite_siding"
-    }
+    "m": "bwt:polished_andesite_moulding",
+    "s": "bwt:polished_andesite_siding"
   },
   "pattern": [
     "sss",

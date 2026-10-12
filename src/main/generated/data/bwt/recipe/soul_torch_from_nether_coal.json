@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "#": {
-      "item": "minecraft:stick"
-    },
-    "S": {
-      "tag": "minecraft:soul_fire_base_blocks"
-    },
-    "X": {
-      "item": "bwt:nethercoal"
-    }
+    "#": "minecraft:stick",
+    "S": "#minecraft:soul_fire_base_blocks",
+    "X": "bwt:nethercoal"
   },
   "pattern": [
     "X",

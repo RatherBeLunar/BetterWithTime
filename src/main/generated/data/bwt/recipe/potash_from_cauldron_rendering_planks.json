@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 6,
-      "ingredient": {
-        "tag": "minecraft:planks"
-      }
+      "ingredient": "#minecraft:planks"
     }
   ],
   "results": [

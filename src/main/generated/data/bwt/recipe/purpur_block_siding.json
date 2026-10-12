@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:purpur_block"
-    }
+    "X": "minecraft:purpur_block"
   },
   "pattern": [
     "XXXX"

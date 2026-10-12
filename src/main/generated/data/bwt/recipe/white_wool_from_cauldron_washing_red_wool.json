@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:red_wool"
-      }
+      "ingredient": "minecraft:red_wool"
     },
     {
-      "ingredient": {
-        "item": "bwt:potash"
-      }
+      "ingredient": "bwt:potash"
     }
   ],
   "results": [

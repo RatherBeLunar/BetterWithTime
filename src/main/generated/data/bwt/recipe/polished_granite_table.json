@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:polished_granite_moulding"
-    },
-    "s": {
-      "item": "bwt:polished_granite_siding"
-    }
+    "m": "bwt:polished_granite_moulding",
+    "s": "bwt:polished_granite_siding"
   },
   "pattern": [
     "sss",

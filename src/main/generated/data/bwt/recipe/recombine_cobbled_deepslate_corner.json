@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:cobbled_deepslate_corner"
-    },
-    {
-      "item": "bwt:cobbled_deepslate_corner"
-    }
+    "bwt:cobbled_deepslate_corner",
+    "bwt:cobbled_deepslate_corner"
   ],
   "result": {
     "count": 1,

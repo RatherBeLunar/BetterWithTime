@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:cobblestone_siding"
-    }
+    "X": "bwt:cobblestone_siding"
   },
   "pattern": [
     "XXXX"

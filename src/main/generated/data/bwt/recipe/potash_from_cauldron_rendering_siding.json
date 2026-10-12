@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 12,
-      "ingredient": {
-        "tag": "bwt:wooden_siding_blocks"
-      }
+      "ingredient": "#bwt:wooden_siding_blocks"
     }
   ],
   "results": [

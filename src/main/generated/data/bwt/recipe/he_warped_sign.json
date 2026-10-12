@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_sign",
   "key": {
-    "m": {
-      "item": "bwt:warped_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:warped_planks_siding"
-    }
+    "m": "bwt:warped_planks_moulding",
+    "s": "bwt:warped_planks_siding"
   },
   "pattern": [
     "s",

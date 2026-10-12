@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:prismarine_moulding"
-    }
+    "#": "bwt:prismarine_moulding"
   },
   "pattern": [
     "#",

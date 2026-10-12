@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:mangrove_fence"
+    "values": "minecraft:mangrove_fence"
   }
 }

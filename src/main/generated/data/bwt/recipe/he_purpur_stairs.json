@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "building",
   "key": {
-    "m": {
-      "item": "bwt:purpur_block_moulding"
-    }
+    "m": "bwt:purpur_block_moulding"
   },
   "pattern": [
     "m ",

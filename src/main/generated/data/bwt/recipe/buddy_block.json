@@ -2,15 +2,9 @@
   "type": "bwt:soul_forge_shaped",
   "category": "redstone",
   "key": {
-    "e": {
-      "item": "bwt:redstone_eye"
-    },
-    "s": {
-      "item": "minecraft:stone"
-    },
-    "t": {
-      "item": "minecraft:redstone_torch"
-    }
+    "e": "bwt:redstone_eye",
+    "s": "minecraft:stone",
+    "t": "minecraft:redstone_torch"
   },
   "pattern": [
     "sses",

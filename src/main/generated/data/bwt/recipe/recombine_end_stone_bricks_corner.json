@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:end_stone_bricks_corner"
-    },
-    {
-      "item": "bwt:end_stone_bricks_corner"
-    }
+    "bwt:end_stone_bricks_corner",
+    "bwt:end_stone_bricks_corner"
   ],
   "result": {
     "count": 1,

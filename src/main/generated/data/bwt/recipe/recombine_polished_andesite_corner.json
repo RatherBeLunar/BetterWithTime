@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:polished_andesite_corner"
-    },
-    {
-      "item": "bwt:polished_andesite_corner"
-    }
+    "bwt:polished_andesite_corner",
+    "bwt:polished_andesite_corner"
   ],
   "result": {
     "count": 1,

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:tuff_moulding"
-    },
-    "s": {
-      "item": "bwt:tuff_siding"
-    }
+    "m": "bwt:tuff_moulding",
+    "s": "bwt:tuff_siding"
   },
   "pattern": [
     "sss",

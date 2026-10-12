@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_fence",
   "key": {
-    "m": {
-      "item": "bwt:mangrove_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:mangrove_planks_siding"
-    }
+    "m": "bwt:mangrove_planks_moulding",
+    "s": "bwt:mangrove_planks_siding"
   },
   "pattern": [
     "sms",

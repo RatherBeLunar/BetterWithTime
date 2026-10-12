@@ -2,27 +2,13 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bwt:tanned_leather"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    },
-    {
-      "item": "minecraft:paper"
-    }
+    "bwt:tanned_leather",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper",
+    "minecraft:paper"
   ],
   "result": {
     "count": 1,

@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:lilac"
-      }
+      "ingredient": "minecraft:lilac"
     }
   ],
   "results": [

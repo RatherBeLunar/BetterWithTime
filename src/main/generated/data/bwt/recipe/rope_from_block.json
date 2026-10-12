@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "rope",
   "ingredients": [
-    {
-      "item": "bwt:rope_coil_block"
-    }
+    "bwt:rope_coil_block"
   ],
   "result": {
     "count": 9,

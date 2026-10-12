@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_fence"
+    "values": "minecraft:warped_fence"
   }
 }

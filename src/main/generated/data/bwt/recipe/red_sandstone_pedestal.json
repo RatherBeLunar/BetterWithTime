@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:red_sandstone"
-    },
-    "s": {
-      "item": "bwt:red_sandstone_siding"
-    }
+    "#": "minecraft:red_sandstone",
+    "s": "bwt:red_sandstone_siding"
   },
   "pattern": [
     " s ",

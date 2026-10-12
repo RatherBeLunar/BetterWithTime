@@ -8,23 +8,20 @@ import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.advancements.Criterion;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.BlockFamilies;
 import net.minecraft.data.BlockFamily;
-import net.minecraft.data.recipes.RecipeBuilder;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.*;
+import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.ItemLike;
@@ -46,7 +43,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
 
     @Override
     protected RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput output) {
-        return new RecipeProvider(registryLookup, output) {
+        return new SharedRecipeProvider(registryLookup, output) {
             @Override
             public void buildRecipes() {
                 generateCraftingRecipes(this, output);
@@ -55,7 +52,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         };
     }
 
-    public void generateCraftingRecipes(RecipeProvider recipeProvider, RecipeOutput output) {
+    public void generateCraftingRecipes(SharedRecipeProvider recipeProvider, RecipeOutput output) {
         generateTier1Recipes(recipeProvider, output);
         generateTier2Recipes(recipeProvider, output);
         generateTier3Recipes(recipeProvider, output);
@@ -64,7 +61,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         generateTier6Recipes(recipeProvider, output);
         generateTier7Recipes(recipeProvider, output);
 
-        generateVaseDyeingRecipes(recipeProvider);
+        generateVaseDyeingRecipes(recipeProvider, output);
         generateWoolSlabRecipes(recipeProvider, output);
         generateDungDyeingRecipes(recipeProvider, output);
         generateCompactingRecipes(recipeProvider, output);
@@ -107,11 +104,11 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
     }
 
     private void generateCompactingRecipes(RecipeProvider recipeProvider, RecipeOutput output) {
-        recipeProvider.nineBlockStorageRecipesRecipesWithCustomUnpacking(RecipeCategory.MISC, BwtItems.soapItem, RecipeCategory.DECORATIONS, BwtBlocks.soapBlock, "soap_from_block", "soap");
-        recipeProvider.nineBlockStorageRecipesRecipesWithCustomUnpacking(RecipeCategory.MISC, BwtItems.dungItem, RecipeCategory.DECORATIONS, BwtBlocks.dungBlock, "dung_from_block", "dung");
-        recipeProvider.nineBlockStorageRecipesRecipesWithCustomUnpacking(RecipeCategory.MISC, BwtItems.concentratedHellfireItem, RecipeCategory.DECORATIONS, BwtBlocks.concentratedHellfireBlock, "concentrated_hellfire_from_block", "concentrated_hellfire");
-        recipeProvider.nineBlockStorageRecipesRecipesWithCustomUnpacking(RecipeCategory.MISC, BwtItems.paddingItem, RecipeCategory.DECORATIONS, BwtBlocks.paddingBlock, "padding_from_block", "padding");
-        recipeProvider.nineBlockStorageRecipesRecipesWithCustomUnpacking(RecipeCategory.MISC, BwtItems.ropeItem, RecipeCategory.DECORATIONS, BwtBlocks.ropeCoilBlock, "rope_from_block", "rope");
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(recipeProvider, output, RecipeCategory.MISC, BwtItems.soapItem, RecipeCategory.DECORATIONS, BwtBlocks.soapBlock, "soap_from_block", "soap");
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(recipeProvider, output, RecipeCategory.MISC, BwtItems.dungItem, RecipeCategory.DECORATIONS, BwtBlocks.dungBlock, "dung_from_block", "dung");
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(recipeProvider, output, RecipeCategory.MISC, BwtItems.concentratedHellfireItem, RecipeCategory.DECORATIONS, BwtBlocks.concentratedHellfireBlock, "concentrated_hellfire_from_block", "concentrated_hellfire");
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(recipeProvider, output, RecipeCategory.MISC, BwtItems.paddingItem, RecipeCategory.DECORATIONS, BwtBlocks.paddingBlock, "padding_from_block", "padding");
+        nineBlockStorageRecipesRecipesWithCustomUnpacking(recipeProvider, output, RecipeCategory.MISC, BwtItems.ropeItem, RecipeCategory.DECORATIONS, BwtBlocks.ropeCoilBlock, "rope_from_block", "rope");
         offer2x2BlockSlabFamily(recipeProvider, output, BwtBlocks.wickerPaneBlock, BwtBlocks.wickerBlock, BwtBlocks.wickerSlabBlock, "wicker");
     }
 
@@ -177,6 +174,87 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         offer2x1SlabUncompacting(recipeProvider, output, slab, baseItem, RecipeCategory.MISC, itemGroup, itemGroup + "_from_slab");
     }
 
+    public void colorBlockWithDye(RecipeProvider recipeProvider, RecipeOutput output, List<Item> dyeItems, List<Item> itemsToDye, String string) {
+        colorBlockWithDye(recipeProvider, output, dyeItems, itemsToDye, string, RecipeCategory.BUILDING_BLOCKS);
+    }
+
+    public void colorBlockWithDye(RecipeProvider recipeProvider, RecipeOutput output, List<Item> dyeItems, List<Item> itemsToDye, String string, RecipeCategory recipeCategory) {
+        for (int i = 0; i < dyeItems.size(); ++i) {
+            Item dyeItem = dyeItems.get(i);
+            Item itemToDye = itemsToDye.get(i);
+            Stream<Item> stream = itemsToDye.stream().filter(item2 -> !item2.equals(itemToDye));
+            recipeProvider.shapeless(recipeCategory, itemToDye)
+                    .requires(dyeItem)
+                    .requires(Ingredient.of(stream))
+                    .group(string)
+                    .unlockedBy("has_needed_dye", recipeProvider.has(dyeItem))
+                    .save(
+                            output,
+                            keyOf("dye_" + RecipeProvider.getItemName(itemToDye))
+                    );
+        }
+    }
+
+    public void nineBlockStorageRecipesRecipesWithCustomUnpacking(
+            RecipeProvider recipeProvider,
+            RecipeOutput output,
+            RecipeCategory compactingCategory,
+            ItemLike itemToCompact,
+            RecipeCategory uncompactingCategory,
+            ItemLike compactedItem,
+            String uncompactingRecipeId,
+            String uncompactingGroup
+    ) {
+        this.nineBlockStorageRecipes(
+                recipeProvider,
+                output,
+                compactingCategory,
+                itemToCompact,
+                uncompactingCategory,
+                compactedItem,
+                RecipeProvider.getSimpleRecipeName(compactedItem),
+                null,
+                uncompactingRecipeId,
+                uncompactingGroup
+        );
+    }
+
+    public final void nineBlockStorageRecipes(
+            RecipeProvider recipeProvider,
+            RecipeOutput output,
+            RecipeCategory compactingCategory,
+            ItemLike itemToCompact,
+            RecipeCategory uncompactingCategory,
+            ItemLike compactedItem,
+            String compactingRecipeId,
+            @Nullable String compactingGroup,
+            String uncompactingRecipeId,
+            @Nullable String uncompactingGroup
+    ) {
+        recipeProvider
+                .shapeless(compactingCategory, itemToCompact, 9)
+                .requires(compactedItem)
+                .group(uncompactingGroup)
+                .unlockedBy(RecipeProvider.getHasName(compactedItem), recipeProvider.has(compactedItem))
+                .save(
+                        output,
+                        keyOf(uncompactingRecipeId)
+                );
+        recipeProvider
+                .shaped(uncompactingCategory, compactedItem)
+                .define('#', itemToCompact)
+                .pattern("###")
+                .pattern("###")
+                .pattern("###")
+                .group(compactingGroup)
+                .unlockedBy(RecipeProvider.getHasName(itemToCompact), recipeProvider.has(itemToCompact))
+                .save(
+                        output,
+                        keyOf(compactingRecipeId)
+                );
+    }
+
+
     private void generateDungDyeingRecipes(RecipeProvider recipeProvider, RecipeOutput output) {
         DyeItem dung = BwtItems.dungItem;
 
@@ -190,6 +268,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         Block brownStainedGlass = Blocks.BROWN_STAINED_GLASS;
         Block brownStainedGlassPane = Blocks.BROWN_STAINED_GLASS_PANE;
         Block brownCandle = Blocks.BROWN_CANDLE;
+        Item brownBundle = Items.BROWN_BUNDLE;
 
         recipeProvider.shapeless(RecipeCategory.DECORATIONS, brownVase)
                 .requires(dung)
@@ -204,7 +283,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .requires(dung)
                 .group("dyed_candle")
                 .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
-                .save(output, RecipeBuilder.getDefaultRecipeId(Blocks.BROWN_CANDLE) + "_from_dung");
+                .save(output, keyOf(RecipeProvider.getItemName(Blocks.BROWN_CANDLE) + "_from_dung"));
         recipeProvider.shapeless(RecipeCategory.BUILDING_BLOCKS, brownBed)
                 .requires(dung)
                 .requires(Ingredient.of(Stream.of(Items.BLACK_BED, Items.BLUE_BED, Items.CYAN_BED, Items.GRAY_BED, Items.GREEN_BED, Items.LIGHT_BLUE_BED, Items.LIGHT_GRAY_BED, Items.LIME_BED, Items.MAGENTA_BED, Items.ORANGE_BED, Items.PINK_BED, Items.PURPLE_BED, Items.RED_BED, Items.YELLOW_BED, Items.WHITE_BED)))
@@ -262,18 +341,27 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .unlockedBy("has_glass_pane", recipeProvider.has(Blocks.GLASS_PANE))
                 .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
                 .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownStainedGlassPane) + "_from_dung"));
+        TransmuteRecipeBuilder.transmute(
+                RecipeCategory.TOOLS,
+                recipeProvider.tag(ItemTags.BUNDLES),
+                Ingredient.of(dung),
+                brownBundle
+        )
+                .group("bundle_dye")
+                .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
+                .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownBundle) + "_from_dung"));
     }
 
-    private void generateVaseDyeingRecipes(RecipeProvider recipeProvider) {
+    private void generateVaseDyeingRecipes(SharedRecipeProvider recipeProvider, RecipeOutput output) {
         List<Item> dyes = List.copyOf(DyeUtils.DYE_COLORS_ORDERED.stream().map(DyeItem::byColor).toList());
         List<Item> vases = DyeUtils.streamColorItemsSorted(BwtBlocks.vaseBlocks).map(VaseBlock::asItem).toList();
-        recipeProvider.colorBlockWithDye(dyes, vases, "vases");
+        colorBlockWithDye(recipeProvider, output, dyes, vases, "vases");
     }
 
-    private void generateWoolSlabRecipes(RecipeProvider recipeProvider, RecipeOutput output) {
+    private void generateWoolSlabRecipes(SharedRecipeProvider recipeProvider, RecipeOutput output) {
         List<Item> dyes = List.copyOf(DyeUtils.DYE_COLORS_ORDERED.stream().map(DyeItem::byColor).toList());
         List<Item> woolSlabs = DyeUtils.streamColorItemsSorted(BwtBlocks.woolSlabBlocks).map(SlabBlock::asItem).toList();
-        recipeProvider.colorBlockWithDye(dyes, woolSlabs, "wool_slabs");
+        colorBlockWithDye(recipeProvider, output, dyes, woolSlabs, "wool_slabs");
         BwtBlocks.woolSlabBlocks.forEach((dyeColor, woolSlab) -> {
             Item woolBlockItem = DyeUtils.WOOL_COLORS.get(dyeColor).asItem();
             recipeProvider.slabBuilder(RecipeCategory.BUILDING_BLOCKS, woolSlab, Ingredient.of(woolBlockItem)).unlockedBy(RecipeProvider.getHasName(woolBlockItem), recipeProvider.has(woolBlockItem)).group("wool_slabs").save(output);
@@ -547,7 +635,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .define('p', ItemTags.WOODEN_PRESSURE_PLATES)
                 .define('c', BwtItemTags.WOODEN_CORNER_BLOCKS)
                 .unlockedBy("has_wooden_corner", recipeProvider.has(BwtItemTags.WOODEN_CORNER_BLOCKS))
-                .save(output, "mech_hopper");
+                .save(output, keyOf("mech_hopper"));
     }
 
     private void generateTier4Recipes(RecipeProvider recipeProvider, RecipeOutput output) {
@@ -580,7 +668,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .define('G', BwtItems.glueItem)
                 .define('P', Blocks.PISTON)
                 .unlockedBy(RecipeProvider.getHasName(BwtItems.glueItem), recipeProvider.has(BwtItems.glueItem))
-                .save(output, "glued_sticky_piston");
+                .save(output, keyOf("glued_sticky_piston"));
         recipeProvider.shaped(RecipeCategory.MISC, BwtItems.woodBladeItem)
                 .pattern("s  ")
                 .pattern("sgs")
@@ -851,7 +939,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .pattern("c c")
                 .pattern(" c ")
                 .unlockedBy("has_wooden_corner", recipeProvider.has(BwtItemTags.WOODEN_CORNER_BLOCKS))
-                .save(output);
+                .save(output, keyOf(RecipeProvider.getItemName(Items.BOWL)));
         BlockFamilies.getAllFamilies()
                 .filter(blockFamily -> blockFamily.getRecipeGroupPrefix().orElse("").equals("wooden"))
                 .forEach(blockFamily -> createHighEfficiencyBlockFamilyRecipes(recipeProvider, output, blockFamily));

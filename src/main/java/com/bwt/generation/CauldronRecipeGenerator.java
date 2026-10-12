@@ -13,19 +13,19 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CampfireCookingRecipe;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SmokingRecipe;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.ItemLike;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -155,8 +155,28 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
 
             public void addNewVanillaCookingRecipe(RecipeProvider recipeProvider, Item input, Item result, RecipeOutput output) {
                 SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.FOOD, result, 0.35f, 200).unlockedBy(RecipeProvider.getHasName(input), recipeProvider.has(input)).save(output);
-                recipeProvider.simpleCookingRecipe("smoking", RecipeSerializer.SMOKING_RECIPE, SmokingRecipe::new, 100, input, result, 0.35f);
-                recipeProvider.simpleCookingRecipe( "campfire_cooking", RecipeSerializer.CAMPFIRE_COOKING_RECIPE, CampfireCookingRecipe::new, 600, input, result, 0.35f);
+                SimpleCookingRecipeBuilder.generic(
+                                Ingredient.of(input),
+                                RecipeCategory.FOOD,
+                                result,
+                                0.35f,
+                                100,
+                                RecipeSerializer.SMOKING_RECIPE,
+                                SmokingRecipe::new
+                        )
+                        .unlockedBy(RecipeProvider.getHasName(input), this.has(input))
+                        .save(this.output, keyOf(RecipeProvider.getItemName(result) + "_from_smoking"));
+                SimpleCookingRecipeBuilder.generic(
+                                Ingredient.of(input),
+                                RecipeCategory.FOOD,
+                                result,
+                                0.35f,
+                                600,
+                                RecipeSerializer.CAMPFIRE_COOKING_RECIPE,
+                                CampfireCookingRecipe::new
+                        )
+                        .unlockedBy(RecipeProvider.getHasName(input), this.has(input))
+                        .save(this.output, keyOf(RecipeProvider.getItemName(result) + "_from_campfire_cooking"));
             }
 
             private void generateFoods(RecipeProvider recipeProvider, RecipeOutput output) {
@@ -204,6 +224,15 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
             }
         };
     }
+
+    public static ResourceKey<Recipe<?>> keyOf(ResourceLocation resourceLocation) {
+        return ResourceKey.create(Registries.RECIPE, resourceLocation);
+    }
+
+    public static ResourceKey<Recipe<?>> keyOf(String id) {
+        return keyOf(Id.of(id));
+    }
+
 
     @Override
     public String getName() {

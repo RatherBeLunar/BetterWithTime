@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#c:storage_blocks/raw_gold"
+    "values": "#c:storage_blocks/raw_gold"
   }
 }

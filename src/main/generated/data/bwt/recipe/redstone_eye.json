@@ -2,15 +2,9 @@
   "type": "bwt:soul_forge_shaped",
   "category": "equipment",
   "key": {
-    "g": {
-      "item": "minecraft:gold_nugget"
-    },
-    "l": {
-      "item": "minecraft:lapis_lazuli"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "g": "minecraft:gold_nugget",
+    "l": "minecraft:lapis_lazuli",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     "lll",

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:polished_diorite_moulding"
-    },
-    {
-      "item": "bwt:polished_diorite_moulding"
-    }
+    "bwt:polished_diorite_moulding",
+    "bwt:polished_diorite_moulding"
   ],
   "result": {
     "count": 1,

@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:weathered_copper_bulb"
-      }
+      "ingredient": "minecraft:weathered_copper_bulb"
     }
   ],
   "results": [

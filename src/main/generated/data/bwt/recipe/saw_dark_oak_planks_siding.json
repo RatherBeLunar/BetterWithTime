@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:dark_oak_planks_siding"
+    "values": "bwt:dark_oak_planks_siding"
   }
 }

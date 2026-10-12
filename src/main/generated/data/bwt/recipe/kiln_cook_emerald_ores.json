@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:emerald_ores"
+    "values": "#minecraft:emerald_ores"
   }
 }

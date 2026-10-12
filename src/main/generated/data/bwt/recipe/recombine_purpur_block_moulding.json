@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:purpur_block_moulding"
-    },
-    {
-      "item": "bwt:purpur_block_moulding"
-    }
+    "bwt:purpur_block_moulding",
+    "bwt:purpur_block_moulding"
   ],
   "result": {
     "count": 1,

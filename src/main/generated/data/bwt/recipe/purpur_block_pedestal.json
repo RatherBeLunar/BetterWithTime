@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:purpur_block"
-    },
-    "s": {
-      "item": "bwt:purpur_block_siding"
-    }
+    "#": "minecraft:purpur_block",
+    "s": "bwt:purpur_block_siding"
   },
   "pattern": [
     " s ",

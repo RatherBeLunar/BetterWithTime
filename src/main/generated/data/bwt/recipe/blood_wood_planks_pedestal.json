@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "bwt:blood_wood_planks"
-    },
-    "s": {
-      "item": "bwt:blood_wood_planks_siding"
-    }
+    "#": "bwt:blood_wood_planks",
+    "s": "bwt:blood_wood_planks_siding"
   },
   "pattern": [
     " s ",

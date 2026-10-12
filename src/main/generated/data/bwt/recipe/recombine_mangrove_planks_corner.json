@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:mangrove_planks_corner"
-    },
-    {
-      "item": "bwt:mangrove_planks_corner"
-    }
+    "bwt:mangrove_planks_corner",
+    "bwt:mangrove_planks_corner"
   ],
   "result": {
     "count": 1,

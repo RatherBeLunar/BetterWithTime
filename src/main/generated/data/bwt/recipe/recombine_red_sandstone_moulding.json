@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:red_sandstone_moulding"
-    },
-    {
-      "item": "bwt:red_sandstone_moulding"
-    }
+    "bwt:red_sandstone_moulding",
+    "bwt:red_sandstone_moulding"
   ],
   "result": {
     "count": 1,

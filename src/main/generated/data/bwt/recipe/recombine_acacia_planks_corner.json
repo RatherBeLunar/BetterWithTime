@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:acacia_planks_corner"
-    },
-    {
-      "item": "bwt:acacia_planks_corner"
-    }
+    "bwt:acacia_planks_corner",
+    "bwt:acacia_planks_corner"
   ],
   "result": {
     "count": 1,

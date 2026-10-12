@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:orange_tulip"
-      }
+      "ingredient": "minecraft:orange_tulip"
     }
   ],
   "results": [

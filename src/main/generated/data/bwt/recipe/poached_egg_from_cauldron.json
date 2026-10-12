@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:raw_egg"
-      }
+      "ingredient": "bwt:raw_egg"
     }
   ],
   "results": [

@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:oak_fence"
+    "values": "minecraft:oak_fence"
   }
 }

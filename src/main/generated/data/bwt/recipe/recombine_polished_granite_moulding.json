@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:polished_granite_moulding"
-    },
-    {
-      "item": "bwt:polished_granite_moulding"
-    }
+    "bwt:polished_granite_moulding",
+    "bwt:polished_granite_moulding"
   ],
   "result": {
     "count": 1,

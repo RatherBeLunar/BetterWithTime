@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_birch_wood"
+    "values": "minecraft:stripped_birch_wood"
   }
 }

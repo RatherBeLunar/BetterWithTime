@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shaped",
   "category": "misc",
   "key": {
-    "m": {
-      "item": "bwt:nether_bricks_moulding"
-    },
-    "s": {
-      "item": "bwt:nether_bricks_siding"
-    }
+    "m": "bwt:nether_bricks_moulding",
+    "s": "bwt:nether_bricks_siding"
   },
   "pattern": [
     "sms",

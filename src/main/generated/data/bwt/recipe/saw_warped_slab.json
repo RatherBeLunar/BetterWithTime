@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_slab"
+    "values": "minecraft:warped_slab"
   }
 }

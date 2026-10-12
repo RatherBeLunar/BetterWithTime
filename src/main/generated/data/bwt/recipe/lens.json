@@ -2,15 +2,9 @@
   "type": "bwt:soul_forge_shaped",
   "category": "redstone",
   "key": {
-    "d": {
-      "item": "minecraft:diamond"
-    },
-    "g": {
-      "item": "minecraft:gold_ingot"
-    },
-    "p": {
-      "item": "minecraft:glass_pane"
-    }
+    "d": "minecraft:diamond",
+    "g": "minecraft:gold_ingot",
+    "p": "minecraft:glass_pane"
   },
   "pattern": [
     "gddg",

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "dirt_block",
   "key": {
-    "#": {
-      "item": "bwt:dirt_slab"
-    }
+    "#": "bwt:dirt_slab"
   },
   "pattern": [
     "#",

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:end_stone_bricks_siding"
-    }
+    "X": "bwt:end_stone_bricks_siding"
   },
   "pattern": [
     "XXXX"

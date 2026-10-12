@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "wicker_block",
   "key": {
-    "#": {
-      "item": "bwt:wicker_slab"
-    }
+    "#": "bwt:wicker_slab"
   },
   "pattern": [
     "#",

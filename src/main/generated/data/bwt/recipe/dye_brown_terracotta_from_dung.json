@@ -3,12 +3,8 @@
   "category": "building",
   "group": "stained_terracotta",
   "key": {
-    "#": {
-      "item": "minecraft:terracotta"
-    },
-    "X": {
-      "item": "bwt:dung"
-    }
+    "#": "minecraft:terracotta",
+    "X": "bwt:dung"
   },
   "pattern": [
     "###",

@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "bwt:sandstone_siding"
-    },
-    {
-      "item": "bwt:sandstone_siding"
-    }
+    "bwt:sandstone_siding",
+    "bwt:sandstone_siding"
   ],
   "result": {
     "count": 1,

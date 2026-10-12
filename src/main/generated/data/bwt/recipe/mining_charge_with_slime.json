@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "d": {
-      "item": "bwt:dynamite"
-    },
-    "r": {
-      "item": "bwt:rope"
-    },
-    "s": {
-      "item": "minecraft:slime_ball"
-    }
+    "d": "bwt:dynamite",
+    "r": "bwt:rope",
+    "s": "minecraft:slime_ball"
   },
   "pattern": [
     "rsr",

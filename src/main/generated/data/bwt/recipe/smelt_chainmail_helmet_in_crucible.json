@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:chainmail_helmet"
-      }
+      "ingredient": "minecraft:chainmail_helmet"
     }
   ],
   "results": [

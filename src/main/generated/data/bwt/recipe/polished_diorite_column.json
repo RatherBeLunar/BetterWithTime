@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:polished_diorite_moulding"
-    }
+    "#": "bwt:polished_diorite_moulding"
   },
   "pattern": [
     "#",

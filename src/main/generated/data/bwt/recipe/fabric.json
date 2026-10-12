@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "f": {
-      "item": "bwt:hemp_fiber"
-    }
+    "f": "bwt:hemp_fiber"
   },
   "pattern": [
     "fff",

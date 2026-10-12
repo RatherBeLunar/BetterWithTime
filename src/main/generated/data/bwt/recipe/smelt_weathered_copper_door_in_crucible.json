@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:weathered_copper_door"
-      }
+      "ingredient": "minecraft:weathered_copper_door"
     }
   ],
   "results": [

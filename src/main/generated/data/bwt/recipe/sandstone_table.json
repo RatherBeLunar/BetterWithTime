@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:sandstone_moulding"
-    },
-    "s": {
-      "item": "bwt:sandstone_siding"
-    }
+    "m": "bwt:sandstone_moulding",
+    "s": "bwt:sandstone_siding"
   },
   "pattern": [
     "sss",
