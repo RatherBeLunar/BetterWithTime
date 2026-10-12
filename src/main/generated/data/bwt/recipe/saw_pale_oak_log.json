@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 4,
+      "id": "minecraft:pale_oak_planks"
+    },
+    {
+      "count": 2,
+      "id": "bwt:saw_dust"
+    }
+  ],
+  "ingredient": {
+    "values": "minecraft:pale_oak_log"
+  }
+}

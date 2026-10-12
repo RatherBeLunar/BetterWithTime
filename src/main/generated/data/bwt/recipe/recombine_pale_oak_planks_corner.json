@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "moulding",
+  "ingredients": [
+    "bwt:pale_oak_planks_corner",
+    "bwt:pale_oak_planks_corner"
+  ],
+  "result": {
+    "count": 1,
+    "id": "bwt:pale_oak_planks_moulding"
+  }
+}

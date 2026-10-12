@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "table",
+  "key": {
+    "m": "bwt:pale_oak_planks_moulding",
+    "s": "bwt:pale_oak_planks_siding"
+  },
+  "pattern": [
+    "sss",
+    " m ",
+    " m "
+  ],
+  "result": {
+    "count": 4,
+    "id": "bwt:pale_oak_planks_table"
+  }
+}

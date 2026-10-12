@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wooden_fence",
+  "key": {
+    "m": "bwt:pale_oak_planks_moulding",
+    "s": "bwt:pale_oak_planks_siding"
+  },
+  "pattern": [
+    "sms",
+    "sms"
+  ],
+  "result": {
+    "count": 3,
+    "id": "minecraft:pale_oak_fence"
+  }
+}

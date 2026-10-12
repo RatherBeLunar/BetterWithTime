@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "redstone",
+  "group": "wooden_pressure_plate",
+  "ingredients": [
+    "bwt:pale_oak_planks_siding"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:pale_oak_pressure_plate"
+  }
+}
