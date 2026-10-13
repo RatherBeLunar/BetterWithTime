@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "bwt:block/nether_groth"
+    "model": "bwt:item/nether_groth"
   }
 }

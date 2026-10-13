@@ -1,9 +1,11 @@
 {
-  "parent": "block/block",
+  "parent": "minecraft:block/block",
   "textures": {
-    "side": "block/dirt",
-    "particle": "#snow",
-    "snow": "block/snow"
+    "bottom": "minecraft:block/dirt",
+    "side": "minecraft:block/dirt",
+    "top": "minecraft:block/dirt",
+    "particle": "minecraft:block/snow",
+    "snow": "minecraft:block/snow"
   },
   "elements": [
     {
