@@ -37,7 +37,7 @@ public class UnfiredDecoratedPotBlock extends UnfiredPotteryBlock {
         if (!stack.is(ItemTags.DECORATED_POT_SHERDS)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        BlockState replacementState = BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState();
+        BlockState replacementState = BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState().setValue(UnfiredDecoratedPotBlockWithSherds.FACING, hit.getDirection());
         level.setBlock(pos, replacementState, Block.UPDATE_CLIENTS, 0);
         return replacementState.useItemOn(stack, level, player, hand, hit);
     }

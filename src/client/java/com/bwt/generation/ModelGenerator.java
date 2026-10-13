@@ -7,6 +7,7 @@ import com.bwt.blocks.lens.LensBeamBlock;
 import com.bwt.blocks.turntable.TurntableBlock;
 import com.bwt.blocks.unfired_pottery.UnfiredPotteryBlock;
 import com.bwt.items.BwtItems;
+import com.bwt.rendering.unfired_decorated_pot.UnfiredDecoratedPotSpecialRenderer;
 import com.bwt.utils.DyeUtils;
 import com.bwt.utils.Id;
 import com.google.common.collect.ImmutableList;
@@ -130,8 +131,7 @@ public class ModelGenerator extends FabricModelProvider {
                 .with(BlockModelGenerators.createHorizontalFacingDispatch())
         );
 
-        // TODO figured out unfiredDecoratedPotBlockWithSherds
-//        blockStateModelGenerator.generateSimpleSpecialItemModel(BwtBlocks.unfiredDecoratedPotBlockWithSherds, new DecoratedPotSpecialRenderer.Unbaked());
+        blockStateModelGenerator.generateSimpleSpecialItemModel(BwtBlocks.unfiredDecoratedPotBlockWithSherds, new UnfiredDecoratedPotSpecialRenderer.Unbaked());
         for (UnfiredPotteryBlock unfiredPotteryBlock : new UnfiredPotteryBlock[]{BwtBlocks.unfiredDecoratedPotBlock, BwtBlocks.unfiredDecoratedPotBlockWithSherds, BwtBlocks.unfiredCrucibleBlock, BwtBlocks.unfiredPlanterBlock, BwtBlocks.unfiredVaseBlock, BwtBlocks.unfiredUrnBlock, BwtBlocks.unfiredFlowerPotBlock}) {
             blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(unfiredPotteryBlock)
                     .with(PropertyDispatch.property(UnfiredPotteryBlock.COOKING)

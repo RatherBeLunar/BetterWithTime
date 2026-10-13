@@ -1,5 +1,6 @@
 package com.bwt.rendering.unfired_decorated_pot;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -70,6 +71,9 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
     }
 
     public void renderPotDecorations(PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, PotDecorations potDecorations) {
+        poseStack.pushPose();
+        this.renderModel(null, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState(), null, poseStack, multiBufferSource, light, uv);
+        poseStack.popPose();
         renderPotDecorations(null, Direction.NORTH, poseStack, multiBufferSource, light, uv, potDecorations);
     }
 
@@ -96,10 +100,10 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         poseStack.popPose();
     }
 
-    private void renderModel(@Nullable Level level, BlockState state, BlockPos pos, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int uv) {
+    private void renderModel(@Nullable Level level, BlockState state, @Nullable BlockPos pos, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int uv) {
         ModelManager bakedModelManager = blockRenderDispatcher.getBlockModelShaper().getModelManager();
         matrices.pushPose();
-        if (level == null) {
+        if (level == null || pos == null) {
             blockRenderDispatcher.getModelRenderer()
                     .renderModel(
                             matrices.last(),
