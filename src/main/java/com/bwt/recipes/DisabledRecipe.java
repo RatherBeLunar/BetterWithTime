@@ -29,7 +29,7 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
 
     @Override
     public String group() {
-        return null;
+        return group;
     }
 
     @Override

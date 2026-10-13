@@ -445,7 +445,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
             BlockBehaviour.Properties.ofFullCopy(Blocks.CLAY)
                     .noOcclusion()
                     .isRedstoneConductor(Blocks::never),
-            new Item.Properties().component(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY)
+            new Item.Properties().useBlockDescriptionPrefix().component(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY)
     );
 	public static final UnfiredPotteryBlock unfiredCrucibleBlock = registerBlockWithItem(
             "unfired_crucible",

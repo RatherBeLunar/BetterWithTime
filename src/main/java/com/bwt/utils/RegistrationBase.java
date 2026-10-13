@@ -43,7 +43,7 @@ public abstract class RegistrationBase {
     }
 
     public static <B extends Block> B registerBlockWithItem(ResourceKey<Block> resourceKey, Function<BlockBehaviour.Properties, B> function, BlockBehaviour.Properties properties) {
-        return registerBlockWithItem(resourceKey, function, properties, new Item.Properties());
+        return registerBlockWithItem(resourceKey, function, properties, new Item.Properties().useBlockDescriptionPrefix());
     }
 
     public static <B extends Block> B registerBlockWithItem(String string, Function<BlockBehaviour.Properties, B> function, BlockBehaviour.Properties properties, Item.Properties itemProperties) {
