@@ -175,7 +175,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     }
 
     public void explode() {
-        this.level().explode(this, this.getX(), this.getY(0.0625), this.getZ(), 1.5f, Level.ExplosionInteraction.TNT);
+        this.level().explode(this, this.getX(), this.getY(0.0625), this.getZ(), 1.9f, Level.ExplosionInteraction.TNT);
         if (isUnderWater()) {
             redneckFish();
         }
