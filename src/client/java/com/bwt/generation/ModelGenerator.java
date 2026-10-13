@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.color.item.GrassColorSource;
+import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.special.DecoratedPotSpecialRenderer;
 import net.minecraft.core.Direction;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -23,12 +24,6 @@ import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.blockstates.Variant;
 import net.minecraft.client.data.models.blockstates.VariantProperties;
-import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.data.models.model.ModelTemplate;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
-import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
@@ -203,6 +198,7 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.creativePowerSouceBlock, ModelLocationUtils.getModelLocation(BwtBlocks.creativePowerSouceBlock));
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.blockDispenserBlock, ModelLocationUtils.getModelLocation(BwtBlocks.blockDispenserBlock));
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.cauldronBlock, ModelLocationUtils.getModelLocation(BwtBlocks.cauldronBlock));
+        blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.concentratedHellfireBlock, ModelLocationUtils.getModelLocation(BwtBlocks.concentratedHellfireBlock, "_0"));
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.crucibleBlock, ModelLocationUtils.getModelLocation(BwtBlocks.crucibleBlock));
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.detectorBlock, ModelLocationUtils.getModelLocation(BwtBlocks.detectorBlock));
         blockStateModelGenerator.registerSimpleItemModel(BwtBlocks.gearBoxBlock, ModelLocationUtils.getModelLocation(BwtBlocks.gearBoxBlock));
@@ -238,7 +234,18 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(BwtItems.canvasItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.coalDustItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateBow(BwtItems.compositeBowItem);
+        itemModelGenerator.createFlatItemModel(BwtItems.compositeBowItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.concentratedHellfireItem, ModelTemplates.FLAT_ITEM);
+//        itemModelGenerator.itemModelOutput.accept(
+//                BwtBlocks.concentratedHellfireBlock.asItem(),
+//                ItemModelUtils.plainModel(
+//                        ModelTemplates.FLAT_ITEM.create(
+//                                ModelLocationUtils.getModelLocation(BwtBlocks.concentratedHellfireBlock.asItem()),
+//                                TextureMapping.layer0(TextureMapping.getBlockTexture(BwtBlocks.concentratedHellfireBlock).withSuffix("_0")),
+//                                itemModelGenerator.modelOutput
+//                        )
+//                )
+//        );
         itemModelGenerator.generateFlatItem(BwtItems.cementBucketItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.cookedWolfChopItem, Items.COOKED_PORKCHOP, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.donutItem, ModelTemplates.FLAT_ITEM);
@@ -259,6 +266,7 @@ public class ModelGenerator extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(BwtItems.hellfireDustItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.kibbleItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.nethercoalItem, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(BwtBlocks.netherGroth.asItem(), ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.paddingItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.poachedEggItem, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(BwtItems.potashItem, ModelTemplates.FLAT_ITEM);
