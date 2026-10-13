@@ -414,6 +414,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         BwtItems.cookedWolfChopItem,
                         Items.MELON_SLICE,
                         Items.NETHER_BRICK,
+                        Items.RESIN_BRICK,
                         // Nether Groth Spores
                         Items.QUARTZ,
                         BwtItems.paddingItem,
@@ -430,6 +431,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         BwtItems.strapItem,
                         Items.SUGAR_CANE,
                         BwtItems.tallowItem,
+                        Items.RESIN_CLUMP,
                         Items.TORCH,
                         Items.SOUL_TORCH,
                         // Urn

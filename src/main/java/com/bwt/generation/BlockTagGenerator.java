@@ -395,6 +395,7 @@ public class BlockTagGenerator extends FabricTagProvider.BlockTagProvider {
                 .add(Blocks.MYCELIUM)
                 .add(Blocks.ROOTED_DIRT)
                 .add(Blocks.MOSS_BLOCK)
+                .add(Blocks.PALE_MOSS_BLOCK)
                 .add(Blocks.MUD)
                 .add(Blocks.MUDDY_MANGROVE_ROOTS);
         getOrCreateTagBuilder(BwtBlockTags.CAN_CONVERT_TO_PODZOL_SLAB)
