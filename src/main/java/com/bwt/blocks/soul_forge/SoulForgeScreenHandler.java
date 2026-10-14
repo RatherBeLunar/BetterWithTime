@@ -43,33 +43,25 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
         this.addStandardInventorySlots(playerInventory, 8, 102);
     }
 
-    protected static void slotChangedCraftingGrid(
-            AbstractContainerMenu abstractContainerMenu,
-            ServerLevel serverLevel,
-            Player player,
-            CraftingContainer craftingContainer,
-            ResultContainer resultContainer
-    ) {
+    protected void slotChangedCraftingGrid(ServerLevel serverLevel) {
         if (serverLevel.isClientSide) {
             return;
         }
-        CraftingInput craftingRecipeInput = craftingContainer.asCraftInput();
+        CraftingInput craftingRecipeInput = craftSlots.asCraftInput();
         ServerPlayer serverPlayerEntity = (ServerPlayer)player;
-        Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> either = OrderedRecipeMatcher.getFirstRecipeForSoulForge(
+        Optional<RecipeHolder<CraftingRecipe>> optionalRecipe = OrderedRecipeMatcher.getFirstRecipeForSoulForge(
                 serverLevel,
                 craftingRecipeInput
         );
-        ItemStack itemStack = either.map(
-                optional -> optional.filter(soulForgeRecipeHolder -> resultContainer.setRecipeUsed(serverPlayerEntity, soulForgeRecipeHolder)),
-                optional -> optional.filter(craftingRecipeHolder -> resultContainer.setRecipeUsed(serverPlayerEntity, craftingRecipeHolder))
-        )
+        ItemStack itemStack = optionalRecipe
+                .filter(recipeHolder -> resultSlots.setRecipeUsed(serverPlayerEntity, recipeHolder))
                 .map(recipeHolder -> recipeHolder.value().assemble(craftingRecipeInput, serverLevel.registryAccess()))
                 .filter(stack -> stack.isItemEnabled(serverLevel.enabledFeatures()))
                 .orElse(ItemStack.EMPTY);
 
-        resultContainer.setItem(0, itemStack);
-        abstractContainerMenu.setRemoteSlot(0, itemStack);
-        serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(abstractContainerMenu.containerId, abstractContainerMenu.incrementStateId(), 0, itemStack));
+        resultSlots.setItem(0, itemStack);
+        this.setRemoteSlot(0, itemStack);
+        serverPlayerEntity.connection.send(new ClientboundContainerSetSlotPacket(containerId, incrementStateId(), 0, itemStack));
     }
 
 
@@ -78,7 +70,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
         if (!this.placingRecipe) {
             this.access.execute((level, blockPos) -> {
                 if (level instanceof ServerLevel serverLevel) {
-                    slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots);
+                    slotChangedCraftingGrid(serverLevel);
                 }
             });
         }
@@ -92,7 +84,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
     @Override
     public void finishPlacingRecipe(ServerLevel serverLevel, RecipeHolder<CraftingRecipe> recipeHolder) {
         this.placingRecipe = false;
-        slotChangedCraftingGrid(this, serverLevel, this.player, this.craftSlots, this.resultSlots);
+        slotChangedCraftingGrid(serverLevel);
     }
 
     @Override

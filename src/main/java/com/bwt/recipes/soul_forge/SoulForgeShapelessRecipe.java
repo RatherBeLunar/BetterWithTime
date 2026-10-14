@@ -1,8 +1,8 @@
 package com.bwt.recipes.soul_forge;
 
+import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.BwtRecipes;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -11,23 +11,18 @@ import java.util.*;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
@@ -60,7 +55,7 @@ public class SoulForgeShapelessRecipe implements SoulForgeRecipe {
     }
 
     @Override
-    public RecipeType<SoulForgeRecipe> getType() {
+    public RecipeType<CraftingRecipe> getType() {
         return BwtRecipes.SOUL_FORGE_RECIPE_TYPE;
     }
 
@@ -110,10 +105,10 @@ public class SoulForgeShapelessRecipe implements SoulForgeRecipe {
     @Override
     public List<RecipeDisplay> display() {
         return List.of(
-                new ShapelessCraftingRecipeDisplay(
+                new SoulForgeShapelessCraftingRecipeDisplay(
                         this.ingredients.stream().map(Ingredient::display).toList(),
                         new SlotDisplay.ItemStackSlotDisplay(this.result),
-                        new SlotDisplay.ItemSlotDisplay(Items.CRAFTING_TABLE)
+                        new SlotDisplay.ItemSlotDisplay(BwtBlocks.soulForgeBlock.asItem())
                 )
         );
     }

@@ -2,8 +2,6 @@ package com.bwt.utils;
 
 import com.bwt.mixin.accessor.RecipeManagerAccessorMixin;
 import com.bwt.recipes.BwtRecipes;
-import com.bwt.recipes.soul_forge.SoulForgeRecipe;
-import com.mojang.datafixers.util.Either;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -18,18 +16,17 @@ import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class OrderedRecipeMatcher {
-    public static Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> getFirstRecipeForSoulForge(
+    public static Optional<RecipeHolder<CraftingRecipe>> getFirstRecipeForSoulForge(
             ServerLevel serverLevel,
             CraftingInput input
     ) {
         RecipeManager recipeManager = serverLevel.getServer().getRecipeManager();
 
-        Optional<RecipeHolder<SoulForgeRecipe>> resultA = recipeManager.getRecipeFor(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, input, serverLevel);
+        Optional<RecipeHolder<CraftingRecipe>> resultA = recipeManager.getRecipeFor(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, input, serverLevel);
         if (resultA.isPresent()) {
-            return Either.left(resultA);
+            return resultA;
         }
-        Optional<RecipeHolder<CraftingRecipe>> resultB = recipeManager.getRecipeFor(RecipeType.CRAFTING, input, serverLevel);
-        return Either.right(resultB);
+        return recipeManager.getRecipeFor(RecipeType.CRAFTING, input, serverLevel);
     }
 
     public static NonNullList<ItemStack> getRemainingStacksForSoulForge(
@@ -40,11 +37,9 @@ public class OrderedRecipeMatcher {
             return CraftingRecipe.defaultCraftingReminder(input);
         }
 
-        Either<Optional<RecipeHolder<SoulForgeRecipe>>, Optional<RecipeHolder<CraftingRecipe>>> either = getFirstRecipeForSoulForge(serverLevel, input);
-        Optional<NonNullList<ItemStack>> optionalRemainingItems = either.map(
-                optional -> optional.map(holder -> holder.value().getRemainingItems(input)),
-                optional -> optional.map(holder -> holder.value().getRemainingItems(input))
-        );
+        Optional<RecipeHolder<CraftingRecipe>> optionalRecipeHolder = getFirstRecipeForSoulForge(serverLevel, input);
+        Optional<NonNullList<ItemStack>> optionalRemainingItems = optionalRecipeHolder
+                .map(holder -> holder.value().getRemainingItems(input));
         if (optionalRemainingItems.isPresent()) {
             return optionalRemainingItems.get();
         } else {

@@ -18,7 +18,7 @@ public class SoulForgeScreen extends AbstractRecipeBookScreen<SoulForgeScreenHan
     private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/soul_forge.png");
 
     public SoulForgeScreen(SoulForgeScreenHandler handler, Inventory inventory, Component title) {
-        super(handler, new CraftingRecipeBookComponent(handler), inventory, title);
+        super(handler, new SoulForgeCraftingRecipeBookComponent(handler), inventory, title);
         imageHeight = 184;
         inventoryLabelY = imageHeight - 94;
     }

@@ -53,21 +53,21 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
         }
     }
 
-    @Override
-    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (!level.isClientSide()
-                && !blockState.getValue(POWERED)
-                && !level.getBlockState(sourcePos).is(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
-                && !level.getBlockTicks().willTickThisTick(pos, this)
-        ) {
-            // minimal delay when triggered to avoid notfying neighbors of change in same tick
-            // that they are notifying of the original change. Not doing so causes problems
-            // with some blocks (like ladders) that haven't finished initializing their state
-            // on placement when they send out the notification
-            level.scheduleTick(blockPos, this, 1);
-        }
-        super.neighborChanged(blockState, level, blockPos, sourceBlock, sourcePos, notify);
-    }
+//    @Override
+//    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+//        if (!level.isClientSide()
+//                && !blockState.getValue(POWERED)
+//                && !level.getBlockState(sourcePos).is(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
+//                && !level.getBlockTicks().willTickThisTick(pos, this)
+//        ) {
+//            // minimal delay when triggered to avoid notfying neighbors of change in same tick
+//            // that they are notifying of the original change. Not doing so causes problems
+//            // with some blocks (like ladders) that haven't finished initializing their state
+//            // on placement when they send out the notification
+//            level.scheduleTick(blockPos, this, 1);
+//        }
+//        super.neighborChanged(blockState, level, blockPos, sourceBlock, sourcePos, notify);
+//    }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {

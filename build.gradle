@@ -53,6 +53,7 @@ loom {
 		}
 	}
 
+	accessWidenerPath = file("src/main/resources/bwt.accesswidener")
 }
 
 fabricApi {
