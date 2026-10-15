@@ -21,6 +21,7 @@ import com.bwt.entities.MiningChargeEntity;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.saw.StateDependentSawRecipeHelper;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.Id;
@@ -161,6 +162,8 @@ public class BetterWithTime implements ModInitializer {
 		RotationProcessHelper.registerDefaults();
 		HorizontalBlockAttachmentHelper.registerDefaults();
 		VerticalBlockAttachmentHelper.registerDefaults();
+		// Saw recipe results modifiers
+		StateDependentSawRecipeHelper.registerDefaults();
 
 		LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
 			if (!source.isBuiltin()) {

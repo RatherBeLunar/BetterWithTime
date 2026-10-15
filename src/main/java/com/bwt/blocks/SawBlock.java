@@ -2,10 +2,10 @@ package com.bwt.blocks;
 
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.items.BwtItems;
-import com.bwt.recipes.BlockIngredient;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.saw.SawRecipe;
 import com.bwt.recipes.saw.SawRecipeInput;
+import com.bwt.recipes.saw.StateDependentSawRecipeHelper;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockUtils;
@@ -30,8 +30,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -144,29 +142,29 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     }
 
     @Override
-    public void tick(BlockState state, ServerLevel level, BlockPos pos, net.minecraft.util.RandomSource random) {
-        super.tick(state, level, pos, random);
+    public void tick(BlockState state, ServerLevel serverLevel, BlockPos pos, net.minecraft.util.RandomSource random) {
+        super.tick(state, serverLevel, pos, random);
 
-        boolean bReceivingPower = isReceivingMechPower(level, state, pos);
-        boolean bOn = isMechPowered(state);
+        boolean receivingPower = isReceivingMechPower(serverLevel, state, pos);
+        boolean isOn = isMechPowered(state);
 
-        if (bOn != bReceivingPower) {
-            emitSawParticles(level, state, pos);
+        if (isOn != receivingPower) {
+            emitSawParticles(serverLevel, state, pos);
 
-            level.setBlockAndUpdate(pos, state.setValue(MECH_POWERED, bReceivingPower));
+            serverLevel.setBlockAndUpdate(pos, state.setValue(MECH_POWERED, receivingPower));
 
-            if (bReceivingPower) {
-                level.playSound(null, pos, BwtSoundEvents.SAW_INITIALIZE, SoundSource.BLOCKS, 1f, 1);
+            if (receivingPower) {
+                serverLevel.playSound(null, pos, BwtSoundEvents.SAW_INITIALIZE, SoundSource.BLOCKS, 1f, 1);
                 // the saw doesn't cut on the update in which it is powered, so check if another
                 // update is required
-                scheduleUpdateIfRequired(level, state, pos);
+                scheduleUpdateIfRequired(serverLevel, state, pos);
             }
             else {
-                level.playSound(null, pos, BwtSoundEvents.SAW_DEPOWERED, SoundSource.BLOCKS, 1f, 1);
+                serverLevel.playSound(null, pos, BwtSoundEvents.SAW_DEPOWERED, SoundSource.BLOCKS, 1f, 1);
             }
         }
-        else if (bOn) {
-            sawBlockToFront(level, state, pos);
+        else if (isOn) {
+            sawBlockToFront(serverLevel, state, pos);
         }
     }
 
@@ -241,18 +239,16 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
         }
     }
 
-    protected void sawBlockToFront(Level level, BlockState state, BlockPos pos) {
-        BlockPos targetPos = pos.relative(state.getValue(FACING));
-        BlockState targetState = level.getBlockState(targetPos);
+    protected void sawBlockToFront(ServerLevel serverLevel, BlockState sawState, BlockPos pos) {
+        BlockPos targetPos = pos.relative(sawState.getValue(FACING));
+        BlockState targetState = serverLevel.getBlockState(targetPos);
 
         if (targetState.is(BlockTags.AIR)) {
             return;
         }
 
         SawRecipeInput recipeInput = new SawRecipeInput(targetState.getBlock());
-        if (!(level instanceof ServerLevel serverLevel)) {
-            return;
-        }
+
         Optional<SawRecipe> recipe = serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.SAW_RECIPE_TYPE,
                 recipeInput,
@@ -277,18 +273,14 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             return;
         }
 
-        List<ItemStack> results = recipe.get().getResults();
-        BlockIngredient blockIngredient = recipe.get().getIngredient();
-
         // The companion slab is the only partial block that doesn't just get cut regardless of collision
-        if (blockIngredient.test(BwtBlocks.companionSlabBlock) && state.getValue(FACING).getAxis().isHorizontal()) {
+        if (targetState.is(BwtBlocks.companionSlabBlock) && sawState.getValue(FACING).getAxis().isHorizontal()) {
             return;
         }
 
-        if (blockIngredient.test(BwtBlocks.companionCubeBlock)) {
+        if (targetState.is(BwtBlocks.companionCubeBlock)) {
             serverLevel.playSound(null, pos, BwtSoundEvents.COMPANION_CUBE_DEATH, SoundSource.BLOCKS, 1, 1);
-            if (state.getValue(FACING).getAxis().isHorizontal()) {
-                results.getFirst().setCount(1);
+            if (sawState.getValue(FACING).getAxis().isHorizontal()) {
                 serverLevel.setBlockAndUpdate(targetPos, BwtBlocks.companionSlabBlock.defaultBlockState());
             }
             else {
@@ -299,9 +291,7 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
             serverLevel.destroyBlock(targetPos, false);
         }
 
-        targetState.getOptionalValue(BlockStateProperties.SLAB_TYPE).filter(property -> property.equals(SlabType.DOUBLE)).ifPresent((property) ->
-            results.forEach(stack -> stack.setCount(stack.getCount() * 2))
-        );
+        List<ItemStack> results = StateDependentSawRecipeHelper.getResults(serverLevel, targetState, targetPos, sawState, recipe.get());
 
         Containers.dropContents(serverLevel, targetPos, NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0])));
     }
