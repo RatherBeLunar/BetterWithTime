@@ -12,7 +12,7 @@ public class BwtBlockTags {
     public static final TagKey<Block> BLOCK_DISPENSER_INHALE_VOID = TagKey.create(Registries.BLOCK, Id.of("block_dispenser_inhale_void"));
     // Crops that, when fully grown one block in front of and below (diagonally down from) a Detector Block's face, will trigger the DB.
     public static final TagKey<Block> DETECTABLE_SMALL_CROPS = TagKey.create(Registries.BLOCK, Id.of("detectable_small_crops"));
-    // When placed in front of a powered saw, neither the saw nor the place block will break
+    // When placed in front of a powered saw, neither the saw nor the placed block will break
     public static final TagKey<Block> SURVIVES_SAW_BLOCK = TagKey.create(Registries.BLOCK, Id.of("survives_saw_block"));
     // When placed in front of a powered saw, the block will be removed with no drops
     public static final TagKey<Block> SAW_BREAKS_NO_DROPS = TagKey.create(Registries.BLOCK, Id.of("saw_breaks_no_drops"));
