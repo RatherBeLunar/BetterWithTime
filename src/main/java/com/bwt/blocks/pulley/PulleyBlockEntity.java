@@ -6,6 +6,7 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.RopeBlock;
 import com.bwt.entities.MovingRopeEntity;
 import com.bwt.items.BwtItems;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
@@ -450,7 +451,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }

@@ -2,6 +2,7 @@ package com.bwt.utils;
 
 import com.bwt.mixin.accessor.RecipeManagerAccessorMixin;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.IngredientsWithCountRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
@@ -58,14 +59,14 @@ public class OrderedRecipeMatcher {
         return recipeMap.getRecipesFor(recipeType, recipeInput, serverLevel);
     }
 
-    public static <I extends RecipeInput, R extends Recipe<I>> void getFirstRecipe(List<RecipeHolder<R>> matches, NonNullList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
+    public static <I extends RecipeInput, R extends IngredientsWithCountRecipe<I>> void getFirstRecipe(List<RecipeHolder<R>> matches, NonNullList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
         // For each inventory item, in order
         for (ItemStack inventoryStack : inventoryItems) {
             // Filter down to recipes that contain that item in its ingredients.
             // If there are multiple that match the first ingredient, get the one with the most ingredients
             Iterator<RecipeHolder<R>> matchIterator = matches.stream()
-                    .filter(match -> match.value().placementInfo().ingredients().stream().anyMatch(ingredient -> ingredient.test(inventoryStack)))
-                    .sorted(Comparator.comparing((RecipeHolder<R> match) -> match.value().placementInfo().ingredients().size()).reversed())
+                    .filter(match -> match.value().getIngredientsWithCount().stream().anyMatch(ingredient -> ingredient.ingredient().test(inventoryStack)))
+                    .sorted(Comparator.comparing((RecipeHolder<R> match) -> match.value().getIngredientsWithCount().size()).reversed())
                     .iterator();
             while (matchIterator.hasNext()) {
                 R match = matchIterator.next().value();

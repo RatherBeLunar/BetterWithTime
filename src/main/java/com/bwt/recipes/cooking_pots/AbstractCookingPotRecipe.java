@@ -1,6 +1,7 @@
 package com.bwt.recipes.cooking_pots;
 
 import com.bwt.generation.SharedRecipeProvider;
+import com.bwt.recipes.IngredientsWithCountRecipe;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
@@ -39,7 +40,7 @@ import java.util.*;
 import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecipeInput> {
+public abstract class AbstractCookingPotRecipe implements IngredientsWithCountRecipe<CookingPotRecipeInput> {
     protected final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type;
     protected final String group;
     protected final CookingPotRecipeCategory category;

@@ -2,6 +2,7 @@ package com.bwt.recipes.mill_stone;
 
 import com.bwt.generation.SharedRecipeProvider;
 import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.IngredientsWithCountRecipe;
 import com.bwt.recipes.IngredientWithCount;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
@@ -33,7 +34,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
+public class MillStoneRecipe implements IngredientsWithCountRecipe<MillStoneRecipeInput> {
     protected final String group;
     protected final CraftingBookCategory category;
     final List<IngredientWithCount> ingredients;
@@ -71,6 +72,7 @@ public class MillStoneRecipe implements Recipe<MillStoneRecipeInput> {
         return defaultedList;
     }
 
+    @Override
     public List<IngredientWithCount> getIngredientsWithCount() {
         return ingredients;
     }

@@ -9,6 +9,7 @@ import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.FireDataCluster;
 import com.bwt.utils.OrderedRecipeMatcher;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -20,6 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -288,10 +290,11 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }
+
         @Override
         public void setChanged() {
             AbstractCookingPotBlockEntity.this.setChanged();
@@ -330,6 +333,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                 }
             }
             transaction.commit();
+            setChanged();
             return true;
         }
     }

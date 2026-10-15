@@ -10,6 +10,7 @@ import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
 import com.bwt.recipes.soul_bottling.SoulBottlingRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.SimpleSingleStackInventory;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -537,7 +538,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
     }
 
-    public class HopperInventory extends SimpleContainer {
+    public class HopperInventory extends SlotPreservingSimpleContainer {
         public HopperInventory(int size) {
             super(size);
         }

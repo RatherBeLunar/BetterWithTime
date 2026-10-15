@@ -8,6 +8,7 @@ import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import com.bwt.recipes.mill_stone.MillStoneRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.OrderedRecipeMatcher;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -256,7 +257,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }
