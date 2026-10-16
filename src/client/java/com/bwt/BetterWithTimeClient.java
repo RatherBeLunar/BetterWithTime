@@ -6,10 +6,9 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.rendering.broadhead_arrow.BroadheadArrowEntityRenderer;
 import com.bwt.rendering.canvas.CanvasRenderer;
 import com.bwt.rendering.cooking_pot.CookingPotEntityRenderer;
-import com.bwt.rendering.cooking_pot.CookingPotFillModel;
 import com.bwt.rendering.dynamite.DynamiteEntityRenderer;
 import com.bwt.rendering.mech_hopper.MechHopperBlockEntityRenderer;
-import com.bwt.rendering.mech_hopper.MechHopperFillModel;
+import com.bwt.rendering.ContainerFillLayerModel;
 import com.bwt.rendering.mining_charge.MiningChargeEntityRenderer;
 import com.bwt.rendering.moving_rope_platform.MovingRopeEntityRenderer;
 import com.bwt.rendering.rotted_arrow.RottedArrowEntityRenderer;
@@ -45,9 +44,7 @@ import net.minecraft.world.level.biome.Biome;
 public class BetterWithTimeClient implements ClientModInitializer {
 	public static final ModelLayerLocation MODEL_WINDMILL_LAYER = new ModelLayerLocation(Id.of("windmill"), "main");
 	public static final ModelLayerLocation MODEL_WATER_WHEEL_LAYER = new ModelLayerLocation(Id.of("water_wheel"), "main");
-	public static final ModelLayerLocation MECH_HOPPER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
-	public static final ModelLayerLocation CAULDRON_FILL_LAYER = new ModelLayerLocation(Id.of("cauldron_fill"), "main");
-	public static final ModelLayerLocation CRUCIBLE_FILL_LAYER = new ModelLayerLocation(Id.of("crucible_fill"), "main");
+	public static final ModelLayerLocation CONTAINER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
 
 	@Override
 	public void onInitializeClient() {
@@ -67,9 +64,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRendererRegistry.register(BwtEntities.canvasEntity, CanvasRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(CAULDRON_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(CRUCIBLE_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(CONTAINER_FILL_LAYER, ContainerFillLayerModel::getTexturedModelData);
 		SpecialModelRenderers.ID_MAPPER.put(
                 Id.of("unfired_decorated_pot_with_sherds"),
 				UnfiredDecoratedPotSpecialRenderer.Unbaked.MAP_CODEC

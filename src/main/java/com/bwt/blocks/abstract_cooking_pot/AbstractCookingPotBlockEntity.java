@@ -37,6 +37,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -342,7 +343,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         try (Transaction transaction = Transaction.openOuter()) {
             for (SingleSlotStorage<ItemVariant> slot : inventoryWrapper.getSlots()) {
                 ItemVariant resource = slot.getResource();
-                if (resource.toStack().getComponents().get(DataComponents.FOOD) == null) {
+                if (resource.toStack().getComponents().get(DataComponents.FOOD) == null && !resource.toStack().is(Items.CAKE)) {
                     continue;
                 }
                 long count = slot.extract(resource, resource.getItem().getDefaultMaxStackSize(), transaction);

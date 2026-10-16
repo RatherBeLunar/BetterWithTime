@@ -2,6 +2,7 @@ package com.bwt.rendering.mech_hopper;
 
 import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.mech_hopper.MechHopperBlockEntity;
+import com.bwt.rendering.ContainerFillLayerModel;
 import com.bwt.utils.Id;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -28,11 +29,11 @@ import java.util.Optional;
 public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHopperBlockEntity> {
     private final BlockRenderDispatcher manager;
     private static final ResourceLocation FILL_TEXTURE = Id.of("textures/block/hopper_fill.png");
-    protected final MechHopperFillModel model;
+    protected final ContainerFillLayerModel model;
 
     public MechHopperBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.manager = ctx.getBlockRenderDispatcher();
-        this.model = new MechHopperFillModel(ctx.bakeLayer(BetterWithTimeClient.MECH_HOPPER_FILL_LAYER));
+        this.model = new ContainerFillLayerModel(ctx.bakeLayer(BetterWithTimeClient.CONTAINER_FILL_LAYER));
     }
 
     protected ResourceLocation getFilterTexture(Item filterItem) {
