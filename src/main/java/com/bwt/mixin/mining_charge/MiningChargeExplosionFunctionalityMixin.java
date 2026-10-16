@@ -45,7 +45,7 @@ public abstract class MiningChargeExplosionFunctionalityMixin {
         ServerExplosion serverExplosion = (ServerExplosion) (Object) this;
         if (serverExplosion.getDirectSourceEntity() instanceof MiningChargeEntity miningChargeEntity) {
             Set<BlockPos> explodedPositions = getMiningChargeExplodedPositions(miningChargeEntity, serverExplosion);
-            cir.setReturnValue(explodedPositions.stream().toList());
+            cir.setReturnValue(new ObjectArrayList<>(explodedPositions));
         }
     }
 
@@ -65,10 +65,10 @@ public abstract class MiningChargeExplosionFunctionalityMixin {
         // offset the blast so that it is centered on the block to which we are attached
         BlockPos targetPos = entityBlockPos.relative(miningChargeEntity.getNearestViewDirection().getOpposite());
 
-        if (canDestroyBlock(level, serverExplosion, damageCalculator, targetPos)) {
+        if (!canDestroyBlock(level, serverExplosion, damageCalculator, targetPos)) {
             // we are attached to a block that's too tough to destroy.  Center the blast on the charge's
             // position
-            targetPos = BlockPos.containing(serverExplosion.center());
+            targetPos = entityBlockPos;
         }
 
         RadiusAroundBlockStream

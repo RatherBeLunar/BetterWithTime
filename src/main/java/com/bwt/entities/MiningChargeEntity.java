@@ -148,7 +148,7 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
     }
 
     public void createMiningChargeExplosion(ServerLevel serverLevel, float power) {
-        Vec3 offsetPos = this.blockPosition().relative(getNearestViewDirection().getOpposite()).getCenter();
+        Vec3 offsetPos = this.blockPosition().getCenter();
         serverLevel.explode(
                 this,
                 serverLevel.damageSources().explosion(this, this.getOwner()),

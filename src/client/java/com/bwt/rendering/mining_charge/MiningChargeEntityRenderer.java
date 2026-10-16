@@ -34,7 +34,7 @@ public class MiningChargeEntityRenderer extends EntityRenderer<MiningChargeEntit
         poseStack.mulPose(Axis.YP.rotationDegrees(-90.0f));
         poseStack.translate(-0.5f, -0.5f, 0.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
-        TntMinecartRenderer.renderWhiteSolidBlock(this.blockRenderManager, renderState.blockState, poseStack, multiBufferSource, light, fuse / 5 % 2 == 0);
+        TntMinecartRenderer.renderWhiteSolidBlock(this.blockRenderManager, renderState.blockState, poseStack, multiBufferSource, light,(int) fuse / 5 % 2 == 0);
         poseStack.popPose();
         super.render(renderState, poseStack, multiBufferSource, light);
     }
