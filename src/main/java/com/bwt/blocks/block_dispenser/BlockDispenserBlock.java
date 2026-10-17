@@ -110,23 +110,25 @@ public class BlockDispenserBlock extends DispenserBlock {
         BoatDispenserBehavior boatDispenserBehavior = new BoatDispenserBehavior();
         Stream.of(
                 Items.OAK_BOAT,
-                Items.SPRUCE_BOAT,
-                Items.BIRCH_BOAT,
-                Items.JUNGLE_BOAT,
-                Items.DARK_OAK_BOAT,
-                Items.ACACIA_BOAT,
-                Items.CHERRY_BOAT,
-                Items.MANGROVE_BOAT,
-                Items.BAMBOO_RAFT,
                 Items.OAK_CHEST_BOAT,
+                Items.SPRUCE_BOAT,
                 Items.SPRUCE_CHEST_BOAT,
+                Items.BIRCH_BOAT,
                 Items.BIRCH_CHEST_BOAT,
+                Items.JUNGLE_BOAT,
                 Items.JUNGLE_CHEST_BOAT,
+                Items.DARK_OAK_BOAT,
                 Items.DARK_OAK_CHEST_BOAT,
+                Items.ACACIA_BOAT,
                 Items.ACACIA_CHEST_BOAT,
+                Items.CHERRY_BOAT,
                 Items.CHERRY_CHEST_BOAT,
+                Items.MANGROVE_BOAT,
                 Items.MANGROVE_CHEST_BOAT,
-                Items.BAMBOO_CHEST_RAFT
+                Items.BAMBOO_RAFT,
+                Items.BAMBOO_CHEST_RAFT,
+                Items.PALE_OAK_BOAT,
+                Items.PALE_OAK_CHEST_BOAT
         ).forEach(item -> registerItemDispenseBehavior(item, boatDispenserBehavior));
 
         registerItemDispenseBehavior(Items.MINECART, new MinecartDispenserBehavior(EntityType.MINECART));
