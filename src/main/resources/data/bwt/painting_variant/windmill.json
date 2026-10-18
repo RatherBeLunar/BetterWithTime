@@ -1,5 +1,13 @@
 {
   "asset_id": "bwt:windmill",
+  "author": {
+    "color": "gray",
+    "translate": "canvas.bwt.windmill.author"
+  },
+  "title": {
+    "color": "yellow",
+    "translate": "canvas.bwt.windmill.title"
+  },
   "height": 5,
   "width": 4
 }

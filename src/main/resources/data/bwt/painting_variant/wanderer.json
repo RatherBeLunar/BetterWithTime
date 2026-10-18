@@ -1,5 +1,13 @@
 {
   "asset_id": "bwt:wanderer",
+  "author": {
+    "color": "gray",
+    "translate": "canvas.bwt.wanderer.author"
+  },
+  "title": {
+    "color": "yellow",
+    "translate": "canvas.bwt.wanderer.title"
+  },
   "height": 4,
   "width": 6
 }
