@@ -181,7 +181,17 @@ public class ModelGenerator extends FabricModelProvider {
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.ropeCoilBlock, TexturedModel.COLUMN);
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.paddingBlock, TexturedModel.CUBE);
         blockStateModelGenerator.createTrivialBlock(BwtBlocks.wickerBlock, TexturedModel.CUBE);
-        blockStateModelGenerator.createRotatedVariantBlock(BwtBlocks.dungBlock);
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(
+                BwtBlocks.dungBlock,
+                BlockModelGenerators.createRotatedVariants(
+                        plainModel(
+                                TexturedModel.GLAZED_TERRACOTTA.create(
+                                        BwtBlocks.dungBlock,
+                                        blockStateModelGenerator.modelOutput
+                                )
+                        )
+                )
+        ));
         blockStateModelGenerator.blockStateOutput.accept(createSlab(
                 BwtBlocks.wickerSlabBlock,
                 plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.wickerSlabBlock)),
