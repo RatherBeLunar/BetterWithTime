@@ -26,15 +26,10 @@ public abstract class SkeletonRottenArrowMixin extends Monster {
                     target = "Lnet/minecraft/world/entity/monster/AbstractSkeleton;getProjectile(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"
             )
     )
-    protected ItemStack rotArrows(ItemStack original) {
+    protected ItemStack bwt$rotArrows(ItemStack original) {
         if (original.is(Items.ARROW)) {
             return original.transmuteCopy(BwtItems.rottedArrowItem, original.getCount());
         }
         return original;
-    }
-
-    @Override
-    protected void dropAllDeathLoot(ServerLevel serverLevel, DamageSource source) {
-        super.dropAllDeathLoot(serverLevel, source);
     }
 }

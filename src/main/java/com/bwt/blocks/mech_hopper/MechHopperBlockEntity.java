@@ -20,7 +20,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -33,7 +32,6 @@ import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -286,7 +284,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (inventoryBelow == null) {
             return;
         }
-        if (VanillaHopperInvoker.isInventoryFull(inventoryBelow, Direction.UP)) {
+        if (VanillaHopperInvoker.bwt$isFullContainer(inventoryBelow, Direction.UP)) {
             return;
         }
         stackCountToDrop = Math.min(stackCountToDrop, inventoryBelow.getMaxStackSize());

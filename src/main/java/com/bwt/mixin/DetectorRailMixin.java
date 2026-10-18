@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.DetectorRailBlock;
 @Mixin(DetectorRailBlock.class)
 public abstract class DetectorRailMixin {
     @ModifyVariable(method = "getInteractingMinecartOfType(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Ljava/lang/Class;Ljava/util/function/Predicate;)Ljava/util/List;", at = @At(value = "HEAD"), index = 4, argsOnly = true)
-    public Predicate<Entity> getCarts(Predicate<Entity> entityPredicate, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos) {
+    public Predicate<Entity> bwt$getCarts(Predicate<Entity> entityPredicate, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos) {
         if (level.getBlockState(pos).is(BwtBlocks.stoneDetectorRailBlock)) {
             return entityPredicate.and(entity -> entity.isVehicle() || (entity instanceof AbstractMinecart && !(entity instanceof Minecart)));
         }

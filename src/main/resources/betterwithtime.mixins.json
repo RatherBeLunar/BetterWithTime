@@ -20,7 +20,6 @@
     "WorldEntityCollisionsMixin",
     "accessor.AbstractArrowAccessorMixin",
     "accessor.BoatItemAccessorMixin",
-    "accessor.CraftingInventoryAccessorMixin",
     "accessor.DecoratedPotPatternsAccessorMixin",
     "accessor.DyeItemAccessorMixin",
     "accessor.IngredientValuesAccessorMixin",

@@ -16,7 +16,7 @@ public abstract class NetherWartGrowthMixin {
      * Don't grow nether wart unless in the nether or a similar dimension
      */
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+    public void bwt$randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
         if (!level.dimensionType().ultraWarm()) {
             ci.cancel();
         }

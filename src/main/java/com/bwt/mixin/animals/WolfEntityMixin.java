@@ -48,7 +48,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
 
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    public void initDataTracker(SynchedEntityData.Builder builder, CallbackInfo ci) {
+    public void bwt$defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
         builder.define(IS_FED, false);
     }
 
@@ -65,7 +65,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))
-    public void addGoal(CallbackInfo ci) {
+    public void bwt$addGoal(CallbackInfo ci) {
         this.getGoalSelector().addGoal(1, new PickUpBreedingItemWhileSittingGoal(
                 this,
                 1.7,
@@ -83,7 +83,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    public void interactMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void bwt$mobInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (!this.isBaby() && this.isTame() && this.isFood(itemStack) && !bwt$isFed()) {
             if (this.level().isClientSide()) {
@@ -99,7 +99,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "isFood", at = @At("HEAD"), cancellable = true)
-    public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    public void bwt$isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.is(BwtItems.kibbleItem)) {
             cir.setReturnValue(true);
             return;
@@ -110,7 +110,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    public void tick(CallbackInfo ci) {
+    public void bwt$tick(CallbackInfo ci) {
         Level level = level();
         RandomSource random = level.getRandom();
         if (level.isClientSide) {

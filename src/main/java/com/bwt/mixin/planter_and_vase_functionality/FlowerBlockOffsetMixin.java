@@ -1,12 +1,9 @@
 package com.bwt.mixin.planter_and_vase_functionality;
 
-import com.bwt.tags.BwtBlockTags;
 import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.FlowerBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateHolder;
@@ -27,7 +24,7 @@ public abstract class FlowerBlockOffsetMixin extends StateHolder<Block, BlockSta
     }
 
     @Inject(method="getOffset", at = @At("HEAD"), cancellable = true)
-    public void getModelOffset(BlockPos blockPos, CallbackInfoReturnable<Vec3> cir) {
+    public void bwt$getOffset(BlockPos blockPos, CallbackInfoReturnable<Vec3> cir) {
 //        if (this.getBlock() instanceof FlowerBlock && level.getBlockState(blockPos.below()).is(BwtBlockTags.VASES)) {
 //            cir.setReturnValue(Vec3.ZERO);
 //        }

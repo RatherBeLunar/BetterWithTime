@@ -22,7 +22,7 @@ public abstract class KilnBlockCookingRenderLayer extends RenderType {
     private static final Function<ResourceLocation, RenderType> KILN_COOKING_RENDER_FUNCTION = Util.memoize(
             resourceLocation -> {
                 RenderStateShard.TextureStateShard textureStateShard = new RenderStateShard.TextureStateShard(resourceLocation, TriState.FALSE, false);
-                return RenderTypeAccessorMixin.create(
+                return RenderTypeAccessorMixin.bwt$create(
                         "kiln_cooking",
                         1536,
                         false,

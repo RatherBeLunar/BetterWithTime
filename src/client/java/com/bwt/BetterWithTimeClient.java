@@ -112,7 +112,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(KilnBlockCookingProgressPayload.ID, (payload, context) ->
 			context.client().execute(() -> {
 				if (context.client().levelRenderer instanceof KilnBlockCookProgressSetter cookProgressSetter) {
-					cookProgressSetter.betterWithTime$setKilnBlockCookingInfo(payload.blockPos(), payload.progress());
+					cookProgressSetter.bwt$setKilnBlockCookingInfo(payload.blockPos(), payload.progress());
 				}
 			})
 		);

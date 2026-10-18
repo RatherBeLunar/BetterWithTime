@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PitcherCropBlock.class)
 public abstract class PitcherPlantPlantOnMixin {
     @Inject(method = "mayPlaceOn", at = @At("HEAD"), cancellable = true)
-    public void canPlantOnTop(BlockState floor, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    public void bwt$mayPlaceOn(BlockState floor, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         cir.setReturnValue(floor.is(BwtBlockTags.CROPS_CAN_PLANT_ON));
     }
 }

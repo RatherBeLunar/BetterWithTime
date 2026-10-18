@@ -18,7 +18,7 @@ public abstract class PigEntityMixin extends Animal implements MobEntityAccessor
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))
-    public void addGoal(CallbackInfo ci) {
+    public void bwt$addGoal(CallbackInfo ci) {
         this.getGoalSelector().addGoal(3, new GoToAndPickUpBreedingItemGoal(this, 6, 1.5, 1));
     }
 }

@@ -36,8 +36,7 @@ public abstract class LevelRendererMixin implements KilnBlockCookProgressSetter 
     public abstract ClientLevel getLevel();
 
     @Unique
-    @Override
-    public void betterWithTime$setKilnBlockCookingInfo(BlockPos pos, int stage) {
+    public void bwt$setKilnBlockCookingInfo(BlockPos pos, int stage) {
         if (stage >= 0 && stage < 10) {
             KilnBlockCookingInfo kilnBlockCookingInfo = this.kilnBlockCookingInfos.get(pos.asLong());
 
