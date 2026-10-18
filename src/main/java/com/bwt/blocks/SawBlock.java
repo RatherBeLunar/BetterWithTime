@@ -19,6 +19,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -169,21 +170,21 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        if (!isMechPowered(state)) {
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier);
+        if (!isMechPowered(blockState)) {
             return;
         }
         if (!(entity instanceof LivingEntity livingEntity)) {
             return;
         }
         // construct bounding box from saw
-        if (BLADE_SHAPES.get(state.getValue(FACING).get3DDataValue()).bounds().move(pos)
+        if (BLADE_SHAPES.get(blockState.getValue(FACING).get3DDataValue()).bounds().move(blockPos)
                 .intersects(livingEntity.getLocalBoundsForPose(entity.getPose()).move(livingEntity.position()))) {
 
             DamageSource damageSource = BwtDamageTypes.of(level, BwtDamageTypes.SAW_DAMAGE_TYPE);
             if (livingEntity.hurtOrSimulate(damageSource, 4.0f)) {
-                level.playSound(null, pos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1);
+                level.playSound(null, blockPos, BwtSoundEvents.SAW_CUT, SoundSource.BLOCKS, 1f, 1);
             }
         }
     }

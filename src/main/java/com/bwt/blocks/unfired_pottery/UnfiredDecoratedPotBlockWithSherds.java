@@ -9,6 +9,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
@@ -126,17 +127,19 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
         if (moved) {
             return;
         }
-        if (!newState.is(state.getBlock()) && !newState.isAir()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockState newState = serverLevel.getBlockState(blockPos);
+
+        if (!newState.is(blockState.getBlock()) && !newState.isAir()) {
+            BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
             if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-                Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultInstance).toArray(ItemStack[]::new)));
+                Containers.dropContents(serverLevel, blockPos, NonNullList.of(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultInstance).toArray(ItemStack[]::new)));
             }
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, false);
     }
 
 //    @Override
@@ -192,20 +195,6 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
             level.setBlock(pos, BwtBlocks.unfiredDecoratedPotBlock.defaultBlockState(), Block.UPDATE_CLIENTS, 0);
         }
         return InteractionResult.SUCCESS;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        PotDecorations sherds = stack.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
-        if (!sherds.equals(PotDecorations.EMPTY)) {
-            tooltip.add(CommonComponents.EMPTY);
-            Stream.of(sherds.front(), sherds.left(), sherds.right(), sherds.back())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(Item::getDefaultInstance)
-                    .forEach(sherd -> tooltip.add(sherd.getHoverName().plainCopy().withStyle(ChatFormatting.GRAY)));
-        }
     }
 
     @Override

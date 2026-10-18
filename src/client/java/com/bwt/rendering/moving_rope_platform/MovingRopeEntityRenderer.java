@@ -49,14 +49,12 @@ public class MovingRopeEntityRenderer extends EntityRenderer<MovingRopeEntity, M
             poseStack.scale(1.001f, 1.001f, 1.001f);
             this.blockRenderManager.getModelRenderer().tesselateBlock(
                     tintGetter,
-                    this.blockRenderManager.getBlockModel(ropeState),
+                    this.blockRenderManager.getBlockModel(ropeState).collectParts(RandomSource.create(ropeState.getSeed(renderState.blockPosition))),
                     ropeState,
                     blockPos.above(i),
                     poseStack,
                     multiBufferSource.getBuffer(ItemBlockRenderTypes.getMovingBlockRenderType(ropeState)),
                     false,
-                    RandomSource.create(),
-                    ropeState.getSeed(renderState.blockPosition),
                     OverlayTexture.NO_OVERLAY
             );
             poseStack.popPose();
@@ -69,14 +67,12 @@ public class MovingRopeEntityRenderer extends EntityRenderer<MovingRopeEntity, M
             poseStack.translate(offset.getX(), offset.getY(), offset.getZ());
             this.blockRenderManager.getModelRenderer().tesselateBlock(
                     tintGetter,
-                    this.blockRenderManager.getBlockModel(connectedBlockState),
+                    this.blockRenderManager.getBlockModel(connectedBlockState).collectParts(RandomSource.create(ropeState.getSeed(renderState.blockPosition))),
                     connectedBlockState,
                     blockPos.offset(offset),
                     poseStack,
                     multiBufferSource.getBuffer(RenderType.cutout()),
                     false,
-                    RandomSource.create(),
-                    connectedBlockState.getSeed(renderState.blockPosition),
                     OverlayTexture.NO_OVERLAY
             );
             poseStack.popPose();

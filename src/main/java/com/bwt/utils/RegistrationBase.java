@@ -100,20 +100,7 @@ public abstract class RegistrationBase {
     }
 
     public static <T extends Item> T registerItem(ResourceKey<Item> resourceKey, Function<Item.Properties, T> function, Item.Properties properties) {
-        return registerItem(
-                resourceKey,
-                function,
-                properties,
-                Item.Properties::setId
-        );
-    }
-
-    public static <T extends Item, P extends Item.Properties> T registerItem(String string, Function<P, T> function, P properties, BiFunction<P, ResourceKey<Item>, P> idSetter) {
-        return registerItem(itemKey(string), function, properties, idSetter);
-    }
-
-    public static <T extends Item, P extends Item.Properties> T registerItem(ResourceKey<Item> resourceKey, Function<P, T> function, P properties, BiFunction<P, ResourceKey<Item>, P> idSetter) {
-        properties = idSetter.apply(properties, resourceKey);
+        properties = properties.setId(resourceKey);
         T item = function.apply(properties);
         if (item instanceof BlockItem blockItem) {
             blockItem.registerBlocks(Item.BY_BLOCK, item);

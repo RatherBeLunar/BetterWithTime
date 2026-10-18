@@ -23,6 +23,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
+
 import java.util.Optional;
 
 @Environment(value=EnvType.CLIENT)
@@ -44,18 +46,12 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
     }
 
     @Override
-    public void render(MechHopperBlockEntity hopperBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumerProvider, int light, int uv) {
+    public void render(MechHopperBlockEntity hopperBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource vertexConsumerProvider, int light, int uv, Vec3 vec3) {
         Level level = hopperBlockEntity.getLevel();
         if (level == null) {
             return;
         }
-        BlockPos pos = hopperBlockEntity.getBlockPos();
-        BlockState state = level.getBlockState(pos);
 
-        // Render the hopper itself
-        poseStack.pushPose();
-        this.renderModel(pos, state, poseStack, vertexConsumerProvider, level, false, uv);
-        poseStack.popPose();
         // Render the fill texture
         if (hopperBlockEntity.slotsOccupied > 0) {
             VertexConsumer vertexConsumer = vertexConsumerProvider.getBuffer(this.model.renderType(FILL_TEXTURE));
@@ -74,12 +70,6 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
             this.model.renderToBuffer(poseStack, vertexConsumer, light, OverlayTexture.pack(0.0f, false), -1);
             poseStack.popPose();
         }
-    }
-
-    private void renderModel(BlockPos pos, BlockState state, PoseStack matrices, MultiBufferSource vertexConsumers, Level level, boolean cull, int overlay) {
-        RenderType renderLayer = ItemBlockRenderTypes.getChunkRenderType(state);
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-        this.manager.getModelRenderer().tesselateBlock(level, this.manager.getBlockModel(state), state, pos, matrices, vertexConsumer, cull, RandomSource.create(), state.getSeed(pos), overlay);
     }
 
     @Override

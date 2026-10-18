@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 public class MiningChargeEntity extends Entity implements TraceableEntity {
     private static final EntityDataAccessor<Integer> FUSE = SynchedEntityData.defineId(MiningChargeEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<BlockState> BLOCK_STATE = SynchedEntityData.defineId(MiningChargeEntity.class, EntityDataSerializers.BLOCK_STATE);
-    private static final int DEFAULT_FUSE = 80;
+    private static final short DEFAULT_FUSE = 80;
 
     @Nullable
     private LivingEntity causingEntity;
@@ -171,11 +171,13 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
 
     @Override
     protected void readAdditionalSaveData(CompoundTag nbt) {
-        setFuse(nbt.getShort("fuse"));
-        if (nbt.contains("block_state", Tag.TAG_COMPOUND)) {
-            this.setBlockState(NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), nbt.getCompound("block_state")));
-        }
-        setFacing(Direction.from3DDataValue(nbt.getInt("facing")));
+        setFuse(nbt.getShortOr("fuse", DEFAULT_FUSE));
+        nbt.getCompound("block_state")
+                .map(compoundTag -> NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundTag))
+                .ifPresent(this::setBlockState);
+        nbt.getInt("facing")
+                .map(Direction::from3DDataValue)
+                .ifPresent(this::setFacing);
     }
 
     @Override

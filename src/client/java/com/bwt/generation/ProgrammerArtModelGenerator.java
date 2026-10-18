@@ -6,8 +6,6 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
-import net.minecraft.client.data.models.blockstates.Variant;
-import net.minecraft.client.data.models.blockstates.VariantProperties;
 import net.minecraft.client.data.models.model.ModelLocationUtils;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
@@ -30,39 +28,35 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.slatsBlock);
         generatePaneBlock(blockStateModelGenerator, BwtBlocks.wickerPaneBlock);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator
-                .multiVariant(BwtBlocks.lensBlock,
-                        Variant.variant().with(
-                                VariantProperties.MODEL,
+                .dispatch(BwtBlocks.lensBlock,
+                        plainVariant(
                                 TexturedModel.createDefault(TextureMapping::commandBlock, ModelTemplates.COMMAND_BLOCK)
                                         .create(BwtBlocks.lensBlock, blockStateModelGenerator.modelOutput)
                         )
-                ).with(BlockModelGenerators.createFacingDispatch())
+                ).with(NORTH_DEFAULT_ROTATION)
         );
         blockStateModelGenerator.blockStateOutput.accept(
-                MultiVariantGenerator.multiVariant(
+                MultiVariantGenerator.dispatch(
                         BwtBlocks.sawBlock,
-                        Variant.variant().with(
-                                VariantProperties.MODEL,
-                                ModelLocationUtils.getModelLocation(BwtBlocks.sawBlock)
-                        )
+                        plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.sawBlock))
                 ).with(createUpDefaultRotationStates())
         );
         blockStateModelGenerator.blockStateOutput.accept(
-                MultiVariantGenerator.multiVariant(BwtBlocks.soapBlock, Variant.variant().with(VariantProperties.MODEL, TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE).create(BwtBlocks.soapBlock, blockStateModelGenerator.modelOutput)))
-                        .with(BlockModelGenerators.createFacingDispatch())
+                MultiVariantGenerator.dispatch(BwtBlocks.soapBlock, plainVariant(TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE).create(BwtBlocks.soapBlock, blockStateModelGenerator.modelOutput)))
+                        .with(NORTH_DEFAULT_ROTATION)
         );
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator
-                .multiVariant(BwtBlocks.vineTrapBlock)
+                .dispatch(BwtBlocks.vineTrapBlock)
                 .with(
-                        PropertyDispatch.property(VineTrapBlock.HALF)
-                                .select(Half.BOTTOM, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock)))
-                                .select(Half.TOP, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock)).with(VariantProperties.X_ROT, VariantProperties.Rotation.R180))
+                        PropertyDispatch.initial(VineTrapBlock.HALF)
+                                .select(Half.BOTTOM, plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock)))
+                                .select(Half.TOP, plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.vineTrapBlock)).with(BlockModelGenerators.X_ROT_180))
                 )
         );
         TexturedModel.ORIENTABLE.create(BwtBlocks.bellowsBlock, blockStateModelGenerator.modelOutput);
         ModelTemplates.SLAB_BOTTOM.create(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE.get(BwtBlocks.wickerBlock).getMapping(), blockStateModelGenerator.modelOutput);
         ModelTemplates.SLAB_TOP.create(BwtBlocks.wickerSlabBlock, TexturedModel.CUBE.get(BwtBlocks.wickerBlock).getMapping(), blockStateModelGenerator.modelOutput);
-        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.multiVariant(BwtBlocks.kilnBlock, Variant.variant().with(VariantProperties.MODEL, ModelLocationUtils.getModelLocation(Blocks.BRICKS))));
+        blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(BwtBlocks.kilnBlock, plainVariant(ModelLocationUtils.getModelLocation(Blocks.BRICKS))));
     }
 
     public void generateGrothedNetherrack(BlockModelGenerators blockStateModelGenerator) {
@@ -73,10 +67,9 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.grothedNetherrackBlock, "_top"))
                 .put(TextureSlot.BOTTOM, netherrackTexture);
         blockStateModelGenerator.blockStateOutput.accept(
-                MultiVariantGenerator.multiVariant(
+                MultiVariantGenerator.dispatch(
                         BwtBlocks.grothedNetherrackBlock,
-                        Variant.variant().with(
-                                VariantProperties.MODEL,
+                        plainVariant(
                                 ModelTemplates.CUBE_BOTTOM_TOP.create(
                                         BwtBlocks.grothedNetherrackBlock,
                                         grothedNetherrackTextureMap,

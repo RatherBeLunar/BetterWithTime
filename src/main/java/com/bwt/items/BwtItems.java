@@ -3,9 +3,7 @@ package com.bwt.items;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.WaterWheelEntity;
 import com.bwt.entities.WindmillEntity;
-import com.bwt.entities.CanvasEntity;
 import com.bwt.tags.BwtPaintingVariantTags;
-import com.bwt.utils.LockableItemSettings;
 import com.bwt.utils.RegistrationBase;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
@@ -14,9 +12,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.decoration.PaintingVariant;
@@ -24,11 +19,9 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.Consumables;
-import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.consume_effects.ApplyStatusEffectsConsumeEffect;
 
 import java.util.Comparator;
-import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class BwtItems extends RegistrationBase implements ModInitializer {
@@ -95,9 +88,8 @@ public class BwtItems extends RegistrationBase implements ModInitializer {
     );
     public static final Item netheriteBattleAxeItem = registerItem(
             "netherite_battle_axe",
-            (Function<LockableItemSettings, Item>) properties -> new BattleAxeItem(ToolMaterial.NETHERITE, 3, -2.4f, properties),
-            new LockableItemSettings(),
-            LockableItemSettings::setId
+             properties -> new BattleAxeItem(ToolMaterial.NETHERITE, 3, -2.4f, properties),
+            new Item.Properties().fireResistant()
     );
 	public static final Item ropeItem = registerItem("rope", RopeItem::new);
 	public static final Item rottedArrowItem = registerItem("rotted_arrow", RottedArrowItem::new);
@@ -196,18 +188,17 @@ public class BwtItems extends RegistrationBase implements ModInitializer {
                     .ifPresent(
                             registryWrapper -> addCanvases(
                                     content,
-                                    content.getContext().holders(),
                                     registryWrapper,
                                     registryEntry -> registryEntry.is(BwtPaintingVariantTags.CANVAS_PLACEABLE)
                             )
                     );
         });
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.OP_BLOCKS).register(content -> content.getContext().holders()
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.OP_BLOCKS).register(content ->
+            content.getContext().holders()
                 .lookup(Registries.PAINTING_VARIANT)
                 .ifPresent(
                         registryWrapper -> addCanvases(
                                 content,
-                                content.getContext().holders(),
                                 registryWrapper,
                                 registryEntry -> !registryEntry.is(BwtPaintingVariantTags.CANVAS_PLACEABLE)
                         )
@@ -216,27 +207,20 @@ public class BwtItems extends RegistrationBase implements ModInitializer {
 
     private static void addCanvases(
             FabricItemGroupEntries entries,
-            HolderLookup.Provider registryLookup,
-            HolderLookup.RegistryLookup<PaintingVariant> registryWrapper,
+            HolderLookup.RegistryLookup<PaintingVariant> registryLookup,
             Predicate<Holder<PaintingVariant>> filter
     ) {
-        RegistryOps<Tag> registryOps = registryLookup.createSerializationContext(NbtOps.INSTANCE);
-        registryWrapper.listElements()
+        registryLookup.listElements()
                 .filter(filter)
                 .sorted(Comparator.comparing(
                         Holder::value,
                         Comparator.comparingInt(PaintingVariant::area).thenComparing(PaintingVariant::width)
                 ))
-                .forEach(
-                        canvasVariantEntry -> {
-                            CustomData nbtComponent = CustomData.EMPTY
-                                    .update(registryOps, CanvasEntity.VARIANT_MAP_CODEC, canvasVariantEntry)
-                                    .getOrThrow()
-                                    .update(nbt -> nbt.putString("id", "bwt:canvas"));
-                            ItemStack itemStack = new ItemStack(canvasItem);
-                            itemStack.set(DataComponents.ENTITY_DATA, nbtComponent);
-                            entries.addAfter(canvasItem, itemStack);
-                        }
-                );
+                .forEach(reference -> {
+                    ItemStack itemStack = new ItemStack(canvasItem);
+                    itemStack.set(DataComponents.PAINTING_VARIANT, reference);
+                    entries.addAfter(canvasItem, itemStack);
+                });
+
     }
 }

@@ -91,6 +91,7 @@ public class BwtEntities extends RegistrationBase implements ModInitializer {
                     (EntityType.EntityFactory<CanvasEntity>) CanvasEntity::new,
                     MobCategory.MISC
             )
+            .noLootTable()
             .sized(0.5F, 0.5F)
             .clientTrackingRange(10)
             .updateInterval(Integer.MAX_VALUE)

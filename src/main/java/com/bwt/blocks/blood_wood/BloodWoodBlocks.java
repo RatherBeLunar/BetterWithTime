@@ -2,6 +2,7 @@ package com.bwt.blocks.blood_wood;
 
 import com.bwt.blocks.*;
 import com.bwt.features.BwtConfiguredFeatures;
+import com.bwt.particles.BwtParticles;
 import com.bwt.utils.Id;
 import com.bwt.utils.RegistrationBase;
 import net.fabricmc.fabric.api.object.builder.v1.block.type.BlockSetTypeBuilder;
@@ -85,7 +86,7 @@ public class BloodWoodBlocks {
 
         leavesBlock = RegistrationBase.registerBlockWithItem(
                 "blood_wood_leaves",
-                BloodWoodLeavesBlock::new,
+                properties -> new BloodWoodLeavesBlock(0.01f, BwtParticles.BLOOD_WOOD_LEAVES, properties),
                 BlockBehaviour.Properties.of()
                         .mapColor(MapColor.PLANT)
                         .strength(0.2F)

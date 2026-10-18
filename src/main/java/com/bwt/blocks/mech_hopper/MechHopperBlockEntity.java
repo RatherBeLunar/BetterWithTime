@@ -118,17 +118,17 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
-        this.filterInventory.readNbt(nbt.getCompound("Filter"), registryLookup);
-        this.hopperInventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.mechPower = nbt.getInt("mechPower");
-        this.soulCount = nbt.getInt("soulCount");
-        this.xpCount = nbt.getInt("xpCount");
-        this.itemPickupCooldown = nbt.getInt("itemPickupCooldown");
-        this.itemDropCooldown = nbt.getInt("itemDropCooldown");
-        this.xpPickupCooldown = nbt.getInt("xpPickupCooldown");
-        this.xpDropCooldown = nbt.getInt("xpDropCooldown");
-        this.slotsOccupied = nbt.getInt("slotsOccupied");
-        this.outputBlocked = nbt.getBoolean("outputBlocked");
+        this.filterInventory.readNbt(nbt.getCompoundOrEmpty("Filter"), registryLookup);
+        this.hopperInventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
+        this.mechPower = nbt.getIntOr("mechPower", 0);
+        this.soulCount = nbt.getIntOr("soulCount", 0);
+        this.xpCount = nbt.getIntOr("xpCount", 0);
+        this.itemPickupCooldown = nbt.getIntOr("itemPickupCooldown", 0);
+        this.itemDropCooldown = nbt.getIntOr("itemDropCooldown", 0);
+        this.xpPickupCooldown = nbt.getIntOr("xpPickupCooldown", 0);
+        this.xpDropCooldown = nbt.getIntOr("xpDropCooldown", 0);
+        this.slotsOccupied = nbt.getIntOr("slotsOccupied", 0);
+        this.outputBlocked = nbt.getBooleanOr("outputBlocked", false);
     }
 
     @Override
@@ -155,7 +155,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
             if ((oldSlotsOccupied == size && slotsOccupied != size) || (slotsOccupied == size && oldSlotsOccupied != size)) {
-                level.blockUpdated(worldPosition, getBlockState().getBlock());
+                level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
             }
         }
         super.setChanged();

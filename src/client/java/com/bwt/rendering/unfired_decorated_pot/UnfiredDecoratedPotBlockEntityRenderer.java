@@ -14,18 +14,21 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,7 +50,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
 
     @Override
     public void render(
-            UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv
+            UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, Vec3 vec3
     ) {
         Level level = unfiredDecoratedPotBlockEntity.getLevel();
         BlockState state = unfiredDecoratedPotBlockEntity.getBlockState();
@@ -104,32 +107,28 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         ModelManager bakedModelManager = blockRenderDispatcher.getBlockModelShaper().getModelManager();
         matrices.pushPose();
         if (level == null || pos == null) {
-            blockRenderDispatcher.getModelRenderer()
-                    .renderModel(
-                            matrices.last(),
-                            vertexConsumers.getBuffer(Sheets.translucentItemSheet()),
-                            state,
-                            bakedModelManager.getBlockModelShaper().getBlockModel(state),
-                            1.0F,
-                            1.0F,
-                            1.0F,
-                            light,
-                            uv
-                    );
+            ModelBlockRenderer.renderModel(
+                    matrices.last(),
+                    vertexConsumers.getBuffer(Sheets.translucentItemSheet()),
+                    bakedModelManager.getBlockModelShaper().getBlockModel(state),
+                    1.0F,
+                    1.0F,
+                    1.0F,
+                    light,
+                    uv
+            );
         }
         else {
             RenderType renderLayer = ItemBlockRenderTypes.getChunkRenderType(state);
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
             blockRenderDispatcher.getModelRenderer().tesselateBlock(
                     level,
-                    blockRenderDispatcher.getBlockModel(state),
+                    blockRenderDispatcher.getBlockModel(state).collectParts(RandomSource.create(state.getSeed(pos))),
                     state,
                     pos,
                     matrices,
                     vertexConsumer,
                     true,
-                    level.random,
-                    state.getSeed(pos),
                     uv
             );
         }

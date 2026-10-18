@@ -20,7 +20,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -60,7 +60,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
     public void bwt$readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
         if (nbt.contains("IsFed")) {
-            this.bwt$setIsFed(nbt.getBoolean("IsFed"));
+            this.bwt$setIsFed(nbt.getBooleanOr("IsFed", false));
         }
     }
 

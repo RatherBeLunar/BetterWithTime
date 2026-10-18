@@ -13,14 +13,16 @@ public class SlotPreservingSimpleContainer extends SimpleContainer {
 
     @Override
     public void fromTag(ListTag listTag, HolderLookup.Provider provider) {
-        for (int i = 0; i < this.getContainerSize(); ++i) {
+        for (int i = 0; i < this.getContainerSize(); i++) {
             this.setItem(i, ItemStack.EMPTY);
         }
-        for (int i = 0; i < listTag.size(); ++i) {
-            CompoundTag compoundTag = listTag.getCompound(i);
-            int j = compoundTag.getByte("Slot") & 0xFF;
-            if (j < 0 || j >= this.getContainerSize()) continue;
-            this.setItem(j, ItemStack.parse(provider, compoundTag).orElse(ItemStack.EMPTY));
+
+        for (int i = 0; i < listTag.size(); i++) {
+            CompoundTag compoundTag = listTag.getCompoundOrEmpty(i);
+            int j = compoundTag.getByteOr("Slot", (byte)0) & 255;
+            if (j < this.getContainerSize()) {
+                this.setItem(j, ItemStack.parse(provider, compoundTag).orElse(ItemStack.EMPTY));
+            }
         }
     }
 

@@ -20,6 +20,7 @@ import com.bwt.entities.BwtEntities;
 import com.bwt.entities.MiningChargeEntity;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
+import com.bwt.particles.BwtParticles;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.saw.StateDependentSawRecipeHelper;
 import com.bwt.sounds.BwtSoundEvents;
@@ -79,6 +80,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtItems items = new BwtItems();
 	public static final BwtEntities entities = new BwtEntities();
 	public static final BwtRecipes recipes = new BwtRecipes();
+	public static final BwtParticles particles = new BwtParticles();
 	public static final BwtDamageTypes damageTypes = new BwtDamageTypes();
 	public static final BwtGameRules gameRules = new BwtGameRules();
 	public static final BwtSoundEvents soundEvents = new BwtSoundEvents();
@@ -110,6 +112,7 @@ public class BetterWithTime implements ModInitializer {
 		blocks.onInitialize();
 		blockEntities.onInitialize();
 		items.onInitialize();
+		particles.onInitialize();
 		entities.onInitialize();
 		recipes.onInitialize();
 		damageTypes.onInitialize();

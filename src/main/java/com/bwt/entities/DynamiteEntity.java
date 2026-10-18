@@ -32,6 +32,7 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import java.util.Arrays;
+import java.util.Optional;
 
 public class DynamiteEntity extends Projectile implements ItemSupplier {
 
@@ -57,7 +58,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(ITEM, ItemStack.EMPTY);
-        builder.define(FUSE, -1);
+        builder.define(FUSE, TICKS_TO_DETONATE);
     }
 
     @Override
@@ -73,12 +74,12 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
-        setFuse(nbt.getInt("fuse"));
-        if (nbt.contains("Item", Tag.TAG_COMPOUND)) {
-            setItem(ItemStack.parse(registryAccess(), nbt.getCompound("Item")).orElseGet(() -> new ItemStack(getDefaultItem())));
-        } else {
-            setItem(new ItemStack(getDefaultItem()));
-        }
+        setFuse(nbt.getIntOr("fuse", TICKS_TO_DETONATE));
+        setItem(
+                nbt.getCompound("Item")
+                        .flatMap(item -> ItemStack.parse(registryAccess(), item))
+                        .orElseGet(() -> new ItemStack(getDefaultItem()))
+        );
     }
 
     @Override

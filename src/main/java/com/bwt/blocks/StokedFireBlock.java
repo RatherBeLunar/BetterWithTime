@@ -137,7 +137,7 @@ public class StokedFireBlock extends BaseFireBlock {
             }
             Block block = blockState.getBlock();
             if (block instanceof TntBlock) {
-                TntBlock.explode(level, pos);
+                TntBlock.prime(level, pos);
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.bwt.utils;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -44,7 +45,7 @@ public class TrackedDataHandlers implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        EntityDataSerializers.registerSerializer(blockStateMapHandler);
-        EntityDataSerializers.registerSerializer(blockEntityMapHandler);
+        FabricTrackedDataRegistry.register(Id.of("block_state_map"), blockStateMapHandler);
+        FabricTrackedDataRegistry.register(Id.of("block_entity_map"), blockEntityMapHandler);
     }
 }

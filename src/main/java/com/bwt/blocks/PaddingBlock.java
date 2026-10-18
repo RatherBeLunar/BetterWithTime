@@ -12,7 +12,7 @@ public class PaddingBlock extends Block {
     }
 
     @Override
-    public void fallOn(Level level, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+    public void fallOn(Level level, BlockState blockState, BlockPos blockPos, Entity entity, double fallDistance) {
         entity.causeFallDamage(fallDistance, 0.2f, level.damageSources().fall());
     }
 }

@@ -167,16 +167,16 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
 
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
-        setPulleyPos(new BlockPos(compound.getInt("PulleyX"), compound.getInt("PulleyY"), compound.getInt("PulleyZ")));
-        setTargetY(compound.getInt("TargetY"));
-        setIsMovingUp(compound.getBoolean("Up"));
-        if (compound.contains("blocks", Tag.TAG_LIST)) {
-            Map<Vec3i, BlockState> blocks = deserializeBlockMap(compound.getList("blocks", Tag.TAG_COMPOUND));
+        setPulleyPos(new BlockPos(compound.getIntOr("PulleyX", 0), compound.getIntOr("PulleyY", 0), compound.getIntOr("PulleyZ", 0)));
+        setTargetY(compound.getIntOr("TargetY", 0));
+        setIsMovingUp(compound.getBooleanOr("Up", false));
+        if (compound.contains("blocks")) {
+            Map<Vec3i, BlockState> blocks = deserializeBlockMap(compound.getListOrEmpty("blocks"));
             setBlockMap(blocks);
             rebuildBlockBoundingBox();
         }
-        if (compound.contains("blockEntities", Tag.TAG_LIST)) {
-            setBlockEntityNbtMap(deserializeBlockEntities(compound.getList("blockEntities", Tag.TAG_COMPOUND)));
+        if (compound.contains("blockEntities")) {
+            setBlockEntityNbtMap(deserializeBlockEntities(compound.getListOrEmpty("blockEntities")));
         }
     }
 
@@ -207,8 +207,8 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
         for (Tag entry : blockEntities) {
             CompoundTag compound = (CompoundTag) entry;
             map.put(
-                    BlockPos.of(compound.getLong("offset")),
-                    compound.getCompound("blockEntity")
+                    compound.getLong("offset").map(BlockPos::of).orElse(BlockPos.ZERO),
+                    compound.getCompoundOrEmpty("blockEntity")
             );
         }
         return map;
@@ -232,8 +232,8 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
         Map<Vec3i, BlockState> map = new HashMap<>();
         for (Tag entry : blocks) {
             CompoundTag entryCompound = ((CompoundTag) entry);
-            Vec3i pos = BlockPos.of(entryCompound.getLong("pos"));
-            BlockState state = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), entryCompound.getCompound("state"));
+            Vec3i pos = entryCompound.getLong("pos").map(BlockPos::of).orElse(BlockPos.ZERO);
+            BlockState state = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), entryCompound.getCompoundOrEmpty("state"));
             map.put(pos, state);
         }
         return map;

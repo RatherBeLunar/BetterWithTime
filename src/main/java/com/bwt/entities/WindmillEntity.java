@@ -206,13 +206,11 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
-        entityData.set(dyeIndex, nbt.getInt("dyeIndex"));
+        entityData.set(dyeIndex, nbt.getIntOr("dyeIndex", 0));
         for (int i = 0; i < NUM_SAILS; i++) {
-            if (nbt.contains("sail" + i + "Color", CompoundTag.TAG_INT)) {
-                entityData.set(sailColors.get(i), nbt.getInt("sail" + i + "Color"));
-            }
+            entityData.set(sailColors.get(i), nbt.getIntOr("sail" + i + "Color", DyeColor.WHITE.getId()));
         }
-        overpowerTimer = nbt.getInt("overpowerTimer");
+        overpowerTimer = nbt.getIntOr("overpowerTimer", 0);
     }
 
     @Override

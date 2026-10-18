@@ -2,8 +2,9 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.accessor.ArmorStandAccessorMixin;
 import com.bwt.utils.DyeUtils;
+
+import java.util.Arrays;
 import java.util.stream.Stream;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
@@ -11,9 +12,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.wolf.Wolf;
+import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -54,7 +57,7 @@ public interface EntityInhaleBehavior {
             public void inhale(ServerLevel serverLevel, Entity entity) {
                 Wolf wolf = ((Wolf) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
-                wolf.playSound(SoundEvents.WOLF_DEATH, 0.4f, wolf.getVoicePitch());
+                wolf.playSound(SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).deathSound().value(), 0.4f, wolf.getVoicePitch());
             }
 
             @Override
@@ -218,11 +221,8 @@ public interface EntityInhaleBehavior {
                 if (!(entity instanceof ArmorStand armorStand)) {
                     return NonNullList.create();
                 }
-                NonNullList<ItemStack> heldItems = ((ArmorStandAccessorMixin) armorStand).getHandItems();
-                NonNullList<ItemStack> armorItems = ((ArmorStandAccessorMixin) armorStand).getArmorItems();
                 NonNullList<ItemStack> returnItems = NonNullList.create();
-                returnItems.addAll(heldItems);
-                returnItems.addAll(armorItems);
+                Arrays.stream(EquipmentSlot.values()).map(armorStand::getItemBySlot).forEach(returnItems::add);
                 return returnItems;
             }
         });

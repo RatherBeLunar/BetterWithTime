@@ -60,10 +60,11 @@ public class KilnBlock extends Block {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
+        BlockState newState = serverLevel.getBlockState(blockPos);
         if (!newState.is(this)) {
-            resetBlockCookProgress(level, pos);
+            resetBlockCookProgress(serverLevel, blockPos);
         }
     }
 

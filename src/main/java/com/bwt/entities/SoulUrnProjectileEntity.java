@@ -65,7 +65,7 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
         Ghast ghastEntity = EntityType.GHAST.create(this.level(), EntitySpawnReason.TRIGGERED);
         if (ghastEntity != null) {
             float yaw = (this.getYRot() + 180.0F) % 360F;
-            ghastEntity.moveTo(this.getX(), this.getY(), this.getZ(), yaw, 0.0F);
+            ghastEntity.snapTo(this.getX(), this.getY(), this.getZ(), yaw, 0.0F);
             if (!ghastEntity.fudgePositionAfterSizeChange(EMPTY_DIMENSIONS)) {
                 return;
             }

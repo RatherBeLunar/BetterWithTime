@@ -3,8 +3,10 @@
   "package": "com.bwt.mixin.client",
   "compatibilityLevel": "JAVA_21",
   "client": [
+    "CompositeStateBuilderAccessorMixin",
     "LevelRendererMixin",
-    "OverlayCraftingRecipeButtonMixin"
+    "OverlayCraftingRecipeButtonMixin",
+    "RenderTypeAccessorMixin"
   ],
   "injectors": {
     "defaultRequire": 1

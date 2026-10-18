@@ -109,10 +109,10 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.cookProgressTime = nbt.getInt("cookProgressTicks");
-        this.isStoked = nbt.getBoolean("isStoked");
-        this.slotsOccupied = nbt.getInt("slotsOccupied");
+        this.inventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
+        this.cookProgressTime = nbt.getIntOr("cookProgressTicks", 0);
+        this.isStoked = nbt.getBooleanOr("isStoked", false);
+        this.slotsOccupied = nbt.getIntOr("slotsOccupied", 0);
     }
 
     @Override

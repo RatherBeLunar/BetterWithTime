@@ -3,9 +3,9 @@ package com.bwt.blocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
@@ -65,7 +65,7 @@ public class RopeBlock extends Block {
 
     @Override
     public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        if (player.getMainHandItem().getItem() instanceof SwordItem) {
+        if (player.getMainHandItem().getItem().getDefaultInstance().is(ItemTags.SWORDS)) {
             return 1.0f;
         }
         return super.getDestroyProgress(state, player, level, pos);

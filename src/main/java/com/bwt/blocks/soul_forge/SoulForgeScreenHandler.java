@@ -140,7 +140,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
             ItemStack itemStack2 = slot.getItem();
             itemStack = itemStack2.copy();
             if (slotNumber == craftingResultIndex) {
-                this.access.execute((level, pos) -> itemStack2.getItem().onCraftedBy(itemStack2, level, player));
+                this.access.execute((level, pos) -> itemStack2.getItem().onCraftedBy(itemStack2, player));
                 if (!this.moveItemStackTo(itemStack2, playerInventoryStart, playerInventoryEnd, true)) {
                     return ItemStack.EMPTY;
                 }

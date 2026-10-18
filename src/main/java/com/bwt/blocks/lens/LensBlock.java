@@ -12,7 +12,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -52,11 +51,12 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
-        if (!newState.is(this) || !newState.getValue(FACING).equals(state.getValue(FACING))) {
-            LensBeamHelper.killBeam(level, pos, state.getValue(FACING));
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        BlockState newState = serverLevel.getBlockState(blockPos);
+        if (!newState.is(this) || !newState.getValue(FACING).equals(blockState.getValue(FACING))) {
+            LensBeamHelper.killBeam(serverLevel, blockPos, blockState.getValue(FACING));
         }
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override

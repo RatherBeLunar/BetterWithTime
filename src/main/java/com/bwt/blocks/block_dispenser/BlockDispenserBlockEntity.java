@@ -201,7 +201,7 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements M
     public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
         super.loadAdditional(nbt, lookup);
         ContainerHelper.loadAllItems(nbt, this.getItems(), lookup);
-        this.selectedSlot = nbt.getInt("nextSlotToDispense");
+        this.selectedSlot = nbt.getIntOr("nextSlotToDispense", 0);
     }
 
     @Override

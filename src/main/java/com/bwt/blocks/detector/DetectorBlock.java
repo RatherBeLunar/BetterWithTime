@@ -188,10 +188,11 @@ public class DetectorBlock extends SimpleFacingBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean bl) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, bl);
+        BlockState newState = serverLevel.getBlockState(blockPos);
         if (!newState.is(this)) {
-            removeDetectorLogicIfNecessary(level, pos, state);
+            removeDetectorLogicIfNecessary(serverLevel, blockPos, blockState);
         }
     }
 }

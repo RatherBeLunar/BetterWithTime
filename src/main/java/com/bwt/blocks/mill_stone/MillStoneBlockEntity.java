@@ -194,8 +194,8 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.grindProgressTime = nbt.getInt("grindProgressTime");
+        this.inventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
+        this.grindProgressTime = nbt.getIntOr("grindProgressTime", 0);
     }
 
     @Override

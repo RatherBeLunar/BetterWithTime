@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -62,18 +63,20 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
+        BlockState newState = serverLevel.getBlockState(blockPos);
         if (!newState.is(this)) {
-            notifyNeighborDetectors(newState, level, pos);
+            notifyNeighborDetectors(newState, serverLevel, blockPos);
         }
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        boolean updated = updateIntersectStates(state, level, pos, true, null);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier);
+        boolean updated = updateIntersectStates(blockState, level, blockPos, true, null);
         if (updated) {
-            level.scheduleTick(pos, this, tickRate);
+            level.scheduleTick(blockPos, this, tickRate);
         }
     }
 

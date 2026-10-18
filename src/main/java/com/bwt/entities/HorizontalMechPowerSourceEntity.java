@@ -360,6 +360,6 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
     @Override
     protected void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, nbt.getFloat("rotationSpeed"));
+        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, nbt.getFloatOr("rotationSpeed", 0f));
     }
 }

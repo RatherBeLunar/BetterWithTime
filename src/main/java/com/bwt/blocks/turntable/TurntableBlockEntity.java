@@ -44,8 +44,8 @@ public class TurntableBlockEntity extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
         super.loadAdditional(nbt, registryLookup);
-        this.rotationTickCounter = nbt.getInt("rotationTickCounter");
-        this.craftingTurnCounter = nbt.getInt("craftingTurnCounter");
+        this.rotationTickCounter = nbt.getIntOr("rotationTickCounter", 0);
+        this.craftingTurnCounter = nbt.getIntOr("craftingTurnCounter", 0);
     }
 
     @Override

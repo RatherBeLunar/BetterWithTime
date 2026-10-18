@@ -4,7 +4,7 @@ import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.mixin.accessor.MobEntityAccessorMixin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

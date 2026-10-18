@@ -1,8 +1,11 @@
 package com.bwt.entities;
 
 import com.bwt.items.BwtItems;
+import com.bwt.mixin.accessor.AbstractArrowAccessorMixin;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +36,7 @@ public class RottedArrowEntity extends AbstractArrow {
     }
 
     public void initFromStack(ItemStack stack) {
-        setBaseDamage(super.getBaseDamage() / 2);
+        setBaseDamage(((AbstractArrowAccessorMixin) this).getBaseDamage() / 2);
     }
 
     @Override
@@ -48,7 +51,16 @@ public class RottedArrowEntity extends AbstractArrow {
         super.handleEntityEvent(status);
         if (status == EntityEvent.DEATH) {
             for (int i = 0; i < 8; ++i) {
-                this.level().playLocalSound(this.getX(), this.getY(), this.getZ(), DEFAULT_STACK.getBreakingSound(), this.getSoundSource(), 0.13f, 0.8f + this.level().random.nextFloat() * 0.4f, false);
+                this.level().playLocalSound(
+                        this.getX(),
+                        this.getY(),
+                        this.getZ(),
+                        DEFAULT_STACK.getComponents().getOrDefault(DataComponents.BREAK_SOUND, SoundEvents.ITEM_BREAK).value(),
+                        this.getSoundSource(),
+                        0.13f,
+                        0.8f + this.level().random.nextFloat() * 0.4f,
+                        false
+                );
                 this.level().addParticle(
                         new ItemParticleOption(ParticleTypes.ITEM, DEFAULT_STACK),
                         this.getX(), this.getY(), this.getZ(),

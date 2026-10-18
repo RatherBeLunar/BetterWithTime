@@ -84,7 +84,7 @@ public interface RotationProcessHelper {
         Block block = state.getBlock();
 
         if ((flags & Block.UPDATE_NEIGHBORS) != 0) {
-            level.blockUpdated(pos, block);
+            level.updateNeighborsAt(pos, block);
             if (!level.isClientSide && state.hasAnalogOutputSignal()) {
                 level.updateNeighbourForOutputSignal(pos, block);
             }

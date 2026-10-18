@@ -7,8 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -44,30 +43,32 @@ public class BuddyBlock extends SimpleFacingBlock implements RotateWithEmptyHand
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        if (state.is(newState.getBlock())) {
+    protected void affectNeighborsAfterRemoval(BlockState state, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        super.affectNeighborsAfterRemoval(state, serverLevel, blockPos, moved);
+        BlockState newState = serverLevel.getBlockState(blockPos);
+        if (newState.is(newState.getBlock())) {
             return;
         }
-        if (!level.isClientSide && state.getValue(POWERED) && level.getBlockTicks().willTickThisTick(pos, this)) {
-            this.updateNeighbors(level, pos, state.setValue(POWERED, false));
+        if (state.getValue(POWERED) && serverLevel.getBlockTicks().willTickThisTick(blockPos, this)) {
+            this.updateNeighbors(serverLevel, blockPos, state.setValue(POWERED, false));
         }
     }
 
-//    @Override
-//    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-//        if (!level.isClientSide()
-//                && !blockState.getValue(POWERED)
-//                && !level.getBlockState(sourcePos).is(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
-//                && !level.getBlockTicks().willTickThisTick(pos, this)
-//        ) {
-//            // minimal delay when triggered to avoid notfying neighbors of change in same tick
-//            // that they are notifying of the original change. Not doing so causes problems
-//            // with some blocks (like ladders) that haven't finished initializing their state
-//            // on placement when they send out the notification
-//            level.scheduleTick(blockPos, this, 1);
-//        }
-//        super.neighborChanged(blockState, level, blockPos, sourceBlock, sourcePos, notify);
-//    }
+    @Override
+    protected BlockState updateShape(BlockState blockState, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos blockPos, Direction direction, BlockPos sourcePos, BlockState sourceState, RandomSource randomSource) {
+        if (!levelReader.isClientSide()
+                && !blockState.getValue(POWERED)
+                && !levelReader.getBlockState(sourcePos).is(BwtBlockTags.DOES_NOT_TRIGGER_BUDDY)
+                && !scheduledTickAccess.getBlockTicks().willTickThisTick(blockPos, this)
+        ) {
+            // minimal delay when triggered to avoid notfying neighbors of change in same tick
+            // that they are notifying of the original change. Not doing so causes problems
+            // with some blocks (like ladders) that haven't finished initializing their state
+            // on placement when they send out the notification
+            scheduledTickAccess.scheduleTick(blockPos, this, 1);
+        }
+        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, sourcePos, sourceState, randomSource);
+    }
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {

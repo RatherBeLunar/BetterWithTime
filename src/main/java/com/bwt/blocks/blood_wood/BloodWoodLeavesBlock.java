@@ -3,6 +3,7 @@ package com.bwt.blocks.blood_wood;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.BloodWoodSaplingItemEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -11,11 +12,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.UntintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class BloodWoodLeavesBlock extends LeavesBlock {
-    public BloodWoodLeavesBlock(Properties settings) {
-        super(settings);
+public class BloodWoodLeavesBlock extends UntintedParticleLeavesBlock {
+    public BloodWoodLeavesBlock(float leafParticleChance, ParticleOptions particleOptions, Properties settings) {
+        super(leafParticleChance, particleOptions, settings);
     }
 
     @Override
