@@ -220,6 +220,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
         getOrCreateTagBuilder(BwtItemTags.PASSES_GRATE_FILTER)
                 .forceAddTag(ConventionalItemTags.FLOWERS)
+                .forceAddTag(ItemTags.EGGS)
                 .add(
                         Items.APPLE,
                         Items.GOLDEN_APPLE,
@@ -252,7 +253,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.RED_DYE,
                         Items.WHITE_DYE,
                         Items.YELLOW_DYE,
-                        Items.EGG,
                         Items.ENDER_PEARL,
                         Items.ENDER_EYE,
                         Items.FEATHER,
