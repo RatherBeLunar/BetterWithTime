@@ -1,0 +1,15 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:open_eyeblossom"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:orange_dye"
+    }
+  ]
+}

@@ -29,23 +29,28 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
                 disableVanilla(Items.DECORATED_POT, output);
                 disableVanilla(Items.DECORATED_POT, "_simple", output);
                 disableVanilla(Items.FLOWER_POT, output);
+
+                // Dyes
                 disableVanilla(getConversionRecipeName(Items.BLACK_DYE, Items.INK_SAC), output);
                 disableVanilla(getConversionRecipeName(Items.BLUE_DYE, Items.LAPIS_LAZULI), output);
                 disableVanilla(getConversionRecipeName(Items.BROWN_DYE, Items.COCOA_BEANS), output);
                 disableVanilla(getConversionRecipeName(Items.BLACK_DYE, Items.WITHER_ROSE), output);
                 disableVanilla(getConversionRecipeName(Items.BLUE_DYE, Items.CORNFLOWER), output);
                 disableVanilla(getConversionRecipeName(Items.CYAN_DYE, Items.PITCHER_PLANT), output);
+                disableVanilla(getConversionRecipeName(Items.GRAY_DYE, Items.CLOSED_EYEBLOSSOM), output);
                 disableVanilla(getConversionRecipeName(Items.LIGHT_BLUE_DYE, Items.BLUE_ORCHID), output);
                 disableVanilla(getConversionRecipeName(Items.LIGHT_GRAY_DYE, Items.AZURE_BLUET), output);
                 disableVanilla(getConversionRecipeName(Items.LIGHT_GRAY_DYE, Items.OXEYE_DAISY), output);
                 disableVanilla(getConversionRecipeName(Items.LIGHT_GRAY_DYE, Items.WHITE_TULIP), output);
                 disableVanilla(getConversionRecipeName(Items.MAGENTA_DYE, Items.ALLIUM), output);
                 disableVanilla(getConversionRecipeName(Items.MAGENTA_DYE, Items.LILAC), output);
+                disableVanilla(getConversionRecipeName(Items.ORANGE_DYE, Items.OPEN_EYEBLOSSOM), output);
                 disableVanilla(getConversionRecipeName(Items.ORANGE_DYE, Items.ORANGE_TULIP), output);
                 disableVanilla(getConversionRecipeName(Items.ORANGE_DYE, Items.TORCHFLOWER), output);
                 disableVanilla(getConversionRecipeName(Items.PINK_DYE, Items.PEONY), output);
                 disableVanilla(getConversionRecipeName(Items.PINK_DYE, Items.PINK_PETALS), output);
                 disableVanilla(getConversionRecipeName(Items.PINK_DYE, Items.PINK_TULIP), output);
+                disableVanilla(getConversionRecipeName(Items.PINK_DYE, Items.CACTUS_FLOWER), output);
                 disableVanilla(getConversionRecipeName(Items.RED_DYE, Items.BEETROOT), output);
                 disableVanilla(getConversionRecipeName(Items.RED_DYE, Items.POPPY), output);
                 disableVanilla(Items.RED_DYE, "_from_tulip", output);
@@ -54,6 +59,7 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
                 disableVanilla(getConversionRecipeName(Items.WHITE_DYE, Items.LILY_OF_THE_VALLEY), output);
                 disableVanilla(getConversionRecipeName(Items.YELLOW_DYE, Items.DANDELION), output);
                 disableVanilla(getConversionRecipeName(Items.YELLOW_DYE, Items.SUNFLOWER), output);
+                disableVanilla(getConversionRecipeName(Items.YELLOW_DYE, Items.WILDFLOWERS), output);
 
                 // Millstone replacements
                 disableVanilla(Items.BONE_MEAL, output);

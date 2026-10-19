@@ -1,0 +1,15 @@
+{
+  "type": "bwt:mill_stone",
+  "category": "misc",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:wildflowers"
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "id": "minecraft:yellow_dye"
+    }
+  ]
+}

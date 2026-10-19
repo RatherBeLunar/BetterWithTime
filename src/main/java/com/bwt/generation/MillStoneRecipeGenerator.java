@@ -42,17 +42,20 @@ public class MillStoneRecipeGenerator extends FabricRecipeProvider {
                 create().ingredient(Items.WITHER_ROSE).result(Items.BLACK_DYE).save(output);
                 create().ingredient(Items.CORNFLOWER).result(Items.BLUE_DYE).save(output);
                 create().ingredient(Items.PITCHER_PLANT).result(Items.CYAN_DYE, 2).save(output);
+                create().ingredient(Items.CLOSED_EYEBLOSSOM).result(Items.GRAY_DYE).save(output);
                 create().ingredient(Items.BLUE_ORCHID).result(Items.LIGHT_BLUE_DYE).save(output);
                 create().ingredient(Items.AZURE_BLUET).result(Items.LIGHT_GRAY_DYE).save(output);
                 create().ingredient(Items.OXEYE_DAISY).result(Items.LIGHT_GRAY_DYE).save(output);
                 create().ingredient(Items.WHITE_TULIP).result(Items.LIGHT_GRAY_DYE).save(output);
                 create().ingredient(Items.ALLIUM).result(Items.MAGENTA_DYE).save(output);
                 create().ingredient(Items.LILAC).result(Items.MAGENTA_DYE, 2).save(output);
+                create().ingredient(Items.OPEN_EYEBLOSSOM).result(Items.ORANGE_DYE).save(output);
                 create().ingredient(Items.ORANGE_TULIP).result(Items.ORANGE_DYE).save(output);
                 create().ingredient(Items.TORCHFLOWER).result(Items.ORANGE_DYE).save(output);
                 create().ingredient(Items.PEONY).result(Items.PINK_DYE, 2).save(output);
                 create().ingredient(Items.PINK_PETALS).result(Items.PINK_DYE).save(output);
                 create().ingredient(Items.PINK_TULIP).result(Items.PINK_DYE).save(output);
+                create().ingredient(Items.CACTUS_FLOWER).result(Items.PINK_DYE).save(output);
                 create().ingredient(Items.BEETROOT).result(Items.RED_DYE).save(output);
                 create().ingredient(Items.POPPY).result(Items.RED_DYE).save(output);
                 create().ingredient(Items.RED_TULIP).result(Items.RED_DYE).save(output);
@@ -61,6 +64,7 @@ public class MillStoneRecipeGenerator extends FabricRecipeProvider {
                 create().ingredient(Items.LILY_OF_THE_VALLEY).result(Items.WHITE_DYE).save(output);
                 create().ingredient(Items.DANDELION).result(Items.YELLOW_DYE).save(output);
                 create().ingredient(Items.SUNFLOWER).result(Items.YELLOW_DYE, 2).save(output);
+                create().ingredient(Items.WILDFLOWERS).result(Items.YELLOW_DYE, 2).save(output);
             }
 
             private MillStoneRecipe.JsonBuilder create() {
