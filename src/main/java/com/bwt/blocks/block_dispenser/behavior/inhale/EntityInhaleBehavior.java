@@ -5,11 +5,14 @@ import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
 import com.bwt.utils.DyeUtils;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -23,11 +26,12 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.decoration.Painting;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public interface EntityInhaleBehavior {
-    default ItemStack getInhaledItems(Entity entity) {
+    default ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
         return ItemStack.EMPTY;
     }
     default NonNullList<ItemStack> getDroppedItems(Entity entity) {
@@ -61,7 +65,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = new ItemStack(BwtBlocks.companionCubeBlock);
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -88,8 +92,22 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = new ItemStack(Items.EGG);
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
+                if (!(entity instanceof Chicken chicken)) {
+                    return ItemStack.EMPTY;
+                }
+                ItemStack itemStack = BuiltInRegistries.ITEM.stream()
+                        .map(Item::getDefaultInstance)
+                        .filter(stack -> stack.is(ItemTags.EGGS))
+                        .filter(stack ->
+                                Optional.ofNullable(stack.get(DataComponents.CHICKEN_VARIANT))
+                                        .flatMap(eitherHolder -> eitherHolder.unwrap(serverLevel.registryAccess()))
+                                        .map(variant -> variant.equals(chicken.getVariant()))
+                                        .orElse(false)
+                        )
+                        .findFirst()
+                        .orElse(Items.EGG.getDefaultInstance());
+
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
@@ -113,7 +131,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 return new ItemStack(DyeUtils.WOOL_COLORS.get(((Sheep) entity).getColor()).asItem());
             }
 
@@ -139,7 +157,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -171,7 +189,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -210,7 +228,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -237,7 +255,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -264,7 +282,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -291,7 +309,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;

@@ -413,7 +413,7 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     protected <T extends Entity> void inhaleEntity(ServerLevel serverLevel, BlockDispenserBlockEntity blockEntity, T entity) {
         EntityInhaleBehavior entityInhaleBehavior = ENTITY_INHALE_BEHAVIORS.get(entity.getType());
-        ItemStack inhaledItems = entityInhaleBehavior.getInhaledItems(entity).copy();
+        ItemStack inhaledItems = entityInhaleBehavior.getInhaledItems(serverLevel, entity).copy();
         if (!blockEntity.hasRoomFor(inhaledItems)) {
             return;
         }
