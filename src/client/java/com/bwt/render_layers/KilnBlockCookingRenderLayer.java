@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.TriState;
 
 public abstract class KilnBlockCookingRenderLayer extends RenderType {
     public KilnBlockCookingRenderLayer(String string, int i, boolean bl, boolean bl2, Runnable runnable, Runnable runnable2) {
@@ -21,7 +20,7 @@ public abstract class KilnBlockCookingRenderLayer extends RenderType {
 
     private static final Function<ResourceLocation, RenderType> KILN_COOKING_RENDER_FUNCTION = Util.memoize(
             resourceLocation -> {
-                RenderStateShard.TextureStateShard textureStateShard = new RenderStateShard.TextureStateShard(resourceLocation, TriState.FALSE, false);
+                RenderStateShard.TextureStateShard textureStateShard = new RenderStateShard.TextureStateShard(resourceLocation, false);
                 return RenderTypeAccessorMixin.bwt$create(
                         "kiln_cooking",
                         1536,

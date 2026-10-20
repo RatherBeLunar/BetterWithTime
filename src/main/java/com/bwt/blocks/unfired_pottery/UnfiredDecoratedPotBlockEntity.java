@@ -5,6 +5,8 @@ import com.bwt.blocks.BwtBlocks;
 import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -37,17 +39,17 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
         if (!this.sherds.equals(PotDecorations.EMPTY)) {
-            nbt.store(SHERDS_NBT_KEY, PotDecorations.CODEC, this.sherds);
+            valueOutput.store(SHERDS_NBT_KEY, PotDecorations.CODEC, this.sherds);
         }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.sherds = nbt.read(SHERDS_NBT_KEY, PotDecorations.CODEC).orElse(PotDecorations.EMPTY);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.sherds = valueInput.read(SHERDS_NBT_KEY, PotDecorations.CODEC).orElse(PotDecorations.EMPTY);
     }
 
     @Nullable
@@ -190,9 +192,10 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
         this.sherds = dataComponentGetter.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
     }
 
+
     @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
-        super.removeComponentsFromTag(nbt);
-        nbt.remove(SHERDS_NBT_KEY);
+    public void removeComponentsFromTag(ValueOutput valueOutput) {
+        super.removeComponentsFromTag(valueOutput);
+        valueOutput.discard(SHERDS_NBT_KEY);
     }
 }

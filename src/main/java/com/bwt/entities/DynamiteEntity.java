@@ -7,8 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -26,13 +24,14 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import java.util.Arrays;
-import java.util.Optional;
 
 public class DynamiteEntity extends Projectile implements ItemSupplier {
 
@@ -62,23 +61,23 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
-        nbt.putInt("fuse", getFuse());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putInt("fuse", getFuse());
         ItemStack itemStack = getItem();
         if (!itemStack.isEmpty()) {
-            nbt.put("Item", itemStack.save(registryAccess()));
+            valueOutput.store("Item", ItemStack.CODEC, itemStack);
         }
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
-        setFuse(nbt.getIntOr("fuse", TICKS_TO_DETONATE));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        setFuse(valueInput.getIntOr("fuse", TICKS_TO_DETONATE));
         setItem(
-                nbt.getCompound("Item")
-                        .flatMap(item -> ItemStack.parse(registryAccess(), item))
-                        .orElseGet(() -> new ItemStack(getDefaultItem()))
+                valueInput
+                        .read("Item", ItemStack.CODEC)
+                        .orElseGet(() -> getDefaultItem().getDefaultInstance())
         );
     }
 

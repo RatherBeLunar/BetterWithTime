@@ -5,7 +5,6 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,8 +23,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -133,7 +136,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     @Override
-    public boolean canBeCollidedWith() {
+    public boolean canBeCollidedWith(@Nullable Entity entity) {
         return true;
     }
 
@@ -354,12 +357,12 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putFloat("rotationSpeed", entityData.get(rotationSpeed));
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        valueOutput.putFloat("rotationSpeed", entityData.get(rotationSpeed));
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, nbt.getFloatOr("rotationSpeed", 0f));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, valueInput.getFloatOr("rotationSpeed", 0f));
     }
 }

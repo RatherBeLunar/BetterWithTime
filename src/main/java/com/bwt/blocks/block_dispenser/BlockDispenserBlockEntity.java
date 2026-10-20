@@ -2,14 +2,14 @@ package com.bwt.blocks.block_dispenser;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.block_entities.ImplementedInventory;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.stream.IntStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.MenuProvider;
@@ -197,18 +197,19 @@ public class BlockDispenserBlockEntity extends DispenserBlockEntity implements M
         return Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
+
     @Override
-    public void loadAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
-        super.loadAdditional(nbt, lookup);
-        ContainerHelper.loadAllItems(nbt, this.getItems(), lookup);
-        this.selectedSlot = nbt.getIntOr("nextSlotToDispense", 0);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        ContainerHelper.loadAllItems(valueInput, this.getItems());
+        this.selectedSlot = valueInput.getIntOr("nextSlotToDispense", 0);
     }
 
     @Override
-    public void saveAdditional(CompoundTag nbt, HolderLookup.Provider lookup) {
-        super.saveAdditional(nbt, lookup);
-        ContainerHelper.saveAllItems(nbt, this.getItems(), lookup);
-        nbt.putInt("nextSlotToDispense", selectedSlot);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        ContainerHelper.saveAllItems(valueOutput, this.getItems());
+        valueOutput.putInt("nextSlotToDispense", selectedSlot);
     }
 
     // SidedInventory, to disable extraction

@@ -11,15 +11,13 @@ import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.*;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -34,6 +32,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+
 import java.util.*;
 
 public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Container {
@@ -374,20 +375,19 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
 
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
-        this.mechPower = nbt.getIntOr("mechPower", 0);
-        nbt.read("ropeId", UUIDUtil.CODEC).ifPresent(uUID -> this.ropeId = uUID);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.mechPower = valueInput.getIntOr("mechPower", 0);
+        valueInput.read("ropeId", UUIDUtil.CODEC).ifPresent(uUID -> this.ropeId = uUID);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("mechPower", this.mechPower);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("mechPower", this.mechPower);
         if (this.rope != null && !rope.isRemoved()) {
-            nbt.store("ropeId", UUIDUtil.CODEC, this.rope.getUUID());
+            valueOutput.store("ropeId", UUIDUtil.CODEC, this.rope.getUUID());
         }
     }
 

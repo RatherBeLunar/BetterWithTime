@@ -7,10 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -23,6 +19,8 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.TraceableEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
@@ -163,19 +161,18 @@ public class MiningChargeEntity extends Entity implements TraceableEntity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putShort("fuse", (short)this.getFuse());
-        nbt.put("block_state", NbtUtils.writeBlockState(this.getBlockState()));
-        nbt.putInt("facing", getNearestViewDirection().get3DDataValue());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        valueOutput.putShort("fuse", (short)this.getFuse());
+        valueOutput.store("block_state", BlockState.CODEC, this.getBlockState());
+        valueOutput.putInt("facing", getNearestViewDirection().get3DDataValue());
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
-        setFuse(nbt.getShortOr("fuse", DEFAULT_FUSE));
-        nbt.getCompound("block_state")
-                .map(compoundTag -> NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundTag))
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        setFuse(valueInput.getShortOr("fuse", DEFAULT_FUSE));
+        valueInput.read("block_state", BlockState.CODEC)
                 .ifPresent(this::setBlockState);
-        nbt.getInt("facing")
+        valueInput.getInt("facing")
                 .map(Direction::from3DDataValue)
                 .ifPresent(this::setFacing);
     }

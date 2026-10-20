@@ -12,9 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -27,6 +25,8 @@ import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 public class TurntableBlockEntity extends BlockEntity {
     protected static final int blocksAboveToRotate = 2;
@@ -42,17 +42,17 @@ public class TurntableBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.rotationTickCounter = nbt.getIntOr("rotationTickCounter", 0);
-        this.craftingTurnCounter = nbt.getIntOr("craftingTurnCounter", 0);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.rotationTickCounter = valueInput.getIntOr("rotationTickCounter", 0);
+        this.craftingTurnCounter = valueInput.getIntOr("craftingTurnCounter", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.putInt("rotationTickCounter", rotationTickCounter);
-        nbt.putInt("craftingTurnCounter", craftingTurnCounter);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        valueOutput.putInt("rotationTickCounter", rotationTickCounter);
+        valueOutput.putInt("craftingTurnCounter", craftingTurnCounter);
     }
 
     public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {

@@ -3,6 +3,8 @@ package com.bwt.rendering.unfired_decorated_pot;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import java.util.Objects;
+import java.util.Set;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -13,6 +15,7 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 @Environment(EnvType.CLIENT)
 public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<PotDecorations> {
@@ -37,7 +40,12 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
             int j,
             boolean bl
     ) {
-        this.unfiredDecoratedPotRenderer.renderPotDecorations(poseStack, multiBufferSource, i, j, Objects.requireNonNullElse(potDecorations, PotDecorations.EMPTY));
+        this.unfiredDecoratedPotRenderer.renderPotWithDecorations(poseStack, multiBufferSource, i, j, Objects.requireNonNullElse(potDecorations, PotDecorations.EMPTY));
+    }
+
+    @Override
+    public void getExtents(Set<Vector3f> set) {
+        // TODO?
     }
 
     @Environment(EnvType.CLIENT)

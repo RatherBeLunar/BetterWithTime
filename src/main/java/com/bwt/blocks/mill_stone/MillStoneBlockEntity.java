@@ -14,16 +14,13 @@ import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -33,6 +30,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -192,17 +191,16 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
-        this.grindProgressTime = nbt.getIntOr("grindProgressTime", 0);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.grindProgressTime = valueInput.getIntOr("grindProgressTime", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("grindProgressTime", this.grindProgressTime);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("grindProgressTime", this.grindProgressTime);
     }
 
     @Override

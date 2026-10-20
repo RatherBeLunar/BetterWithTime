@@ -25,7 +25,7 @@ import com.bwt.utils.Id;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
@@ -34,6 +34,7 @@ import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.Holder;
@@ -69,7 +70,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
                 Id.of("unfired_decorated_pot_with_sherds"),
 				UnfiredDecoratedPotSpecialRenderer.Unbaked.MAP_CODEC
 		);
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
+		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT,
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.lensBeamGlassBlock,
 				BwtBlocks.hempCropBlock,
@@ -86,7 +87,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.doorBlock,
 				BwtBlocks.bloodWoodBlocks.trapdoorBlock
 		);
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutoutMipped(),
+		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT_MIPPED,
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);

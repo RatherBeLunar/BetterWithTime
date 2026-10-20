@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -30,9 +31,11 @@ import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Environment(value= EnvType.CLIENT)
 public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRenderer<UnfiredDecoratedPotBlockEntity> {
@@ -53,13 +56,6 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
             UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, Vec3 vec3
     ) {
         Level level = unfiredDecoratedPotBlockEntity.getLevel();
-        BlockState state = unfiredDecoratedPotBlockEntity.getBlockState();
-        BlockPos pos = unfiredDecoratedPotBlockEntity.getBlockPos();
-
-        // Render the block itself
-        poseStack.pushPose();
-        this.renderModel(level, state, pos, poseStack, multiBufferSource, light, uv);
-        poseStack.popPose();
 
         PotDecorations potDecorations = unfiredDecoratedPotBlockEntity.getPotDecorations();
         renderPotDecorations(
@@ -73,7 +69,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         );
     }
 
-    public void renderPotDecorations(PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, PotDecorations potDecorations) {
+    public void renderPotWithDecorations(PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, PotDecorations potDecorations) {
         poseStack.pushPose();
         this.renderModel(null, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState(), null, poseStack, multiBufferSource, light, uv);
         poseStack.popPose();
@@ -119,7 +115,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
             );
         }
         else {
-            RenderType renderLayer = ItemBlockRenderTypes.getChunkRenderType(state);
+            RenderType renderLayer = ItemBlockRenderTypes.getRenderType(state);
             VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
             blockRenderDispatcher.getModelRenderer().tesselateBlock(
                     level,

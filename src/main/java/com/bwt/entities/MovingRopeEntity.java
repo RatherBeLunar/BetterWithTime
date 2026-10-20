@@ -8,19 +8,17 @@ import com.bwt.utils.VoxelShapedEntity;
 import com.bwt.utils.rectangular_entity.EntityRectDimensions;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import com.google.common.collect.Maps;
+import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockUpdatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
@@ -30,15 +28,22 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.slf4j.Logger;
+
 import java.util.*;
 
 public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEntity {
+    private static final Logger LOGGER = LogUtils.getLogger();
+
     protected static final EntityDataAccessor<BlockPos> pulleyPos = SynchedEntityData.defineId(MovingRopeEntity.class, EntityDataSerializers.BLOCK_POS);
     private static final EntityDataAccessor<Integer> targetY = SynchedEntityData.defineId(MovingRopeEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Boolean> up = SynchedEntityData.defineId(MovingRopeEntity.class, EntityDataSerializers.BOOLEAN);
@@ -166,75 +171,66 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        setPulleyPos(new BlockPos(compound.getIntOr("PulleyX", 0), compound.getIntOr("PulleyY", 0), compound.getIntOr("PulleyZ", 0)));
-        setTargetY(compound.getIntOr("TargetY", 0));
-        setIsMovingUp(compound.getBooleanOr("Up", false));
-        if (compound.contains("blocks")) {
-            Map<Vec3i, BlockState> blocks = deserializeBlockMap(compound.getListOrEmpty("blocks"));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        setPulleyPos(new BlockPos(valueInput.getIntOr("PulleyX", 0), valueInput.getIntOr("PulleyY", 0), valueInput.getIntOr("PulleyZ", 0)));
+        setTargetY(valueInput.getIntOr("TargetY", 0));
+        setIsMovingUp(valueInput.getBooleanOr("Up", false));
+        valueInput.childrenList("blocks").ifPresent(list -> {
+            Map<Vec3i, BlockState> blocks = deserializeBlockMap(list);
             setBlockMap(blocks);
             rebuildBlockBoundingBox();
-        }
-        if (compound.contains("blockEntities")) {
-            setBlockEntityNbtMap(deserializeBlockEntities(compound.getListOrEmpty("blockEntities")));
-        }
+        });
+        valueInput.childrenList("blockEntities").ifPresent(list ->
+                setBlockEntityNbtMap(deserializeBlockEntities(list))
+        );
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        compound.putInt("PulleyX", getPulleyPos().getX());
-        compound.putInt("PulleyY", getPulleyPos().getY());
-        compound.putInt("PulleyZ", getPulleyPos().getZ());
-        compound.putInt("TargetY", getTargetY());
-        compound.putBoolean("Up", isMovingUp());
-        compound.put("blocks", serializeBlockMap());
-        compound.put("blockEntities", serializeBlockEntities());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        valueOutput.putInt("PulleyX", getPulleyPos().getX());
+        valueOutput.putInt("PulleyY", getPulleyPos().getY());
+        valueOutput.putInt("PulleyZ", getPulleyPos().getZ());
+        valueOutput.putInt("TargetY", getTargetY());
+        valueOutput.putBoolean("Up", isMovingUp());
+        serializeBlockMap(valueOutput.childrenList("blocks"));
+        serializeBlockEntities(valueOutput.childrenList("blockEntities"));
     }
 
-    private ListTag serializeBlockEntities() {
-        ListTag entries = new ListTag();
+    private void serializeBlockEntities(ValueOutput.ValueOutputList outputList) {
         getBlockEntityNbtMap().forEach((offset, blockEntity) -> {
-            CompoundTag entry = new CompoundTag();
-            entry.putLong("offset", new BlockPos(offset).asLong());
-            entry.put("blockEntity", blockEntity);
-            entries.add(entry);
+            ValueOutput child = outputList.addChild();
+            child.putLong("offset", new BlockPos(offset).asLong());
+            child.store("blockEntity", CompoundTag.CODEC, blockEntity);
         });
-        return entries;
     }
 
-    private Map<Vec3i, CompoundTag> deserializeBlockEntities(ListTag blockEntities) {
+    private Map<Vec3i, CompoundTag> deserializeBlockEntities(ValueInput.ValueInputList blockEntities) {
         Map<Vec3i, CompoundTag> map = new HashMap<>();
-        for (Tag entry : blockEntities) {
-            CompoundTag compound = (CompoundTag) entry;
+        for (ValueInput entry : blockEntities) {
             map.put(
-                    compound.getLong("offset").map(BlockPos::of).orElse(BlockPos.ZERO),
-                    compound.getCompoundOrEmpty("blockEntity")
+                    entry.getLong("offset").map(BlockPos::of).orElse(BlockPos.ZERO),
+                    entry.read("blockEntity", CompoundTag.CODEC).orElse(new CompoundTag())
             );
         }
         return map;
     }
 
-    private ListTag serializeBlockMap() {
-        ListTag entries = new ListTag();
+    private void serializeBlockMap(ValueOutput.ValueOutputList outputList) {
         for (Map.Entry<Vec3i, BlockState> entry : getBlockMap().entrySet()) {
             if (entry.getValue() == null) {
                 continue;
             }
-            CompoundTag listEntry = new CompoundTag();
-            listEntry.putLong("pos", new BlockPos(entry.getKey()).asLong());
-            listEntry.put("state", NbtUtils.writeBlockState(entry.getValue()));
-            entries.add(listEntry);
+            ValueOutput child = outputList.addChild();
+            child.putLong("pos", new BlockPos(entry.getKey()).asLong());
+            child.store("state", BlockState.CODEC, entry.getValue());
         }
-        return entries;
     }
 
-    private Map<Vec3i, BlockState> deserializeBlockMap(ListTag blocks) {
+    private Map<Vec3i, BlockState> deserializeBlockMap(ValueInput.ValueInputList blocks) {
         Map<Vec3i, BlockState> map = new HashMap<>();
-        for (Tag entry : blocks) {
-            CompoundTag entryCompound = ((CompoundTag) entry);
-            Vec3i pos = entryCompound.getLong("pos").map(BlockPos::of).orElse(BlockPos.ZERO);
-            BlockState state = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), entryCompound.getCompoundOrEmpty("state"));
-            map.put(pos, state);
+        for (ValueInput entry : blocks) {
+            Vec3i pos = entry.getLong("pos").map(BlockPos::of).orElse(BlockPos.ZERO);
+            entry.read("state", BlockState.CODEC).ifPresent(state -> map.put(pos, state));
         }
         return map;
     }
@@ -350,7 +346,10 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
                         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
                         if (blockEntity != null) {
                             CompoundTag tag = blockEntities.get(entry.getKey());
-                            blockEntity.loadWithComponents(tag, registryAccess());
+                            try (ProblemReporter.ScopedCollector scopedCollector = new ProblemReporter.ScopedCollector(this.problemPath(), LOGGER)) {
+                                ValueInput valueInput = TagValueInput.create(scopedCollector, registryAccess(), tag);
+                                blockEntity.loadWithComponents(valueInput);
+                            }
                             ((MovableBlockEntityMixin) blockEntity).setPos(blockPos);
                         }
                     }
@@ -421,7 +420,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
             BlockPos pos = this.getPulleyPos().below(this.getPulleyPos().getY() - getTargetY()).offset(offset);
             pos = isMovingUp() ? pos.above() : pos.below();
 
-            BlockState placementState = getCommandSenderWorld().getBlockState(pos);
+            BlockState placementState = level().getBlockState(pos);
 
             if (!(placementState.is(BlockTags.AIR) || placementState.canBeReplaced())) {
                 blocked.add(pos);

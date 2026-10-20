@@ -9,7 +9,6 @@ import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,6 +28,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -53,14 +54,14 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
-        nbt.putBoolean("IsFed", this.bwt$isFed());
+    public void bwt$writeCustomDataToNbt(ValueOutput valueOutput, CallbackInfo ci) {
+        valueOutput.putBoolean("IsFed", this.bwt$isFed());
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
-        if (nbt.contains("IsFed")) {
-            this.bwt$setIsFed(nbt.getBooleanOr("IsFed", false));
+    public void bwt$readCustomDataFromNbt(ValueInput valueInput, CallbackInfo ci) {
+        if (valueInput.contains("IsFed")) {
+            this.bwt$setIsFed(valueInput.getBooleanOr("IsFed", false));
         }
     }
 

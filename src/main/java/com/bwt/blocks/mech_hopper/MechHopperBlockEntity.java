@@ -20,19 +20,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -50,6 +49,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,35 +115,35 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.filterInventory.readNbt(nbt.getCompoundOrEmpty("Filter"), registryLookup);
-        this.hopperInventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
-        this.mechPower = nbt.getIntOr("mechPower", 0);
-        this.soulCount = nbt.getIntOr("soulCount", 0);
-        this.xpCount = nbt.getIntOr("xpCount", 0);
-        this.itemPickupCooldown = nbt.getIntOr("itemPickupCooldown", 0);
-        this.itemDropCooldown = nbt.getIntOr("itemDropCooldown", 0);
-        this.xpPickupCooldown = nbt.getIntOr("xpPickupCooldown", 0);
-        this.xpDropCooldown = nbt.getIntOr("xpDropCooldown", 0);
-        this.slotsOccupied = nbt.getIntOr("slotsOccupied", 0);
-        this.outputBlocked = nbt.getBooleanOr("outputBlocked", false);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.filterInventory.readData(valueInput, "Filter");
+        this.hopperInventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.mechPower = valueInput.getIntOr("mechPower", 0);
+        this.soulCount = valueInput.getIntOr("soulCount", 0);
+        this.xpCount = valueInput.getIntOr("xpCount", 0);
+        this.itemPickupCooldown = valueInput.getIntOr("itemPickupCooldown", 0);
+        this.itemDropCooldown = valueInput.getIntOr("itemDropCooldown", 0);
+        this.xpPickupCooldown = valueInput.getIntOr("xpPickupCooldown", 0);
+        this.xpDropCooldown = valueInput.getIntOr("xpDropCooldown", 0);
+        this.slotsOccupied = valueInput.getIntOr("slotsOccupied", 0);
+        this.outputBlocked = valueInput.getBooleanOr("outputBlocked", false);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Filter", this.filterInventory.toNbt(registryLookup));
-        nbt.put("Inventory", this.hopperInventory.createTag(registryLookup));
-        nbt.putInt("mechPower", this.mechPower);
-        nbt.putInt("soulCount", this.soulCount);
-        nbt.putInt("xpCount", this.xpCount);
-        nbt.putInt("itemPickupCooldown", this.itemPickupCooldown);
-        nbt.putInt("itemDropCooldown", this.itemDropCooldown);
-        nbt.putInt("xpPickupCooldown", this.xpPickupCooldown);
-        nbt.putInt("xpDropCooldown", this.xpDropCooldown);
-        nbt.putInt("slotsOccupied", this.slotsOccupied);
-        nbt.putBoolean("outputBlocked", this.outputBlocked);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        this.filterInventory.saveData(valueOutput, "Filter");
+        this.hopperInventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("mechPower", this.mechPower);
+        valueOutput.putInt("soulCount", this.soulCount);
+        valueOutput.putInt("xpCount", this.xpCount);
+        valueOutput.putInt("itemPickupCooldown", this.itemPickupCooldown);
+        valueOutput.putInt("itemDropCooldown", this.itemDropCooldown);
+        valueOutput.putInt("xpPickupCooldown", this.xpPickupCooldown);
+        valueOutput.putInt("xpDropCooldown", this.xpDropCooldown);
+        valueOutput.putInt("slotsOccupied", this.slotsOccupied);
+        valueOutput.putBoolean("outputBlocked", this.outputBlocked);
     }
 
     @Override
@@ -438,11 +439,11 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        CompoundTag nbtCompound = saveWithoutMetadata(registryLookup);
-        nbtCompound.putInt("slotsOccupied", slotsOccupied);
-        nbtCompound.put("Filter", this.filterInventory.toNbt(registryLookup));
-        return nbtCompound;
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        CompoundTag compoundTag = saveWithoutMetadata(provider);
+        compoundTag.putInt("slotsOccupied", slotsOccupied);
+        compoundTag.put("Filter", this.filterInventory.toTag(provider));
+        return compoundTag;
     }
 
     @Override

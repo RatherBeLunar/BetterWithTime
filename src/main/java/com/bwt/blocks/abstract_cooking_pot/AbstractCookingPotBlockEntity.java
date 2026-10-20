@@ -21,8 +21,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -30,23 +28,21 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -107,21 +103,21 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getListOrEmpty("Inventory"), registryLookup);
-        this.cookProgressTime = nbt.getIntOr("cookProgressTicks", 0);
-        this.isStoked = nbt.getBooleanOr("isStoked", false);
-        this.slotsOccupied = nbt.getIntOr("slotsOccupied", 0);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.cookProgressTime = valueInput.getIntOr("cookProgressTicks", 0);
+        this.isStoked = valueInput.getBooleanOr("isStoked", false);
+        this.slotsOccupied = valueInput.getIntOr("slotsOccupied", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("cookProgressTicks", this.cookProgressTime);
-        nbt.putBoolean("isStoked", this.isStoked);
-        nbt.putInt("slotsOccupied", this.slotsOccupied);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("cookProgressTicks", this.cookProgressTime);
+        valueOutput.putBoolean("isStoked", this.isStoked);
+        valueOutput.putInt("slotsOccupied", this.slotsOccupied);
     }
 
     @Override

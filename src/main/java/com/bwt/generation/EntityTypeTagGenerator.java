@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.vehicle.ChestBoat;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -17,7 +16,7 @@ public class EntityTypeTagGenerator extends FabricTagProvider.EntityTypeTagProvi
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        getOrCreateTagBuilder(BwtEntityTags.BLOCK_DISPENSER_INHALE_ENTITIES)
+        valueLookupBuilder(BwtEntityTags.BLOCK_DISPENSER_INHALE_ENTITIES)
                 .add(EntityType.WOLF)
                 .add(EntityType.CHICKEN)
                 .add(EntityType.SHEEP)

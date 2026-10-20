@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -26,6 +25,8 @@ import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 public class WindmillEntity extends HorizontalMechPowerSourceEntity {
@@ -194,23 +195,23 @@ public class WindmillEntity extends HorizontalMechPowerSourceEntity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
-        nbt.putInt("dyeIndex", entityData.get(dyeIndex));
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putInt("dyeIndex", entityData.get(dyeIndex));
         for (int i = 0; i < NUM_SAILS; i++) {
-            nbt.putInt("sail" + i + "Color", entityData.get(sailColors.get(i)));
+            valueOutput.putInt("sail" + i + "Color", entityData.get(sailColors.get(i)));
         }
-        nbt.putInt("overpowerTimer", overpowerTimer);
+        valueOutput.putInt("overpowerTimer", overpowerTimer);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
-        entityData.set(dyeIndex, nbt.getIntOr("dyeIndex", 0));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        entityData.set(dyeIndex, valueInput.getIntOr("dyeIndex", 0));
         for (int i = 0; i < NUM_SAILS; i++) {
-            entityData.set(sailColors.get(i), nbt.getIntOr("sail" + i + "Color", DyeColor.WHITE.getId()));
+            entityData.set(sailColors.get(i), valueInput.getIntOr("sail" + i + "Color", DyeColor.WHITE.getId()));
         }
-        overpowerTimer = nbt.getIntOr("overpowerTimer", 0);
+        overpowerTimer = valueInput.getIntOr("overpowerTimer", 0);
     }
 
     @Override

@@ -5,7 +5,6 @@ import com.bwt.entities.WindmillEntity;
 import com.bwt.rendering.horizontal_mech_power_source.HorizontalMechPowerSourceEntityRenderer;
 import com.bwt.utils.Id;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.resources.ResourceLocation;
 
 public class WindmillEntityRenderer extends HorizontalMechPowerSourceEntityRenderer<WindmillEntity, WindmillRenderState> {
