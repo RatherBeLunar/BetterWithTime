@@ -482,6 +482,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
                 .forceAddTag(ConventionalItemTags.MUSIC_DISCS)
                 .forceAddTag(ItemTags.SAPLINGS)
+                .forceAddTag(ItemTags.HARNESSES)
                 .forceAddTag(ConventionalItemTags.TOOLS)
                 .forceAddTag(ConventionalItemTags.BOW_TOOLS)
                 .forceAddTag(ConventionalItemTags.CROSSBOW_TOOLS)

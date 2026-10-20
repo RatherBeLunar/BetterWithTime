@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_cauldron",
+  "category": "misc",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": "#minecraft:harnesses"
+    }
+  ],
+  "results": [
+    {
+      "count": 3,
+      "id": "bwt:glue"
+    }
+  ]
+}

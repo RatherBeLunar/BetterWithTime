@@ -111,6 +111,7 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
                     // TODO tanned leather armor, gimp armor, breeding harness
                 });
                 GLUE_AMOUNTS.forEach((key, value) -> createStoked().ingredient(key).result(BwtItems.glueItem, value).save(output, RecipeProvider.getItemName(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemName(key)));
+                createStoked().ingredient(ItemTags.HARNESSES).result(BwtItems.glueItem, 3).save(output, RecipeProvider.getItemName(BwtItems.glueItem) + "_from_cauldron_rendering_harness");
                 createStoked().ingredient(BwtItems.strapItem, 8).result(BwtItems.glueItem, 1).save(output, RecipeProvider.getItemName(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemName(BwtItems.strapItem));
                 createStoked().ingredient(BwtItems.beltItem, 2).result(BwtItems.glueItem, 1).save(output, RecipeProvider.getItemName(BwtItems.glueItem) + "_from_cauldron_rendering_" + RecipeProvider.getItemName(BwtItems.beltItem));
                 // Tallow
