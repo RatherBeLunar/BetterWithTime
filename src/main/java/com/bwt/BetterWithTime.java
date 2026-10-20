@@ -68,7 +68,9 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class BetterWithTime implements ModInitializer {
 	// This logger is used to write text to the console and the log file.
@@ -168,6 +170,16 @@ public class BetterWithTime implements ModInitializer {
 		// Saw recipe results modifiers
 		StateDependentSawRecipeHelper.registerDefaults();
 
+		LootTableEvents.MODIFY_DROPS.register(((entry, context, drops) -> {
+			if (Stream.of(EntityType.SKELETON, EntityType.BOGGED, EntityType.STRAY)
+					.map(EntityType::getDefaultLootTable)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .anyMatch(entry::is)
+			) {
+				drops.forEach((key) -> drops.replaceAll(drop -> drop.is(Items.ARROW) ? new ItemStack(BwtItems.rottedArrowItem, drop.getCount()) : drop));
+			}
+		}));
 		LootTableEvents.MODIFY.register((key, tableBuilder, source, wrapperLookup) -> {
 			if (!source.isBuiltin()) {
 				return;
