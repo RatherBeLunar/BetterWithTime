@@ -10,7 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import java.util.concurrent.CompletableFuture;
@@ -105,7 +105,7 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
     }
 
     @Override
-    protected ResourceLocation getRecipeIdentifier(ResourceLocation identifier) {
+    protected Identifier getRecipeIdentifier(Identifier identifier) {
         return identifier;
     }
 

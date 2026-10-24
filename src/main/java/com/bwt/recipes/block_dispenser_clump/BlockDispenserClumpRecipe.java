@@ -9,7 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.level.block.Block;
@@ -22,7 +22,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -242,7 +242,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
             this.save(exporter, Id.of(recipePath));
         }
 
-        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+        public void save(RecipeOutput recipeOutput, Identifier recipeId) {
             this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
         }
 
@@ -255,7 +255,7 @@ public record BlockDispenserClumpRecipe(IngredientWithCount item, Block block, C
                     this.block,
                     this.category
             );
-            recipeOutput.accept(resourceKey, blockDispenserClumpRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, blockDispenserClumpRecipe, advancementBuilder.build(resourceKey.identifier().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

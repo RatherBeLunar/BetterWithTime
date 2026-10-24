@@ -97,8 +97,9 @@ public class LensBeamGlassBlock extends LensBeamBlock {
     }
 
     @Override
-    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
-        glassState.entityInside(level, blockPos, entity, insideBlockEffectApplier);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
+        glassState.entityInside(level, blockPos, entity, insideBlockEffectApplier, bl);
     }
 
     @Override

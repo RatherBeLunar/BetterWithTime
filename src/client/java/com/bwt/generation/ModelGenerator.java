@@ -21,7 +21,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.MultiVariant;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.util.random.WeightedList;
 import net.minecraft.world.item.DyeColor;
@@ -126,8 +126,8 @@ public class ModelGenerator extends FabricModelProvider {
                         plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.platformBlock))
                 )
         );
-        ResourceLocation bellowsId = ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock);
-        ResourceLocation bellowsCompressedId = bellowsId.withSuffix("_compressed");
+        Identifier bellowsId = ModelLocationUtils.getModelLocation(BwtBlocks.bellowsBlock);
+        Identifier bellowsCompressedId = bellowsId.withSuffix("_compressed");
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(BwtBlocks.bellowsBlock)
                 .with(PropertyDispatch.initial(BellowsBlock.MECH_POWERED)
                         .select(true, plainVariant(bellowsCompressedId))
@@ -166,9 +166,9 @@ public class ModelGenerator extends FabricModelProvider {
                 ModelLocationUtils.getModelLocation(BwtBlocks.grassPlanterBlock),
                 new GrassColorSource()
         );
-        ResourceLocation buddyBlockModelId = TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
+        Identifier buddyBlockModelId = TexturedModel.createDefault(block -> TextureMapping.orientableCubeOnlyTop(block).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side")), ModelTemplates.CUBE_ORIENTABLE)
                 .create(BwtBlocks.buddyBlock, blockStateModelGenerator.modelOutput);
-        ResourceLocation buddyBlockPoweredModelId = TexturedModel.createDefault(block -> new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block, "_side_powered")).put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front_powered")).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side_powered")), ModelTemplates.CUBE_ORIENTABLE)
+        Identifier buddyBlockPoweredModelId = TexturedModel.createDefault(block -> new TextureMapping().put(TextureSlot.SIDE, TextureMapping.getBlockTexture(block, "_side_powered")).put(TextureSlot.FRONT, TextureMapping.getBlockTexture(block, "_front_powered")).put(TextureSlot.TOP, TextureMapping.getBlockTexture(block, "_side_powered")), ModelTemplates.CUBE_ORIENTABLE)
                 .createWithSuffix(BwtBlocks.buddyBlock, "_powered", blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(BwtBlocks.buddyBlock)
@@ -325,21 +325,21 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     private void generateCompanionBlocks(BlockModelGenerators blockStateModelGenerator) {
-        ResourceLocation companionCubeModelId = TexturedModel.ORIENTABLE_ONLY_TOP.create(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelOutput);
+        Identifier companionCubeModelId = TexturedModel.ORIENTABLE_ONLY_TOP.create(BwtBlocks.companionCubeBlock, blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(
                         BwtBlocks.companionCubeBlock,
                         plainVariant(ModelLocationUtils.getModelLocation(BwtBlocks.companionCubeBlock))
                 ).with(NORTH_DEFAULT_ROTATION)
         );
-        ResourceLocation companionSlabBottom = TexturedModel.createDefault(
+        Identifier companionSlabBottom = TexturedModel.createDefault(
                 block -> new TextureMapping()
                         .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_top"))
                         .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.companionSlabBlock, "_top"))
                         .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_side"))
                 , ModelTemplates.SLAB_BOTTOM
         ).create(BwtBlocks.companionSlabBlock, blockStateModelGenerator.modelOutput);
-        ResourceLocation companionSlabTop = TexturedModel.createDefault(
+        Identifier companionSlabTop = TexturedModel.createDefault(
                 block -> new TextureMapping()
                         .put(TextureSlot.BOTTOM, TextureMapping.getBlockTexture(BwtBlocks.companionSlabBlock, "_top"))
                         .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.companionCubeBlock, "_top"))
@@ -418,7 +418,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateDebugLensBeam(BlockModelGenerators blockStateModelGenerator) {
         LensBeamBlock beam = BwtBlocks.lensBeamBlock;
-        ResourceLocation identifier = ModelLocationUtils.getModelLocation(beam);
+        Identifier identifier = ModelLocationUtils.getModelLocation(beam);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiPartGenerator
                         .multiPart(beam)
@@ -446,7 +446,7 @@ public class ModelGenerator extends FabricModelProvider {
 
     public static void generateScrewPump(BlockModelGenerators blockStateModelGenerator) {
         ScrewPumpBlock screwPump = BwtBlocks.screwPumpBlock;
-        ResourceLocation identifier = ModelLocationUtils.getModelLocation(screwPump);
+        Identifier identifier = ModelLocationUtils.getModelLocation(screwPump);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiPartGenerator
                         .multiPart(screwPump)
@@ -529,8 +529,8 @@ public class ModelGenerator extends FabricModelProvider {
         TexturedModel texturedModel = TexturedModel.CUBE.get(mouldingBlock.fullBlock);
         ModelTemplate horizontalModel = new ModelTemplate(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
         ModelTemplate verticalModel = new ModelTemplate(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        ResourceLocation horizontalId = horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
-        ResourceLocation verticalId = verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier horizontalId = horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier verticalId = verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(mouldingBlock).with(createMouldingOrientationMap(horizontalId, verticalId)));
         blockStateModelGenerator.registerSimpleItemModel(mouldingBlock, horizontalId);
     }
@@ -578,8 +578,8 @@ public class ModelGenerator extends FabricModelProvider {
         TexturedModel texturedModel = TexturedModel.CUBE.get(tableBlock.fullBlock);
         ModelTemplate tableModel = new ModelTemplate(Optional.of(Id.of("block/table")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
         ModelTemplate tableNoSupportModel = new ModelTemplate(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        ResourceLocation tableModelId = tableModel.create(ModelLocationUtils.getModelLocation(tableBlock), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
-        ResourceLocation noSupportModelId = tableNoSupportModel.create(ModelLocationUtils.getModelLocation(tableBlock, "_no_support"), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier tableModelId = tableModel.create(ModelLocationUtils.getModelLocation(tableBlock), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier noSupportModelId = tableNoSupportModel.create(ModelLocationUtils.getModelLocation(tableBlock, "_no_support"), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(tableBlock)
                         .with(PropertyDispatch.initial(TableBlock.SUPPORT)
@@ -590,7 +590,7 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public void generateVaseBlock(BlockModelGenerators blockStateModelGenerator, VaseBlock vaseBlock) {
-        ResourceLocation modelId = new ModelTemplate(
+        Identifier modelId = new ModelTemplate(
                 Optional.of(Id.of("block/vase")),
                 Optional.empty(),
                 TextureSlot.PARTICLE,
@@ -606,10 +606,10 @@ public class ModelGenerator extends FabricModelProvider {
 
     public void generateWoolSlab(BlockModelGenerators blockStateModelGenerator, DyeColor dyeColor, SlabBlock woolSlabBlock) {
         Block woolBlock = DyeUtils.WOOL_COLORS.get(dyeColor);
-        ResourceLocation identifier = ModelLocationUtils.getModelLocation(woolBlock);
+        Identifier identifier = ModelLocationUtils.getModelLocation(woolBlock);
         TexturedModel texturedModel = TexturedModel.CUBE.get(woolBlock);
-        ResourceLocation identifier2 = ModelTemplates.SLAB_BOTTOM.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
-        ResourceLocation identifier3 = ModelTemplates.SLAB_TOP.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier identifier2 = ModelTemplates.SLAB_BOTTOM.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier identifier3 = ModelTemplates.SLAB_TOP.create(woolSlabBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
         blockStateModelGenerator.blockStateOutput.accept(createSlab(woolSlabBlock, identifier2, identifier3, identifier));
     }
 
@@ -623,7 +623,7 @@ public class ModelGenerator extends FabricModelProvider {
                 .select(Direction.EAST, BlockModelGenerators.X_ROT_90.then(BlockModelGenerators.Y_ROT_90));
     }
 
-    public static PropertyDispatch<MultiVariant> createMouldingOrientationMap(ResourceLocation horizontalId, ResourceLocation verticalId) {
+    public static PropertyDispatch<MultiVariant> createMouldingOrientationMap(Identifier horizontalId, Identifier verticalId) {
         return PropertyDispatch.initial(MouldingBlock.ORIENTATION)
                 // horizontal, bottom - west, north, east, south
                 .select(0, plainVariant(horizontalId).with(BlockModelGenerators.UV_LOCK.then(BlockModelGenerators.Y_ROT_180)))
@@ -659,22 +659,22 @@ public class ModelGenerator extends FabricModelProvider {
     public void generateDirtAndGrassSlab(BlockModelGenerators blockStateModelGenerator) {
         //Dirt Slab
         TexturedModel dirtTexturedModel = TexturedModel.CUBE.get(Blocks.DIRT);
-        ResourceLocation dirtTexture = dirtTexturedModel.getMapping().get(TextureSlot.ALL);
-        ResourceLocation dirtSlab = TexturedModel.createDefault(
+        Identifier dirtTexture = dirtTexturedModel.getMapping().get(TextureSlot.ALL);
+        Identifier dirtSlab = TexturedModel.createDefault(
                 block -> new TextureMapping()
                         .put(TextureSlot.BOTTOM, dirtTexture)
                         .put(TextureSlot.TOP, dirtTexture)
                         .put(TextureSlot.SIDE, dirtTexture),
                 ModelTemplates.SLAB_BOTTOM
         ).create(BwtBlocks.dirtSlabBlock, blockStateModelGenerator.modelOutput);
-        ResourceLocation snowyDirtSlab = Id.of("block/snowy_dirt_slab");
-        ResourceLocation dirtPathSlab = Id.of("block/dirt_path_slab");
-        ResourceLocation grassSlab = Id.of("block/grass_slab");
-        ResourceLocation snowyGrassSlab = Id.of("block/snowy_grass_slab");
-        ResourceLocation myceliumSlab = Id.of("block/mycelium_slab");
-        ResourceLocation snowyMyceliumSlab = Id.of("block/snowy_mycelium_slab");
-        ResourceLocation podzolSlab = Id.of("block/podzol_slab");
-        ResourceLocation snowyPodzolSlab = Id.of("block/snowy_podzol_slab");
+        Identifier snowyDirtSlab = Id.of("block/snowy_dirt_slab");
+        Identifier dirtPathSlab = Id.of("block/dirt_path_slab");
+        Identifier grassSlab = Id.of("block/grass_slab");
+        Identifier snowyGrassSlab = Id.of("block/snowy_grass_slab");
+        Identifier myceliumSlab = Id.of("block/mycelium_slab");
+        Identifier snowyMyceliumSlab = Id.of("block/snowy_mycelium_slab");
+        Identifier podzolSlab = Id.of("block/podzol_slab");
+        Identifier snowyPodzolSlab = Id.of("block/snowy_podzol_slab");
 
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(BwtBlocks.dirtSlabBlock)
@@ -725,7 +725,7 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     private static PropertyDispatch<MultiVariant> createBooleanModelDispatch(
-            BooleanProperty booleanProperty, ResourceLocation trueVariant, ResourceLocation falseVariant
+            BooleanProperty booleanProperty, Identifier trueVariant, Identifier falseVariant
     ) {
         return createBooleanModelDispatch(booleanProperty, plainVariant(trueVariant), plainVariant(falseVariant));
     }
@@ -734,7 +734,7 @@ public class ModelGenerator extends FabricModelProvider {
         return createSimpleBlock(block, ModelLocationUtils.getModelLocation(block));
     }
 
-    static MultiVariantGenerator createSimpleBlock(Block block, ResourceLocation resourceLocation) {
+    static MultiVariantGenerator createSimpleBlock(Block block, Identifier resourceLocation) {
         return createSimpleBlock(block, plainVariant(resourceLocation));
     }
 
@@ -750,15 +750,15 @@ public class ModelGenerator extends FabricModelProvider {
         return variants(Arrays.stream(variants));
     }
 
-    protected static MultiVariant variants(ResourceLocation... resourceLocations) {
+    protected static MultiVariant variants(Identifier... resourceLocations) {
         return variants(Arrays.stream(resourceLocations).map(ModelGenerator::plainModel));
     }
 
-    protected static MultiVariant plainVariant(ResourceLocation resourceLocation) {
+    protected static MultiVariant plainVariant(Identifier resourceLocation) {
         return variant(plainModel(resourceLocation));
     }
 
-    static Variant plainModel(ResourceLocation resourceLocation) {
+    static Variant plainModel(Identifier resourceLocation) {
         return new Variant(resourceLocation);
     }
 
@@ -776,7 +776,7 @@ public class ModelGenerator extends FabricModelProvider {
                 );
     }
 
-    static BlockModelDefinitionGenerator createSlab(Block block, ResourceLocation variant1, ResourceLocation variant2, ResourceLocation variant3) {
+    static BlockModelDefinitionGenerator createSlab(Block block, Identifier variant1, Identifier variant2, Identifier variant3) {
         return createSlab(block, plainVariant(variant1), plainVariant(variant2), plainVariant(variant3));
     }
 

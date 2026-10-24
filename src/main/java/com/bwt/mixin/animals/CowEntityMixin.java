@@ -3,7 +3,7 @@ package com.bwt.mixin.animals;
 import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.mixin.accessor.MobEntityAccessorMixin;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.AbstractCow;
+import net.minecraft.world.entity.animal.cow.AbstractCow;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;

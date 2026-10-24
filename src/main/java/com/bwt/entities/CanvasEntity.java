@@ -7,7 +7,7 @@ import com.bwt.tags.BwtPaintingVariantTags;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
@@ -16,11 +16,11 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.decoration.Painting;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.Painting;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +36,7 @@ public class CanvasEntity extends Painting {
 
     @Override
     public void dropItem(ServerLevel serverLevel, @Nullable Entity breaker) {
-        if (serverLevel.getGameRules().getBoolean(GameRules.RULE_DOENTITYDROPS)) {
+        if (serverLevel.getGameRules().get(GameRules.ENTITY_DROPS)) {
             this.playSound(SoundEvents.PAINTING_BREAK, 1.0F, 1.0F);
             if (!(breaker instanceof Player playerEntity && playerEntity.hasInfiniteMaterials())) {
                 this.spawnAtLocation(serverLevel, BwtItems.canvasItem);

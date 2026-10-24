@@ -5,13 +5,12 @@ import com.bwt.utils.Id;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -19,13 +18,13 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.data.AtlasIds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 import net.minecraft.world.level.Level;
 
 public class CanvasRenderer extends EntityRenderer<CanvasEntity, CanvasRenderState> {
-    private static final ResourceLocation BACK_SPRITE_LOCATION = Id.of("back");
+    private static final Identifier BACK_SPRITE_LOCATION = Id.of("back");
     private final TextureAtlas paintingsAtlas;
 
     public CanvasRenderer(EntityRendererProvider.Context context) {
@@ -46,7 +45,7 @@ public class CanvasRenderer extends EntityRenderer<CanvasEntity, CanvasRenderSta
         this.renderCanvas(
                 poseStack,
                 submitNodeCollector,
-                RenderType.entitySolidZOffsetForward(backSprite.atlasLocation()),
+                RenderTypes.entitySolidZOffsetForward(backSprite.atlasLocation()),
                 paintingRenderState.lightCoordsPerBlock,
                 paintingVariant.width(),
                 paintingVariant.height(),

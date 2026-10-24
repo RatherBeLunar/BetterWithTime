@@ -9,12 +9,12 @@ import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.gui.screens.inventory.AbstractRecipeBookScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 @Environment(value= EnvType.CLIENT)
 public class SoulForgeScreen extends AbstractRecipeBookScreen<SoulForgeScreenHandler> {
-    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/soul_forge.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/soul_forge.png");
 
     public SoulForgeScreen(SoulForgeScreenHandler handler, Inventory inventory, Component title) {
         super(handler, new SoulForgeCraftingRecipeBookComponent(handler), inventory, title);

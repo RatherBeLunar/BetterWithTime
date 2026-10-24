@@ -1,5 +1,6 @@
 package com.bwt.mixin;
 
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -17,7 +18,7 @@ public abstract class NetherWartGrowthMixin {
      */
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
     public void bwt$randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (!level.dimensionType().ultraWarm()) {
+        if (!level.environmentAttributes().getValue(BwtEnvironmentAttributes.NETHER_GROTH_SPREADS, pos)) {
             ci.cancel();
         }
     }

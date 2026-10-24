@@ -2,19 +2,15 @@ package com.bwt.rendering.horizontal_mech_power_source;
 
 import com.bwt.entities.HorizontalMechPowerSourceEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class HorizontalMechPowerSourceEntityRenderer<E extends HorizontalMechPowerSourceEntity, S extends HorizontalMechPowerSourceEntityRenderState> extends EntityRenderer<E, S> {
@@ -26,11 +22,11 @@ public abstract class HorizontalMechPowerSourceEntityRenderer<E extends Horizont
 
     @Nullable
     protected RenderType getRenderLayer() {
-        ResourceLocation identifier = this.getTextureLocation();
+        Identifier identifier = this.getTextureLocation();
         return this.model.renderType(identifier);
     }
 
-    protected abstract ResourceLocation getTextureLocation();
+    protected abstract Identifier getTextureLocation();
 
     @Override
     public void submit(S renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {

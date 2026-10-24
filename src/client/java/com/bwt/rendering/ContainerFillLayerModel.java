@@ -7,7 +7,7 @@ import net.minecraft.client.model.geom.builders.CubeListBuilder;
 import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Unit;
 
 /**
@@ -18,7 +18,7 @@ public class ContainerFillLayerModel extends Model<Unit> {
     protected final ModelPart flat;
 
     public ContainerFillLayerModel(ModelPart root) {
-        super(root, RenderType::itemEntityTranslucentCull);
+        super(root, RenderTypes::itemEntityTranslucentCull);
         this.root = root;
         this.flat = root.getChild("flat");
     }

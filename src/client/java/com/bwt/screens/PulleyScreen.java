@@ -6,11 +6,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class PulleyScreen extends AbstractContainerScreen<PulleyScreenHandler> {
-    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/pulley.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/pulley.png");
 
     static final int gearIconHeight = 14;
 

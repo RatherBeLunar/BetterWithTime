@@ -18,6 +18,7 @@ import com.bwt.blocks.turntable.VerticalBlockAttachmentHelper;
 import com.bwt.damage_types.BwtDamageTypes;
 import com.bwt.entities.BwtEntities;
 import com.bwt.entities.MiningChargeEntity;
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import com.bwt.gamerules.BwtGameRules;
 import com.bwt.items.BwtItems;
 import com.bwt.particles.BwtParticles;
@@ -35,12 +36,12 @@ import net.fabricmc.fabric.api.registry.CompostingChanceRegistry;
 import net.fabricmc.fabric.api.registry.FuelRegistryEvents;
 import net.fabricmc.fabric.api.registry.StrippableBlockRegistry;
 import net.fabricmc.fabric.api.registry.TillableBlockRegistry;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.fabricmc.fabric.api.resource.v1.pack.PackActivationType;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.advancements.critereon.EntityFlagsPredicate;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.EntityFlagsPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -68,7 +69,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -80,6 +80,7 @@ public class BetterWithTime implements ModInitializer {
 	public static final BwtBlocks blocks = new BwtBlocks();
 	public static final BwtBlockEntities blockEntities = new BwtBlockEntities();
 	public static final BwtItems items = new BwtItems();
+	public static final BwtEnvironmentAttributes environmentAttributes = new BwtEnvironmentAttributes();
 	public static final BwtEntities entities = new BwtEntities();
 	public static final BwtRecipes recipes = new BwtRecipes();
 	public static final BwtParticles particles = new BwtParticles();
@@ -115,6 +116,7 @@ public class BetterWithTime implements ModInitializer {
 		blockEntities.onInitialize();
 		items.onInitialize();
 		particles.onInitialize();
+		environmentAttributes.onInitialize();
 		entities.onInitialize();
 		recipes.onInitialize();
 		damageTypes.onInitialize();
@@ -238,18 +240,18 @@ public class BetterWithTime implements ModInitializer {
 
 		PayloadTypeRegistry.playS2C().register(KilnBlockCookingProgressPayload.ID, KilnBlockCookingProgressPayload.CODEC);
 
-        ResourceManagerHelper.registerBuiltinResourcePack(
+        ResourceLoader.registerBuiltinPack(
                 Id.PROGRAMMER_ART_PACK_ID,
                 FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
                 Component.literal("BWT Programmer Art"),
-                ResourcePackActivationType.NORMAL
+                PackActivationType.NORMAL
         );
 
-		ResourceManagerHelper.registerBuiltinResourcePack(
+		ResourceLoader.registerBuiltinPack(
 				Id.LEGACY_SOUNDS_PACK_ID,
 				FabricLoader.getInstance().getModContainer(Id.MOD_ID).orElseThrow(),
 				Component.literal("Legacy Sounds Pack"),
-				ResourcePackActivationType.NORMAL
+				PackActivationType.NORMAL
 		);
 	}
 }

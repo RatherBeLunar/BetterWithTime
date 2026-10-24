@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -17,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 @Environment(EnvType.CLIENT)
 public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<PotDecorations> {
@@ -53,7 +55,7 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
     }
 
     @Override
-    public void getExtents(Set<Vector3f> set) {
+    public void getExtents(Consumer<Vector3fc> consumer) {
         // TODO?
     }
 

@@ -11,7 +11,7 @@ import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.Half;
 
@@ -61,7 +61,7 @@ public class ProgrammerArtModelGenerator extends ModelGenerator {
 
     public void generateGrothedNetherrack(BlockModelGenerators blockStateModelGenerator) {
         TexturedModel netherrackTexturedModel = TexturedModel.CUBE.get(Blocks.NETHERRACK);
-        ResourceLocation netherrackTexture = netherrackTexturedModel.getMapping().get(TextureSlot.ALL);
+        Identifier netherrackTexture = netherrackTexturedModel.getMapping().get(TextureSlot.ALL);
         TextureMapping grothedNetherrackTextureMap = new TextureMapping()
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(BwtBlocks.grothedNetherrackBlock, "_side"))
                 .put(TextureSlot.TOP, TextureMapping.getBlockTexture(BwtBlocks.grothedNetherrackBlock, "_top"))

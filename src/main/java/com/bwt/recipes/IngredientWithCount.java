@@ -12,7 +12,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -129,7 +129,7 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
     }
 
     public static class Serializer implements CustomIngredientSerializer<IngredientWithCount> {
-        private static final ResourceLocation ID = Id.of("ingredient_with_count");
+        private static final Identifier ID = Id.of("ingredient_with_count");
         public static final MapCodec<IngredientWithCount> CODEC = createCodec();
         public static final StreamCodec<RegistryFriendlyByteBuf, IngredientWithCount> PACKET_CODEC = StreamCodec.of(
                 Serializer::write, Serializer::read
@@ -145,7 +145,7 @@ public record IngredientWithCount(Ingredient ingredient, int count) implements C
         }
 
         @Override
-        public ResourceLocation getIdentifier() {
+        public Identifier getIdentifier() {
             return ID;
         }
 

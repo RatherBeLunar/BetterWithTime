@@ -72,8 +72,8 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     @Override
-    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
-        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
         boolean updated = updateIntersectStates(blockState, level, blockPos, true, null);
         if (updated) {
             level.scheduleTick(blockPos, this, tickRate);

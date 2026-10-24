@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -22,10 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(value=EnvType.CLIENT)
 public class CookingPotEntityRenderer implements BlockEntityRenderer<AbstractCookingPotBlockEntity, AbstractCookingPotRenderState> {
-    private final ResourceLocation fillTexture;
+    private final Identifier fillTexture;
     protected final ContainerFillLayerModel fillModel;
 
-    public CookingPotEntityRenderer(BlockEntityRendererProvider.Context ctx, ResourceLocation fillTexture) {
+    public CookingPotEntityRenderer(BlockEntityRendererProvider.Context ctx, Identifier fillTexture) {
         this.fillModel = new ContainerFillLayerModel(ctx.bakeLayer(BetterWithTimeClient.CONTAINER_FILL_LAYER));
         this.fillTexture = fillTexture;
     }

@@ -6,15 +6,11 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.ArrowRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.TippableArrowRenderState;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.projectile.Arrow;
+import net.minecraft.resources.Identifier;
 
 @Environment(value= EnvType.CLIENT)
 public class BroadheadArrowEntityRenderer extends ArrowRenderer<BroadheadArrowEntity, BroadheadArrowRenderState> {
-    public static final ResourceLocation TEXTURE = Id.of("textures/entity/broadhead_arrows.png");
+    public static final Identifier TEXTURE = Id.of("textures/entity/broadhead_arrows.png");
 
     public BroadheadArrowEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -26,7 +22,7 @@ public class BroadheadArrowEntityRenderer extends ArrowRenderer<BroadheadArrowEn
     }
 
     @Override
-    protected ResourceLocation getTextureLocation(BroadheadArrowRenderState arrowRenderState) {
+    protected Identifier getTextureLocation(BroadheadArrowRenderState arrowRenderState) {
         return TEXTURE;
     }
 }

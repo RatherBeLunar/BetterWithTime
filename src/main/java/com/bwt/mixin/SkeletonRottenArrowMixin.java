@@ -2,10 +2,8 @@ package com.bwt.mixin;
 
 import com.bwt.items.BwtItems;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.monster.AbstractSkeleton;
+import net.minecraft.world.entity.monster.skeleton.AbstractSkeleton;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,7 +21,7 @@ public abstract class SkeletonRottenArrowMixin extends Monster {
             method = "performRangedAttack",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/monster/AbstractSkeleton;getProjectile(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"
+                    target = "Lnet/minecraft/world/entity/monster/skeleton/AbstractSkeleton;getProjectile(Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;"
             )
     )
     protected ItemStack bwt$rotArrows(ItemStack original) {

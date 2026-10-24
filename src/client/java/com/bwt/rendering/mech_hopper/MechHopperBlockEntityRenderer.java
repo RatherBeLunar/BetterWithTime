@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -28,18 +28,18 @@ import java.util.Optional;
 
 @Environment(value=EnvType.CLIENT)
 public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHopperBlockEntity, MechHopperRenderState> {
-    private static final ResourceLocation FILL_TEXTURE = Id.of("textures/block/hopper_fill.png");
+    private static final Identifier FILL_TEXTURE = Id.of("textures/block/hopper_fill.png");
     protected final ContainerFillLayerModel fillModel;
 
     public MechHopperBlockEntityRenderer(BlockEntityRendererProvider.Context ctx) {
         this.fillModel = new ContainerFillLayerModel(ctx.bakeLayer(BetterWithTimeClient.CONTAINER_FILL_LAYER));
     }
 
-    protected @Nullable ResourceLocation getFilterTexture(Item filterItem) {
+    protected @Nullable Identifier getFilterTexture(Item filterItem) {
         if (filterItem.equals(Items.AIR)) {
             return null;
         }
-        Optional<ResourceLocation> identifier = BuiltInRegistries.ITEM.wrapAsHolder(filterItem).unwrapKey().map(ResourceKey::location);
+        Optional<Identifier> identifier = BuiltInRegistries.ITEM.wrapAsHolder(filterItem).unwrapKey().map(ResourceKey::identifier);
         return identifier.map(value -> value.withPrefix("textures/block/").withSuffix(".png"))
                 .orElseGet(() -> Id.mc("textures/block/air.png"));
 

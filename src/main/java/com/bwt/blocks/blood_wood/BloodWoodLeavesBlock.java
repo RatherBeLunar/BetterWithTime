@@ -10,7 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.UntintedParticleLeavesBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,7 +37,7 @@ public class BloodWoodLeavesBlock extends UntintedParticleLeavesBlock {
     }
 
     public static void popResource(ServerLevel level, BlockPos pos, ItemStack stack) {
-        if (level.isClientSide() || stack.isEmpty() || !level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+        if (level.isClientSide() || stack.isEmpty() || !level.getGameRules().get(GameRules.BLOCK_DROPS)) {
             return;
         }
         double d = (double) EntityType.ITEM.getHeight() / 2.0;

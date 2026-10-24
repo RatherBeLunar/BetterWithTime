@@ -17,7 +17,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.HolderSetCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -101,7 +101,7 @@ public record BlockIngredient(HolderSet<Block> values) implements CustomIngredie
     }
 
     public static class Serializer implements CustomIngredientSerializer<BlockIngredient> {
-        private static final ResourceLocation ID = Id.of("block_ingredient");
+        private static final Identifier ID = Id.of("block_ingredient");
         public static final MapCodec<BlockIngredient> CODEC = RecordCodecBuilder.mapCodec(instance ->
                 instance.group(
                         RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("values").forGetter(BlockIngredient::values)
@@ -109,7 +109,7 @@ public record BlockIngredient(HolderSet<Block> values) implements CustomIngredie
         );
 
         @Override
-        public ResourceLocation getIdentifier() {
+        public Identifier getIdentifier() {
             return ID;
         }
 

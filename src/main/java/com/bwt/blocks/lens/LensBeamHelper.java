@@ -15,7 +15,6 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -41,7 +40,7 @@ public class LensBeamHelper {
     protected static int getRemainingRange(ServerLevel level, BlockPos pos, Direction direction) {
         BlockPos.MutableBlockPos mutable = pos.mutable();
         int distanceFromLens = 0;
-        int maxRange = level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE);
+        int maxRange = level.getGameRules().get(BwtGameRules.LENS_BEAM_RANGE);
         while (distanceFromLens < maxRange) {
             mutable.move(direction.getOpposite());
             distanceFromLens++;
@@ -60,7 +59,7 @@ public class LensBeamHelper {
     }
 
     public static void fireBeam(ServerLevel level, BlockPos lensPos, BlockState lensState) {
-        propagateBeam(level, lensPos, lensState, lensState.getValue(LensBlock.FACING), level.getGameRules().getInt(BwtGameRules.LENS_BEAM_RANGE));
+        propagateBeam(level, lensPos, lensState, lensState.getValue(LensBlock.FACING), level.getGameRules().get(BwtGameRules.LENS_BEAM_RANGE));
     }
 
     public static void killBeam(Level level, BlockPos originPos, Direction facing) {

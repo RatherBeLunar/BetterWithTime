@@ -19,14 +19,14 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -206,7 +206,7 @@ public record SoulBottlingRecipe(String group, CraftingBookCategory category, Bl
             this.save(exporter, Id.of(recipePath));
         }
 
-        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+        public void save(RecipeOutput recipeOutput, Identifier recipeId) {
             this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
         }
 
@@ -220,7 +220,7 @@ public record SoulBottlingRecipe(String group, CraftingBookCategory category, Bl
                     this.soulCount,
                     this.result
             );
-            recipeOutput.accept(resourceKey, soulBottlingRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
+            recipeOutput.accept(resourceKey, soulBottlingRecipe, advancementBuilder.build(resourceKey.identifier().withPrefix("recipes/" + this.category.getSerializedName() + "/")));
         }
     }
 }

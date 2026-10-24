@@ -6,11 +6,11 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class CauldronScreen extends AbstractContainerScreen<CauldronScreenHandler> {
-    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/cauldron.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/cauldron.png");
 
     static final int fireIconHeight = 14;
 

@@ -5,7 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 
 public class BwtSoundEvents implements ModInitializer {
@@ -43,7 +43,7 @@ public class BwtSoundEvents implements ModInitializer {
         return BwtSoundEvents.register(Id.of(id));
     }
 
-    protected static SoundEvent register(ResourceLocation id) {
+    protected static SoundEvent register(Identifier id) {
         return BwtSoundEvents.register(id, id);
     }
 
@@ -51,15 +51,15 @@ public class BwtSoundEvents implements ModInitializer {
         return BwtSoundEvents.registerReference(Id.mc(id));
     }
 
-    protected static Holder.Reference<SoundEvent> registerReference(ResourceLocation id) {
+    protected static Holder.Reference<SoundEvent> registerReference(Identifier id) {
         return BwtSoundEvents.registerReference(id, id);
     }
 
-    protected static Holder.Reference<SoundEvent> registerReference(ResourceLocation id, ResourceLocation soundId) {
+    protected static Holder.Reference<SoundEvent> registerReference(Identifier id, Identifier soundId) {
         return Registry.registerForHolder(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(soundId));
     }
 
-    protected static SoundEvent register(ResourceLocation id, ResourceLocation soundId) {
+    protected static SoundEvent register(Identifier id, Identifier soundId) {
         return Registry.register(BuiltInRegistries.SOUND_EVENT, id, SoundEvent.createVariableRangeEvent(soundId));
     }
 

@@ -86,7 +86,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.doorBlock,
 				BwtBlocks.bloodWoodBlocks.trapdoorBlock
 		);
-		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT_MIPPED,
+		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT,
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);

@@ -4,8 +4,8 @@ import com.bwt.items.BwtItems;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
-import net.minecraft.world.entity.projectile.ThrownEgg;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownEgg;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
@@ -45,7 +45,7 @@ public abstract class EggEntityMixin extends ThrowableItemProjectile {
         this.chickenSpawned = true;
     }
 
-    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/ThrownEgg;discard()V"))
+    @Inject(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/projectile/throwableitemprojectile/ThrownEgg;discard()V"))
     public void bwt$spawnRawEgg(HitResult hitResult, CallbackInfo ci) {
         if (!this.chickenSpawned) {
             level().addFreshEntity(new ItemEntity(level(), getX(), getY(), getZ(), new ItemStack(BwtItems.rawEggItem)));

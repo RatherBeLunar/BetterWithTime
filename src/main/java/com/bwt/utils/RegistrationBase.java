@@ -68,7 +68,7 @@ public abstract class RegistrationBase {
     }
 
     public static ResourceKey<Item> itemKey(ResourceKey<Block> resourceKey) {
-        return ResourceKey.create(Registries.ITEM, resourceKey.location());
+        return ResourceKey.create(Registries.ITEM, resourceKey.identifier());
     }
 
     public static Item registerItem(String string) {

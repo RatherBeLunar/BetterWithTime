@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
@@ -108,7 +109,7 @@ public class NetherGrothBlock extends Block {
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // Only grow in the nether
-        if (!level.dimensionType().ultraWarm()) {
+        if (!level.environmentAttributes().getValue(BwtEnvironmentAttributes.NETHER_GROTH_SPREADS, pos)) {
             return;
         }
 
@@ -196,7 +197,8 @@ public class NetherGrothBlock extends Block {
     }
 
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(state, level, pos, entity, insideBlockEffectApplier, bl);
         if (level.isClientSide()) {
             return;
         }

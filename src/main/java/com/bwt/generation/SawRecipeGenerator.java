@@ -11,7 +11,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
@@ -59,16 +59,16 @@ public class SawRecipeGenerator extends FabricRecipeProvider {
                 continue;
             }
             Block planksBlock = sidingBlock.fullBlock;
-            ResourceLocation planksId = BuiltInRegistries.BLOCK.getKey(planksBlock);
-            ResourceLocation baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
-            ResourceLocation logId = baseId.withSuffix("_log");
-            ResourceLocation woodId = baseId.withSuffix("_wood");
-            ResourceLocation hyphaeId = baseId.withSuffix("_hyphae");
-            ResourceLocation stemId = baseId.withSuffix("_stem");
+            Identifier planksId = BuiltInRegistries.BLOCK.getKey(planksBlock);
+            Identifier baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
+            Identifier logId = baseId.withSuffix("_log");
+            Identifier woodId = baseId.withSuffix("_wood");
+            Identifier hyphaeId = baseId.withSuffix("_hyphae");
+            Identifier stemId = baseId.withSuffix("_stem");
 
             Item dustItem = planksBlock == BwtBlocks.bloodWoodBlocks.planksBlock ? BwtItems.soulDustItem : BwtItems.sawDustItem;
             // Logs/Stems/Hyphae -> planks
-            for (ResourceLocation logIshId : new ResourceLocation[]{logId, woodId, hyphaeId, stemId}) {
+            for (Identifier logIshId : new Identifier[]{logId, woodId, hyphaeId, stemId}) {
                 Block logBlock = BuiltInRegistries.BLOCK.get(logIshId).map(Holder.Reference::value).orElse(Blocks.AIR);
                 if (!logBlock.equals(Blocks.AIR)) {
                     SawRecipe.JsonBuilder.create(logBlock).result(planksBlock, 4).result(dustItem, 2).save(output);

@@ -5,7 +5,7 @@ import com.bwt.recipes.soul_forge.SoulForgeShapelessCraftingRecipeDisplay;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.screens.recipebook.OverlayRecipeComponent;
 import net.minecraft.recipebook.PlaceRecipeHelper;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.display.RecipeDisplay;
@@ -64,7 +64,7 @@ public class OverlayCraftingRecipeButtonMixin {
     }
 
 //    @Inject(method = "getSprite", at = @At("HEAD"), cancellable = true)
-//    void bwt$foo(boolean enabled, CallbackInfoReturnable<ResourceLocation> cir) {
+//    void bwt$foo(boolean enabled, CallbackInfoReturnable<Identifier> cir) {
 //
 //    }
 

@@ -2,7 +2,7 @@ package com.bwt.entities;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.mining_charge.MiningChargeBlock;
-import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderGetter;

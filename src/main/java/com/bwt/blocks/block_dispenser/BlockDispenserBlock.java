@@ -18,7 +18,7 @@ import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtEntityTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;

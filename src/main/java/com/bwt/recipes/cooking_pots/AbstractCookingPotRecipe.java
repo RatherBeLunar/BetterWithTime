@@ -12,7 +12,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
@@ -24,7 +24,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
@@ -266,7 +266,7 @@ public abstract class AbstractCookingPotRecipe implements IngredientsWithCountRe
             this.save(recipeOutput, Id.of(recipePath));
         }
 
-        public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+        public void save(RecipeOutput recipeOutput, Identifier recipeId) {
             this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
         }
 
@@ -286,7 +286,7 @@ public abstract class AbstractCookingPotRecipe implements IngredientsWithCountRe
                     this.ingredients,
                     this.results
             );
-            recipeOutput.accept(resourceKey, cookingPotRecipe, advancementBuilder.build(resourceKey.location().withPrefix("recipes/" + this.category.getFolderName() + "/")));
+            recipeOutput.accept(resourceKey, cookingPotRecipe, advancementBuilder.build(resourceKey.identifier().withPrefix("recipes/" + this.category.getFolderName() + "/")));
         }
 
         private static CookingPotRecipeCategory getCookingPotRecipeCategory(NonNullList<ItemStack> results) {
@@ -298,7 +298,7 @@ public abstract class AbstractCookingPotRecipe implements IngredientsWithCountRe
 
         private void validate(ResourceKey<Recipe<?>> recipeId) {
             if (this.criteria.isEmpty()) {
-                throw new IllegalStateException("No way of obtaining recipe " + recipeId.location());
+                throw new IllegalStateException("No way of obtaining recipe " + recipeId.identifier());
             }
         }
 

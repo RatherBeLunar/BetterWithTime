@@ -18,7 +18,7 @@ import net.minecraft.data.BlockFamily;
 import net.minecraft.data.recipes.*;
 import net.minecraft.data.recipes.packs.VanillaRecipeProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
@@ -957,11 +957,11 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 continue;
             }
             Block planksBlock = mouldingBlock.fullBlock;
-            ResourceLocation planksId = BuiltInRegistries.BLOCK.getKey(planksBlock);
-            ResourceLocation baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
-            ResourceLocation strippedLogId = baseId.withPrefix("stripped_").withSuffix("_log");
-            ResourceLocation strippedStemId = baseId.withPrefix("stripped_").withSuffix("_stem");
-            ResourceLocation shelfId = baseId.withSuffix("_shelf");
+            Identifier planksId = BuiltInRegistries.BLOCK.getKey(planksBlock);
+            Identifier baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
+            Identifier strippedLogId = baseId.withPrefix("stripped_").withSuffix("_log");
+            Identifier strippedStemId = baseId.withPrefix("stripped_").withSuffix("_stem");
+            Identifier shelfId = baseId.withSuffix("_shelf");
             Block strippedLogBlock = BuiltInRegistries.BLOCK.get(strippedLogId)
                     .or(() -> BuiltInRegistries.BLOCK.get(strippedStemId))
                     .map(Holder.Reference::value)
@@ -1045,7 +1045,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                         .unlockedBy(RecipeProvider.getHasName(cornerBlock), recipeProvider.has(cornerBlock)));
     }
     
-    public static ResourceKey<Recipe<?>> keyOf(ResourceLocation resourceLocation) {
+    public static ResourceKey<Recipe<?>> keyOf(Identifier resourceLocation) {
         return ResourceKey.create(Registries.RECIPE, resourceLocation);
     }
 

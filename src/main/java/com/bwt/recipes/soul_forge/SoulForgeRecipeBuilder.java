@@ -8,7 +8,7 @@ import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -57,7 +57,7 @@ public abstract class SoulForgeRecipeBuilder implements RecipeBuilder {
 
     protected void ensureValid(ResourceKey<Recipe<?>> resourceKey) {
         if (this.criteria.isEmpty()) {
-            throw new IllegalStateException("No way of obtaining recipe " + resourceKey.location());
+            throw new IllegalStateException("No way of obtaining recipe " + resourceKey.identifier());
         }
     }
 
@@ -66,7 +66,7 @@ public abstract class SoulForgeRecipeBuilder implements RecipeBuilder {
         this.save(recipeOutput, Id.of(recipePath));
     }
 
-    public void save(RecipeOutput recipeOutput, ResourceLocation recipeId) {
+    public void save(RecipeOutput recipeOutput, Identifier recipeId) {
         this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
     }
 }

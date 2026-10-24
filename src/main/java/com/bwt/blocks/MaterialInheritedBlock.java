@@ -9,7 +9,7 @@ import com.bwt.utils.RegistrationBase;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.BlockFamilies;
 import net.minecraft.data.BlockFamily;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -39,7 +39,7 @@ public abstract class MaterialInheritedBlock extends Block {
             Block planksBlock,
             boolean wood
     ) {
-        ResourceLocation blockId = BuiltInRegistries.BLOCK.getKey(planksBlock);
+        Identifier blockId = BuiltInRegistries.BLOCK.getKey(planksBlock);
         String sidingId = blockId.getPath() + "_siding";
         String mouldingId = blockId.getPath() + "_moulding";
         String cornerId = blockId.getPath() + "_corner";

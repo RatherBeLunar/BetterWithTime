@@ -170,8 +170,8 @@ public class SawBlock extends SimpleFacingBlock implements MechPowerBlockBase {
     }
 
     @Override
-    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
-        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
         if (!isMechPowered(blockState)) {
             return;
         }

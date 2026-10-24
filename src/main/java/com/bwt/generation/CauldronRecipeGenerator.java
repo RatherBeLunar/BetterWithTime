@@ -10,7 +10,7 @@ import com.bwt.utils.Id;
 import com.google.common.collect.Maps;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -19,7 +19,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;
@@ -226,7 +226,7 @@ public class CauldronRecipeGenerator extends FabricRecipeProvider {
         };
     }
 
-    public static ResourceKey<Recipe<?>> keyOf(ResourceLocation resourceLocation) {
+    public static ResourceKey<Recipe<?>> keyOf(Identifier resourceLocation) {
         return ResourceKey.create(Registries.RECIPE, resourceLocation);
     }
 

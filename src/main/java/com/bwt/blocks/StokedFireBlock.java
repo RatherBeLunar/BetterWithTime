@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public class StokedFireBlock extends BaseFireBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
@@ -84,9 +86,6 @@ public class StokedFireBlock extends BaseFireBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!level.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
-            return;
-        }
         if (!state.canSurvive(level, pos)) {
             level.removeBlock(pos, false);
         }
@@ -106,7 +105,7 @@ public class StokedFireBlock extends BaseFireBlock {
         int age = Math.min(2, oldAge + 1);
         level.setBlock(pos, state.setValue(AGE, age), Block.UPDATE_ALL);
 
-        boolean extraBurn = level.getBiome(pos).is(BiomeTags.INCREASED_FIRE_BURNOUT);
+        boolean extraBurn = level.environmentAttributes().getValue(EnvironmentAttributes.INCREASED_FIRE_BURNOUT, pos);
         int k = extraBurn ? -50 : 0;
         this.trySpreadingFire(level, pos.east(), 300 + k, random, age);
         this.trySpreadingFire(level, pos.west(), 300 + k, random, age);

@@ -12,7 +12,7 @@ import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -73,7 +73,7 @@ public class VanillaRecipeGenerator extends FabricRecipeProvider {
                 .save(output, keyOf(BuiltInRegistries.ITEM.getKey(Items.HOPPER).getPath()));
     }
 
-    public static ResourceKey<Recipe<?>> keyOf(ResourceLocation resourceLocation) {
+    public static ResourceKey<Recipe<?>> keyOf(Identifier resourceLocation) {
         return ResourceKey.create(Registries.RECIPE, resourceLocation);
     }
 
@@ -83,7 +83,7 @@ public class VanillaRecipeGenerator extends FabricRecipeProvider {
 
     // Don't enforce the ID into any specific namespace
     @Override
-    protected ResourceLocation getRecipeIdentifier(ResourceLocation identifier) {
+    protected Identifier getRecipeIdentifier(Identifier identifier) {
         return identifier;
     }
 

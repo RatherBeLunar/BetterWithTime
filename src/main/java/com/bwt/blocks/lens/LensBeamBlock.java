@@ -2,7 +2,7 @@ package com.bwt.blocks.lens;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -118,8 +118,8 @@ public class LensBeamBlock extends Block {
     }
 
     @Override
-    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
-        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
         BlockState finalState = LensBeamHelper.setTerminus(level, blockPos, blockState, true);
         LensBeamHelper.streamFacingDirections(finalState)
                 .forEach(entry -> LensBeamHelper.killBeam(level, blockPos, entry.getKey()));
