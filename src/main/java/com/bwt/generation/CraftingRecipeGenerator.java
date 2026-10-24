@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.advancements.Criterion;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -950,6 +951,33 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         BlockFamilies.getAllFamilies()
                 .filter(blockFamily -> blockFamily.getRecipeGroupPrefix().orElse("").equals("wooden"))
                 .forEach(blockFamily -> createHighEfficiencyBlockFamilyRecipes(recipeProvider, output, blockFamily));
+
+        for (MouldingBlock mouldingBlock : BwtBlocks.mouldingBlocks) {
+            if (!mouldingBlock.isWood()) {
+                continue;
+            }
+            Block planksBlock = mouldingBlock.fullBlock;
+            ResourceLocation planksId = BuiltInRegistries.BLOCK.getKey(planksBlock);
+            ResourceLocation baseId = planksId.withPath(planksId.getPath().replace("_planks", ""));
+            ResourceLocation strippedLogId = baseId.withPrefix("stripped_").withSuffix("_log");
+            ResourceLocation strippedStemId = baseId.withPrefix("stripped_").withSuffix("_stem");
+            ResourceLocation shelfId = baseId.withSuffix("_shelf");
+            Block strippedLogBlock = BuiltInRegistries.BLOCK.get(strippedLogId)
+                    .or(() -> BuiltInRegistries.BLOCK.get(strippedStemId))
+                    .map(Holder.Reference::value)
+                    .orElse(Blocks.AIR);
+            Block shelfBlock = BuiltInRegistries.BLOCK.getValue(shelfId);
+            if (!strippedLogBlock.equals(Blocks.AIR) && !shelfBlock.equals(Blocks.AIR)) {
+                recipeProvider.shaped(RecipeCategory.DECORATIONS, shelfBlock, 6)
+                        .define('#', mouldingBlock)
+                        .pattern("###")
+                        .pattern("   ")
+                        .pattern("###")
+                        .group("shelf")
+                        .unlockedBy("has_wooden_moulding", recipeProvider.has(BwtItemTags.WOODEN_MOULDING_BLOCKS))
+                        .save(output, highEfficiencyId(shelfBlock));
+            }
+        }
     }
 
     private void createHighEfficiencyBlockFamilyRecipe(RecipeOutput output, BlockFamily blockFamily, BlockFamily.Variant variant, Function<Block, RecipeBuilder> builder) {

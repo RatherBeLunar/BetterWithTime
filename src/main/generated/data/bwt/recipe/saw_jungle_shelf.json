@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 6,
+      "id": "bwt:jungle_planks_moulding"
+    }
+  ],
+  "ingredient": {
+    "values": "minecraft:jungle_shelf"
+  }
+}
