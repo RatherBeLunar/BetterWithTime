@@ -8,11 +8,12 @@ import net.minecraft.client.model.geom.builders.LayerDefinition;
 import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Unit;
 
 /**
  * Used for Cauldrons, Crucibles, and the Mech Hopper to show fill level visually
  */
-public class ContainerFillLayerModel extends Model {
+public class ContainerFillLayerModel extends Model<Unit> {
     protected final ModelPart root;
     protected final ModelPart flat;
 
@@ -34,5 +35,10 @@ public class ContainerFillLayerModel extends Model {
     public static LayerDefinition getTexturedModelData() {
         MeshDefinition modelData = getModelData();
         return LayerDefinition.create(modelData, 16, 16);
+    }
+
+    @Override
+    public void setupAnim(Unit object) {
+        super.setupAnim(object);
     }
 }

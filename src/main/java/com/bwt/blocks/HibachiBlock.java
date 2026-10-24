@@ -78,7 +78,7 @@ public class HibachiBlock extends Block {
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean bl) {
         super.neighborChanged(blockState, level, pos, block, orientation, bl);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         level.scheduleTick(pos, this, 4);

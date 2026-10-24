@@ -340,7 +340,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
                 BlockState state = entry.getValue();
                 if (state.canSurvive(level(), blockPos)) {
                     if (serverLevel.setBlock(blockPos, state, Block.UPDATE_ALL)) {
-                        serverLevel.getChunkSource().broadcast(this, new ClientboundBlockUpdatePacket(blockPos, serverLevel.getBlockState(blockPos)));
+                        serverLevel.getChunkSource().sendToTrackingPlayers(this, new ClientboundBlockUpdatePacket(blockPos, serverLevel.getBlockState(blockPos)));
                     }
                     if (blockEntities.containsKey(entry.getKey())) {
                         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
@@ -400,7 +400,7 @@ public class MovingRopeEntity extends RectangularEntity implements VoxelShapedEn
             level.removeBlockEntity(pos);
             setBlockEntityNbtMap(blockEntities);
         }
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             setBlockMap(blocks);
         }
         return blocks;

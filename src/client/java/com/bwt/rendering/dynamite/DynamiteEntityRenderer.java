@@ -7,10 +7,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -38,23 +40,22 @@ public class DynamiteEntityRenderer extends EntityRenderer<DynamiteEntity, Dynam
         return this.lit ? 15 : super.getBlockLightLevel(entity, pos);
     }
 
-    public void render(DynamiteRenderState renderState, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
-        if (renderState.ageInTicks < 2 && this.entityRenderDispatcher.camera.getEntity().distanceToSqr(renderState.x, renderState.y, renderState.z) < 12.25) {
-            return;
-        }
+    @Override
+    public void submit(DynamiteRenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         poseStack.scale(this.scale, this.scale, this.scale);
-        poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
-        poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
+        poseStack.mulPose(cameraRenderState.orientation);
+//        poseStack.mulPose(Axis.YP.rotationDegrees(180.0f));
         int overlay = (renderState.fuse / 5 % 2 == 0) ? OverlayTexture.pack(OverlayTexture.u(1.0f), 10) : OverlayTexture.NO_OVERLAY;
-        renderState.item.render(
+        renderState.item.submit(
                 poseStack,
-                multiBufferSource,
-                light,
-                overlay
+                submitNodeCollector,
+                renderState.lightCoords,
+                overlay,
+                renderState.outlineColor
         );
         poseStack.popPose();
-        super.render(renderState, poseStack, multiBufferSource, light);
+        super.submit(renderState, poseStack, submitNodeCollector, cameraRenderState);
     }
 
     @Override

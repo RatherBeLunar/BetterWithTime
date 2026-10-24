@@ -114,7 +114,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     public void bwt$tick(CallbackInfo ci) {
         Level level = level();
         RandomSource random = level.getRandom();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (isBaby() || !bwt$isFed()) {

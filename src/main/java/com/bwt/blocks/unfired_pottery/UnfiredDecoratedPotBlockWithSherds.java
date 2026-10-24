@@ -114,7 +114,7 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-            if (!level.isClientSide && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
+            if (!level.isClientSide() && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
                 ItemStack itemStack = new ItemStack(this);
                 itemStack.applyComponents(unfiredDecoratedPotBlockEntity.collectComponents());
                 ItemEntity itemEntity = new ItemEntity(level, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, itemStack);
@@ -170,7 +170,7 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
         if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        if (!level.isClientSide && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+        if (!level.isClientSide() && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
             stack.consume(1, player);
         }
         return InteractionResult.SUCCESS;

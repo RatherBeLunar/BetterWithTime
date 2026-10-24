@@ -165,7 +165,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
-        if (serverLevel.isClientSide || !state.is(BwtBlocks.hopperBlock)) {
+        if (serverLevel.isClientSide() || !state.is(BwtBlocks.hopperBlock)) {
             return;
         }
 

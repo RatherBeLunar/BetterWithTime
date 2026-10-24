@@ -12,4 +12,5 @@ public class MovingRopeRenderState extends EntityRenderState {
     public double boundingBoxMaxY;
     public BlockPos blockPosition;
     public HashMap<Vec3i, BlockState> blockMap;
+    public HashMap<Vec3i, Integer> lightMap = new HashMap<>();
 }

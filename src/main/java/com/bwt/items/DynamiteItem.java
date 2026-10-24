@@ -26,7 +26,7 @@ public class DynamiteItem extends Item implements ProjectileItem {
     public InteractionResult use(Level level, Player user, InteractionHand hand) {
         ItemStack itemStack = user.getItemInHand(hand);
         level.playSound(null, user.getX(), user.getY(), user.getZ(), BwtSoundEvents.DYNAMITE_THROW, SoundSource.NEUTRAL, 0.5f, 0.4f / (level.getRandom().nextFloat() * 0.4f + 0.8f));
-        if (!level.isClientSide && user instanceof ServerPlayer serverUser) {
+        if (!level.isClientSide() && user instanceof ServerPlayer serverUser) {
             DynamiteEntity dynamiteEntity = new DynamiteEntity(level, user);
             dynamiteEntity.setItem(itemStack);
             dynamiteEntity.shootFromRotation(user, user.getXRot(), user.getYRot(), 0.0f, 1.0f, 1.0f);
@@ -37,7 +37,7 @@ public class DynamiteItem extends Item implements ProjectileItem {
                     continue;
                 }
                 if (!serverUser.getAbilities().instabuild) {
-                    otherStack.hurtAndBreak(1, user, Player.getSlotForHand(user.getUsedItemHand()));
+                    otherStack.hurtAndBreak(1, user, user.getUsedItemHand());
                 }
                 dynamiteEntity.ignite();
                 break;

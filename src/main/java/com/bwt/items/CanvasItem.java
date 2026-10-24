@@ -10,6 +10,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.HangingEntity;
 import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HangingEntityItem;
@@ -54,13 +55,9 @@ public class CanvasItem extends HangingEntityItem {
         }
         CanvasEntity canvasEntity = optional.get();
 
-        CustomData nbtComponent = itemStack.getOrDefault(DataComponents.ENTITY_DATA, CustomData.EMPTY);
-        if (!nbtComponent.isEmpty()) {
-            EntityType.updateCustomEntityTag(level, playerEntity, canvasEntity, nbtComponent);
-        }
-
+        EntityType.<CanvasEntity>createDefaultStackConfig(level, itemStack, playerEntity).accept(canvasEntity);
         if (canvasEntity.survives()) {
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 canvasEntity.playPlacementSound();
                 level.gameEvent(playerEntity, GameEvent.ENTITY_PLACE, canvasEntity.position());
                 level.addFreshEntity(canvasEntity);

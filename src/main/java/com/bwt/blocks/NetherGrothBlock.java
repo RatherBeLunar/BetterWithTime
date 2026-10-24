@@ -197,7 +197,7 @@ public class NetherGrothBlock extends Block {
 
     @Override
     protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
 

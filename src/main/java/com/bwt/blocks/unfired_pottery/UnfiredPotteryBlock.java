@@ -34,7 +34,7 @@ public abstract class UnfiredPotteryBlock extends Block {
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide || !level.getBlockState(blockPos).is(this)) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
         if (canSurvive(blockState, level, blockPos)) {

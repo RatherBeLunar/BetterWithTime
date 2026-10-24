@@ -109,7 +109,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
         if (level.hasNeighborSignal(blockPos)) {
             level.scheduleTick(blockPos, this, 1);
         }
-        if (level.isClientSide || !level.getBlockState(blockPos).is(this)) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
         if (canSurvive(blockState, level, blockPos)) {
@@ -139,7 +139,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
             return;
         }
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, explosion.getIndirectSourceEntity());
@@ -148,7 +148,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     private static void prime(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity igniter) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, igniter);
@@ -168,7 +168,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
         Item item = itemStack.getItem();
         if (!player.isCreative()) {
             if (itemStack.is(Items.FLINT_AND_STEEL)) {
-                itemStack.hurtAndBreak(1, player, Player.getSlotForHand(player.getUsedItemHand()));
+                itemStack.hurtAndBreak(1, player, player.getUsedItemHand());
             } else {
                 itemStack.shrink(1);
             }

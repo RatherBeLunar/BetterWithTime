@@ -117,7 +117,7 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(blockState, level, blockPos);
@@ -151,7 +151,7 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (state.getValue(TIP_DIRECTION) != Direction.UP) {
@@ -169,8 +169,8 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 
     @Override

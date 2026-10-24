@@ -81,7 +81,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MillStoneBlockEntity millStoneBlockEntity) {
             player.openMenu(millStoneBlockEntity);
@@ -121,7 +121,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(blockState, level, blockPos);
@@ -152,7 +152,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 }

@@ -31,7 +31,7 @@ public class LightBlock extends TransparentBlock {
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean bl) {
         super.neighborChanged(state, level, pos, block, orientation, bl);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (state.getValue(LIT) != level.hasNeighborSignal(pos)) {

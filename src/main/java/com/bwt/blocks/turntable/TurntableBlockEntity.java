@@ -56,7 +56,7 @@ public class TurntableBlockEntity extends BlockEntity {
     }
 
     public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, TurntableBlockEntity blockEntity) {
-        if (serverLevel.isClientSide) {
+        if (serverLevel.isClientSide()) {
             return;
         }
         if (!state.is(BwtBlocks.turntableBlock) || !state.getValue(TurntableBlock.MECH_POWERED)) {

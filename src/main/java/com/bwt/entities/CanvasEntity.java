@@ -52,6 +52,7 @@ public class CanvasEntity extends Painting {
         if (paintingVariants.isEmpty()) {
             return Optional.empty();
         }
+
         canvasEntity.setDirection(facing);
         paintingVariants.removeIf(holder -> {
             variantSetter.bwt$setVariant(holder);

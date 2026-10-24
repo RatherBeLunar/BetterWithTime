@@ -55,7 +55,7 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
         if (this.level().getDifficulty().equals(Difficulty.PEACEFUL)) {

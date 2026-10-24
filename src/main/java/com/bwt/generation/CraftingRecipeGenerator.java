@@ -269,6 +269,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         Block brownStainedGlassPane = Blocks.BROWN_STAINED_GLASS_PANE;
         Block brownCandle = Blocks.BROWN_CANDLE;
         Item brownBundle = Items.BROWN_BUNDLE;
+        Item brownHarness = Items.BROWN_HARNESS;
 
         recipeProvider.shapeless(RecipeCategory.DECORATIONS, brownVase)
                 .requires(dung)
@@ -287,7 +288,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         recipeProvider.shapeless(RecipeCategory.BUILDING_BLOCKS, brownBed)
                 .requires(dung)
                 .requires(Ingredient.of(Stream.of(Items.BLACK_BED, Items.BLUE_BED, Items.CYAN_BED, Items.GRAY_BED, Items.GREEN_BED, Items.LIGHT_BLUE_BED, Items.LIGHT_GRAY_BED, Items.LIME_BED, Items.MAGENTA_BED, Items.ORANGE_BED, Items.PINK_BED, Items.PURPLE_BED, Items.RED_BED, Items.YELLOW_BED, Items.WHITE_BED)))
-                .group("bed")
+                .group("bed_dye")
                 .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
                 .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownBed) + "_from_dung"));
         recipeProvider.shapeless(RecipeCategory.BUILDING_BLOCKS, brownWool)
@@ -299,7 +300,7 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
         recipeProvider.shapeless(RecipeCategory.BUILDING_BLOCKS, brownCarpet)
                 .requires(dung)
                 .requires(Ingredient.of(Stream.of(Items.BLACK_CARPET, Items.BLUE_CARPET, Items.CYAN_CARPET, Items.GRAY_CARPET, Items.GREEN_CARPET, Items.LIGHT_BLUE_CARPET, Items.LIGHT_GRAY_CARPET, Items.LIME_CARPET, Items.MAGENTA_CARPET, Items.ORANGE_CARPET, Items.PINK_CARPET, Items.PURPLE_CARPET, Items.RED_CARPET, Items.YELLOW_CARPET, Items.WHITE_CARPET)))
-                .group("carpet")
+                .group("carpet_dye")
                 .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
                 .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownCarpet) + "_from_dung"));
         recipeProvider.shaped(RecipeCategory.BUILDING_BLOCKS, brownTerracotta, 8)
@@ -350,6 +351,12 @@ public class CraftingRecipeGenerator extends FabricRecipeProvider {
                 .group("bundle_dye")
                 .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
                 .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownBundle) + "_from_dung"));
+        recipeProvider.shapeless(RecipeCategory.COMBAT, brownHarness)
+                .requires(dung)
+                .requires(Ingredient.of(Stream.of(Items.BLACK_HARNESS, Items.BLUE_HARNESS, Items.CYAN_HARNESS, Items.GRAY_HARNESS, Items.GREEN_HARNESS, Items.LIGHT_BLUE_HARNESS, Items.LIGHT_GRAY_HARNESS, Items.LIME_HARNESS, Items.MAGENTA_HARNESS, Items.ORANGE_HARNESS, Items.PINK_HARNESS, Items.PURPLE_HARNESS, Items.RED_HARNESS, Items.YELLOW_HARNESS, Items.WHITE_HARNESS)))
+                .group("harness_dye")
+                .unlockedBy(RecipeProvider.getHasName(dung), recipeProvider.has(dung))
+                .save(output, keyOf("dye_" + RecipeProvider.getItemName(brownHarness) + "_from_dung"));
     }
 
     private void generateVaseDyeingRecipes(SharedRecipeProvider recipeProvider, RecipeOutput output) {

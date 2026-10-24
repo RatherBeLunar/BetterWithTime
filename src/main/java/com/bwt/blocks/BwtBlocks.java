@@ -165,7 +165,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
             DetectorLogicBlock::new,
             BlockBehaviour.Properties.of()
                     .replaceable()
-                    .noCollission()
+                    .noCollision()
                     .noLootTable()
                     .pushReaction(PushReaction.DESTROY)
                     .air()
@@ -246,7 +246,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
             LensBeamBlock::new,
             BlockBehaviour.Properties.of()
                     .replaceable()
-                    .noCollission()
+                    .noCollision()
                     .noLootTable()
                     .pushReaction(PushReaction.DESTROY)
                     .lightLevel(state -> state.getValue(LensBeamBlock.TERMINUS) ? 14 : 0)
@@ -407,7 +407,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.FIRE)
                     .replaceable()
-                    .noCollission()
+                    .noCollision()
                     .instabreak()
                     .lightLevel(state -> 15)
                     .sound(SoundType.WOOL)
@@ -520,7 +520,7 @@ public class BwtBlocks extends RegistrationBase implements ModInitializer {
             VineTrapBlock::new,
             BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
                     .isValidSpawn(Blocks::never)
-                    .noCollission()
+                    .noCollision()
     );
     public static final Block dirtSlabBlock = registerBlockWithItem(
             "dirt_slab",

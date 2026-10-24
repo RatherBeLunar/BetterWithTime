@@ -212,7 +212,7 @@ public class BlockDispenserBlock extends DispenserBlock {
                 if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
                     return stack;
                 }
-                if (!level.isClientSide && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+                if (!level.isClientSide() && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
                     stack.shrink(1);
                 }
                 return stack;
@@ -278,7 +278,7 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (blockState.getValue(TRIGGERED) != isReceivingPower(level, blockPos, blockState.getValue(FACING))) {
@@ -288,7 +288,7 @@ public class BlockDispenserBlock extends DispenserBlock {
 
     @Override
     protected InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         level.getBlockEntity(blockPos, BwtBlockEntities.blockDispenserBlockEntity).ifPresent(player::openMenu);
         return InteractionResult.CONSUME;
     }

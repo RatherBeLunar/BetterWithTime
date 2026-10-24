@@ -8,10 +8,10 @@ import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.state.LevelRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
@@ -60,8 +60,8 @@ public abstract class LevelRendererMixin implements KilnBlockCookProgressSetter 
     }
     
     @Inject(method = "renderBlockDestroyAnimation", at = @At(value = "HEAD"))
-    public void bwt$renderKilnCookingProgressAnimation(PoseStack poseStack, Camera camera, MultiBufferSource.BufferSource bufferSource, CallbackInfo ci) {
-        Vec3 cameraPos = camera.getPosition();
+    public void bwt$renderKilnCookingProgressAnimation(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource, LevelRenderState levelRenderState, CallbackInfo ci) {
+        Vec3 cameraPos = levelRenderState.cameraRenderState.pos;
         double cameraX = cameraPos.x();
         double cameraY = cameraPos.y();
         double cameraZ = cameraPos.z();

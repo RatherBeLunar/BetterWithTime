@@ -94,7 +94,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, PulleyBlockEntity blockEntity) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         blockEntity.tryNextOperation(level, pos, state);
@@ -216,7 +216,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         }
 
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             for (BlockPos blockPos : platformBlocks) {
                 Vec3i offset = blockPos.subtract(anchor.above());
                 rope.addBlock(offset, level, blockPos, level.getBlockState(blockPos));

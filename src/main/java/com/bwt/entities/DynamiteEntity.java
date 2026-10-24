@@ -118,11 +118,15 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        double d = this.getBoundingBox().getSize() * 4.0;
-        if (Double.isNaN(d)) {
-            d = 4.0;
+        if (this.tickCount < 2 && distance < 12.25) {
+            return false;
         }
-        return distance < (d *= 64.0) * d;
+        double e = this.getBoundingBox().getSize() * 4.0;
+        if (Double.isNaN(e)) {
+            e = 4.0;
+        }
+        e *= 64.0;
+        return distance < e * e;
     }
 
     @Override
@@ -140,14 +144,14 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
         if (fuse > 0) {
             setFuse(fuse - 1);
             fuse--;
-            if (level().isClientSide) {
+            if (level().isClientSide()) {
                 level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), getDeltaMovement().x() * 0.1, getDeltaMovement().y() * 0.1, getDeltaMovement().z() * 0.1);
             }
         }
 
         if (fuse == 0) {
             discard();
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 explode();
             }
             return;
@@ -157,7 +161,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
             if (this.isInLava()) {
                 ignite();
                 discard();
-                if (!level().isClientSide) {
+                if (!level().isClientSide()) {
                     explode();
                 }
                 return;
@@ -165,7 +169,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
             if (onGround()) {
                 if (getDeltaMovement().length() < 0.01) {
                     // The dynamite has come to a stop. Convert it to an item.
-                    if (!level().isClientSide) {
+                    if (!level().isClientSide()) {
                         convertToItem();
                         return;
                     }

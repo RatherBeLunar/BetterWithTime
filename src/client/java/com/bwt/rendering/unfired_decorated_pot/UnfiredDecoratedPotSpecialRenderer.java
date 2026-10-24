@@ -9,6 +9,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -31,16 +32,24 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
     }
 
     @Override
-    public void render(
+    public void submit(
             @Nullable PotDecorations potDecorations,
             ItemDisplayContext itemDisplayContext,
             PoseStack poseStack,
-            MultiBufferSource multiBufferSource,
+            SubmitNodeCollector submitNodeCollector,
             int i,
             int j,
-            boolean bl
+            boolean bl,
+            int k
     ) {
-        this.unfiredDecoratedPotRenderer.renderPotWithDecorations(poseStack, multiBufferSource, i, j, Objects.requireNonNullElse(potDecorations, PotDecorations.EMPTY));
+        this.unfiredDecoratedPotRenderer.submitPotWithDecorations(
+                poseStack,
+                submitNodeCollector,
+                i,
+                j,
+                Objects.requireNonNullElse(potDecorations, PotDecorations.EMPTY),
+                k
+        );
     }
 
     @Override
@@ -58,8 +67,8 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet entityModelSet) {
-            return new UnfiredDecoratedPotSpecialRenderer(new UnfiredDecoratedPotBlockEntityRenderer(entityModelSet));
+        public SpecialModelRenderer<?> bake(BakingContext bakingContext) {
+            return new UnfiredDecoratedPotSpecialRenderer(new UnfiredDecoratedPotBlockEntityRenderer());
         }
     }
 }

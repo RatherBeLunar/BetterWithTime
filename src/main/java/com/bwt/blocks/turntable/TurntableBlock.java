@@ -110,7 +110,7 @@ public class TurntableBlock extends BaseEntityBlock implements MechPowerBlockBas
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(blockState, level, blockPos);

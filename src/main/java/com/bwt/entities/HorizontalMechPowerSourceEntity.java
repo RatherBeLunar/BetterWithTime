@@ -232,7 +232,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             this.setDamageWobbleStrength(this.getDamageWobbleStrength() - 1.0f);
         }
 
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             updateRotation();
         }
         else {

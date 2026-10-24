@@ -180,7 +180,7 @@ public class AxleBlock extends RotatedPillarBlock implements AxlePowerLevelGette
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         updatePowerStates(blockState, level, blockPos);

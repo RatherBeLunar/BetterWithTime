@@ -87,14 +87,14 @@ public class HandCrankBlock extends Block {
             return InteractionResult.FAIL;
         }
         if (player.getFoodData().getFoodLevel() <= 8) {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 player.displayClientMessage(Component.nullToEmpty("You're too exhausted for manual labor."), true);
             }
             return InteractionResult.FAIL;
         }
         player.causeFoodExhaustion( 2.0F ); // every two pulls results in a half pip of hunger
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -187,7 +187,7 @@ public class HandCrankBlock extends Block {
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide || !level.getBlockState(blockPos).is(this)) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
         if (canSurvive(blockState, level, blockPos)) {

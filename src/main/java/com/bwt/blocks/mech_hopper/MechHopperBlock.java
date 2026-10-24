@@ -156,7 +156,7 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(blockState, level, blockPos);
@@ -193,7 +193,7 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
             player.openMenu(hopperBlockEntity);
@@ -231,7 +231,7 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 }

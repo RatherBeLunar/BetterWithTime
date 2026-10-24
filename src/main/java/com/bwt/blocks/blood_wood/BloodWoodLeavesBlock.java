@@ -37,7 +37,7 @@ public class BloodWoodLeavesBlock extends UntintedParticleLeavesBlock {
     }
 
     public static void popResource(ServerLevel level, BlockPos pos, ItemStack stack) {
-        if (level.isClientSide || stack.isEmpty() || !level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
+        if (level.isClientSide() || stack.isEmpty() || !level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS)) {
             return;
         }
         double d = (double) EntityType.ITEM.getHeight() / 2.0;

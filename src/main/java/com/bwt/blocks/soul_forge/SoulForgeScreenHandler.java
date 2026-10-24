@@ -44,7 +44,7 @@ public class SoulForgeScreenHandler extends AbstractCraftingMenu {
     }
 
     protected void slotChangedCraftingGrid(ServerLevel serverLevel) {
-        if (serverLevel.isClientSide) {
+        if (serverLevel.isClientSide()) {
             return;
         }
         CraftingInput craftingRecipeInput = craftSlots.asCraftInput();

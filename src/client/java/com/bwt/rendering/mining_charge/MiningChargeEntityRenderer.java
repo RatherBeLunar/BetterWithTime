@@ -6,24 +6,23 @@ import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.TntMinecartRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.util.Mth;
 
 @Environment(value=EnvType.CLIENT)
 public class MiningChargeEntityRenderer extends EntityRenderer<MiningChargeEntity, MiningChargeRenderState> {
-    private final BlockRenderDispatcher blockRenderManager;
-
     public MiningChargeEntityRenderer(EntityRendererProvider.Context context) {
         super(context);
         this.shadowRadius = 0.5f;
-        this.blockRenderManager = context.getBlockRenderDispatcher();
     }
 
     @Override
-    public void render(MiningChargeRenderState renderState, PoseStack poseStack, MultiBufferSource multiBufferSource, int light) {
+    public void submit(MiningChargeRenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         poseStack.pushPose();
         poseStack.translate(0.0f, 0.5f, 0.0f);
         float fuse = renderState.ticksBeforeExplosion;
@@ -34,9 +33,13 @@ public class MiningChargeEntityRenderer extends EntityRenderer<MiningChargeEntit
         poseStack.mulPose(Axis.YP.rotationDegrees(-90.0f));
         poseStack.translate(-0.5f, -0.5f, 0.5f);
         poseStack.mulPose(Axis.YP.rotationDegrees(90.0f));
-        TntMinecartRenderer.renderWhiteSolidBlock(this.blockRenderManager, renderState.blockState, poseStack, multiBufferSource, light,(int) fuse / 5 % 2 == 0);
+        if (renderState.blockState != null) {
+            TntMinecartRenderer.submitWhiteSolidBlock(
+                    renderState.blockState, poseStack, submitNodeCollector, renderState.lightCoords, (int)fuse / 5 % 2 == 0, renderState.outlineColor
+            );
+        }
         poseStack.popPose();
-        super.render(renderState, poseStack, multiBufferSource, light);
+        super.submit(renderState, poseStack, submitNodeCollector, cameraRenderState);
     }
 
     @Override

@@ -9,16 +9,19 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.block.ModelBlockRenderer;
-import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.item.ItemModelResolver;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -26,71 +29,118 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Environment(value= EnvType.CLIENT)
-public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRenderer<UnfiredDecoratedPotBlockEntity> {
-    protected final BlockRenderDispatcher blockRenderDispatcher;
-    protected final ItemRenderer itemRenderer;
+public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRenderer<UnfiredDecoratedPotBlockEntity, UnfiredDecoratedPotRenderState> {
+    private final ItemModelResolver itemModelResolver;
 
-    public UnfiredDecoratedPotBlockEntityRenderer(EntityModelSet entityModelSet) {
-        this.blockRenderDispatcher = Minecraft.getInstance().getBlockRenderer();
-        this.itemRenderer = Minecraft.getInstance().getItemRenderer();
+    public UnfiredDecoratedPotBlockEntityRenderer() {
+        this.itemModelResolver = Minecraft.getInstance().getItemModelResolver();
+    }
+
+    public UnfiredDecoratedPotBlockEntityRenderer(ItemModelResolver itemModelResolver) {
+        this.itemModelResolver = itemModelResolver;
     }
 
     public UnfiredDecoratedPotBlockEntityRenderer(BlockEntityRendererProvider.Context context) {
-        this(context.getModelSet());
+        this(context.itemModelResolver());
     }
 
     @Override
-    public void render(
-            UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity, float tickDelta, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, Vec3 vec3
-    ) {
-        Level level = unfiredDecoratedPotBlockEntity.getLevel();
+    public UnfiredDecoratedPotRenderState createRenderState() {
+        return new UnfiredDecoratedPotRenderState();
+    }
 
-        PotDecorations potDecorations = unfiredDecoratedPotBlockEntity.getPotDecorations();
-        renderPotDecorations(
-                level,
-                unfiredDecoratedPotBlockEntity.getHorizontalFacing(),
+    @Override
+    public void extractRenderState(
+            UnfiredDecoratedPotBlockEntity blockEntity,
+            UnfiredDecoratedPotRenderState renderState,
+            float tickDelta,
+            Vec3 vec3,
+            @Nullable ModelFeatureRenderer.CrumblingOverlay crumblingOverlay
+    ) {
+        BlockEntityRenderer.super.extractRenderState(blockEntity, renderState, tickDelta, vec3, crumblingOverlay);
+        renderState.horizontalFacing = blockEntity.getHorizontalFacing();
+        renderState.sherdRenderStates = new ArrayList<>();
+        int i = (int)blockEntity.getBlockPos().asLong();
+
+        List<Optional<Item>> rotationalSherds = blockEntity.getRotationalSherds();
+        for (int j = 0; j < rotationalSherds.size(); j++) {
+            ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
+            renderState.sherdRenderStates.add(itemStackRenderState);
+            ItemStack sherd = rotationalSherds.get(j).orElse(Items.AIR).getDefaultInstance();
+            if (sherd.is(Items.AIR)) {
+                continue;
+            }
+            this.itemModelResolver.updateForTopItem(
+                    itemStackRenderState,
+                    sherd,
+                    ItemDisplayContext.FIXED,
+                    blockEntity.getLevel(),
+                    null,
+                    i + j
+            );
+        }
+    }
+
+    @Override
+    public void submit(UnfiredDecoratedPotRenderState renderState, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        submitPotDecorations(
+                renderState.horizontalFacing,
                 poseStack,
-                multiBufferSource,
-                light,
-                uv,
-                potDecorations
+                submitNodeCollector,
+                renderState.lightCoords,
+                OverlayTexture.NO_OVERLAY,
+                renderState.sherdRenderStates
         );
     }
 
-    public void renderPotWithDecorations(PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, PotDecorations potDecorations) {
+    public void submitPotWithDecorations(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, PotDecorations potDecorations, int outlineColor) {
         poseStack.pushPose();
-        this.renderModel(null, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState(), null, poseStack, multiBufferSource, light, uv);
+        submitNodeCollector.submitBlock(
+                poseStack,
+                BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState(),
+                light,
+                OverlayTexture.NO_OVERLAY,
+                outlineColor
+        );
         poseStack.popPose();
-        renderPotDecorations(null, Direction.NORTH, poseStack, multiBufferSource, light, uv, potDecorations);
+        submitPotDecorations(Direction.NORTH, poseStack, submitNodeCollector, light, overlay, potDecorations);
     }
 
-    public void renderPotDecorations(@Nullable Level level, Direction facing, PoseStack poseStack, MultiBufferSource multiBufferSource, int light, int uv, PotDecorations potDecorations) {
+    public void submitPotDecorations(Direction facing, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, List<ItemStackRenderState> sherdRenderStates) {
         // Decorated pot code
         poseStack.pushPose();
         poseStack.translate(0.5, 0.5, 0.5);
 
-        for (Optional<Item> sherd : List.of(potDecorations.front(), potDecorations.right(), potDecorations.back(), potDecorations.left())) {
-            if (sherd.isEmpty()) {
+        for (ItemStackRenderState sherdRenderstate : sherdRenderStates) {
+            if (sherdRenderstate.isEmpty()) {
                 facing = facing.getClockWise();
                 continue;
             }
-            ItemStack sherdStack = sherd.get().getDefaultInstance();
             poseStack.pushPose();
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - facing.toYRot()));
             poseStack.translate(0, 0, -0.41);
-            this.renderDecoratedSide(level, sherdStack, poseStack, multiBufferSource, light, uv);
+            poseStack.pushPose();
+            poseStack.scale(0.9f, 0.9f, 0.9f);
+            sherdRenderstate.submit(
+                    poseStack,
+                    submitNodeCollector,
+                    light,
+                    overlay,
+                    0
+            );
+            poseStack.popPose();
             poseStack.popPose();
             facing = facing.getClockWise();
         }
@@ -99,58 +149,37 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         poseStack.popPose();
     }
 
-    private void renderModel(@Nullable Level level, BlockState state, @Nullable BlockPos pos, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int uv) {
-        ModelManager bakedModelManager = blockRenderDispatcher.getBlockModelShaper().getModelManager();
-        matrices.pushPose();
-        if (level == null || pos == null) {
-            ModelBlockRenderer.renderModel(
-                    matrices.last(),
-                    vertexConsumers.getBuffer(Sheets.translucentItemSheet()),
-                    bakedModelManager.getBlockModelShaper().getBlockModel(state),
-                    1.0F,
-                    1.0F,
-                    1.0F,
-                    light,
-                    uv
+    public void submitPotDecorations(Direction facing, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, PotDecorations potDecorations) {
+        List<Optional<Item>> rotationalSherds = List.of(potDecorations.front(), potDecorations.right(), potDecorations.back(), potDecorations.left());
+        ArrayList<ItemStackRenderState> sherdRenderStates = new ArrayList<>();
+        for (int j = 0; j < rotationalSherds.size(); j++) {
+            ItemStackRenderState itemStackRenderState = new ItemStackRenderState();
+            sherdRenderStates.add(itemStackRenderState);
+            ItemStack sherd = rotationalSherds.get(j).orElse(Items.AIR).getDefaultInstance();
+            if (sherd.is(Items.AIR)) {
+                continue;
+            }
+            this.itemModelResolver.updateForTopItem(
+                    itemStackRenderState,
+                    sherd,
+                    ItemDisplayContext.FIXED,
+                    null,
+                    null,
+                    j
             );
         }
-        else {
-            RenderType renderLayer = ItemBlockRenderTypes.getRenderType(state);
-            VertexConsumer vertexConsumer = vertexConsumers.getBuffer(renderLayer);
-            blockRenderDispatcher.getModelRenderer().tesselateBlock(
-                    level,
-                    blockRenderDispatcher.getBlockModel(state).collectParts(RandomSource.create(state.getSeed(pos))),
-                    state,
-                    pos,
-                    matrices,
-                    vertexConsumer,
-                    true,
-                    uv
-            );
-        }
-        matrices.popPose();
+        submitPotDecorations(
+                facing,
+                poseStack,
+                submitNodeCollector,
+                light,
+                overlay,
+                sherdRenderStates
+        );
     }
 
     @Override
     public int getViewDistance() {
         return 68;
-    }
-
-    private void renderDecoratedSide(
-            @Nullable Level level, ItemStack itemStack, PoseStack matrices, MultiBufferSource vertexConsumers, int light, int overlay
-    ) {
-        matrices.pushPose();
-        matrices.scale(0.9f, 0.9f, 0.9f);
-        this.itemRenderer.renderStatic(
-                itemStack,
-                ItemDisplayContext.FIXED,
-                light,
-                overlay,
-                matrices,
-                vertexConsumers,
-                level,
-                0
-        );
-        matrices.popPose();
     }
 }

@@ -81,7 +81,7 @@ public class ScrewPumpBlock extends Block implements MechPowerBlockBase {
     @Override
     protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block block, @Nullable Orientation orientation, boolean bl) {
         super.neighborChanged(state, level, pos, block, orientation, bl);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(state, level, pos);

@@ -34,7 +34,7 @@ public class CauldronBlock extends AbstractCookingPotBlock {
 
     @Override
     public InteractionResult useWithoutItem(BlockState blockState, Level level, BlockPos blockPos, Player player, BlockHitResult blockHitResult) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof CauldronBlockEntity cauldronBlockEntity) {
             player.openMenu(cauldronBlockEntity);

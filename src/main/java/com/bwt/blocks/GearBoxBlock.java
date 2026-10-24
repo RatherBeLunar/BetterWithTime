@@ -159,7 +159,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
 
     @Override
     protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bl) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         schedulePowerUpdate(blockState, level, blockPos);
