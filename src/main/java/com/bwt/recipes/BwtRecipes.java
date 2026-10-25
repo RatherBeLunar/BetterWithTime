@@ -12,6 +12,7 @@ import com.bwt.recipes.soul_forge.*;
 import com.bwt.recipes.turntable.TurntableRecipe;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -82,5 +83,21 @@ public class BwtRecipes implements ModInitializer {
 
         Registry.register(BuiltInRegistries.RECIPE_DISPLAY, "soul_forge_shaped", SoulForgeShapedCraftingRecipeDisplay.TYPE);
         Registry.register(BuiltInRegistries.RECIPE_DISPLAY, "soul_forge_shapeless", SoulForgeShapelessCraftingRecipeDisplay.TYPE);
+
+        RecipeSynchronization.synchronizeRecipeSerializer(BLOCK_DISPENSER_CLUMP_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(CAULDRON_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(STOKED_CAULDRON_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(CRUCIBLE_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(STOKED_CRUCIBLE_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(MILL_STONE_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(MOB_SPAWNER_CONVERSION_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(HOPPER_FILTER_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(SOUL_BOTTLING_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(SAW_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(TURNTABLE_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(KILN_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(SOUL_FORGE_SHAPED_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(SOUL_FORGE_SHAPELESS_RECIPE_SERIALIZER);
+        RecipeSynchronization.synchronizeRecipeSerializer(DISABLED_RECIPE_SERIALIZER);
     }
 }

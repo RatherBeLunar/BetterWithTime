@@ -12,7 +12,7 @@ import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -24,8 +24,8 @@ import java.util.List;
 
 public class MillStoneCategory extends BwtRecipeCategoryBase<MillStoneRecipe> {
 
-    public static final RecipeType<MillStoneRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "mill_stone", MillStoneRecipe.class);
+    public static final IRecipeType<MillStoneRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "mill_stone", MillStoneRecipe.class);
 
     public MillStoneCategory(IGuiHelper guiHelper) {
         super(
@@ -39,7 +39,7 @@ public class MillStoneCategory extends BwtRecipeCategoryBase<MillStoneRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<MillStoneRecipe> getRecipeType() {
+    public @NotNull IRecipeType<MillStoneRecipe> getRecipeType() {
         return TYPE;
     }
 
@@ -94,7 +94,7 @@ public class MillStoneCategory extends BwtRecipeCategoryBase<MillStoneRecipe> {
             IRecipeSlotBuilder slot = slotBuilders.get(i);
             Ingredient ingredient = ingredients.get(i);
             if (ingredient != null) {
-                slot.addIngredients(ingredient);
+                slot.add(ingredient);
             }
         }
     }

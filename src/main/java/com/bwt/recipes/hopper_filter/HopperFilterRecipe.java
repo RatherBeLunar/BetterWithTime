@@ -129,8 +129,8 @@ public record HopperFilterRecipe(
                 Ingredient.CONTENTS_STREAM_CODEC, HopperFilterRecipe::ingredient,
                 Ingredient.CONTENTS_STREAM_CODEC, HopperFilterRecipe::filter,
                 ByteBufCodecs.INT, HopperFilterRecipe::soulCount,
-                ItemStack.STREAM_CODEC, HopperFilterRecipe::result,
-                ItemStack.STREAM_CODEC, HopperFilterRecipe::byproduct,
+                ItemStack.OPTIONAL_STREAM_CODEC, HopperFilterRecipe::result,
+                ItemStack.OPTIONAL_STREAM_CODEC, HopperFilterRecipe::byproduct,
                 HopperFilterRecipe::new
         );
 

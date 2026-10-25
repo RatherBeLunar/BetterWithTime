@@ -12,7 +12,7 @@ import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +22,8 @@ import java.util.List;
 
 public class SawCategory extends BwtRecipeCategoryBase<SawRecipe> {
 
-    public static final RecipeType<SawRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "saw", SawRecipe.class);
+    public static final IRecipeType<SawRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "saw", SawRecipe.class);
 
     public SawCategory(IGuiHelper guiHelper) {
         super(
@@ -37,14 +37,14 @@ public class SawCategory extends BwtRecipeCategoryBase<SawRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<SawRecipe> getRecipeType() {
+    public @NotNull IRecipeType<SawRecipe> getRecipeType() {
         return TYPE;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, SawRecipe recipe, IFocusGroup focusGroup) {
         IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 6);
-        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks());
+        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks().toList());
 
         List<ItemStack> outputs = recipe.getResults();
         for (int i = 0; i < outputs.size(); i++) {

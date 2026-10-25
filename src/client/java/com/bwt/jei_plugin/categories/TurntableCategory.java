@@ -12,7 +12,7 @@ import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -22,8 +22,8 @@ import java.util.List;
 
 public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
 
-    public static final RecipeType<TurntableRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "turntable", TurntableRecipe.class);
+    public static final IRecipeType<TurntableRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "turntable", TurntableRecipe.class);
 
     public TurntableCategory(IGuiHelper guiHelper) {
         super(
@@ -37,14 +37,14 @@ public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<TurntableRecipe> getRecipeType() {
+    public @NotNull IRecipeType<TurntableRecipe> getRecipeType() {
         return TYPE;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, TurntableRecipe recipe, IFocusGroup focusGroup) {
         IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 1);
-        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks());
+        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks().toList());
 
         IRecipeSlotBuilder outputBlockSlot = builder.addOutputSlot(56, 1);
         outputBlockSlot.addIngredients(VanillaTypes.ITEM_STACK, List.of(recipe.getOutput().asItem().getDefaultInstance()));

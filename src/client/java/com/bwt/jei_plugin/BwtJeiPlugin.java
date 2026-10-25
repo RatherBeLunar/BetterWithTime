@@ -1,21 +1,24 @@
 package com.bwt.jei_plugin;
 
+import com.bwt.blocks.BwtBlocks;
+import com.bwt.items.BwtItems;
 import com.bwt.jei_plugin.categories.*;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.cooking_pots.*;
 import com.bwt.recipes.hopper_filter.HopperFilterRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeRecipe;
 import com.bwt.recipes.turntable.TurntableRecipe;
 import com.bwt.utils.Id;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.registration.IModInfoRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
+import mezz.jei.api.registration.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,13 +26,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @JeiPlugin
 public class BwtJeiPlugin implements IModPlugin {
-    private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_ID = Comparator.comparing(RecipeHolder::id);
-    private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_GROUP = Comparator.comparing(holder -> holder.value().getGroup());
+    private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_ID = Comparator.comparing(holder -> holder.id().identifier());
+    private static final Comparator<RecipeHolder<? extends Recipe<?>>> BY_GROUP = Comparator.comparing(holder -> holder.value().group());
     private static final Comparator<RecipeHolder<? extends CraftingRecipe>> BY_CATEGORY = Comparator.comparing(holder -> holder.value().category());
     private static final Comparator<RecipeHolder<? extends AbstractCookingPotRecipe>> BY_COOKING_POT_CATEGORY = Comparator.comparing(holder -> holder.value().getCategory());
     private static final List<CraftingBookCategory> CUSTOM_CATEGORY_ORDER = List.of(CraftingBookCategory.REDSTONE, CraftingBookCategory.EQUIPMENT, CraftingBookCategory.BUILDING, CraftingBookCategory.MISC);
@@ -42,13 +46,18 @@ public class BwtJeiPlugin implements IModPlugin {
     });
 
     @Override
-    public @NotNull ResourceLocation getPluginUid() {
+    public @NotNull Identifier getPluginUid() {
         return Id.of("jei_plugin");
     }
 
     @Override
     public void registerModInfo(IModInfoRegistration modAliasRegistration) {
         modAliasRegistration.addModAliases(Id.MOD_ID, "betterwithtime", "better with time");
+    }
+
+    @Override
+    public void registerItemSubtypes(ISubtypeRegistration registration) {
+        registration.registerFromDataComponentTypes(BwtItems.canvasItem, DataComponents.PAINTING_VARIANT);
     }
 
     @Override
@@ -73,7 +82,14 @@ public class BwtJeiPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        registration.addRecipes(SoulForgeCategory.TYPE, sortRecipes(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, BY_CATEGORY_REDSTONE_FIRST.thenComparing(BY_ID)).toList());
+        registration.addRecipes(
+                SoulForgeCategory.TYPE,
+                sortRecipes(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, BY_CATEGORY_REDSTONE_FIRST.thenComparing(BY_ID))
+                        .map(mapRecipes(SoulForgeRecipe.class))
+                        .filter(Optional::isPresent)
+                        .map(Optional::get)
+                        .toList()
+        );
         registration.addRecipes(MillStoneCategory.TYPE, sortRecipes(BwtRecipes.MILL_STONE_RECIPE_TYPE, BY_ID).toList());
         registration.addRecipes(SawCategory.TYPE, sortRecipes(BwtRecipes.SAW_RECIPE_TYPE, BY_ID).toList());
         registration.addRecipes(CauldronCategory.TYPE, sortRecipes(BwtRecipes.CAULDRON_RECIPE_TYPE, BY_COOKING_POT_CATEGORY.thenComparing(BY_ID)).toList());
@@ -99,16 +115,37 @@ public class BwtJeiPlugin implements IModPlugin {
         registration.addRecipes(HopperSoulBottlingCategory.TYPE, sortRecipes(BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE, BY_GROUP.thenComparing(BY_ID)).toList());
     }
 
+    @Override
+    public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
+        registration.addCraftingStation(SoulForgeCategory.TYPE, BwtBlocks.soulForgeBlock);
+        registration.addCraftingStation(SoulForgeCategory.TYPE, BwtBlocks.soulForgeBlock);
+        registration.addCraftingStation(MillStoneCategory.TYPE, BwtBlocks.millStoneBlock);
+        registration.addCraftingStation(SawCategory.TYPE, BwtBlocks.sawBlock);
+        registration.addCraftingStation(CauldronCategory.TYPE, BwtBlocks.cauldronBlock);
+        registration.addCraftingStation(StokedCauldronCategory.TYPE, BwtBlocks.cauldronBlock);
+        registration.addCraftingStation(CrucibleCategory.TYPE, BwtBlocks.crucibleBlock);
+        registration.addCraftingStation(StokedCrucibleCategory.TYPE, BwtBlocks.crucibleBlock);
+        registration.addCraftingStation(StokedCrucibleReclaimCategory.TYPE, BwtBlocks.crucibleBlock);
+        registration.addCraftingStation(TurntableCategory.TYPE, BwtBlocks.turntableBlock);
+        registration.addCraftingStation(KilnCategory.TYPE, BwtBlocks.bellowsBlock);
+        registration.addCraftingStation(HopperFilteringCategory.TYPE, BwtBlocks.hopperBlock);
+        registration.addCraftingStation(HopperSoulBottlingCategory.TYPE, BwtBlocks.hopperBlock);
+    }
+
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<RecipeHolder<T>> streamRecipes(RecipeType<T> type) {
         ClientLevel level = Minecraft.getInstance().level;
         if (level == null) {
             return Stream.of();
         }
-        return level.recipeAccess().getAllRecipesFor(type).stream();
+        return level.recipeAccess().getSynchronizedRecipes().getAllOfType(type).stream();
     }
 
     private static <T extends Recipe<C>, C extends RecipeInput> Stream<T> sortRecipes(RecipeType<T> type, Comparator<? super RecipeHolder<T>> comparator) {
         return streamRecipes(type).sorted(comparator).map(RecipeHolder::value);
+    }
+
+    private static <T extends Recipe<C>, C extends RecipeInput, R extends T> Function<T, Optional<R>> mapRecipes(Class<R> castTo) {
+        return t -> castTo.isInstance(t) ? Optional.of(castTo.cast(t)) : Optional.empty();
     }
 
     private static List<TurntableRecipe> getTurnTableRecipesSorted() {

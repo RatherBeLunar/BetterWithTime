@@ -15,7 +15,7 @@ import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -27,8 +27,8 @@ import java.util.List;
 
 public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
 
-    public static final RecipeType<KilnRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "kiln", KilnRecipe.class);
+    public static final IRecipeType<KilnRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "kiln", KilnRecipe.class);
 
     public KilnCategory(IGuiHelper guiHelper) {
         super(
@@ -42,14 +42,14 @@ public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<KilnRecipe> getRecipeType() {
+    public @NotNull IRecipeType<KilnRecipe> getRecipeType() {
         return TYPE;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focusGroup) {
         IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 1);
-        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks());
+        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks().toList());
 
         List<ItemStack> outputs = recipe.getDrops();
         for (int i = 0; i < outputs.size(); i++) {

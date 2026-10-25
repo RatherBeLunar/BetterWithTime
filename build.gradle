@@ -75,17 +75,18 @@ dependencies {
 	// These are included in the Fabric API production distribution and allow you to update your mod to the latest modules at a later more convenient time.
 
 	// compile against the JEI API but do not include it at runtime
-//	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
+	modCompileOnly("mezz.jei:jei-${minecraft_version}-fabric-api:${jei_version}")
 //	// at runtime, use the full JEI jar for Fabric
-//	modLocalRuntime("net.mezzdev.config:mezz_config-1.21.1-fabric:0.5.8")
-//	modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
+	modLocalRuntime("net.mezzdev.config:mezz_config-1.21.11-fabric:0.6.8")
+	modLocalRuntime("mezz.jei:jei-${minecraft_version}-fabric:${jei_version}")
 }
 
 processResources {
-	inputs.property "version", project.version
+	def version = project.version
+	inputs.property "version", version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": version
 	}
 }
 
@@ -104,15 +105,18 @@ java {
 }
 
 jar {
+	def projectName = project.name
+	inputs.property "projectName", projectName
+
 	from("LICENSE") {
-		rename { "${it}_${project.base.archivesName.get()}"}
+		rename { "${it}_$projectName"}
 	}
 }
 
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
+		create("mavenJava", MavenPublication) {
 			from components.java
 		}
 	}

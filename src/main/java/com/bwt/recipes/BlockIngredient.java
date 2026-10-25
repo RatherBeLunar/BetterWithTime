@@ -86,6 +86,10 @@ public record BlockIngredient(HolderSet<Block> values) implements CustomIngredie
         return getMatchingBlocks().stream().map(Holder::value).map(Block::asItem).map(Holder::direct);
     }
 
+    public Stream<ItemStack> getMatchingStacks() {
+        return getMatchingItems().map(Holder::value).map(Item::getDefaultInstance);
+    }
+
     public Item getFirstMatchingItem() {
         return getMatchingItems().map(Holder::value).findFirst().orElse(Items.AIR);
     }
