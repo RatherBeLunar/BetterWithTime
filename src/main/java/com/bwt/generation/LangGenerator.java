@@ -207,7 +207,6 @@ public class LangGenerator extends FabricLanguageProvider {
         addSubtitle(BwtSoundEvents.SAW_DEPOWERED, "Saw slows down", translationBuilder);
         addSubtitle(BwtSoundEvents.SAW_INITIALIZE, "Saw powers up", translationBuilder);
         addSubtitle(BwtSoundEvents.WOLF_DUNG_PRODUCTION, "Wolf produces dung", translationBuilder);
-        addSubtitle(BwtSoundEvents.WOLF_DUNG_EFFORT, "Wolf growls", translationBuilder);
         addSubtitle(BwtSoundEvents.DYNAMITE_THROW, "Dynamite thrown", translationBuilder);
         addSubtitle(BwtSoundEvents.DYNAMITE_IGNITE, "Dynamite ignited", translationBuilder);
         addSubtitle(BwtSoundEvents.MINING_CHARGE_PRIME, "Mining charge primed", translationBuilder);

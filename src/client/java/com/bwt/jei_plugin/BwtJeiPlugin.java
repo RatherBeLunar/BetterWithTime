@@ -18,7 +18,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.*;
 import org.jetbrains.annotations.NotNull;
 

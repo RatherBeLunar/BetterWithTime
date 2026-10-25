@@ -26,6 +26,7 @@
     "accessor.MobEntityAccessorMixin",
     "accessor.PaintingAccessorMixin",
     "accessor.RecipeManagerAccessorMixin",
+    "accessor.WolfEntityAccessorMixin",
     "animals.BabyAnimalJumpHeightMixin",
     "animals.ChickenEntityMixin",
     "animals.CowEntityMixin",

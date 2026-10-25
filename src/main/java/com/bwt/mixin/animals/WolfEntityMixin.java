@@ -5,13 +5,17 @@ import com.bwt.entities.PickUpBreedingItemWhileSittingGoal;
 import com.bwt.entities.WolfIsFedAccess;
 import com.bwt.items.BwtItems;
 import com.bwt.mixin.accessor.MobEntityAccessorMixin;
+import com.bwt.mixin.accessor.WolfEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -162,7 +166,8 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
         itemEntity.setPickUpDelay(10);
         level.addFreshEntity(itemEntity);
         level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_PRODUCTION, getSoundSource(), 0.2f, 1.25f);
-        level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_EFFORT, getSoundSource(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        SoundEvent growlSound = ((WolfEntityAccessorMixin) this).bwt$getSoundVariant().value().growlSound().value();
+        level.playSound(this, blockPosition(), growlSound, getSoundSource(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         
         for (int counter = 0; counter < 5; counter++) {
             double smokeX = getX() + (dungVectorX * 0.5f) + (random.nextDouble() * 0.25F);

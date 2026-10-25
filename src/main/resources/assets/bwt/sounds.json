@@ -86,13 +86,13 @@
   "block.companion_cube.death": {
     "subtitle": "bwt.subtitles.block.companion_cube.death",
     "sounds": [
-      "mob/wolf/death"
+      "mob/wolf/classic/death"
     ]
   },
   "block.companion_cube.whine": {
     "subtitle": "bwt.subtitles.block.companion_cube.whine",
     "sounds": [
-      "mob/wolf/whine"
+      "mob/wolf/classic/whine"
     ]
   },
   "block.generic.soul_conversion": {
@@ -199,14 +199,6 @@
       {"name": "random/explode2", "pitch": 1.5},
       {"name": "random/explode3", "pitch": 1.5},
       {"name": "random/explode4", "pitch": 1.5}
-    ]
-  },
-  "entity.wolf.dung.effort": {
-    "subtitle": "bwt.subtitles.entity.wolf.dung.effort",
-    "sounds": [
-      "mob/wolf/growl1",
-      "mob/wolf/growl2",
-      "mob/wolf/growl3"
     ]
   },
   "entity.dynamite.throw": {

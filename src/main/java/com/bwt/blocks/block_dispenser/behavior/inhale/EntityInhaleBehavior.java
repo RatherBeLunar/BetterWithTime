@@ -2,6 +2,7 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
+import com.bwt.mixin.accessor.WolfEntityAccessorMixin;
 import com.bwt.utils.DyeUtils;
 
 import java.util.Arrays;
@@ -11,6 +12,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
@@ -19,7 +21,6 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.animal.wolf.Wolf;
-import net.minecraft.world.entity.animal.wolf.WolfSoundVariants;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.decoration.ItemFrame;
@@ -61,7 +62,8 @@ public interface EntityInhaleBehavior {
             public void inhale(ServerLevel serverLevel, Entity entity) {
                 Wolf wolf = ((Wolf) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
-                wolf.playSound(SoundEvents.WOLF_SOUNDS.get(WolfSoundVariants.SoundSet.CLASSIC).deathSound().value(), 0.4f, wolf.getVoicePitch());
+                SoundEvent deathSound = ((WolfEntityAccessorMixin) wolf).bwt$getDeathSound();
+                wolf.playSound(deathSound, 0.4f, wolf.getVoicePitch());
             }
 
             @Override
@@ -76,6 +78,7 @@ public interface EntityInhaleBehavior {
                 return NonNullList.of(ItemStack.EMPTY, new ItemStack(Items.STRING), new ItemStack(Items.STRING));
             }
         });
+
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.CHICKEN, new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {

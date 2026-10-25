@@ -33,7 +33,6 @@ public class BwtSoundEvents implements ModInitializer {
     public static final SoundEvent SAW_CUT = register("block.saw.cut");
     public static final SoundEvent SAW_DEPOWERED = register("block.saw.depowered");
     public static final SoundEvent WOLF_DUNG_PRODUCTION = register("entity.wolf.dung.production");
-    public static final SoundEvent WOLF_DUNG_EFFORT = register("entity.wolf.dung.effort");
     public static final SoundEvent DYNAMITE_THROW = register("entity.dynamite.throw");
     public static final SoundEvent SOUL_URN_THROW = register("entity.soul_urn.throw");
     public static final SoundEvent DYNAMITE_IGNITE = register("entity.dynamite.ignite");
