@@ -442,7 +442,9 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         CompoundTag compoundTag = saveWithoutMetadata(provider);
         compoundTag.putInt("slotsOccupied", slotsOccupied);
-        compoundTag.put("Filter", this.filterInventory.toTag(provider));
+        this.filterInventory.toTag(provider).ifPresent(tag ->
+            compoundTag.put("Filter", tag)
+        );
         return compoundTag;
     }
 

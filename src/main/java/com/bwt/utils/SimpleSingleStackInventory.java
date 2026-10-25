@@ -73,13 +73,15 @@ public class SimpleSingleStackInventory implements ContainerSingleItem.BlockCont
 
     public void saveData(ValueOutput valueOutput, String key) {
         ItemStack itemStack = this.getTheItem();
-        valueOutput.store(key, ItemStack.CODEC, itemStack);
+        if (!itemStack.isEmpty()) {
+            valueOutput.store(key, ItemStack.CODEC, itemStack);
+        }
     }
 
-    public Tag toTag(HolderLookup.Provider provider) {
+    public Optional<Tag> toTag(HolderLookup.Provider provider) {
         ItemStack itemStack = this.getTheItem();
-        if (itemStack.isEmpty()) return new CompoundTag();
+        if (itemStack.isEmpty()) return Optional.empty();
         RegistryOps<Tag> registryOps = provider.createSerializationContext(NbtOps.INSTANCE);
-        return ItemStack.CODEC.encodeStart(registryOps, getTheItem()).getOrThrow();
+        return Optional.of(ItemStack.CODEC.encodeStart(registryOps, getTheItem()).getOrThrow());
     }
 }

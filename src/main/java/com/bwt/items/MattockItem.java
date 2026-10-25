@@ -25,10 +25,10 @@ public class MattockItem extends Item {
     public static final boolean CAN_DESTROY_BLOCKS_IN_CREATIVE = true;
 
     public MattockItem(ToolMaterial material, float attackDamage, float attackSpeed, Item.Properties properties) {
-        super(applyBattleAxeProperties(properties, material, attackDamage, attackSpeed));
+        super(applyMattockProperties(properties, material, attackDamage, attackSpeed));
     }
 
-    public static Item.Properties applyBattleAxeProperties(Item.Properties properties, ToolMaterial toolMaterial, float attackDamage, float attackSpeed) {
+    public static Item.Properties applyMattockProperties(Item.Properties properties, ToolMaterial toolMaterial, float attackDamage, float attackSpeed) {
         HolderGetter<Block> holderGetter = BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK);
         return properties
                 .durability(toolMaterial.durability())
