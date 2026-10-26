@@ -3,6 +3,7 @@ package com.bwt;
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.entities.BwtEntities;
+import com.bwt.particles.BwtParticles;
 import com.bwt.rendering.broadhead_arrow.BroadheadArrowEntityRenderer;
 import com.bwt.rendering.canvas.CanvasRenderer;
 import com.bwt.rendering.cooking_pot.CookingPotEntityRenderer;
@@ -25,18 +26,27 @@ import com.bwt.utils.Id;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.particle.FallingLeavesParticle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleResources;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.biome.Biome;
 
@@ -53,6 +63,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
         BlockEntityRenderers.register(BwtBlockEntities.unfiredDecoratedPotBlockEntity, UnfiredDecoratedPotBlockEntityRenderer::new);
         BlockEntityRenderers.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
         BlockEntityRenderers.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
+
 		EntityRenderers.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
 		EntityRenderers.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
 		EntityRenderers.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
@@ -62,9 +73,11 @@ public class BetterWithTimeClient implements ClientModInitializer {
 		EntityRenderers.register(BwtEntities.miningChargeEntity, MiningChargeEntityRenderer::new);
 		EntityRenderers.register(BwtEntities.soulUrnProjectileEntity, ThrownItemRenderer::new);
 		EntityRenderers.register(BwtEntities.canvasEntity, CanvasRenderer::new);
+
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(CONTAINER_FILL_LAYER, ContainerFillLayerModel::getTexturedModelData);
+
 		SpecialModelRenderers.ID_MAPPER.put(
                 Id.of("unfired_decorated_pot_with_sherds"),
 				UnfiredDecoratedPotSpecialRenderer.Unbaked.MAP_CODEC
@@ -84,9 +97,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.saplingBlock,
 				BwtBlocks.bloodWoodBlocks.pottedSaplingBlock,
 				BwtBlocks.bloodWoodBlocks.doorBlock,
-				BwtBlocks.bloodWoodBlocks.trapdoorBlock
-		);
-		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT,
+				BwtBlocks.bloodWoodBlocks.trapdoorBlock,
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);
@@ -116,5 +127,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				}
 			})
 		);
+
+		ParticleFactoryRegistry.getInstance().register(BwtParticles.BLOOD_WOOD_LEAVES, FallingLeavesParticle.PaleOakProvider::new);
 	}
 }

@@ -1,16 +1,8 @@
 {
   "textures": [
-    "bwt:blood_wood_0",
     "bwt:blood_wood_1",
     "bwt:blood_wood_2",
     "bwt:blood_wood_3",
-    "bwt:blood_wood_4",
-    "bwt:blood_wood_5",
-    "bwt:blood_wood_6",
-    "bwt:blood_wood_7",
-    "bwt:blood_wood_8",
-    "bwt:blood_wood_9",
-    "bwt:blood_wood_10",
-    "bwt:blood_wood_11"
+    "bwt:blood_wood_4"
   ]
 }
