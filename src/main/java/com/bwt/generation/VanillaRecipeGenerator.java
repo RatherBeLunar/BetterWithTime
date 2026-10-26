@@ -71,6 +71,21 @@ public class VanillaRecipeGenerator extends FabricRecipeProvider {
                 .pattern(" N ")
                 .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
                 .save(output, keyOf(BuiltInRegistries.ITEM.getKey(Items.HOPPER).getPath()));
+
+        recipeProvider.shaped(RecipeCategory.COMBAT, Items.NETHERITE_NAUTILUS_ARMOR)
+                .pattern("sss")
+                .pattern("s s")
+                .pattern("ss ")
+                .define('s', Items.NETHERITE_INGOT)
+                .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
+                .save(output);
+        recipeProvider.shaped(RecipeCategory.COMBAT, Items.NETHERITE_HORSE_ARMOR)
+                .pattern("s s")
+                .pattern("sss")
+                .pattern("s s")
+                .define('s', Items.NETHERITE_INGOT)
+                .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
+                .save(output);
     }
 
     public static ResourceKey<Recipe<?>> keyOf(Identifier resourceLocation) {

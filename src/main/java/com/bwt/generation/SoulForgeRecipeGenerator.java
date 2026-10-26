@@ -274,6 +274,15 @@ public class SoulForgeRecipeGenerator extends FabricRecipeProvider {
                         .define('h', BwtItems.haftItem)
                         .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
                         .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_SWORD)));
+                sfShaped(RecipeCategory.TOOLS, Items.NETHERITE_SPEAR)
+                        .pattern("   s")
+                        .pattern("  h ")
+                        .pattern(" h  ")
+                        .pattern("h   ")
+                        .define('s', Items.NETHERITE_INGOT)
+                        .define('h', BwtItems.haftItem)
+                        .unlockedBy(RecipeProvider.getHasName(Items.NETHERITE_INGOT), recipeProvider.has(Items.NETHERITE_INGOT))
+                        .save(output, keyOf(RecipeProvider.getItemName(Items.NETHERITE_SPEAR)));
 
                 // Netherite armor
                 sfShaped(RecipeCategory.TOOLS, BwtItems.armorPlateItem)

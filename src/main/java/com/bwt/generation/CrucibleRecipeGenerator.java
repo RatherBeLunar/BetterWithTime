@@ -73,6 +73,7 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                 reclaim(Items.IRON_AXE, Items.IRON_INGOT, 3);
                 reclaim(Items.IRON_HOE, Items.IRON_INGOT, 2);
                 reclaim(Items.IRON_SWORD, Items.IRON_INGOT, 2);
+                reclaim(Items.IRON_SPEAR, Items.IRON_INGOT, 1);
                 // Iron misc
                 reclaim(Items.ACTIVATOR_RAIL, Items.IRON_INGOT, 1);
                 reclaim().ingredient(ItemTags.ANVIL).result(Items.IRON_INGOT, 9).save(output, "smelt_anvil_in_crucible");
@@ -93,6 +94,7 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                 reclaim(Items.SHEARS, Items.IRON_INGOT, 2);
 
                 reclaim(Items.IRON_HORSE_ARMOR, Items.IRON_INGOT, 7);
+                reclaim(Items.IRON_NAUTILUS_ARMOR, Items.IRON_INGOT, 8);
 
                 reclaim(BwtBlocks.stoneDetectorRailBlock, Items.IRON_INGOT, 1);
                 reclaim(BwtBlocks.obsidianDetectorRailBlock, Items.IRON_INGOT, 1);
@@ -112,6 +114,7 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                 reclaim(Items.COPPER_AXE, Items.COPPER_INGOT, 3);
                 reclaim(Items.COPPER_HOE, Items.COPPER_INGOT, 2);
                 reclaim(Items.COPPER_SWORD, Items.COPPER_INGOT, 2);
+                reclaim(Items.COPPER_SPEAR, Items.COPPER_INGOT, 1);
                 // Copper misc
                 reclaim(Items.BRUSH, Items.COPPER_INGOT, 1);
                 Items.COPPER_BARS.forEach(copperBars -> reclaim(copperBars, 8, Items.COPPER_INGOT, 3));
@@ -152,6 +155,9 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                         reclaim(copperBulb, Items.COPPER_INGOT, 6)
                 );
 
+                reclaim(Items.COPPER_HORSE_ARMOR, Items.COPPER_INGOT, 7);
+                reclaim(Items.COPPER_NAUTILUS_ARMOR, Items.COPPER_INGOT, 8);
+
                 reclaim(Items.COPPER_NUGGET, 9, Items.COPPER_INGOT, 1);
             }
 
@@ -167,12 +173,14 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                 reclaim(Items.GOLDEN_AXE, Items.GOLD_INGOT, 3);
                 reclaim(Items.GOLDEN_HOE, Items.GOLD_INGOT, 2);
                 reclaim(Items.GOLDEN_SWORD, Items.GOLD_INGOT, 2);
+                reclaim(Items.GOLDEN_SPEAR, Items.GOLD_INGOT, 1);
                 // Gold misc
                 reclaim(Items.CLOCK, Items.GOLD_INGOT, 4);
                 reclaim(Items.LIGHT_WEIGHTED_PRESSURE_PLATE, Items.GOLD_INGOT, 2);
                 reclaim(Items.POWERED_RAIL, Items.GOLD_INGOT, 1);
 
                 reclaim(Items.GOLDEN_HORSE_ARMOR, Items.GOLD_INGOT, 7);
+                reclaim(Items.GOLDEN_NAUTILUS_ARMOR, Items.GOLD_INGOT, 8);
 
                 reclaim(Items.GOLD_NUGGET, 9, Items.GOLD_INGOT, 1);
             }
@@ -190,8 +198,12 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
                 reclaim(Items.NETHERITE_SHOVEL, Items.NETHERITE_INGOT, 1);
                 reclaim(Items.NETHERITE_AXE, Items.NETHERITE_INGOT, 3);
                 reclaim(Items.NETHERITE_HOE, Items.NETHERITE_INGOT, 2);
-                reclaim(Items.NETHERITE_SWORD, Items.NETHERITE_INGOT, 2);
+                reclaim(Items.NETHERITE_SWORD, Items.NETHERITE_INGOT, 3);
+                reclaim(Items.NETHERITE_SPEAR, Items.NETHERITE_INGOT, 1);
                 reclaim(Items.NETHERITE_BLOCK, Items.NETHERITE_INGOT, 16);
+
+                reclaim(Items.NETHERITE_HORSE_ARMOR, Items.NETHERITE_INGOT, 7);
+                reclaim(Items.NETHERITE_NAUTILUS_ARMOR, Items.NETHERITE_INGOT, 8);
             }
 
             StokedCrucibleRecipe.JsonBuilder createStoked() {

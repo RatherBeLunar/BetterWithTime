@@ -77,10 +77,14 @@ public class DisabledVanilaRecipeGenerator extends FabricRecipeProvider {
                 disableVanilla(Items.NETHERITE_AXE, "_smithing", output);
                 disableVanilla(Items.NETHERITE_HOE, "_smithing", output);
                 disableVanilla(Items.NETHERITE_SWORD, "_smithing", output);
+                disableVanilla(Items.NETHERITE_SPEAR, "_smithing", output);
                 disableVanilla(Items.NETHERITE_HELMET, "_smithing", output);
                 disableVanilla(Items.NETHERITE_CHESTPLATE, "_smithing", output);
                 disableVanilla(Items.NETHERITE_LEGGINGS, "_smithing", output);
                 disableVanilla(Items.NETHERITE_BOOTS, "_smithing", output);
+
+                disableVanilla(Items.NETHERITE_NAUTILUS_ARMOR, "_smithing", output);
+                disableVanilla(Items.NETHERITE_HORSE_ARMOR, "_smithing", output);
 
                 // Mossy
                 disableVanilla(Items.MOSSY_COBBLESTONE, "_from_moss_block", output);
