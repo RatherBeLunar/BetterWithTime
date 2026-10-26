@@ -35,13 +35,24 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 public class ModelGenerator extends FabricModelProvider {
+    // There are some special-generated models that don't need auto-genning here
+    static List<Block> PRE_DEFINED_COLUMN_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+    static List<Block> PRE_DEFINED_CORNER_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+    static List<Block> PRE_DEFINED_MOULDING_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+    static List<Block> PRE_DEFINED_PEDESTAL_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+    static List<Block> PRE_DEFINED_SIDING_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+    static List<Block> PRE_DEFINED_TABLE_MODELS = List.of(Blocks.SANDSTONE, Blocks.RED_SANDSTONE);
+
+
     public ModelGenerator(FabricDataOutput generator) {
         super(generator);
     }
+
     public static final PropertyDispatch<VariantMutator> NORTH_DEFAULT_HORIZONTAL_ROTATION = PropertyDispatch.modify(BlockStateProperties.HORIZONTAL_FACING)
             .select(Direction.EAST, BlockModelGenerators.Y_ROT_90)
             .select(Direction.SOUTH, BlockModelGenerators.Y_ROT_180)
@@ -512,9 +523,11 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public static void generateSidingBlock(BlockModelGenerators blockStateModelGenerator, SidingBlock sidingBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(sidingBlock.fullBlock);
-        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/siding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        model.create(sidingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        if (!PRE_DEFINED_SIDING_MODELS.contains(sidingBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(sidingBlock.fullBlock);
+            ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/siding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            model.create(sidingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(
                         sidingBlock,
@@ -526,19 +539,25 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public static void generateMouldingBlock(BlockModelGenerators blockStateModelGenerator, MouldingBlock mouldingBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(mouldingBlock.fullBlock);
-        ModelTemplate horizontalModel = new ModelTemplate(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        ModelTemplate verticalModel = new ModelTemplate(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        Identifier horizontalId = horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
-        Identifier verticalId = verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier horizontalId = ModelLocationUtils.getModelLocation(mouldingBlock);
+        Identifier verticalId = ModelLocationUtils.getModelLocation(mouldingBlock, "_vertical");
+        if (!PRE_DEFINED_MOULDING_MODELS.contains(mouldingBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(mouldingBlock.fullBlock);
+            ModelTemplate horizontalModel = new ModelTemplate(Optional.of(Id.of("block/moulding")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            ModelTemplate verticalModel = new ModelTemplate(Optional.of(Id.of("block/moulding_vertical")), Optional.of("_vertical"), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            horizontalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+            verticalModel.create(mouldingBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(mouldingBlock).with(createMouldingOrientationMap(horizontalId, verticalId)));
         blockStateModelGenerator.registerSimpleItemModel(mouldingBlock, horizontalId);
     }
 
     public static void generateCornerBlock(BlockModelGenerators blockStateModelGenerator, CornerBlock cornerBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(cornerBlock.fullBlock);
-        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/corner")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        model.create(cornerBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        if (!PRE_DEFINED_CORNER_MODELS.contains(cornerBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(cornerBlock.fullBlock);
+            ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/corner")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            model.create(cornerBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(
                         cornerBlock,
@@ -550,17 +569,21 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public static void generateColumnBlock(BlockModelGenerators blockStateModelGenerator, ColumnBlock columnBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(columnBlock.fullBlock);
-        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/column")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        model.create(columnBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        if (!PRE_DEFINED_COLUMN_MODELS.contains(columnBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(columnBlock.fullBlock);
+            ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/column")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            model.create(columnBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(MultiVariantGenerator.dispatch(columnBlock, plainVariant(ModelLocationUtils.getModelLocation(columnBlock)).with(BlockModelGenerators.UV_LOCK)));
         blockStateModelGenerator.registerSimpleItemModel(columnBlock, ModelLocationUtils.getModelLocation(columnBlock));
     }
 
     public static void generatePedestalBlock(BlockModelGenerators blockStateModelGenerator, PedestalBlock pedestalBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(pedestalBlock.fullBlock);
-        ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/pedestal")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        model.create(pedestalBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        if (!PRE_DEFINED_PEDESTAL_MODELS.contains(pedestalBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(pedestalBlock.fullBlock);
+            ModelTemplate model = new ModelTemplate(Optional.of(Id.of("block/pedestal")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            model.create(pedestalBlock, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(
                         pedestalBlock,
@@ -575,11 +598,15 @@ public class ModelGenerator extends FabricModelProvider {
     }
 
     public static void generateTableBlock(BlockModelGenerators blockStateModelGenerator, TableBlock tableBlock) {
-        TexturedModel texturedModel = TexturedModel.CUBE.get(tableBlock.fullBlock);
-        ModelTemplate tableModel = new ModelTemplate(Optional.of(Id.of("block/table")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        ModelTemplate tableNoSupportModel = new ModelTemplate(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
-        Identifier tableModelId = tableModel.create(ModelLocationUtils.getModelLocation(tableBlock), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
-        Identifier noSupportModelId = tableNoSupportModel.create(ModelLocationUtils.getModelLocation(tableBlock, "_no_support"), texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        Identifier tableModelId = ModelLocationUtils.getModelLocation(tableBlock);
+        Identifier noSupportModelId = ModelLocationUtils.getModelLocation(tableBlock, "_no_support");
+        if (!PRE_DEFINED_TABLE_MODELS.contains(tableBlock.fullBlock)) {
+            TexturedModel texturedModel = TexturedModel.CUBE.get(tableBlock.fullBlock);
+            ModelTemplate tableModel = new ModelTemplate(Optional.of(Id.of("block/table")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            ModelTemplate tableNoSupportModel = new ModelTemplate(Optional.of(Id.of("block/table_no_support")), Optional.empty(), TextureSlot.BOTTOM, TextureSlot.TOP, TextureSlot.SIDE);
+            tableModel.create(tableModelId, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+            tableNoSupportModel.create(noSupportModelId, texturedModel.getMapping(), blockStateModelGenerator.modelOutput);
+        }
         blockStateModelGenerator.blockStateOutput.accept(
                 MultiVariantGenerator.dispatch(tableBlock)
                         .with(PropertyDispatch.initial(TableBlock.SUPPORT)
