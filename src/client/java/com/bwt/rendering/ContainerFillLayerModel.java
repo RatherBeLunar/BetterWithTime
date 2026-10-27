@@ -14,12 +14,10 @@ import net.minecraft.util.Unit;
  * Used for Cauldrons, Crucibles, and the Mech Hopper to show fill level visually
  */
 public class ContainerFillLayerModel extends Model<Unit> {
-    protected final ModelPart root;
     protected final ModelPart flat;
 
     public ContainerFillLayerModel(ModelPart root) {
         super(root, RenderTypes::itemEntityTranslucentCull);
-        this.root = root;
         this.flat = root.getChild("flat");
     }
 

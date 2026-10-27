@@ -54,7 +54,7 @@ import net.minecraft.world.level.biome.Biome;
 public class BetterWithTimeClient implements ClientModInitializer {
 	public static final ModelLayerLocation MODEL_WINDMILL_LAYER = new ModelLayerLocation(Id.of("windmill"), "main");
 	public static final ModelLayerLocation MODEL_WATER_WHEEL_LAYER = new ModelLayerLocation(Id.of("water_wheel"), "main");
-	public static final ModelLayerLocation CONTAINER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
+	public static final ModelLayerLocation CONTAINER_FILL_LAYER = new ModelLayerLocation(Id.of("hopper_fill"), "main");
 
 	@Override
 	public void onInitializeClient() {

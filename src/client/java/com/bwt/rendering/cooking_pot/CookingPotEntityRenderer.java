@@ -4,16 +4,23 @@ import com.bwt.BetterWithTimeClient;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlock;
 import com.bwt.blocks.abstract_cooking_pot.AbstractCookingPotBlockEntity;
 import com.bwt.rendering.ContainerFillLayerModel;
+import com.bwt.utils.Id;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.MaterialSet;
+import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.Direction;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Unit;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,12 +29,16 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(value=EnvType.CLIENT)
 public class CookingPotEntityRenderer implements BlockEntityRenderer<AbstractCookingPotBlockEntity, AbstractCookingPotRenderState> {
+    public final Material FILL_TEXTURE;
+    private final MaterialSet materials;
     private final Identifier fillTexture;
     protected final ContainerFillLayerModel fillModel;
 
     public CookingPotEntityRenderer(BlockEntityRendererProvider.Context ctx, Identifier fillTexture) {
+        this.materials = ctx.materials();
         this.fillModel = new ContainerFillLayerModel(ctx.bakeLayer(BetterWithTimeClient.CONTAINER_FILL_LAYER));
         this.fillTexture = fillTexture;
+        this.FILL_TEXTURE = Sheets.BLOCKS_MAPPER.apply(fillTexture);
     }
 
     @Override
@@ -68,6 +79,8 @@ public class CookingPotEntityRenderer implements BlockEntityRenderer<AbstractCoo
                 renderState.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 -1,
+                null,
+                0,
                 null
         );
         poseStack.popPose();

@@ -72,6 +72,8 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
                     renderState.lightCoords,
                     OverlayTexture.NO_OVERLAY,
                     -1,
+                    null,
+                    0,
                     null
             );
             poseStack.popPose();
@@ -89,6 +91,8 @@ public class MechHopperBlockEntityRenderer implements BlockEntityRenderer<MechHo
                     renderState.lightCoords,
                     OverlayTexture.NO_OVERLAY,
                     -1,
+                    null,
+                    0,
                     null
             );
             poseStack.popPose();
