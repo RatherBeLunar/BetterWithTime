@@ -15,7 +15,6 @@ import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -81,7 +80,7 @@ public class KilnBlock extends Block {
         if (recipe.isPresent()) {
             if (checkKilnIntegrity(level, pos)) {
                 if (oldCookCounter >= 15) {
-                    cookBlock(level, pos.above(), cookingBlockState, recipe.get());
+                    cookBlock(level, pos.above(), recipe.get());
                 }
                 else {
                     newCookCounter = oldCookCounter + 1;
@@ -99,7 +98,7 @@ public class KilnBlock extends Block {
         if (oldCookCounter != newCookCounter) {
             level.setBlockAndUpdate(pos, state.setValue(COOK_TIME, newCookCounter));
             // The 10 here is the max block breaking progress
-            KilnBlockCookOverlay.setKilnBlockCookingInfo(level, pos.above(), ((int) Mth.clampedLerp(-1, 9, ((float) newCookCounter) / 15f)));
+            KilnBlockCookOverlay.setKilnBlockCookingInfo(level, pos.above(), ((int) Mth.clampedLerp(((float) newCookCounter) / 15f, -1, 9)));
             if (cookingBlockState.hasProperty(UnfiredPotteryBlock.COOKING) && cookingBlockState.getValue(UnfiredPotteryBlock.COOKING).equals(false)) {
                 level.setBlockAndUpdate(cookingBlockPos, cookingBlockState.setValue(UnfiredPotteryBlock.COOKING, true));
             }
@@ -127,7 +126,7 @@ public class KilnBlock extends Block {
         }
         else if (state.getValue(COOK_TIME) > 0) {
             // reset the cook counter so it doesn't get passed to another block on piston push
-            resetBlockCookProgress(level, pos);
+            resetBlockCookProgress(serverLevel, pos);
             level.setBlockAndUpdate(pos, state.setValue(COOK_TIME, 0));
         }
     }
@@ -149,25 +148,22 @@ public class KilnBlock extends Block {
         ).map(RecipeHolder::value);
     }
 
-    private void cookBlock(Level level, BlockPos cookingBlockPos, BlockState cookingBlockState, KilnRecipe recipe) {
-        DataComponentMap components = cookingBlockState.getCloneItemStack(level, cookingBlockPos, true).getComponents();
+    private void cookBlock(Level level, BlockPos cookingBlockPos, KilnRecipe recipe) {
         level.destroyBlock(cookingBlockPos, false);
         NonNullList<ItemStack> drops = NonNullList.of(ItemStack.EMPTY, recipe.getDrops().stream().map(ItemStack::copy).toArray(ItemStack[]::new));
         if (drops.isEmpty()) {
             return;
         }
-        ItemStack firstDrop = drops.getFirst();
-        firstDrop.applyComponents(components.filter(componentType -> firstDrop.getComponents().has(componentType)));
         Containers.dropContents(level, cookingBlockPos, drops);
     }
 
-    private void resetBlockCookProgress(Level level, BlockPos kilnPos) {
+    private void resetBlockCookProgress(ServerLevel serverLevel, BlockPos kilnPos) {
         BlockPos cookingBlockPos = kilnPos.above();
-        BlockState cookingBlockState = level.getBlockState(cookingBlockPos);
+        BlockState cookingBlockState = serverLevel.getBlockState(cookingBlockPos);
         if (cookingBlockState.hasProperty(UnfiredPotteryBlock.COOKING) && cookingBlockState.getValue(UnfiredPotteryBlock.COOKING).equals(true)) {
-            level.setBlockAndUpdate(cookingBlockPos, cookingBlockState.setValue(UnfiredPotteryBlock.COOKING, false));
+            serverLevel.setBlockAndUpdate(cookingBlockPos, cookingBlockState.setValue(UnfiredPotteryBlock.COOKING, false));
         }
-        KilnBlockCookOverlay.setKilnBlockCookingInfo(level, cookingBlockPos, -1);
+        KilnBlockCookOverlay.setKilnBlockCookingInfo(serverLevel, cookingBlockPos, -1);
     }
 
     private boolean checkKilnIntegrity(Level level, BlockPos pos) {
