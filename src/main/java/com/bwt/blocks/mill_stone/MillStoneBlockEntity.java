@@ -98,7 +98,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
     }
 
     private void playSoundChance(Level level, BlockPos pos, MillStoneBlockEntity.InventoryStatus status) {
-        if (level.getRandom().nextInt(40) != 0) {
+        if (level.getRandom().nextInt(5) != 0) {
             return;
         }
         playSound(level, pos, status);
