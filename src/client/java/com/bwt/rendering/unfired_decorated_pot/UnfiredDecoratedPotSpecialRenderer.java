@@ -1,15 +1,14 @@
 package com.bwt.rendering.unfired_decorated_pot;
 
+import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlock;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.MapCodec;
+
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.model.geom.EntityModelSet;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.core.component.DataComponents;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import org.joml.Vector3fc;
 
 @Environment(EnvType.CLIENT)
@@ -47,6 +45,7 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
         this.unfiredDecoratedPotRenderer.submitPotWithDecorations(
                 poseStack,
                 submitNodeCollector,
+                itemDisplayContext,
                 i,
                 j,
                 Objects.requireNonNullElse(potDecorations, PotDecorations.EMPTY),
@@ -56,7 +55,7 @@ public class UnfiredDecoratedPotSpecialRenderer implements SpecialModelRenderer<
 
     @Override
     public void getExtents(Consumer<Vector3fc> consumer) {
-        // TODO?
+        UnfiredDecoratedPotBlock.EXTENTS.forEach(consumer);
     }
 
     @Environment(EnvType.CLIENT)

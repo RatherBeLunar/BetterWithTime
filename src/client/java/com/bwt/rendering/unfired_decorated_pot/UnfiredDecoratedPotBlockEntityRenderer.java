@@ -3,36 +3,24 @@ package com.bwt.rendering.unfired_decorated_pot;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.renderer.*;
-import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.block.ModelBlockRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
 import net.minecraft.client.renderer.item.ItemModelResolver;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.ModelManager;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.PotDecorations;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -105,17 +93,33 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         );
     }
 
-    public void submitPotWithDecorations(PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, PotDecorations potDecorations, int outlineColor) {
+    public void submitPotWithDecorations(
+            PoseStack poseStack,
+            SubmitNodeCollector submitNodeCollector,
+            ItemDisplayContext itemDisplayContext,
+            int light,
+            int overlay,
+            PotDecorations potDecorations,
+            int outlineColor
+    ) {
         poseStack.pushPose();
         submitNodeCollector.submitBlock(
                 poseStack,
-                BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState(),
+                BwtBlocks.unfiredDecoratedPotBlock.defaultBlockState(),
                 light,
-                OverlayTexture.NO_OVERLAY,
+                overlay,
                 outlineColor
         );
+        submitPotDecorations(
+                Direction.NORTH,
+                poseStack,
+                submitNodeCollector,
+                itemDisplayContext,
+                light,
+                overlay,
+                potDecorations
+        );
         poseStack.popPose();
-        submitPotDecorations(Direction.NORTH, poseStack, submitNodeCollector, light, overlay, potDecorations);
     }
 
     public void submitPotDecorations(Direction facing, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, List<ItemStackRenderState> sherdRenderStates) {
@@ -149,7 +153,15 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
         poseStack.popPose();
     }
 
-    public void submitPotDecorations(Direction facing, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int light, int overlay, PotDecorations potDecorations) {
+    public void submitPotDecorations(
+            Direction facing,
+            PoseStack poseStack,
+            SubmitNodeCollector submitNodeCollector,
+            ItemDisplayContext itemDisplayContext,
+            int light,
+            int overlay,
+            PotDecorations potDecorations
+    ) {
         List<Optional<Item>> rotationalSherds = List.of(potDecorations.front(), potDecorations.right(), potDecorations.back(), potDecorations.left());
         ArrayList<ItemStackRenderState> sherdRenderStates = new ArrayList<>();
         for (int j = 0; j < rotationalSherds.size(); j++) {
@@ -162,7 +174,7 @@ public class UnfiredDecoratedPotBlockEntityRenderer implements BlockEntityRender
             this.itemModelResolver.updateForTopItem(
                     itemStackRenderState,
                     sherd,
-                    ItemDisplayContext.FIXED,
+                    ItemDisplayContext.NONE,
                     null,
                     null,
                     j
