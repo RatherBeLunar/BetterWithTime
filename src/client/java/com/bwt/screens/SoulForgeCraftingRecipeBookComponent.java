@@ -1,5 +1,6 @@
 package com.bwt.screens;
 
+import com.bwt.mixin.client.GhostSlotsAccessorMixin;
 import com.bwt.recipes.soul_forge.SoulForgeShapedCraftingRecipeDisplay;
 import com.bwt.recipes.soul_forge.SoulForgeShapelessCraftingRecipeDisplay;
 import net.minecraft.client.gui.screens.recipebook.CraftingRecipeBookComponent;
@@ -40,35 +41,34 @@ public class SoulForgeCraftingRecipeBookComponent extends CraftingRecipeBookComp
         recipeCollection.selectRecipes(stackedItemContents, this::canDisplay);
     }
 
-//    @Override
-//    protected void fillGhostRecipe(GhostSlots ghostSlots, RecipeDisplay recipeDisplay, ContextMap contextMap) {
-//        ghostSlots.setResult(this.menu.getResultSlot(), contextMap, recipeDisplay.result());
-//        int n = 0;
-//        switch (recipeDisplay) {
-//            case SoulForgeShapedCraftingRecipeDisplay soulForgeShapedCraftingRecipeDisplay: {
-//                List<Slot> list = this.menu.getInputGridSlots();
-//                PlaceRecipeHelper.placeRecipe(
-//                        this.menu.getGridWidth(),
-//                        this.menu.getGridHeight(),
-//                        soulForgeShapedCraftingRecipeDisplay.width(),
-//                        soulForgeShapedCraftingRecipeDisplay.height(),
-//                        soulForgeShapedCraftingRecipeDisplay.ingredients(),
-//                        (slotDisplay, i, j, k) -> {
-//                            Slot slot = list.get(i);
-//                            ghostSlots.setInput(slot, contextMap, (SlotDisplay)slotDisplay);
-//                        }
-//                );
-//                break;
-//            }
-//            case 1: {
-//                ShapelessCraftingRecipeDisplay shapelessCraftingRecipeDisplay = (ShapelessCraftingRecipeDisplay) recipeDisplay;
-//                List list2 = this.menu.getInputGridSlots();
-//                int i2 = Math.min(shapelessCraftingRecipeDisplay.ingredients().size(), list2.size());
-//                for (int j2 = 0; j2 < i2; ++j2) {
-//                    ghostSlots.setInput((Slot)list2.get(j2), contextMap, (SlotDisplay)shapelessCraftingRecipeDisplay.ingredients().get(j2));
-//                }
-//                break;
-//            }
-//        }
-//    }
+    @Override
+    protected void fillGhostRecipe(GhostSlots ghostSlots, RecipeDisplay recipeDisplay, ContextMap contextMap) {
+        GhostSlotsAccessorMixin ghostSlotsAccessor = (GhostSlotsAccessorMixin) ghostSlots;
+        ghostSlotsAccessor.bwt$setResult(this.menu.getResultSlot(), contextMap, recipeDisplay.result());
+        switch (recipeDisplay) {
+            case SoulForgeShapedCraftingRecipeDisplay soulForgeShapedCraftingRecipeDisplay:
+                List<Slot> list = this.menu.getInputGridSlots();
+                PlaceRecipeHelper.placeRecipe(
+                        this.menu.getGridWidth(),
+                        this.menu.getGridHeight(),
+                        soulForgeShapedCraftingRecipeDisplay.width(),
+                        soulForgeShapedCraftingRecipeDisplay.height(),
+                        soulForgeShapedCraftingRecipeDisplay.ingredients(),
+                        (slotDisplay, ix, jx, k) -> {
+                            Slot slot = list.get(ix);
+                            ghostSlotsAccessor.bwt$setInput(slot, contextMap, slotDisplay);
+                        }
+                );
+                break;
+            case SoulForgeShapelessCraftingRecipeDisplay soulForgeShapelessCraftingRecipeDisplay:
+                List<Slot> list2 = this.menu.getInputGridSlots();
+                int i = Math.min(soulForgeShapelessCraftingRecipeDisplay.ingredients().size(), list2.size());
+
+                for (int j = 0; j < i; j++) {
+                    ghostSlotsAccessor.bwt$setInput(list2.get(j), contextMap, soulForgeShapelessCraftingRecipeDisplay.ingredients().get(j));
+                }
+            default:
+                super.fillGhostRecipe(ghostSlots, recipeDisplay, contextMap);
+        }
+    }
 }
