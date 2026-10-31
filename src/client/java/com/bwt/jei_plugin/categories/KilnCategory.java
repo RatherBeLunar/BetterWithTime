@@ -10,6 +10,7 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
@@ -17,6 +18,7 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.types.IRecipeType;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +50,7 @@ public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, KilnRecipe recipe, IFocusGroup focusGroup) {
-        IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 1);
+        IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 7);
         inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks().toList());
 
         List<ItemStack> outputs = recipe.getDrops();
@@ -59,8 +61,13 @@ public class KilnCategory extends BwtRecipeCategoryBase<KilnRecipe> {
     }
 
     @Override
+    public void draw(KilnRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
+        guiHelper.createDrawableItemLike(Blocks.BRICKS).draw(guiGraphics, 2, 7 + 8);
+    }
+
+    @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, KilnRecipe recipe, IFocusGroup focuses) {
-        builder.addDrawableWidget(guiHelper.createDrawableItemLike(Blocks.BRICKS)).setPosition(2, 1 + 15);
         String flameTooltipText = "Stoked fire directly beneath a brick block, with at least 3 other bricks surrounding the ingredient";
         IDrawableStatic flameIcon = guiHelper.getRecipeFlameFilled();
         IDrawableAnimated animatedFill = guiHelper.createAnimatedDrawable(flameIcon, 60, IDrawableAnimated.StartDirection.BOTTOM, false);
