@@ -2,7 +2,9 @@ package com.bwt.jei_plugin.categories;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.soul_forge.SoulForgeRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapedCraftingRecipeDisplay;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapelessCraftingRecipeDisplay;
 import com.bwt.utils.Id;
 
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -79,9 +81,9 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
     }
 
     protected static List<SlotDisplay> getIngredients(RecipeDisplay display) {
-        if (display instanceof ShapedCraftingRecipeDisplay shapedCraftingRecipeDisplay) {
+        if (display instanceof SoulForgeShapedCraftingRecipeDisplay shapedCraftingRecipeDisplay) {
             return shapedCraftingRecipeDisplay.ingredients();
-        } else if (display instanceof ShapelessCraftingRecipeDisplay shapelessCraftingRecipeDisplay) {
+        } else if (display instanceof SoulForgeShapelessCraftingRecipeDisplay shapelessCraftingRecipeDisplay) {
             return shapelessCraftingRecipeDisplay.ingredients();
         } else {
             return List.of();
