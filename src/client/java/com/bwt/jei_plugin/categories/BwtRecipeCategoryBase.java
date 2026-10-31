@@ -16,14 +16,14 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class BwtRecipeCategoryBase<T> implements IRecipeCategory<T> {
-	public static final ResourceLocation WIDGETS = Id.of("textures/gui/container/emiwidgets.png");
+	public static final Identifier WIDGETS = Id.of("textures/gui/container/emiwidgets.png");
 
 	@Nullable
 	private final IDrawableStatic background;

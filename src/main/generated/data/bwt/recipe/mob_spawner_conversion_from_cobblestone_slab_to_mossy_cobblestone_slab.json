@@ -2,7 +2,7 @@
   "type": "bwt:mob_spawner_conversion",
   "category": "misc",
   "ingredient": {
-    "block": "minecraft:cobblestone_slab"
+    "values": "minecraft:cobblestone_slab"
   },
   "result": "minecraft:mossy_cobblestone_slab"
 }

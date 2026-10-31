@@ -2,10 +2,11 @@ package com.bwt.jei_plugin.categories;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.recipes.soul_forge.SoulForgeRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapedCraftingRecipeDisplay;
 import com.bwt.recipes.soul_forge.SoulForgeShapedRecipe;
+import com.bwt.recipes.soul_forge.SoulForgeShapelessCraftingRecipeDisplay;
 import com.bwt.utils.Id;
 
-import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
@@ -13,20 +14,23 @@ import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapedCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
 
-    public static final RecipeType<SoulForgeRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "soul_forge", SoulForgeRecipe.class);
+    public static final IRecipeType<SoulForgeRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "soul_forge", SoulForgeRecipe.class);
 
     public SoulForgeCategory(IGuiHelper guiHelper) {
         super(
@@ -40,7 +44,7 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<SoulForgeRecipe> getRecipeType() {
+    public @NotNull IRecipeType<SoulForgeRecipe> getRecipeType() {
         return TYPE;
     }
 
@@ -48,11 +52,42 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
     public void setRecipe(IRecipeLayoutBuilder builder, SoulForgeRecipe recipe, IFocusGroup focusGroup) {
         int width = getRecipeGridWidth(recipe);
         int height = getRecipeGridHeight(recipe);
-        createAndSetIngredients(builder, recipe.getIngredients(), width, height);
-        List<ItemStack> outputs = List.of(recipe.getResultItem(getRegistryAccess()));
-        IRecipeSlotBuilder outputSlot = builder.addOutputSlot(113, 28)
-                .setOutputSlotBackground();
-        outputSlot.addIngredients(VanillaTypes.ITEM_STACK, outputs);
+
+        RecipeDisplay display = recipe.display().getFirst();
+
+        List<SlotDisplay> ingredients = getIngredients(recipe);
+        createAndSetDisplays(builder, ingredients, width, height);
+
+        SlotDisplay resultItem = display.result();
+        builder.addOutputSlot(113, 28)
+                .setOutputSlotBackground()
+                .add(resultItem);
+    }
+
+    public List<SlotDisplay> getIngredients(SoulForgeRecipe recipe) {
+        RecipeDisplay display = getFirstDisplay(recipe);
+        if (display == null) {
+            return List.of();
+        }
+        return getIngredients(display);
+    }
+
+    protected static @Nullable RecipeDisplay getFirstDisplay(SoulForgeRecipe recipe) {
+        List<RecipeDisplay> displays = recipe.display();
+        if (displays.isEmpty()) {
+            return null;
+        }
+        return displays.getFirst();
+    }
+
+    protected static List<SlotDisplay> getIngredients(RecipeDisplay display) {
+        if (display instanceof SoulForgeShapedCraftingRecipeDisplay shapedCraftingRecipeDisplay) {
+            return shapedCraftingRecipeDisplay.ingredients();
+        } else if (display instanceof SoulForgeShapelessCraftingRecipeDisplay shapelessCraftingRecipeDisplay) {
+            return shapelessCraftingRecipeDisplay.ingredients();
+        } else {
+            return List.of();
+        }
     }
 
     @Override
@@ -76,9 +111,9 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
         return 0;
     }
 
-    public void createAndSetIngredients(IRecipeLayoutBuilder builder, List<Ingredient> ingredients, int width, int height) {
+    public void createAndSetDisplays(IRecipeLayoutBuilder builder, List<SlotDisplay> displays, int width, int height) {
         List<IRecipeSlotBuilder> inputSlots = createInputSlots(builder, width, height);
-        setIngredients(inputSlots, ingredients, width, height);
+        setDisplays(inputSlots, displays, width, height);
     }
 
     private static List<IRecipeSlotBuilder> createInputSlots(IRecipeLayoutBuilder builder, int width, int height) {
@@ -96,20 +131,21 @@ public class SoulForgeCategory extends BwtRecipeCategoryBase<SoulForgeRecipe> {
         return inputSlots;
     }
 
-    public void setIngredients(List<IRecipeSlotBuilder> slotBuilders, List<Ingredient> ingredients, int width, int height) {
+    private static void setDisplays(List<IRecipeSlotBuilder> slotBuilders, List<SlotDisplay> displays, int width, int height) {
         if (width <= 0 || height <= 0) {
-            width = height = getShapelessSize(ingredients.size());
+            width = height = getShapelessSize(displays.size());
         }
         if (slotBuilders.size() < width * height) {
             throw new IllegalArgumentException(String.format("There are not enough slots (%s) to hold a recipe of this size. (%sx%s)", slotBuilders.size(), width, height));
         }
 
-        for (int i = 0; i < ingredients.size(); i++) {
+        for (int i = 0; i < displays.size(); i++) {
             int index = getCraftingIndex(i, width, height);
             IRecipeSlotBuilder slot = slotBuilders.get(index);
-            Ingredient ingredient = ingredients.get(i);
-            if (ingredient != null) {
-                slot.addIngredients(ingredient);
+
+            SlotDisplay display = displays.get(i);
+            if (display != null) {
+                slot.add(display);
             }
         }
     }

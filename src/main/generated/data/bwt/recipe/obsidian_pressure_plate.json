@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "redstone",
   "key": {
-    "o": {
-      "item": "minecraft:obsidian"
-    }
+    "o": "minecraft:obsidian"
   },
   "pattern": [
     "oooo"

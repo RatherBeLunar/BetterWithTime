@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:stripped_blood_wood_log"
+    "values": "bwt:stripped_blood_wood_log"
   }
 }

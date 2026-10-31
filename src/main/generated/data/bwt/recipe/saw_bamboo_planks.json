@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:bamboo_planks"
+    "values": "minecraft:bamboo_planks"
   }
 }

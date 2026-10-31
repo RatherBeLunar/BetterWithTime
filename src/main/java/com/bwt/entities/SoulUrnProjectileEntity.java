@@ -4,13 +4,11 @@ import com.bwt.items.BwtItems;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityEvent;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.monster.Ghast;
-import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -22,12 +20,12 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
         super(entityType, level);
     }
 
-    public SoulUrnProjectileEntity(Level level, LivingEntity owner) {
-        super(BwtEntities.soulUrnProjectileEntity, owner, level);
+    public SoulUrnProjectileEntity(Level level, LivingEntity owner, ItemStack itemStack) {
+        super(BwtEntities.soulUrnProjectileEntity, owner, level, itemStack);
     }
 
-    public SoulUrnProjectileEntity(Level level, double x, double y, double z) {
-        super(BwtEntities.soulUrnProjectileEntity, x, y, z, level);
+    public SoulUrnProjectileEntity(Level level, double x, double y, double z, ItemStack itemStack) {
+        super(BwtEntities.soulUrnProjectileEntity, x, y, z, level, itemStack);
     }
 
     @Override
@@ -57,17 +55,17 @@ public class SoulUrnProjectileEntity extends ThrowableItemProjectile {
     @Override
     protected void onHit(HitResult hitResult) {
         super.onHit(hitResult);
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
         if (this.level().getDifficulty().equals(Difficulty.PEACEFUL)) {
             return;
         }
 
-        Ghast ghastEntity = EntityType.GHAST.create(this.level());
+        Ghast ghastEntity = EntityType.GHAST.create(this.level(), EntitySpawnReason.TRIGGERED);
         if (ghastEntity != null) {
             float yaw = (this.getYRot() + 180.0F) % 360F;
-            ghastEntity.moveTo(this.getX(), this.getY(), this.getZ(), yaw, 0.0F);
+            ghastEntity.snapTo(this.getX(), this.getY(), this.getZ(), yaw, 0.0F);
             if (!ghastEntity.fudgePositionAfterSizeChange(EMPTY_DIMENSIONS)) {
                 return;
             }

@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_fence",
   "key": {
-    "m": {
-      "item": "bwt:birch_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:birch_planks_siding"
-    }
+    "m": "bwt:birch_planks_moulding",
+    "s": "bwt:birch_planks_siding"
   },
   "pattern": [
     "sms",

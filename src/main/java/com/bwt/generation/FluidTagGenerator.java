@@ -14,6 +14,6 @@ public class FluidTagGenerator extends FabricTagProvider.FluidTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider arg) {
-        tag(BwtFluidTags.AQUEDUCT_FLUIDS).forceAddTag(FluidTags.WATER);
+         valueLookupBuilder(BwtFluidTags.AQUEDUCT_FLUIDS).forceAddTag(FluidTags.WATER);
     }
 }

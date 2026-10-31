@@ -8,8 +8,10 @@ import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,8 +20,8 @@ import java.util.List;
 import java.util.stream.Stream;
 
 public class HopperSoulBottlingCategory extends HopperCategoryBase<SoulBottlingRecipe> {
-    public static final RecipeType<SoulBottlingRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "soul_bottling", SoulBottlingRecipe.class);
+    public static final IRecipeType<SoulBottlingRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "soul_bottling", SoulBottlingRecipe.class);
 
     static ArrayList<ItemStack> inputs = new ArrayList<>();
     static ArrayList<ItemStack> filters = new ArrayList<>();
@@ -31,13 +33,13 @@ public class HopperSoulBottlingCategory extends HopperCategoryBase<SoulBottlingR
     }
 
     @Override
-    public @NotNull RecipeType<SoulBottlingRecipe> getRecipeType() {
+    public @NotNull IRecipeType<SoulBottlingRecipe> getRecipeType() {
         return TYPE;
     }
 
     protected static void processSingleFilterRecipe(HopperFilterRecipe filterRecipe) {
-        ArrayList<ItemStack> inputsToAdd = new ArrayList<>(List.of(filterRecipe.ingredient().getItems()));
-        ArrayList<ItemStack> filtersToAdd = new ArrayList<>(List.of(filterRecipe.filter().getItems()));
+        ArrayList<ItemStack> inputsToAdd = new ArrayList<>(filterRecipe.ingredient().items().map(Holder::value).map(Item::getDefaultInstance).toList());
+        ArrayList<ItemStack> filtersToAdd = new ArrayList<>(filterRecipe.filter().items().map(Holder::value).map(Item::getDefaultInstance).toList());
         ArrayList<ItemStack> outputsToAdd = new ArrayList<>(List.of(filterRecipe.result()));
         ArrayList<ItemStack> byproductsToAdd = new ArrayList<>(List.of(filterRecipe.byproduct()));
         int maxLength = Stream.of(inputsToAdd, filtersToAdd, outputsToAdd, byproductsToAdd).mapToInt(ArrayList::size).max().orElse(0);
@@ -87,8 +89,8 @@ public class HopperSoulBottlingCategory extends HopperCategoryBase<SoulBottlingR
                 outputs.stream().map(itemStack -> itemStack.copyWithCount(recipe.soulCount())).toList(),
                 byproducts.stream().map(itemStack -> itemStack.copyWithCount(recipe.soulCount())).toList()
         );
-        builder.addInputSlot(9, 18 * 3).setStandardSlotBackground().addIngredients(VanillaTypes.ITEM_STACK, recipe.bottle().getMatchingStacks());
-        builder.addOutputSlot(9 * 7, 18 * 3).setStandardSlotBackground().addItemStack(recipe.getResult());
+        builder.addInputSlot(9, 18 * 3).setStandardSlotBackground().addIngredients(VanillaTypes.ITEM_STACK, recipe.bottle().getMatchingStacks().toList());
+        builder.addOutputSlot(9 * 7, 18 * 3).setStandardSlotBackground().add(recipe.getResult());
     }
 
     @Override

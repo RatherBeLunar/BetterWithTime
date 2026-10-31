@@ -28,7 +28,7 @@
         }
       }
     },
-	"license": "CC0-1.0",
+	"license": "CC-BY-4.0",
 	"icon": "assets/bwt/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -40,9 +40,6 @@
 		],
 		"fabric-datagen": [
 			"com.bwt.BetterWithTimeDataGenerator"
-		],
-		"emi": [
-          	"com.bwt.emi.BwtEmiPlugin"
 		],
 		"jei_mod_plugin": [
 			"com.bwt.jei_plugin.BwtJeiPlugin"
@@ -57,12 +54,12 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.19.5",
-		"minecraft": "1.21.1",
+		"fabricloader": ">=0.20.1",
+		"minecraft": "1.21.11",
 		"java": ">=21",
-		"fabric-api": ">=0.116.17+1.21.1"
+		"fabric-api": ">=0.141.6+1.21.11"
 	},
 	"suggests": {
-		"emi": ">=1.1.24+1.21.1+fabric"
+		"jei": ">=27.54.0.116"
 	}
 }

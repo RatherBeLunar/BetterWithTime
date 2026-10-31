@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:mangrove_planks_moulding"
+    "values": "bwt:mangrove_planks_moulding"
   }
 }

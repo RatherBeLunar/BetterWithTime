@@ -20,7 +20,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class DetectorBlock extends SimpleFacingBlock {
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
@@ -50,12 +52,12 @@ public class DetectorBlock extends SimpleFacingBlock {
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
-        boolean detected = checkForDetection(level, pos, state);
-        boolean wasDetected = state.getValue(POWERED);
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
+        boolean detected = checkForDetection(level, blockPos, blockState);
+        boolean wasDetected = blockState.getValue(POWERED);
         if (detected != wasDetected) {
-            level.scheduleTick(pos, this, tickRate);
+            level.scheduleTick(blockPos, this, tickRate);
         }
     }
 
@@ -177,7 +179,7 @@ public class DetectorBlock extends SimpleFacingBlock {
         }
         Direction facing = state.getValue(FACING);
         BlockPos blockPos = pos.relative(facing);
-        if (level.getBlockState(blockPos).isSolidRender(level, blockPos)) return;
+        if (level.getBlockState(blockPos).isSolidRender()) return;
         Direction.Axis axis = facing.getAxis();
         double e = axis == Direction.Axis.X ? 0.5 + 0.5625 * (double)facing.getStepX() : (double)random.nextFloat();
         double f = axis == Direction.Axis.Y ? 0.5 + 0.5625 * (double)facing.getStepY() : (double)random.nextFloat();
@@ -186,10 +188,11 @@ public class DetectorBlock extends SimpleFacingBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean bl) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, bl);
+        BlockState newState = serverLevel.getBlockState(blockPos);
         if (!newState.is(this)) {
-            removeDetectorLogicIfNecessary(level, pos, state);
+            removeDetectorLogicIfNecessary(serverLevel, blockPos, blockState);
         }
     }
 }

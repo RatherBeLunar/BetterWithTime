@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:spruce_fence"
+    "values": "minecraft:spruce_fence"
   }
 }

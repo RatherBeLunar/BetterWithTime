@@ -4,15 +4,11 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:soap"
-      }
+      "ingredient": "bwt:soap"
     },
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:sticky_piston"
-      }
+      "ingredient": "minecraft:sticky_piston"
     }
   ],
   "results": [

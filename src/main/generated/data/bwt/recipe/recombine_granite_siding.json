@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "bwt:granite_siding"
-    },
-    {
-      "item": "bwt:granite_siding"
-    }
+    "bwt:granite_siding",
+    "bwt:granite_siding"
   ],
   "result": {
     "count": 1,

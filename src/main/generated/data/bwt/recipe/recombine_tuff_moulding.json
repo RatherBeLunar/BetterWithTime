@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:tuff_moulding"
-    },
-    {
-      "item": "bwt:tuff_moulding"
-    }
+    "bwt:tuff_moulding",
+    "bwt:tuff_moulding"
   ],
   "result": {
     "count": 1,

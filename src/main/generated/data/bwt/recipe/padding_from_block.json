@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "padding",
   "ingredients": [
-    {
-      "item": "bwt:padding_block"
-    }
+    "bwt:padding_block"
   ],
   "result": {
     "count": 9,

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_wood"
+    "values": "minecraft:cherry_wood"
   }
 }

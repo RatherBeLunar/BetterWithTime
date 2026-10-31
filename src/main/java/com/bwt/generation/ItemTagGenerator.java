@@ -68,8 +68,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
         copy(BwtBlockTags.WOOL_SLABS, BwtItemTags.WOOL_SLABS);
         copyIgnoreMissing(BwtBlockTags.NETHER_GROTH_CAN_EAT, BwtItemTags.NETHER_GROTH_CAN_EAT);
 
-        getOrCreateTagBuilder(BwtItemTags.SAW_DUSTS).add(BwtItems.sawDustItem, BwtItems.soulDustItem);
-        getOrCreateTagBuilder(BwtItemTags.MINING_CHARGE_IMMUNE)
+        valueLookupBuilder(BwtItemTags.SAW_DUSTS).add(BwtItems.sawDustItem, BwtItems.soulDustItem);
+        valueLookupBuilder(BwtItemTags.MINING_CHARGE_IMMUNE)
                 .forceAddTag(ConventionalItemTags.ORES)
                 .forceAddTag(ConventionalItemTags.RAW_MATERIALS)
                 .forceAddTag(ConventionalItemTags.REDSTONE_DUSTS)
@@ -81,22 +81,22 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .add(Items.FLINT)
                 .add(Items.ANCIENT_DEBRIS);
 
-        getOrCreateTagBuilder(ItemTags.ARROWS).add(BwtItems.broadheadArrowItem, BwtItems.rottedArrowItem);
+        valueLookupBuilder(ItemTags.ARROWS).add(BwtItems.broadheadArrowItem, BwtItems.rottedArrowItem);
 
-        getOrCreateTagBuilder(ItemTags.WOOL).add(BwtBlocks.companionSlabBlock.asItem());
+        valueLookupBuilder(ItemTags.WOOL).add(BwtBlocks.companionSlabBlock.asItem());
 
-        getOrCreateTagBuilder(ConventionalItemTags.RAW_MEAT_FOODS).add(BwtItems.wolfChopItem);
-        getOrCreateTagBuilder(ConventionalItemTags.COOKED_MEAT_FOODS).add(BwtItems.cookedWolfChopItem);
+        valueLookupBuilder(ConventionalItemTags.RAW_MEAT_FOODS).add(BwtItems.wolfChopItem);
+        valueLookupBuilder(ConventionalItemTags.COOKED_MEAT_FOODS).add(BwtItems.cookedWolfChopItem);
 
-        getOrCreateTagBuilder(ItemTags.PICKAXES).add(BwtItems.netheriteMattockItem);
-        getOrCreateTagBuilder(ItemTags.SHOVELS).add(BwtItems.netheriteMattockItem);
-        getOrCreateTagBuilder(ItemTags.AXES).add(BwtItems.netheriteBattleAxeItem);
-        getOrCreateTagBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
-        getOrCreateTagBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
+        valueLookupBuilder(ItemTags.PICKAXES).add(BwtItems.netheriteMattockItem);
+        valueLookupBuilder(ItemTags.SHOVELS).add(BwtItems.netheriteMattockItem);
+        valueLookupBuilder(ItemTags.AXES).add(BwtItems.netheriteBattleAxeItem);
+        valueLookupBuilder(ItemTags.SWORDS).add(BwtItems.netheriteBattleAxeItem);
+        valueLookupBuilder(ItemTags.BOW_ENCHANTABLE).add(BwtItems.compositeBowItem);
 
         //Blood wood blocks don't burn
-        getOrCreateTagBuilder(ItemTags.NON_FLAMMABLE_WOOD).add(
-                BwtBlocks.bloodWoodBlocks.saplingItem,
+        valueLookupBuilder(ItemTags.NON_FLAMMABLE_WOOD).add(
+                BwtBlocks.bloodWoodBlocks.saplingBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.buttonBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.fenceBlock.asItem(),
                 BwtBlocks.bloodWoodBlocks.fenceGateBlock.asItem(),
@@ -130,14 +130,14 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
     }
 
     protected void addHopperFilters() {
-        getOrCreateTagBuilder(BwtItemTags.STOKED_EXPLOSIVES)
+        valueLookupBuilder(BwtItemTags.STOKED_EXPLOSIVES)
                 .add(
                         BwtItems.hellfireDustItem,
                         Items.GUNPOWDER,
                         Items.TNT
                 );
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_WICKER_FILTER)
+        valueLookupBuilder(BwtItemTags.PASSES_WICKER_FILTER)
                 .add(
                         Items.BLAZE_POWDER,
                         BwtItems.coalDustItem,
@@ -177,9 +177,8 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.SUGAR
                 );
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_SLATS_FILTER)
+        valueLookupBuilder(BwtItemTags.PASSES_SLATS_FILTER)
                 .addTag(BwtItemTags.PASSES_WICKER_FILTER)
-                .forceAddTag(ItemTags.TRIM_TEMPLATES)
                 .add(
                         // Arcane scrolls
                         BwtItems.fabricItem,
@@ -197,11 +196,31 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.STRING,
 
                         Items.PRISMARINE_SHARD,
-                        Items.DRIED_KELP
+                        Items.DRIED_KELP,
+                        // Trim templates
+                        Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.VEX_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WILD_ARMOR_TRIM_SMITHING_TEMPLATE
                 );
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_GRATE_FILTER)
-                .forceAddTag(ItemTags.FLOWERS)
+        valueLookupBuilder(BwtItemTags.PASSES_GRATE_FILTER)
+                .forceAddTag(ConventionalItemTags.FLOWERS)
+                .forceAddTag(ItemTags.EGGS)
                 .add(
                         Items.APPLE,
                         Items.GOLDEN_APPLE,
@@ -234,7 +253,6 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.RED_DYE,
                         Items.WHITE_DYE,
                         Items.YELLOW_DYE,
-                        Items.EGG,
                         Items.ENDER_PEARL,
                         Items.ENDER_EYE,
                         Items.FEATHER,
@@ -291,7 +309,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.POPPED_CHORUS_FRUIT
             );
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_TRAPDOOR_FILTER)
+        valueLookupBuilder(BwtItemTags.PASSES_TRAPDOOR_FILTER)
                 .addTag(BwtItemTags.PASSES_GRATE_FILTER)
                 .forceAddTag(ItemTags.ARROWS)
                 .add(
@@ -310,22 +328,25 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
 
                         Items.WARPED_FUNGUS_ON_A_STICK,
                         Items.DRIED_KELP,
-                        Items.CREEPER_BANNER_PATTERN,
                         Items.FLOWER_BANNER_PATTERN,
-                        Items.PIGLIN_BANNER_PATTERN,
-                        Items.GLOBE_BANNER_PATTERN,
+                        Items.CREEPER_BANNER_PATTERN,
+                        Items.SKULL_BANNER_PATTERN,
                         Items.MOJANG_BANNER_PATTERN,
-                        Items.SKULL_BANNER_PATTERN
+                        Items.GLOBE_BANNER_PATTERN,
+                        Items.PIGLIN_BANNER_PATTERN,
+                        Items.FLOW_BANNER_PATTERN,
+                        Items.GUSTER_BANNER_PATTERN,
+                        Items.FIELD_MASONED_BANNER_PATTERN,
+                        Items.BORDURE_INDENTED_BANNER_PATTERN
                 );
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_IRON_BARS_FILTER)
+        valueLookupBuilder(BwtItemTags.PASSES_IRON_BARS_FILTER)
                 .addTag(BwtItemTags.PASSES_GRATE_FILTER)
                 .forceAddTag(ItemTags.CANDLES)
                 .forceAddTag(ConventionalItemTags.POTIONS)
                 .forceAddTag(ItemTags.SAPLINGS)
                 .forceAddTag(ItemTags.SIGNS)
                 .forceAddTag(ItemTags.DECORATED_POT_SHERDS)
-                .forceAddTag(ItemTags.TRIM_TEMPLATES)
                 .add(
                         BwtItems.armorPlateItem,
                         Items.ARROW,
@@ -393,6 +414,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         BwtItems.cookedWolfChopItem,
                         Items.MELON_SLICE,
                         Items.NETHER_BRICK,
+                        Items.RESIN_BRICK,
                         // Nether Groth Spores
                         Items.QUARTZ,
                         BwtItems.paddingItem,
@@ -409,6 +431,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         BwtItems.strapItem,
                         Items.SUGAR_CANE,
                         BwtItems.tallowItem,
+                        Items.RESIN_CLUMP,
                         Items.TORCH,
                         Items.SOUL_TORCH,
                         // Urn
@@ -424,11 +447,31 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.ECHO_SHARD,
                         Items.PHANTOM_MEMBRANE,
                         Items.DRAGON_BREATH,
-                        Items.RABBIT_FOOT
+                        Items.RABBIT_FOOT,
+
+                        // Trim templates
+                        Items.BOLT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.COAST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.DUNE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.EYE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.HOST_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RAISER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.RIB_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.VEX_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WARD_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE,
+                        Items.WILD_ARMOR_TRIM_SMITHING_TEMPLATE
                 );
 
 
-        getOrCreateTagBuilder(BwtItemTags.PASSES_LADDER_FILTER)
+        valueLookupBuilder(BwtItemTags.PASSES_LADDER_FILTER)
                 .addTag(BwtItemTags.PASSES_IRON_BARS_FILTER)
                 .forceAddTag(ItemTags.TRIMMABLE_ARMOR)
                 .forceAddTag(ItemTags.BEDS)
@@ -439,6 +482,7 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                 .forceAddTag(ItemTags.CREEPER_DROP_MUSIC_DISCS)
                 .forceAddTag(ConventionalItemTags.MUSIC_DISCS)
                 .forceAddTag(ItemTags.SAPLINGS)
+                .forceAddTag(ItemTags.HARNESSES)
                 .forceAddTag(ConventionalItemTags.TOOLS)
                 .forceAddTag(ConventionalItemTags.BOW_TOOLS)
                 .forceAddTag(ConventionalItemTags.CROSSBOW_TOOLS)
@@ -473,12 +517,16 @@ public class ItemTagGenerator extends FabricTagProvider.ItemTagProvider {
                         Items.MUSHROOM_STEW,
                         Items.SHIELD,
                         Items.TOTEM_OF_UNDYING,
-                        Items.CREEPER_BANNER_PATTERN,
                         Items.FLOWER_BANNER_PATTERN,
-                        Items.PIGLIN_BANNER_PATTERN,
-                        Items.GLOBE_BANNER_PATTERN,
+                        Items.CREEPER_BANNER_PATTERN,
+                        Items.SKULL_BANNER_PATTERN,
                         Items.MOJANG_BANNER_PATTERN,
-                        Items.SKULL_BANNER_PATTERN
+                        Items.GLOBE_BANNER_PATTERN,
+                        Items.PIGLIN_BANNER_PATTERN,
+                        Items.FLOW_BANNER_PATTERN,
+                        Items.GUSTER_BANNER_PATTERN,
+                        Items.FIELD_MASONED_BANNER_PATTERN,
+                        Items.BORDURE_INDENTED_BANNER_PATTERN
                 );
     }
 }

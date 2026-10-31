@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:logs"
+    "values": "#minecraft:logs"
   }
 }

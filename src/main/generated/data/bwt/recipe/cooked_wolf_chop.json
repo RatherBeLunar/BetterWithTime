@@ -3,9 +3,7 @@
   "category": "food",
   "cookingtime": 200,
   "experience": 0.35,
-  "ingredient": {
-    "item": "bwt:wolf_chop"
-  },
+  "ingredient": "bwt:wolf_chop",
   "result": {
     "id": "bwt:cooked_wolf_chop"
   }

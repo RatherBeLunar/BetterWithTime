@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_stem"
+    "values": "minecraft:warped_stem"
   }
 }

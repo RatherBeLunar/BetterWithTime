@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:dark_oak_log"
+    "values": "minecraft:dark_oak_log"
   }
 }

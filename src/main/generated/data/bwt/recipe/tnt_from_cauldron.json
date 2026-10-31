@@ -5,15 +5,11 @@
   "ingredients": [
     {
       "count": 5,
-      "ingredient": {
-        "item": "minecraft:gunpowder"
-      }
+      "ingredient": "minecraft:gunpowder"
     },
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:sand"
-      }
+      "ingredient": "minecraft:sand"
     }
   ],
   "results": [

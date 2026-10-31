@@ -3,12 +3,8 @@
   "category": "redstone",
   "group": "wooden_fence_gate",
   "key": {
-    "m": {
-      "item": "bwt:blood_wood_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:blood_wood_planks_siding"
-    }
+    "m": "bwt:blood_wood_planks_moulding",
+    "s": "bwt:blood_wood_planks_siding"
   },
   "pattern": [
     "msm",

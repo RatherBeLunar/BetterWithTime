@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -108,11 +109,11 @@ public class TurntableBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     @Override
@@ -123,7 +124,15 @@ public class TurntableBlock extends BaseEntityBlock implements MechPowerBlockBas
 
     @Nullable
     protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
-        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.turntableBlockEntity, TurntableBlockEntity::tick);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return createTickerHelper(
+                givenType,
+                BwtBlockEntities.turntableBlockEntity,
+                (_level, blockPos, blockState, blockEntity) ->
+                        TurntableBlockEntity.serverTick(serverLevel, blockPos, blockState, blockEntity)
+        );
     }
 
     @Nullable

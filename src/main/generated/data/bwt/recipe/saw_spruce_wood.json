@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:spruce_wood"
+    "values": "minecraft:spruce_wood"
   }
 }

@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_bamboo_block"
+    "values": "minecraft:stripped_bamboo_block"
   }
 }

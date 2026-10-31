@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:birch_planks_moulding"
-    },
-    {
-      "item": "bwt:birch_planks_moulding"
-    }
+    "bwt:birch_planks_moulding",
+    "bwt:birch_planks_moulding"
   ],
   "result": {
     "count": 1,

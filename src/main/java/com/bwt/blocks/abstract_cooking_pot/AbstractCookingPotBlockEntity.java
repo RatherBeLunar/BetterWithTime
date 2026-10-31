@@ -9,6 +9,7 @@ import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.FireDataCluster;
 import com.bwt.utils.OrderedRecipeMatcher;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
@@ -20,29 +21,28 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerData;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -103,21 +103,21 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.cookProgressTime = nbt.getInt("cookProgressTicks");
-        this.isStoked = nbt.getBoolean("isStoked");
-        this.slotsOccupied = nbt.getInt("slotsOccupied");
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.cookProgressTime = valueInput.getIntOr("cookProgressTicks", 0);
+        this.isStoked = valueInput.getBooleanOr("isStoked", false);
+        this.slotsOccupied = valueInput.getIntOr("slotsOccupied", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("cookProgressTicks", this.cookProgressTime);
-        nbt.putBoolean("isStoked", this.isStoked);
-        nbt.putInt("slotsOccupied", this.slotsOccupied);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("cookProgressTicks", this.cookProgressTime);
+        valueOutput.putBoolean("isStoked", this.isStoked);
+        valueOutput.putInt("slotsOccupied", this.slotsOccupied);
     }
 
     @Override
@@ -132,22 +132,22 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         return Component.translatable(getBlockState().getBlock().getDescriptionId());
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
-        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(level, pos);
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, AbstractCookingPotBlockEntity blockEntity) {
+        FireDataCluster fireDataCluster = FireDataCluster.fromWorld(serverLevel, pos);
         boolean isStoked = fireDataCluster.isStoked();
         if (isStoked != blockEntity.isStoked) {
             blockEntity.isStoked = isStoked;
             blockEntity.setChanged();
         }
         if (state.getValue(AbstractCookingPotBlock.TIP_DIRECTION) == Direction.UP) {
-            blockEntity.cookItems(level, pos, fireDataCluster);
+            blockEntity.cookItems(serverLevel, pos, fireDataCluster);
         }
         else {
-            blockEntity.dumpItems(level, pos, state);
+            blockEntity.dumpItems(serverLevel, pos, state);
         }
     }
 
-    protected void cookItems(Level level, BlockPos pos, FireDataCluster fireDataCluster) {
+    protected void cookItems(ServerLevel serverLevel, BlockPos pos, FireDataCluster fireDataCluster) {
         if (!fireDataCluster.anyFirePresent()) {
             if (cookProgressTime != 0) {
                 cookProgressTime = 0;
@@ -168,19 +168,18 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                     .reduce(Integer::sum)
                     .orElse(0);
             if (stokedExplosivesCount > 0) {
-                explode(level, pos, stokedExplosivesCount);
+                explode(serverLevel, pos, stokedExplosivesCount);
                 return;
             }
         }
 
-        RecipeManager recipeManager = level.getRecipeManager();
         CookingPotRecipeInput recipeInput = new CookingPotRecipeInput(inventory.getItems());
 
         if (fireDataCluster.isStoked()) {
-            cookMatches(fireDataCluster, recipeManager.getRecipesFor(stokedRecipeType, recipeInput, level));
+            cookMatches(fireDataCluster, OrderedRecipeMatcher.getRecipesFor(stokedRecipeType, recipeInput, serverLevel).toList());
         }
         else {
-            cookMatches(fireDataCluster, recipeManager.getRecipesFor(unstokedRecipeType, recipeInput, level));
+            cookMatches(fireDataCluster, OrderedRecipeMatcher.getRecipesFor(unstokedRecipeType, recipeInput, serverLevel).toList());
         }
     }
 
@@ -233,7 +232,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
 
         Vec3 entityPos = dumpPosAndState.pos().getCenter().subtract(0, 0.25f, 0);
         ItemEntity itemEntity = new ItemEntity(level, entityPos.x, entityPos.y, entityPos.z, itemStack.copyWithCount(stackSizeToDump));
-        Vec3 itemVelocity = Vec3.atLowerCornerOf(facing.getNormal()).scale(0.1);
+        Vec3 itemVelocity = Vec3.atLowerCornerOf(facing.getUnitVec3i()).scale(0.1);
         itemEntity.setDeltaMovement(itemVelocity);
         itemEntity.setPickUpDelay(10);
 
@@ -288,10 +287,11 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }
+
         @Override
         public void setChanged() {
             AbstractCookingPotBlockEntity.this.setChanged();
@@ -309,11 +309,9 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                     if (itemVariant == null) {
                         continue;
                     }
-                    if (itemVariant.getItem().hasCraftingRemainingItem()) {
-                        Item remainder = itemVariant.getItem().getCraftingRemainingItem();
-                        if (remainder != null) {
-                            remaindersAndResults.add(new ItemStack(remainder, (int) countToSpend));
-                        }
+                    ItemStack remainder = itemVariant.getItem().getCraftingRemainder();
+                    if (!remainder.isEmpty()) {
+                        remaindersAndResults.add(remainder.copyWithCount((int) countToSpend));
                     }
                     long taken = inventoryWrapper.extract(itemVariant, countToSpend, transaction);
                     countToSpend -= taken;
@@ -332,6 +330,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
                 }
             }
             transaction.commit();
+            setChanged();
             return true;
         }
     }
@@ -340,7 +339,7 @@ public abstract class AbstractCookingPotBlockEntity extends BlockEntity implemen
         try (Transaction transaction = Transaction.openOuter()) {
             for (SingleSlotStorage<ItemVariant> slot : inventoryWrapper.getSlots()) {
                 ItemVariant resource = slot.getResource();
-                if (resource.toStack().getComponents().get(DataComponents.FOOD) == null) {
+                if (resource.toStack().getComponents().get(DataComponents.FOOD) == null && !resource.toStack().is(Items.CAKE)) {
                     continue;
                 }
                 long count = slot.extract(resource, resource.getItem().getDefaultMaxStackSize(), transaction);

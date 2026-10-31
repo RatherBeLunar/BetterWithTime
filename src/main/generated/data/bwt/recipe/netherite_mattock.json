@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shaped",
   "category": "equipment",
   "key": {
-    "h": {
-      "item": "bwt:haft"
-    },
-    "s": {
-      "item": "minecraft:netherite_ingot"
-    }
+    "h": "bwt:haft",
+    "s": "minecraft:netherite_ingot"
   },
   "pattern": [
     "sss ",

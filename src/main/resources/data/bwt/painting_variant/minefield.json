@@ -1,5 +1,13 @@
 {
   "asset_id": "bwt:minefield",
+  "author": {
+    "color": "gray",
+    "translate": "canvas.bwt.minefield.author"
+  },
+  "title": {
+    "color": "yellow",
+    "translate": "canvas.bwt.minefield.title"
+  },
   "height": 5,
   "width": 4
 }

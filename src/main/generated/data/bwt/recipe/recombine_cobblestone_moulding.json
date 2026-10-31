@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:cobblestone_moulding"
-    },
-    {
-      "item": "bwt:cobblestone_moulding"
-    }
+    "bwt:cobblestone_moulding",
+    "bwt:cobblestone_moulding"
   ],
   "result": {
     "count": 1,

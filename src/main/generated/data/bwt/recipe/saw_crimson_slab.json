@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:crimson_slab"
+    "values": "minecraft:crimson_slab"
   }
 }

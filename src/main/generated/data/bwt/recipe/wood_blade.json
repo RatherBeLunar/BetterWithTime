@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "bwt:glue"
-    },
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "g": "bwt:glue",
+    "s": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "s  ",

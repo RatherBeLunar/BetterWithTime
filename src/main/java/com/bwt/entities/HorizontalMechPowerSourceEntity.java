@@ -5,11 +5,11 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.utils.rectangular_entity.RectangularEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
@@ -23,8 +23,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -132,7 +136,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     @Override
-    public boolean canBeCollidedWith() {
+    public boolean canBeCollidedWith(@Nullable Entity entity) {
         return true;
     }
 
@@ -153,13 +157,13 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
 
         if (placementBlockedByBlock()) {
             if(player != null) {
-                player.sendSystemMessage(blockBlockedErrorMessage);
+                player.displayClientMessage(blockBlockedErrorMessage, true);
             }
             return false;
         }
         if (placementBlockedByEntity()) {
             if(player != null) {
-                player.sendSystemMessage(entityBlockedErrorMessage);
+                player.displayClientMessage(entityBlockedErrorMessage, true);
             }
             return false;
         }
@@ -228,7 +232,7 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             this.setDamageWobbleStrength(this.getDamageWobbleStrength() - 1.0f);
         }
 
-        if (level().isClientSide) {
+        if (level().isClientSide()) {
             updateRotation();
         }
         else {
@@ -289,11 +293,16 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
     }
 
     @Override
-    public boolean hurt(DamageSource source, float amount) {
-        if (this.level().isClientSide || this.isRemoved()) {
+    public boolean hurtClient(DamageSource damageSource) {
+        return !this.isInvulnerableToBase(damageSource) && !this.isRemoved();
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel serverLevel, DamageSource source, float amount) {
+        if (this.isRemoved()) {
             return true;
         }
-        if (this.isInvulnerableTo(source)) {
+        if (this.isInvulnerableToBase(source)) {
             return false;
         }
         this.setDamageWobbleSide(-this.getDamageWobbleSide());
@@ -307,15 +316,21 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
             return true;
         }
         if (this.getDamageWobbleStrength() > 40.0f) {
-            destroyWithDrop();
+            destroyWithDrop(serverLevel);
         }
         return true;
     }
 
     public void destroyWithDrop() {
+        if (level() instanceof ServerLevel serverLevel) {
+            destroyWithDrop(serverLevel);
+        }
+    }
+
+    public void destroyWithDrop(ServerLevel serverLevel) {
         if (isRemoved()) return;
-        spawnAtLocation(getPickResult(), 0.5f);
-        kill();
+        spawnAtLocation(serverLevel, getPickResult(), 0.5f);
+        kill(serverLevel);
     }
 
     @Override
@@ -331,21 +346,23 @@ public abstract class HorizontalMechPowerSourceEntity extends RectangularEntity 
         if (!powered && hostBlockState.is(BwtBlocks.axlePowerSourceBlock)) {
             level.removeBlock(pos, false);
             level.setBlockAndUpdate(pos, BwtBlocks.axleBlock.defaultBlockState()
+                    .setValue(AxleBlock.WATERLOGGED, hostBlockState.getValue(AxleBlock.WATERLOGGED))
                     .setValue(AxleBlock.AXIS, hostBlockState.getValue(AxleBlock.AXIS)));
         }
         if (powered && hostBlockState.is(BwtBlocks.axleBlock)) {
             level.setBlockAndUpdate(pos, BwtBlocks.axlePowerSourceBlock.defaultBlockState()
+                    .setValue(AxleBlock.WATERLOGGED, hostBlockState.getValue(AxleBlock.WATERLOGGED))
                     .setValue(AxleBlock.AXIS, hostBlockState.getValue(AxleBlock.AXIS)));
         }
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag nbt) {
-        nbt.putFloat("rotationSpeed", entityData.get(rotationSpeed));
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        valueOutput.putFloat("rotationSpeed", entityData.get(rotationSpeed));
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag nbt) {
-        this.entityData.set(rotationSpeed, nbt.getFloat("rotationSpeed"));
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        this.entityData.set(HorizontalMechPowerSourceEntity.rotationSpeed, valueInput.getFloatOr("rotationSpeed", 0f));
     }
 }

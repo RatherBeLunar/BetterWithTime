@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:crimson_planks_moulding"
-    },
-    {
-      "item": "bwt:crimson_planks_moulding"
-    }
+    "bwt:crimson_planks_moulding",
+    "bwt:crimson_planks_moulding"
   ],
   "result": {
     "count": 1,

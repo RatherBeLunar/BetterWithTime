@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "g": {
-      "item": "bwt:gear"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    },
-    "s": {
-      "item": "minecraft:stone"
-    },
-    "w": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "g": "bwt:gear",
+    "r": "minecraft:redstone",
+    "s": "minecraft:stone",
+    "w": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "www",

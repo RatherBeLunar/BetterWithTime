@@ -10,6 +10,7 @@ import com.bwt.recipes.soul_bottling.SoulBottlingRecipe;
 import com.bwt.recipes.soul_bottling.SoulBottlingRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.SimpleSingleStackInventory;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
@@ -19,20 +20,18 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.Container;
-import net.minecraft.world.Containers;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -50,6 +49,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
@@ -114,35 +115,35 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.filterInventory.readNbt(nbt.getCompound("Filter"), registryLookup);
-        this.hopperInventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.mechPower = nbt.getInt("mechPower");
-        this.soulCount = nbt.getInt("soulCount");
-        this.xpCount = nbt.getInt("xpCount");
-        this.itemPickupCooldown = nbt.getInt("itemPickupCooldown");
-        this.itemDropCooldown = nbt.getInt("itemDropCooldown");
-        this.xpPickupCooldown = nbt.getInt("xpPickupCooldown");
-        this.xpDropCooldown = nbt.getInt("xpDropCooldown");
-        this.slotsOccupied = nbt.getInt("slotsOccupied");
-        this.outputBlocked = nbt.getBoolean("outputBlocked");
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.filterInventory.readData(valueInput, "Filter");
+        this.hopperInventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.mechPower = valueInput.getIntOr("mechPower", 0);
+        this.soulCount = valueInput.getIntOr("soulCount", 0);
+        this.xpCount = valueInput.getIntOr("xpCount", 0);
+        this.itemPickupCooldown = valueInput.getIntOr("itemPickupCooldown", 0);
+        this.itemDropCooldown = valueInput.getIntOr("itemDropCooldown", 0);
+        this.xpPickupCooldown = valueInput.getIntOr("xpPickupCooldown", 0);
+        this.xpDropCooldown = valueInput.getIntOr("xpDropCooldown", 0);
+        this.slotsOccupied = valueInput.getIntOr("slotsOccupied", 0);
+        this.outputBlocked = valueInput.getBooleanOr("outputBlocked", false);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Filter", this.filterInventory.toNbt(registryLookup));
-        nbt.put("Inventory", this.hopperInventory.createTag(registryLookup));
-        nbt.putInt("mechPower", this.mechPower);
-        nbt.putInt("soulCount", this.soulCount);
-        nbt.putInt("xpCount", this.xpCount);
-        nbt.putInt("itemPickupCooldown", this.itemPickupCooldown);
-        nbt.putInt("itemDropCooldown", this.itemDropCooldown);
-        nbt.putInt("xpPickupCooldown", this.xpPickupCooldown);
-        nbt.putInt("xpDropCooldown", this.xpDropCooldown);
-        nbt.putInt("slotsOccupied", this.slotsOccupied);
-        nbt.putBoolean("outputBlocked", this.outputBlocked);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        this.filterInventory.saveData(valueOutput, "Filter");
+        this.hopperInventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("mechPower", this.mechPower);
+        valueOutput.putInt("soulCount", this.soulCount);
+        valueOutput.putInt("xpCount", this.xpCount);
+        valueOutput.putInt("itemPickupCooldown", this.itemPickupCooldown);
+        valueOutput.putInt("itemDropCooldown", this.itemDropCooldown);
+        valueOutput.putInt("xpPickupCooldown", this.xpPickupCooldown);
+        valueOutput.putInt("xpDropCooldown", this.xpDropCooldown);
+        valueOutput.putInt("slotsOccupied", this.slotsOccupied);
+        valueOutput.putBoolean("outputBlocked", this.outputBlocked);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (level != null) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), Block.UPDATE_ALL);
             if ((oldSlotsOccupied == size && slotsOccupied != size) || (slotsOccupied == size && oldSlotsOccupied != size)) {
-                level.blockUpdated(worldPosition, getBlockState().getBlock());
+                level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
             }
         }
         super.setChanged();
@@ -163,8 +164,8 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         return filterInventory.getTheItem().getItem();
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
-        if (level.isClientSide || !state.is(BwtBlocks.hopperBlock)) {
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, MechHopperBlockEntity blockEntity) {
+        if (serverLevel.isClientSide() || !state.is(BwtBlocks.hopperBlock)) {
             return;
         }
 
@@ -181,7 +182,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
                 blockEntity.itemDropCooldown += 1;
 
                 if (blockEntity.itemDropCooldown >= MechHopperBlockEntity.ITEM_DROP_COOLDOWN) {
-                    blockEntity.attemptToEjectStack(level, pos);
+                    blockEntity.attemptToEjectStack(serverLevel, pos);
                     blockEntity.itemDropCooldown = 0;
                 }
             }
@@ -197,7 +198,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (blockEntity.soulCount > 0) {
             // souls can only be trapped if there's a soul sand filter on the hopper
             if (blockEntity.getFilterItem().equals(Items.SOUL_SAND)) {
-                bottleSouls(level, blockEntity);
+                bottleSouls(serverLevel, blockEntity);
             }
             else {
                 blockEntity.soulCount = 0;
@@ -205,21 +206,21 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
     }
 
-    protected static void bottleSouls(Level level, MechHopperBlockEntity blockEntity) {
-        BlockState blockBelowState = level.getBlockState(blockEntity.getBlockPos().below());
+    protected static void bottleSouls(ServerLevel serverLevel, MechHopperBlockEntity blockEntity) {
+        BlockState blockBelowState = serverLevel.getBlockState(blockEntity.getBlockPos().below());
 
         SoulBottlingRecipeInput recipeInput = new SoulBottlingRecipeInput(blockBelowState.getBlock());
-        Optional<SoulBottlingRecipe> optionalRecipe = level.getRecipeManager().getRecipeFor(
+        Optional<SoulBottlingRecipe> optionalRecipe = serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.SOUL_BOTTLING_RECIPE_TYPE,
                 recipeInput,
-                level
+                serverLevel
         ).map(RecipeHolder::value);
 
         // If unpowered, we just need to check for explosions
         // Otherwise, nothing happens while unpowered
         if (blockEntity.mechPower <= 0) {
             if (blockEntity.soulCount >= SOUL_STORAGE_LIMIT) {
-                soulOverloadExplode(level, blockEntity);
+                soulOverloadExplode(serverLevel, blockEntity);
             }
             return;
         }
@@ -238,8 +239,8 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
 
         // Powered + enough souls + bottle found? Convert
-        level.removeBlock(blockEntity.getBlockPos().below(), false);
-        Containers.dropItemStack(level, blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY() - 1, blockEntity.getBlockPos().getZ(), recipe.getResult());
+        serverLevel.removeBlock(blockEntity.getBlockPos().below(), false);
+        Containers.dropItemStack(serverLevel, blockEntity.getBlockPos().getX(), blockEntity.getBlockPos().getY() - 1, blockEntity.getBlockPos().getZ(), recipe.getResult());
 
         // the rest of the souls escape (if any remain)
         blockEntity.soulCount = 0;
@@ -284,7 +285,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         if (inventoryBelow == null) {
             return;
         }
-        if (VanillaHopperInvoker.isInventoryFull(inventoryBelow, Direction.UP)) {
+        if (VanillaHopperInvoker.bwt$isFullContainer(inventoryBelow, Direction.UP)) {
             return;
         }
         stackCountToDrop = Math.min(stackCountToDrop, inventoryBelow.getMaxStackSize());
@@ -322,21 +323,18 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     // Pick up items from above
-    public void onEntityCollided(Level level, Entity entity) {
+    public void onEntityCollided(ServerLevel serverLevel, Entity entity) {
         if (this.itemPickupCooldown > 0) {
             return;
         }
         if (entity instanceof ItemEntity itemEntity) {
-            pickupItemEntity(level, itemEntity);
+            pickupItemEntity(serverLevel, itemEntity);
         }
     }
 
-    protected Optional<HopperFilterRecipe> getMatchingRecipe(ItemStack itemStack) {
+    protected Optional<HopperFilterRecipe> getMatchingRecipe(ServerLevel serverLevel, ItemStack itemStack) {
         HopperFilterRecipeInput recipeInput = new HopperFilterRecipeInput(getFilterItem(), itemStack);
-        if (level == null) {
-            return Optional.empty();
-        }
-        return level.getRecipeManager().getRecipeFor(
+        return serverLevel.recipeAccess().getRecipeFor(
                 BwtRecipes.HOPPER_FILTER_RECIPE_TYPE,
                 recipeInput,
                 level
@@ -347,15 +345,15 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         return MechHopperBlock.filterMap.getOrDefault(getFilterItem(), s -> true).test(itemStack);
     }
 
-    protected void pickupItemEntity(Level level, ItemEntity itemEntity) {
+    protected void pickupItemEntity(ServerLevel serverLevel, ItemEntity itemEntity) {
         ItemStack itemStack = itemEntity.getItem();
         if (itemStack.isEmpty()) {
             return;
         }
 
-        Optional<HopperFilterRecipe> optionalRecipe = getMatchingRecipe(itemStack);
+        Optional<HopperFilterRecipe> optionalRecipe = getMatchingRecipe(serverLevel, itemStack);
         if (optionalRecipe.isPresent()) {
-            processRecipe(level, itemEntity, optionalRecipe.get(), itemStack);
+            processRecipe(serverLevel, itemEntity, optionalRecipe.get(), itemStack);
             return;
         }
 
@@ -441,11 +439,13 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        CompoundTag nbtCompound = saveWithoutMetadata(registryLookup);
-        nbtCompound.putInt("slotsOccupied", slotsOccupied);
-        nbtCompound.put("Filter", this.filterInventory.toNbt(registryLookup));
-        return nbtCompound;
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        CompoundTag compoundTag = saveWithoutMetadata(provider);
+        compoundTag.putInt("slotsOccupied", slotsOccupied);
+        this.filterInventory.toTag(provider).ifPresent(tag ->
+            compoundTag.put("Filter", tag)
+        );
+        return compoundTag;
     }
 
     @Override
@@ -512,7 +512,10 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
         // Don't process recipes via hoppers.
         // Enforce filter checks
-        return getMatchingRecipe(stack).isEmpty() && passesFilter(stack);
+        if (level instanceof ServerLevel serverLevel && getMatchingRecipe(serverLevel, stack).isPresent()) {
+            return false;
+        }
+        return passesFilter(stack);
     }
 
     @Override
@@ -536,7 +539,7 @@ public class MechHopperBlockEntity extends BlockEntity implements MenuProvider, 
         }
     }
 
-    public class HopperInventory extends SimpleContainer {
+    public class HopperInventory extends SlotPreservingSimpleContainer {
         public HopperInventory(int size) {
             super(size);
         }

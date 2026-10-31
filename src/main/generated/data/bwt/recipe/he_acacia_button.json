@@ -3,9 +3,7 @@
   "category": "redstone",
   "group": "wooden_button",
   "ingredients": [
-    {
-      "item": "bwt:acacia_planks_corner"
-    }
+    "bwt:acacia_planks_corner"
   ],
   "result": {
     "count": 1,

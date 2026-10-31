@@ -3,7 +3,7 @@ package com.bwt.tags;
 import com.bwt.utils.Id;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.decoration.PaintingVariant;
+import net.minecraft.world.entity.decoration.painting.PaintingVariant;
 
 public class BwtPaintingVariantTags {
     public static final TagKey<PaintingVariant> CANVAS_PLACEABLE = of("canvas_placeable");

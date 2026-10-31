@@ -2,6 +2,7 @@ package com.bwt.blocks.unfired_pottery;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -9,6 +10,8 @@ import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class UnfiredPotteryBlock extends Block {
     public static final BooleanProperty COOKING = BooleanProperty.create("cooking");
@@ -30,22 +33,22 @@ public abstract class UnfiredPotteryBlock extends Block {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
-        if (canSurvive(state, level, pos)) {
+        if (canSurvive(blockState, level, blockPos)) {
             return;
         }
-        dropResources(state, level, pos);
-        level.removeBlock(pos, notify);
+        dropResources(blockState, level, blockPos);
+        level.removeBlock(blockPos, notify);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
         if (moved) {
             return;
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 }

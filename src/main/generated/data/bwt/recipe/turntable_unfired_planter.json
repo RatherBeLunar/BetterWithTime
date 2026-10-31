@@ -8,7 +8,7 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_planter"
+    "values": "bwt:unfired_planter"
   },
   "output": "bwt:unfired_vase"
 }

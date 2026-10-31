@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:ancient_debris"
+    "values": "minecraft:ancient_debris"
   }
 }

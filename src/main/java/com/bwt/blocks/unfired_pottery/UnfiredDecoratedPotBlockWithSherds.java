@@ -9,11 +9,11 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +37,7 @@ import net.minecraft.world.level.block.entity.PotDecorations;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock implements EntityBlock {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction>FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final MapCodec<UnfiredDecoratedPotBlockWithSherds> CODEC = simpleCodec(UnfiredDecoratedPotBlockWithSherds::new);
 
     public UnfiredDecoratedPotBlockWithSherds(Properties settings) {
@@ -71,11 +71,6 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return Blocks.DECORATED_POT.defaultBlockState().getShape(level, pos, context);
-    }
-
-    @Override
-    protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
     @Override
@@ -119,7 +114,7 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-            if (!level.isClientSide && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
+            if (!level.isClientSide() && player.isCreative() && unfiredDecoratedPotBlockEntity.hasSherds()) {
                 ItemStack itemStack = new ItemStack(this);
                 itemStack.applyComponents(unfiredDecoratedPotBlockEntity.collectComponents());
                 ItemEntity itemEntity = new ItemEntity(level, (double)pos.getX() + 0.5, (double)pos.getY() + 0.5, (double)pos.getZ() + 0.5, itemStack);
@@ -132,17 +127,19 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
         if (moved) {
             return;
         }
-        if (!newState.is(state.getBlock()) && !newState.isAir()) {
-            BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockState newState = serverLevel.getBlockState(blockPos);
+
+        if (!newState.is(blockState.getBlock()) && !newState.isAir()) {
+            BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
             if (blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity) {
-                Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultInstance).toArray(ItemStack[]::new)));
+                Containers.dropContents(serverLevel, blockPos, NonNullList.of(ItemStack.EMPTY, unfiredDecoratedPotBlockEntity.streamSherds().map(Item::getDefaultInstance).toArray(ItemStack[]::new)));
             }
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, false);
     }
 
 //    @Override
@@ -161,7 +158,7 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
 //    }
 
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!stack.is(ItemTags.DECORATED_POT_SHERDS)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
@@ -173,10 +170,10 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
         if (!(blockEntity instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity)) {
             return super.useItemOn(stack, state, level, pos, player, hand, hit);
         }
-        if (!level.isClientSide && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
+        if (!level.isClientSide() && unfiredDecoratedPotBlockEntity.tryAddSherd(side, stack.getItem())) {
             stack.consume(1, player);
         }
-        return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
@@ -197,28 +194,14 @@ public class UnfiredDecoratedPotBlockWithSherds extends UnfiredPotteryBlock impl
         if (!unfiredDecoratedPotBlockEntity.hasSherds()) {
             level.setBlock(pos, BwtBlocks.unfiredDecoratedPotBlock.defaultBlockState(), Block.UPDATE_CLIENTS, 0);
         }
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag options) {
-        super.appendHoverText(stack, context, tooltip, options);
-        PotDecorations sherds = stack.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
-        if (!sherds.equals(PotDecorations.EMPTY)) {
-            tooltip.add(CommonComponents.EMPTY);
-            Stream.of(sherds.front(), sherds.left(), sherds.right(), sherds.back())
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(Item::getDefaultInstance)
-                    .forEach(sherd -> tooltip.add(sherd.getHoverName().plainCopy().withStyle(ChatFormatting.GRAY)));
-        }
-    }
-
-    @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
-        return level.getBlockEntity(pos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
+    protected ItemStack getCloneItemStack(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl) {
+        return levelReader.getBlockEntity(blockPos) instanceof UnfiredDecoratedPotBlockEntity unfiredDecoratedPotBlockEntity
                 ? unfiredDecoratedPotBlockEntity.asStack()
-                : super.getCloneItemStack(level, pos, state);
+                : super.getCloneItemStack(levelReader, blockPos, blockState, bl);
     }
 
     @Override

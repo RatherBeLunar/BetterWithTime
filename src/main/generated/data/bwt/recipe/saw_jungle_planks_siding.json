@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:jungle_planks_siding"
+    "values": "bwt:jungle_planks_siding"
   }
 }

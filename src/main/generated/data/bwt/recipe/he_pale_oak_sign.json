@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "group": "wooden_sign",
+  "key": {
+    "m": "bwt:pale_oak_planks_moulding",
+    "s": "bwt:pale_oak_planks_siding"
+  },
+  "pattern": [
+    "s",
+    "m"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:pale_oak_sign"
+  }
+}

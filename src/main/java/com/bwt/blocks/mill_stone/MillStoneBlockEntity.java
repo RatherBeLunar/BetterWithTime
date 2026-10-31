@@ -8,20 +8,19 @@ import com.bwt.recipes.mill_stone.MillStoneRecipe;
 import com.bwt.recipes.mill_stone.MillStoneRecipeInput;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.OrderedRecipeMatcher;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.storage.StorageUtil;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,6 +30,8 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -97,24 +98,24 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
     }
 
     private void playSoundChance(Level level, BlockPos pos, MillStoneBlockEntity.InventoryStatus status) {
-        if (level.getRandom().nextInt(40) != 0) {
+        if (level.getRandom().nextInt(5) != 0) {
             return;
         }
         playSound(level, pos, status);
     }
 
-    public static void tick(Level level, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
+    public static void serverTick(ServerLevel serverLevel, BlockPos pos, BlockState state, MillStoneBlockEntity blockEntity) {
         if (!state.is(BwtBlocks.millStoneBlock) || !state.getValue(MillStoneBlock.MECH_POWERED)) {
             return;
         }
         MillStoneRecipeInput recipeInput = new MillStoneRecipeInput(blockEntity.inventory.getItems());
-        List<RecipeHolder<MillStoneRecipe>> matches = level.getRecipeManager().getRecipesFor(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, level);
+        List<RecipeHolder<MillStoneRecipe>> matches = OrderedRecipeMatcher.getRecipesFor(BwtRecipes.MILL_STONE_RECIPE_TYPE, recipeInput, serverLevel).toList();
         if (matches.isEmpty()) {
             if (blockEntity.isEmpty()) {
-                blockEntity.playSoundChance(level, pos, InventoryStatus.EMPTY);
+                blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.EMPTY);
             }
             else {
-                blockEntity.playSoundChance(level, pos, InventoryStatus.GRINDING);
+                blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.GRINDING);
             }
             if (blockEntity.grindProgressTime != 0) {
                 blockEntity.grindProgressTime = 0;
@@ -124,7 +125,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         }
 
         blockEntity.grindProgressTime += 1;
-        blockEntity.playSoundChance(level, pos, InventoryStatus.WORKING);
+        blockEntity.playSoundChance(serverLevel, pos, InventoryStatus.WORKING);
         if (blockEntity.grindProgressTime >= timeToGrind) {
             blockEntity.grindProgressTime = 0;
             blockEntity.setChanged();
@@ -134,7 +135,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         }
 
         // Get the first recipe and grind it
-        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getItems(), match -> blockEntity.completeRecipe(match, level, pos));
+        OrderedRecipeMatcher.getFirstRecipe(matches, blockEntity.inventory.getItems(), match -> blockEntity.completeRecipe(match, serverLevel, pos));
     }
 
     public boolean completeRecipe(MillStoneRecipe recipe, Level level, BlockPos pos) {
@@ -190,17 +191,16 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.grindProgressTime = nbt.getInt("grindProgressTime");
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.grindProgressTime = valueInput.getIntOr("grindProgressTime", 0);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("grindProgressTime", this.grindProgressTime);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("grindProgressTime", this.grindProgressTime);
     }
 
     @Override
@@ -255,7 +255,7 @@ public class MillStoneBlockEntity extends BlockEntity implements MenuProvider, C
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }

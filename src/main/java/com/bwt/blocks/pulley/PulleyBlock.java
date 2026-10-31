@@ -4,6 +4,7 @@ import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
 import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -66,9 +67,9 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, level, pos);
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(blockState, serverLevel, blockPos);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof PulleyBlockEntity pulleyBlockEntity) {
             player.openMenu(pulleyBlockEntity);
@@ -99,7 +100,7 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
 
     @Nullable
     protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
-        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.pulleyBlockEntity, PulleyBlockEntity::tick);
+        return level.isClientSide() ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.pulleyBlockEntity, PulleyBlockEntity::tick);
     }
 
     @Nullable
@@ -124,11 +125,11 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
 
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {
@@ -161,7 +162,7 @@ public class PulleyBlock extends BaseEntityBlock implements MechPowerBlockBase {
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 }

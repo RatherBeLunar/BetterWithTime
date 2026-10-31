@@ -1,22 +1,22 @@
 package com.bwt.utils;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class Id {
     public static final String MOD_ID = "bwt";
 
-    public static final ResourceLocation PROGRAMMER_ART_PACK_ID = Id.of("bwt_programmer_art");
-    public static final ResourceLocation LEGACY_SOUNDS_PACK_ID = Id.of("legacy_bwt_sounds");
+    public static final Identifier PROGRAMMER_ART_PACK_ID = Id.of("bwt_programmer_art");
+    public static final Identifier LEGACY_SOUNDS_PACK_ID = Id.of("legacy_bwt_sounds");
 
-    public static ResourceLocation of(String id) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, id);
+    public static Identifier of(String id) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, id);
     }
 
-    public static ResourceLocation of(String namespace, String id) {
-        return ResourceLocation.fromNamespaceAndPath(namespace, id);
+    public static Identifier of(String namespace, String id) {
+        return Identifier.fromNamespaceAndPath(namespace, id);
     }
 
-    public static ResourceLocation mc(String id) {
-        return ResourceLocation.parse(id);
+    public static Identifier mc(String id) {
+        return Identifier.parse(id);
     }
 }

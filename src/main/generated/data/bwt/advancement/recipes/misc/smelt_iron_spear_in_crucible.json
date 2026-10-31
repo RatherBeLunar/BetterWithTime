@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_spear": {
+      "conditions": {
+        "items": [
+          {
+            "items": "minecraft:iron_spear"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:smelt_iron_spear_in_crucible"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_spear"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:smelt_iron_spear_in_crucible"
+    ]
+  }
+}

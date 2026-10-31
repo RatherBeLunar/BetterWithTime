@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(HopperBlockEntity.class)
 public interface VanillaHopperInvoker {
     @Invoker("isFullContainer")
-    static boolean isInventoryFull(Container level, Direction direction) {
+    static boolean bwt$isFullContainer(Container level, Direction direction) {
         throw new AssertionError();
     }
 }

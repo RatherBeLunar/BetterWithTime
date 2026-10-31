@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_log"
+    "values": "minecraft:jungle_log"
   }
 }

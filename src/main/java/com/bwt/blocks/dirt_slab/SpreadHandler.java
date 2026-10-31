@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
@@ -18,59 +19,67 @@ import net.minecraft.world.level.lighting.LightEngine;
 import java.util.Map;
 
 public class SpreadHandler {
-
-
     @FunctionalInterface
     interface Spreader {
-        void spread(Level level, BlockPos pos, BlockState state);
+        void spread(ServerLevel level, BlockPos pos, BlockState state);
+
+        static Spreader getSlabBlockSpreader(Block slabBlock) {
+            return (level, pos, state) ->
+                    level.setBlockAndUpdate(pos, slabBlock.defaultBlockState().setValue(DirtSlabBlock.SNOWY, state.getValue(DirtSlabBlock.SNOWY)));
+        }
+
+        static Spreader getVanillaBlockSpreader(Block block) {
+            return (level, pos, state) ->
+                    level.setBlockAndUpdate(pos, block.defaultBlockState().setValue(GrassBlock.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW)));
+        }
     }
 
     static final Map<Block, Map<Block, Spreader>> SOURCE_DEST_SPREADERS = ImmutableMap.<Block, Map<Block, Spreader>>builder()
             .put(Blocks.GRASS_BLOCK, ImmutableMap.<Block, Spreader>builder()
-                    .put(BwtBlocks.dirtSlabBlock, (level, pos, state) -> level.setBlockAndUpdate(pos, BwtBlocks.grassSlabBlock.defaultBlockState().setValue(DirtSlabBlock.SNOWY, state.getValue(DirtSlabBlock.SNOWY)))
+                    .put(BwtBlocks.dirtSlabBlock, Spreader.getSlabBlockSpreader(BwtBlocks.grassSlabBlock)
                     ).build())
             .put(Blocks.MYCELIUM, ImmutableMap.<Block, Spreader>builder()
-                    .put(BwtBlocks.dirtSlabBlock, (level, pos, state) -> level.setBlockAndUpdate(pos, BwtBlocks.myceliumSlabBlock.defaultBlockState().setValue(DirtSlabBlock.SNOWY, state.getValue(DirtSlabBlock.SNOWY))))
+                    .put(BwtBlocks.dirtSlabBlock, Spreader.getSlabBlockSpreader(BwtBlocks.myceliumSlabBlock))
                     .build())
             .put(BwtBlocks.grassSlabBlock, ImmutableMap.<Block, Spreader>builder()
-                    .put(BwtBlocks.dirtSlabBlock, (level, pos, state) -> level.setBlockAndUpdate(pos, BwtBlocks.grassSlabBlock.defaultBlockState().setValue(DirtSlabBlock.SNOWY, state.getValue(DirtSlabBlock.SNOWY))))
-                    .put(Blocks.DIRT, (level, pos, state) -> level.setBlockAndUpdate(pos, Blocks.GRASS_BLOCK.defaultBlockState().setValue(GrassBlock.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW))))
+                    .put(BwtBlocks.dirtSlabBlock, Spreader.getSlabBlockSpreader(BwtBlocks.grassSlabBlock))
+                    .put(Blocks.DIRT, Spreader.getVanillaBlockSpreader(Blocks.GRASS_BLOCK))
                     .build()
             )
             .put(BwtBlocks.myceliumSlabBlock, ImmutableMap.<Block, Spreader>builder()
-                    .put(BwtBlocks.dirtSlabBlock, (level, pos, state) -> level.setBlockAndUpdate(pos, BwtBlocks.myceliumSlabBlock.defaultBlockState().setValue(DirtSlabBlock.SNOWY, state.getValue(DirtSlabBlock.SNOWY))))
-                    .put(Blocks.DIRT, (level, pos, state) -> level.setBlockAndUpdate(pos, Blocks.MYCELIUM.defaultBlockState().setValue(GrassBlock.SNOWY, level.getBlockState(pos.above()).is(Blocks.SNOW))))
+                    .put(BwtBlocks.dirtSlabBlock, Spreader.getSlabBlockSpreader(BwtBlocks.myceliumSlabBlock))
+                    .put(Blocks.DIRT, Spreader.getVanillaBlockSpreader(Blocks.MYCELIUM))
                     .build()
             ).build();
 
 
-    public static boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public static boolean canBeGrass(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos blockPos = pos.above();
         BlockState blockState = level.getBlockState(blockPos);
-        if (blockState.is(Blocks.SNOW) && (Integer) blockState.getValue(SnowLayerBlock.LAYERS) == 1) {
+        if (blockState.is(Blocks.SNOW) && blockState.getValue(SnowLayerBlock.LAYERS) == 1) {
             return true;
-        } else if (blockState.getFluidState().getAmount() == 8) {
-            return false;
-        } else {
-            int i = LightEngine.getLightBlockInto(level, state, pos, blockState, blockPos, Direction.UP, blockState.getLightBlock(level, blockPos));
-            return i < level.getMaxLightLevel();
         }
+        if (blockState.getFluidState().getAmount() == 8) {
+            return false;
+        }
+        int i = LightEngine.getLightBlockInto(state, blockState, Direction.UP, blockState.getLightBlock());
+        return i < 15;
     }
 
-    public static boolean canSpread(BlockState state, LevelReader level, BlockPos pos) {
+    public static boolean canPropagate(BlockState state, LevelReader level, BlockPos pos) {
         BlockPos blockPos = pos.above();
-        return canSurvive(state, level, pos) && !level.getFluidState(blockPos).is(FluidTags.WATER);
+        return canBeGrass(state, level, pos) && !level.getFluidState(blockPos).is(FluidTags.WATER);
     }
 
 
-    public static void randomTick(BlockState inputState, Level level, BlockPos pos, RandomSource random) {
+    public static void randomTick(BlockState inputState, ServerLevel level, BlockPos pos, RandomSource random) {
         Block inputBlock = inputState.getBlock();
         if (level.getMaxLocalRawBrightness(pos.above()) >= 9) {
             for (int i = 0; i < 4; ++i) {
                 BlockPos destPost = pos.offset(random.nextInt(3) - 1, random.nextInt(5) - 3, random.nextInt(3) - 1);
                 BlockState destState = level.getBlockState(destPost);
 
-                if (canSpread(inputState, level, destPost)) {
+                if (canPropagate(inputState, level, destPost)) {
                     Map<Block, Spreader> DEST_SPREADER = SOURCE_DEST_SPREADERS.get(inputBlock);
                     if(DEST_SPREADER != null) {
                         Spreader spreader = DEST_SPREADER.get(destState.getBlock());
@@ -82,6 +91,4 @@ public class SpreadHandler {
             }
         }
     }
-
-
 }

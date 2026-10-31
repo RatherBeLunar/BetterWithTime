@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:netherite_pickaxe"
-      }
+      "ingredient": "minecraft:netherite_pickaxe"
     }
   ],
   "results": [

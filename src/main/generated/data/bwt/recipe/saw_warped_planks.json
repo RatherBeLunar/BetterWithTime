@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_planks"
+    "values": "minecraft:warped_planks"
   }
 }

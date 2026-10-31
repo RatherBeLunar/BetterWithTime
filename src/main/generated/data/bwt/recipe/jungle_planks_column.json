@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:jungle_planks_moulding"
-    }
+    "#": "bwt:jungle_planks_moulding"
   },
   "pattern": [
     "#",

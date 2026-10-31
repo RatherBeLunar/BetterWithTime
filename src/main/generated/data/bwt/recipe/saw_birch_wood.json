@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_wood"
+    "values": "minecraft:birch_wood"
   }
 }

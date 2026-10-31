@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:peony"
-      }
+      "ingredient": "minecraft:peony"
     }
   ],
   "results": [

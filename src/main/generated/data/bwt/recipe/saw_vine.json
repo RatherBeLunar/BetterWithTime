@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:vine"
+    "values": "minecraft:vine"
   }
 }

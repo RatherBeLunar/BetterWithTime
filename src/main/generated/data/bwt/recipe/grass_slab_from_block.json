@@ -3,9 +3,7 @@
   "category": "building",
   "group": "grass_slab",
   "key": {
-    "#": {
-      "item": "minecraft:grass_block"
-    }
+    "#": "minecraft:grass_block"
   },
   "pattern": [
     "##"

@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:sunflower"
-      }
+      "ingredient": "minecraft:sunflower"
     }
   ],
   "results": [

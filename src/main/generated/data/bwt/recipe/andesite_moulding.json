@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:andesite_siding"
-    }
+    "X": "bwt:andesite_siding"
   },
   "pattern": [
     "XXXX"

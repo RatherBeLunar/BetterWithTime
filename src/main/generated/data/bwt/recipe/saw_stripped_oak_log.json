@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_oak_log"
+    "values": "minecraft:stripped_oak_log"
   }
 }

@@ -7,11 +7,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BiomeTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.GameRules;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.BaseFireBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -23,6 +21,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public class StokedFireBlock extends BaseFireBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
@@ -63,9 +62,9 @@ public class StokedFireBlock extends BaseFireBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-        if (!this.canSurvive(state, level, pos)) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        state = super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource);
+        if (!this.canSurvive(state, levelReader, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
         if (direction == Direction.UP) {
@@ -87,9 +86,6 @@ public class StokedFireBlock extends BaseFireBlock {
 
     @Override
     public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (!level.getGameRules().getBoolean(GameRules.RULE_DOFIRETICK)) {
-            return;
-        }
         if (!state.canSurvive(level, pos)) {
             level.removeBlock(pos, false);
         }
@@ -109,7 +105,7 @@ public class StokedFireBlock extends BaseFireBlock {
         int age = Math.min(2, oldAge + 1);
         level.setBlock(pos, state.setValue(AGE, age), Block.UPDATE_ALL);
 
-        boolean extraBurn = level.getBiome(pos).is(BiomeTags.INCREASED_FIRE_BURNOUT);
+        boolean extraBurn = level.environmentAttributes().getValue(EnvironmentAttributes.INCREASED_FIRE_BURNOUT, pos);
         int k = extraBurn ? -50 : 0;
         this.trySpreadingFire(level, pos.east(), 300 + k, random, age);
         this.trySpreadingFire(level, pos.west(), 300 + k, random, age);
@@ -140,7 +136,7 @@ public class StokedFireBlock extends BaseFireBlock {
             }
             Block block = blockState.getBlock();
             if (block instanceof TntBlock) {
-                TntBlock.explode(level, pos);
+                TntBlock.prime(level, pos);
             }
         }
     }

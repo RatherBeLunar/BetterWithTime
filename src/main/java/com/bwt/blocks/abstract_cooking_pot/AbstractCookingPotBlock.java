@@ -24,7 +24,8 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -37,7 +38,11 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements MechPowerBlockBase {
-    public static final DirectionProperty TIP_DIRECTION = DirectionProperty.create("tip_direction", direction -> direction != Direction.DOWN);
+    public static final EnumProperty<Direction> TIP_DIRECTION = EnumProperty.create(
+            "tip_direction",
+            Direction.class,
+            direction -> direction != Direction.DOWN
+    );
 
     public static final AABB box1 = new AABB(1, 0, 1, 15, 16, 15);
     public static final AABB box2 = new AABB(0, 2, 0, 16, 14, 16);
@@ -63,11 +68,6 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-
-    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return COLLISION_SHAPES.get(state.getValue(TIP_DIRECTION).get3DDataValue());
     }
@@ -83,9 +83,8 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, level, pos);
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean bl) {
+        Containers.updateNeighboursAfterDestroy(blockState, serverLevel, blockPos);
     }
 
     @Override
@@ -117,11 +116,11 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     @Override
@@ -138,13 +137,21 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Nullable
-    protected static <A extends BlockEntity, E extends AbstractCookingPotBlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
-        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, expectedType, E::tick);
+    public static <A extends BlockEntity, E extends AbstractCookingPotBlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType, BlockEntityType<E> expectedType) {
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return createTickerHelper(
+                givenType,
+                expectedType,
+                (_level, blockPos, blockState, blockEntity) ->
+                        E.serverTick(serverLevel, blockPos, blockState, blockEntity)
+        );
     }
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (state.getValue(TIP_DIRECTION) != Direction.UP) {
@@ -162,8 +169,8 @@ public abstract class AbstractCookingPotBlock extends BaseEntityBlock implements
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 
     @Override

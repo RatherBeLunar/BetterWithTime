@@ -9,8 +9,8 @@
       "to": [ 16.1, 32, 0.1 ],
       "shade": false,
       "faces": {
-        "south": { "uv": [ 16, 0, 0, 16 ], "texture": "#fire" },
-        "north": { "uv": [ 16, 0, 0, 16 ], "texture": "#fire", "cullface": "north" }
+        "south": { "uv": [ 8, 0, 0, 16 ], "texture": "#fire" },
+        "north": { "uv": [ 8, 0, 0, 16 ], "texture": "#fire", "cullface": "north" }
       }
     }
   ]

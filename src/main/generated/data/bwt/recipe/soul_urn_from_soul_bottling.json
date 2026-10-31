@@ -1,7 +1,7 @@
 {
   "type": "bwt:soul_bottling",
   "bottle": {
-    "block": "bwt:urn"
+    "values": "bwt:urn"
   },
   "category": "misc",
   "result": {

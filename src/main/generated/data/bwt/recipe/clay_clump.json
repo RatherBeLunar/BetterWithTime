@@ -4,8 +4,6 @@
   "category": "misc",
   "ingredient": {
     "count": 4,
-    "ingredient": {
-      "item": "minecraft:clay_ball"
-    }
+    "ingredient": "minecraft:clay_ball"
   }
 }

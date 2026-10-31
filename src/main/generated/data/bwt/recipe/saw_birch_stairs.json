@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_stairs"
+    "values": "minecraft:birch_stairs"
   }
 }

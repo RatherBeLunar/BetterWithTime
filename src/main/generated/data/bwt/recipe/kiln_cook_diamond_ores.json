@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:diamond_ores"
+    "values": "#minecraft:diamond_ores"
   }
 }

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:cherry_planks_corner"
-    },
-    {
-      "item": "bwt:cherry_planks_corner"
-    }
+    "bwt:cherry_planks_corner",
+    "bwt:cherry_planks_corner"
   ],
   "result": {
     "count": 1,

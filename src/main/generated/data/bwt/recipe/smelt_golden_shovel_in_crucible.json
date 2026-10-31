@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:golden_shovel"
-      }
+      "ingredient": "minecraft:golden_shovel"
     }
   ],
   "results": [

@@ -5,26 +5,18 @@
   "ingredients": [
     {
       "count": 3,
-      "ingredient": {
-        "item": "minecraft:milk_bucket"
-      }
+      "ingredient": "minecraft:milk_bucket"
     },
     {
       "count": 2,
-      "ingredient": {
-        "item": "minecraft:sugar"
-      }
+      "ingredient": "minecraft:sugar"
     },
     {
       "count": 3,
-      "ingredient": {
-        "item": "bwt:flour"
-      }
+      "ingredient": "bwt:flour"
     },
     {
-      "ingredient": {
-        "item": "bwt:raw_egg"
-      }
+      "ingredient": "bwt:raw_egg"
     }
   ],
   "results": [

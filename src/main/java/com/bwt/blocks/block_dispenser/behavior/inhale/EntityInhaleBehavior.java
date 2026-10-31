@@ -2,28 +2,37 @@ package com.bwt.blocks.block_dispenser.behavior.inhale;
 
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.block_dispenser.BlockDispenserBlock;
-import com.bwt.mixin.accessors.ArmorStandAccessorMixin;
+import com.bwt.mixin.accessor.WolfEntityAccessorMixin;
 import com.bwt.utils.DyeUtils;
+
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Chicken;
-import net.minecraft.world.entity.animal.Sheep;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.animal.chicken.Chicken;
+import net.minecraft.world.entity.animal.sheep.Sheep;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.entity.decoration.GlowItemFrame;
 import net.minecraft.world.entity.decoration.ItemFrame;
-import net.minecraft.world.entity.decoration.Painting;
-import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.decoration.painting.Painting;
+import net.minecraft.world.entity.vehicle.minecart.AbstractMinecart;
+import net.minecraft.world.entity.vehicle.boat.Boat;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 public interface EntityInhaleBehavior {
-    default ItemStack getInhaledItems(Entity entity) {
+    default ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
         return ItemStack.EMPTY;
     }
     default NonNullList<ItemStack> getDroppedItems(Entity entity) {
@@ -33,13 +42,13 @@ public interface EntityInhaleBehavior {
     default boolean canInhale(Entity entity) {
         return true;
     }
-    void inhale(Entity entity);
+    void inhale(ServerLevel serverLevel, Entity entity);
 
     EntityInhaleBehavior NOOP = new EntityInhaleBehavior() {
         @Override
         public boolean canInhale(Entity entity) {return false;}
         @Override
-        public void inhale(Entity entity) {}
+        public void inhale(ServerLevel serverLevel, Entity entity) {}
     };
 
     static void registerBehaviors() {
@@ -50,14 +59,15 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 Wolf wolf = ((Wolf) entity);
                 wolf.remove(Entity.RemovalReason.KILLED);
-                wolf.playSound(SoundEvents.WOLF_DEATH, 0.4f, wolf.getVoicePitch());
+                SoundEvent deathSound = ((WolfEntityAccessorMixin) wolf).bwt$getDeathSound();
+                wolf.playSound(deathSound, 0.4f, wolf.getVoicePitch());
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = new ItemStack(BwtBlocks.companionCubeBlock);
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -68,6 +78,7 @@ public interface EntityInhaleBehavior {
                 return NonNullList.of(ItemStack.EMPTY, new ItemStack(Items.STRING), new ItemStack(Items.STRING));
             }
         });
+
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.CHICKEN, new EntityInhaleBehavior() {
             @Override
             public boolean canInhale(Entity entity) {
@@ -75,7 +86,7 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Chicken chicken)) {
                     return;
                 }
@@ -84,8 +95,22 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
-                ItemStack itemStack = new ItemStack(Items.EGG);
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
+                if (!(entity instanceof Chicken chicken)) {
+                    return ItemStack.EMPTY;
+                }
+                ItemStack itemStack = BuiltInRegistries.ITEM.stream()
+                        .map(Item::getDefaultInstance)
+                        .filter(stack -> stack.is(ItemTags.EGGS))
+                        .filter(stack ->
+                                Optional.ofNullable(stack.get(DataComponents.CHICKEN_VARIANT))
+                                        .flatMap(eitherHolder -> eitherHolder.unwrap(serverLevel.registryAccess()))
+                                        .map(variant -> variant.equals(chicken.getVariant()))
+                                        .orElse(false)
+                        )
+                        .findFirst()
+                        .orElse(Items.EGG.getDefaultInstance());
+
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
@@ -103,13 +128,13 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 Sheep sheep = ((Sheep) entity);
                 sheep.playSound(SoundEvents.SHEEP_HURT, 0.4f, sheep.getVoicePitch());
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 return new ItemStack(DyeUtils.WOOL_COLORS.get(((Sheep) entity).getColor()).asItem());
             }
 
@@ -127,15 +152,15 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof AbstractMinecart minecart)) {
                     return;
                 }
-                minecart.kill();
+                minecart.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -159,33 +184,54 @@ public interface EntityInhaleBehavior {
             }
 
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Boat boat)) {
                     return;
                 }
-                boat.kill();
+                boat.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
             }
         };
-        Stream.of(EntityType.BOAT, EntityType.CHEST_BOAT).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
+        Stream.of(
+                EntityType.OAK_BOAT,
+                EntityType.OAK_CHEST_BOAT,
+                EntityType.SPRUCE_BOAT,
+                EntityType.SPRUCE_CHEST_BOAT,
+                EntityType.BIRCH_BOAT,
+                EntityType.BIRCH_CHEST_BOAT,
+                EntityType.JUNGLE_BOAT,
+                EntityType.JUNGLE_CHEST_BOAT,
+                EntityType.DARK_OAK_BOAT,
+                EntityType.DARK_OAK_CHEST_BOAT,
+                EntityType.ACACIA_BOAT,
+                EntityType.ACACIA_CHEST_BOAT,
+                EntityType.CHERRY_BOAT,
+                EntityType.CHERRY_CHEST_BOAT,
+                EntityType.MANGROVE_BOAT,
+                EntityType.MANGROVE_CHEST_BOAT,
+                EntityType.PALE_OAK_BOAT,
+                EntityType.PALE_OAK_CHEST_BOAT,
+                EntityType.BAMBOO_RAFT,
+                EntityType.BAMBOO_CHEST_RAFT
+        ).forEach(boat -> BlockDispenserBlock.registerEntityInhaleBehavior(boat, boatBehavior));
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ARMOR_STAND, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof ArmorStand armorStand)) {
                     return;
                 }
-                armorStand.kill();
+                armorStand.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -196,26 +242,23 @@ public interface EntityInhaleBehavior {
                 if (!(entity instanceof ArmorStand armorStand)) {
                     return NonNullList.create();
                 }
-                NonNullList<ItemStack> heldItems = ((ArmorStandAccessorMixin) armorStand).getHandItems();
-                NonNullList<ItemStack> armorItems = ((ArmorStandAccessorMixin) armorStand).getArmorItems();
                 NonNullList<ItemStack> returnItems = NonNullList.create();
-                returnItems.addAll(heldItems);
-                returnItems.addAll(armorItems);
+                Arrays.stream(EquipmentSlot.values()).map(armorStand::getItemBySlot).forEach(returnItems::add);
                 return returnItems;
             }
         });
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof ItemFrame itemFrame)) {
                     return;
                 }
-                itemFrame.kill();
+                itemFrame.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -234,15 +277,15 @@ public interface EntityInhaleBehavior {
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.GLOW_ITEM_FRAME, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof GlowItemFrame itemFrame)) {
                     return;
                 }
-                itemFrame.kill();
+                itemFrame.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;
@@ -261,15 +304,15 @@ public interface EntityInhaleBehavior {
 
         BlockDispenserBlock.registerEntityInhaleBehavior(EntityType.PAINTING, new EntityInhaleBehavior() {
             @Override
-            public void inhale(Entity entity) {
+            public void inhale(ServerLevel serverLevel, Entity entity) {
                 if (!(entity instanceof Painting painting)) {
                     return;
                 }
-                painting.kill();
+                painting.kill(serverLevel);
             }
 
             @Override
-            public ItemStack getInhaledItems(Entity entity) {
+            public ItemStack getInhaledItems(ServerLevel serverLevel, Entity entity) {
                 ItemStack itemStack = (itemStack = entity.getPickResult()) == null ? ItemStack.EMPTY : itemStack;
                 itemStack.set(DataComponents.CUSTOM_NAME, entity.getCustomName());
                 return itemStack;

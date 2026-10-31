@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_fence"
+    "values": "minecraft:birch_fence"
   }
 }

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:mud_bricks_corner"
-    },
-    {
-      "item": "bwt:mud_bricks_corner"
-    }
+    "bwt:mud_bricks_corner",
+    "bwt:mud_bricks_corner"
   ],
   "result": {
     "count": 1,

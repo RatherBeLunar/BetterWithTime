@@ -3,6 +3,8 @@ package com.bwt.blocks;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.utils.BlockUtils;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -14,9 +16,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -65,7 +64,7 @@ public class AnchorBlock extends SimpleFacingBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         return switch (direction) {
             case UP -> state.setValue(CONNECTED_ABOVE,
                     (state.getValue(FACING) != Direction.DOWN && neighborState.is(BwtBlocks.ropeBlock))

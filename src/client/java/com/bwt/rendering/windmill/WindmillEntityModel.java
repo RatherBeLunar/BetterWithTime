@@ -1,0 +1,85 @@
+package com.bwt.rendering.windmill;
+
+import com.bwt.entities.WindmillEntity;
+import com.bwt.rendering.horizontal_mech_power_source.HorizontalMechPowerSourceEntityModel;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.item.DyeColor;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class WindmillEntityModel extends HorizontalMechPowerSourceEntityModel<WindmillRenderState> {
+
+    private static final float bladeOffsetFromCenter = 15.0f;
+    private static final int bladeLength = (int)( ( WindmillEntity.height * 8.0f ) - bladeOffsetFromCenter) - 3;
+    private static final int bladeWidth = 16;
+
+    private static final float shaftOffsetFromCenter = 2.5f;
+    private static final int shaftLength = (int)( ( WindmillEntity.height * 8.0f ) - shaftOffsetFromCenter) - 2;
+    private static final int shaftWidth = 4;
+
+    private final List<ModelPart> sails;
+    private final List<ModelPart> shafts;
+
+
+    public WindmillEntityModel(ModelPart modelPart) {
+        super(modelPart);
+        shafts = IntStream.range(0, WindmillEntity.NUM_SAILS).mapToObj(i -> modelPart.getChild("shaft" + i)).collect(Collectors.toList());
+        sails = IntStream.range(0, WindmillEntity.NUM_SAILS).mapToObj(i -> modelPart.getChild("sail" + i)).collect(Collectors.toList());
+    }
+
+    public static LayerDefinition getTexturedModelData() {
+        MeshDefinition modelData = new MeshDefinition();
+        PartDefinition modelPartData = modelData.getRoot();
+        float localPi = 3.141593F;
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
+            modelPartData.addOrReplaceChild("shaft" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 0)
+                    .addBox(
+                            shaftOffsetFromCenter,
+                            -(float) shaftWidth / 2.0f,
+                            -(float) shaftWidth / 2.0f,
+                            shaftLength,
+                            shaftWidth,
+                            shaftWidth
+                    ),
+                PartPose.rotation(0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+            );
+        }
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
+            modelPartData.addOrReplaceChild("sail" + i,
+                CubeListBuilder.create()
+                    .texOffs(0, 15)
+                    .addBox(
+                            bladeOffsetFromCenter,
+                            1.75f,
+                            1.0F,
+                            bladeLength,
+                            bladeWidth,
+                            1
+                    ),
+                PartPose.rotation(-localPi / 12.0F, 0F, 2 * localPi * (i / (float)WindmillEntity.NUM_SAILS))
+            );
+        }
+        return LayerDefinition.create(modelData, 64, 32);
+    }
+
+    @Override
+    public void render(WindmillRenderState renderState, PoseStack poseStack, VertexConsumer vertexConsumer, int light, int uv, int color) {
+        shafts.forEach(shaft -> shaft.render(poseStack, vertexConsumer, light, uv));
+        for (int i = 0; i < WindmillEntity.NUM_SAILS; i++) {
+            ModelPart sail = sails.get(i);
+            DyeColor sailColor = renderState.getSailColor(i);
+            sail.render(poseStack, vertexConsumer, light, uv, ARGB.multiply(color, sailColor.getTextureDiffuseColor()));
+        }
+    }
+}

@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:detector_rail"
-      }
+      "ingredient": "minecraft:detector_rail"
     }
   ],
   "results": [

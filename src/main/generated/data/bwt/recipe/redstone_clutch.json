@@ -3,15 +3,9 @@
   "category": "redstone",
   "group": "redstone_clutch",
   "key": {
-    "g": {
-      "item": "bwt:gear"
-    },
-    "p": {
-      "tag": "minecraft:planks"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "g": "bwt:gear",
+    "p": "#minecraft:planks",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     "pgp",

@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:netherite_nautilus_armor"
+    }
+  ],
+  "results": [
+    {
+      "count": 8,
+      "id": "minecraft:netherite_ingot"
+    }
+  ]
+}

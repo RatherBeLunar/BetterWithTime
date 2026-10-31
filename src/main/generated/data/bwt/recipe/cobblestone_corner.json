@@ -3,9 +3,7 @@
   "category": "building",
   "group": "corners",
   "key": {
-    "X": {
-      "item": "bwt:cobblestone_moulding"
-    }
+    "X": "bwt:cobblestone_moulding"
   },
   "pattern": [
     "XXXX"

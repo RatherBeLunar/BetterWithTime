@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:jungle_planks"
-    },
-    "s": {
-      "item": "bwt:jungle_planks_siding"
-    }
+    "#": "minecraft:jungle_planks",
+    "s": "bwt:jungle_planks_siding"
   },
   "pattern": [
     " s ",

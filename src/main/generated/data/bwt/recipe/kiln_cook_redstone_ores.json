@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:redstone_ores"
+    "values": "#minecraft:redstone_ores"
   }
 }

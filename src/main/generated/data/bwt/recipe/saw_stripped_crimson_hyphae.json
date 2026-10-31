@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_crimson_hyphae"
+    "values": "minecraft:stripped_crimson_hyphae"
   }
 }

@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 1,
+      "id": "bwt:pale_oak_planks_moulding"
+    }
+  ],
+  "ingredient": {
+    "values": "bwt:pale_oak_planks_table"
+  }
+}

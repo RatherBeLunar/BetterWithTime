@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_fence",
   "key": {
-    "m": {
-      "item": "bwt:dark_oak_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:dark_oak_planks_siding"
-    }
+    "m": "bwt:dark_oak_planks_moulding",
+    "s": "bwt:dark_oak_planks_siding"
   },
   "pattern": [
     "sms",

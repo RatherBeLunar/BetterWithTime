@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "misc",
   "key": {
-    "i": {
-      "item": "minecraft:iron_ingot"
-    }
+    "i": "minecraft:iron_ingot"
   },
   "pattern": [
     "ii  ",

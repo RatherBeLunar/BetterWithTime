@@ -1,7 +1,9 @@
 package com.bwt.blocks.blood_wood;
 
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import com.bwt.sounds.BwtSoundEvents;
 import com.bwt.tags.BwtBlockTags;
+import net.minecraft.world.entity.monster.zombie.ZombifiedPiglin;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -10,7 +12,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.ZombifiedPiglin;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -30,22 +31,25 @@ public class BloodWoodSaplingBlock extends SaplingBlock {
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack itemStack) {
         super.setPlacedBy(level, pos, state, placer, itemStack);
-        if (!(placer instanceof Player playerEntity) || !level.dimensionType().ultraWarm()) {
+        if (!(placer instanceof Player playerEntity) || !level.environmentAttributes().getValue(BwtEnvironmentAttributes.BLOOD_WOOD_SPREADS, pos)) {
+            return;
+        }
+        if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
         List<ZombifiedPiglin> list = level.getEntitiesOfClass(ZombifiedPiglin.class, playerEntity.getBoundingBox().inflate(16.0));
         list.forEach(piglin -> piglin.setTarget(playerEntity));
-        PiglinAi.angerNearbyPiglins(playerEntity, false);
+        PiglinAi.angerNearbyPiglins(serverLevel, playerEntity, false);
     }
 
     @Override
     public boolean isBonemealSuccess(Level level, RandomSource random, BlockPos pos, BlockState state) {
-        return super.isBonemealSuccess(level, random, pos, state) && level.dimensionType().ultraWarm();
+        return super.isBonemealSuccess(level, random, pos, state) && level.environmentAttributes().getValue(BwtEnvironmentAttributes.BLOOD_WOOD_SPREADS, pos);
     }
 
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (level.dimensionType().ultraWarm() && random.nextInt(7) == 0) {
+        if (level.environmentAttributes().getValue(BwtEnvironmentAttributes.BLOOD_WOOD_SPREADS, pos) && random.nextInt(7) == 0) {
             this.advanceTree(level, pos, state, random);
         }
     }

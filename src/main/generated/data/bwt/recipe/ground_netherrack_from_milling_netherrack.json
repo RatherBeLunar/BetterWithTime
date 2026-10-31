@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:netherrack"
-      }
+      "ingredient": "minecraft:netherrack"
     }
   ],
   "results": [

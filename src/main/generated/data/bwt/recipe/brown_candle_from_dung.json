@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "dyed_candle",
   "ingredients": [
-    {
-      "item": "minecraft:candle"
-    },
-    {
-      "item": "bwt:dung"
-    }
+    "minecraft:candle",
+    "bwt:dung"
   ],
   "result": {
     "count": 1,

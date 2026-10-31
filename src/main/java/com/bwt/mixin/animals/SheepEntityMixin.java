@@ -1,10 +1,10 @@
 package com.bwt.mixin.animals;
 
 import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
-import com.bwt.mixin.accessors.MobEntityAccessorMixin;
+import com.bwt.mixin.accessor.MobEntityAccessorMixin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,7 +18,7 @@ public abstract class SheepEntityMixin extends Animal implements MobEntityAccess
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))
-    public void addGoal(CallbackInfo ci) {
+    public void bwt$addGoal(CallbackInfo ci) {
         this.getGoalSelector().addGoal(3, new GoToAndPickUpBreedingItemGoal(this, 6, 1.5, 1));
     }
 }

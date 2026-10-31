@@ -1,6 +1,7 @@
 {
   "parent": "block/block",
   "textures": {
+    "particle": "bwt:block/gear_box_side",
     "side": "bwt:block/gear_box_side"
   },
   "elements": [

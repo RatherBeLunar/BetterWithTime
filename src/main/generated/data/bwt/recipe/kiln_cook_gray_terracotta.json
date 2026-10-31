@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:gray_terracotta"
+    "values": "minecraft:gray_terracotta"
   }
 }

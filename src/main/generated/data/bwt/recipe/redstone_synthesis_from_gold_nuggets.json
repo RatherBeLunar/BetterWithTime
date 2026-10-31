@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:gold_nugget"
-      }
+      "ingredient": "minecraft:gold_nugget"
     },
     {
-      "ingredient": {
-        "item": "bwt:concentrated_hellfire"
-      }
+      "ingredient": "bwt:concentrated_hellfire"
     }
   ],
   "results": [

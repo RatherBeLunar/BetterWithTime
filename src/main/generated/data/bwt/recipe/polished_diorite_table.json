@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:polished_diorite_moulding"
-    },
-    "s": {
-      "item": "bwt:polished_diorite_siding"
-    }
+    "m": "bwt:polished_diorite_moulding",
+    "s": "bwt:polished_diorite_siding"
   },
   "pattern": [
     "sss",

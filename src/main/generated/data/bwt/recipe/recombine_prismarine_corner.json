@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:prismarine_corner"
-    },
-    {
-      "item": "bwt:prismarine_corner"
-    }
+    "bwt:prismarine_corner",
+    "bwt:prismarine_corner"
   ],
   "result": {
     "count": 1,

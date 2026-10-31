@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:sand"
-      }
+      "ingredient": "minecraft:sand"
     }
   ],
   "results": [

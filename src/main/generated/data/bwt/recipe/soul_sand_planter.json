@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "p": {
-      "item": "bwt:planter"
-    },
-    "s": {
-      "item": "minecraft:soul_sand"
-    }
+    "p": "bwt:planter",
+    "s": "minecraft:soul_sand"
   },
   "pattern": [
     "s",

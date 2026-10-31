@@ -7,8 +7,6 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -26,6 +24,8 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -57,28 +57,28 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(ITEM, ItemStack.EMPTY);
-        builder.define(FUSE, -1);
+        builder.define(FUSE, TICKS_TO_DETONATE);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag nbt) {
-        super.addAdditionalSaveData(nbt);
-        nbt.putInt("fuse", getFuse());
+    protected void addAdditionalSaveData(ValueOutput valueOutput) {
+        super.addAdditionalSaveData(valueOutput);
+        valueOutput.putInt("fuse", getFuse());
         ItemStack itemStack = getItem();
         if (!itemStack.isEmpty()) {
-            nbt.put("Item", itemStack.save(registryAccess()));
+            valueOutput.store("Item", ItemStack.CODEC, itemStack);
         }
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag nbt) {
-        super.readAdditionalSaveData(nbt);
-        setFuse(nbt.getInt("fuse"));
-        if (nbt.contains("Item", Tag.TAG_COMPOUND)) {
-            setItem(ItemStack.parse(registryAccess(), nbt.getCompound("Item")).orElseGet(() -> new ItemStack(getDefaultItem())));
-        } else {
-            setItem(new ItemStack(getDefaultItem()));
-        }
+    protected void readAdditionalSaveData(ValueInput valueInput) {
+        super.readAdditionalSaveData(valueInput);
+        setFuse(valueInput.getIntOr("fuse", TICKS_TO_DETONATE));
+        setItem(
+                valueInput
+                        .read("Item", ItemStack.CODEC)
+                        .orElseGet(() -> getDefaultItem().getDefaultInstance())
+        );
     }
 
     @Override
@@ -118,11 +118,15 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
 
     @Override
     public boolean shouldRenderAtSqrDistance(double distance) {
-        double d = this.getBoundingBox().getSize() * 4.0;
-        if (Double.isNaN(d)) {
-            d = 4.0;
+        if (this.tickCount < 2 && distance < 12.25) {
+            return false;
         }
-        return distance < (d *= 64.0) * d;
+        double e = this.getBoundingBox().getSize() * 4.0;
+        if (Double.isNaN(e)) {
+            e = 4.0;
+        }
+        e *= 64.0;
+        return distance < e * e;
     }
 
     @Override
@@ -140,14 +144,14 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
         if (fuse > 0) {
             setFuse(fuse - 1);
             fuse--;
-            if (level().isClientSide) {
+            if (level().isClientSide()) {
                 level().addParticle(ParticleTypes.SMOKE, this.getX(), this.getY() + 0.5, this.getZ(), getDeltaMovement().x() * 0.1, getDeltaMovement().y() * 0.1, getDeltaMovement().z() * 0.1);
             }
         }
 
         if (fuse == 0) {
             discard();
-            if (!level().isClientSide) {
+            if (!level().isClientSide()) {
                 explode();
             }
             return;
@@ -157,7 +161,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
             if (this.isInLava()) {
                 ignite();
                 discard();
-                if (!level().isClientSide) {
+                if (!level().isClientSide()) {
                     explode();
                 }
                 return;
@@ -165,7 +169,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
             if (onGround()) {
                 if (getDeltaMovement().length() < 0.01) {
                     // The dynamite has come to a stop. Convert it to an item.
-                    if (!level().isClientSide) {
+                    if (!level().isClientSide()) {
                         convertToItem();
                         return;
                     }
@@ -175,7 +179,7 @@ public class DynamiteEntity extends Projectile implements ItemSupplier {
     }
 
     public void explode() {
-        this.level().explode(this, this.getX(), this.getY(0.0625), this.getZ(), 1.5f, Level.ExplosionInteraction.TNT);
+        this.level().explode(this, this.getX(), this.getY(0.0625), this.getZ(), 1.9f, Level.ExplosionInteraction.TNT);
         if (isUnderWater()) {
             redneckFish();
         }

@@ -4,6 +4,7 @@ import com.bwt.blocks.AqueductBlock;
 import com.bwt.blocks.BwtBlocks;
 import com.bwt.tags.BwtFluidTags;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.server.level.ServerLevel;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,7 +16,6 @@ import java.util.Collections;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -58,14 +58,14 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
     }
 
     @Inject(method = "getNewLiquid", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/material/FlowingFluid;getDropOff(Lnet/minecraft/world/level/LevelReader;)I"), cancellable = true)
-    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) Level level, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int i, @Local int k) {
+    public void bwt$getUpdatedState(CallbackInfoReturnable<FluidState> cir, @Local(argsOnly = true) ServerLevel serverLevel, @Local(argsOnly = true) BlockPos pos, @Local(argsOnly = true) BlockState state, @Local int k) {
         if (!this.is(BwtFluidTags.AQUEDUCT_FLUIDS)) {
             return;
         }
         if (k <= 0 || !this.isSame(this)) {
             return;
         }
-        if (!level.getBlockState(pos.below()).is(BwtBlocks.aqueductBlock)) {
+        if (!serverLevel.getBlockState(pos.below()).is(BwtBlocks.aqueductBlock)) {
             return;
         }
         int thisLevel = state.getFluidState().getAmount();
@@ -74,15 +74,15 @@ public abstract class AqueductFlowableFluidMixin extends Fluid {
         ArrayList<Integer> aqueductSupportedNeighborLevels = new ArrayList<>();
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             BlockPos neighborPos = pos.relative(direction);
-            FluidState neighborFluidState = level.getFluidState(neighborPos);
+            FluidState neighborFluidState = serverLevel.getFluidState(neighborPos);
             if (!neighborFluidState.getType().isSame(this)) {
                 continue;
             }
-            BlockState neighborSupportingBlockState = level.getBlockState(neighborPos.below());
+            BlockState neighborSupportingBlockState = serverLevel.getBlockState(neighborPos.below());
             // If supported by an aqueduct, only accept neighbor flow if that neighbor isn't getting flow from *this* block
             if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock)) {
-                level.neighborShapeChanged(Direction.UP, state, neighborPos.below(), neighborPos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
-                neighborSupportingBlockState = level.getBlockState(neighborPos.below());
+                serverLevel.neighborShapeChanged(Direction.UP, neighborPos.below(), neighborPos, state, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                neighborSupportingBlockState = serverLevel.getBlockState(neighborPos.below());
                 if (neighborSupportingBlockState.is(BwtBlocks.aqueductBlock) && !neighborSupportingBlockState.getValue(AqueductBlock.FACING_PROPERTIES.get(direction.getOpposite()))) {
                     aqueductSupportedNeighborLevels.add(neighborFluidState.getAmount());
                 }

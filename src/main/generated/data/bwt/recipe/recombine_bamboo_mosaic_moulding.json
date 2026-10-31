@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:bamboo_mosaic_moulding"
-    },
-    {
-      "item": "bwt:bamboo_mosaic_moulding"
-    }
+    "bwt:bamboo_mosaic_moulding",
+    "bwt:bamboo_mosaic_moulding"
   ],
   "result": {
     "count": 1,

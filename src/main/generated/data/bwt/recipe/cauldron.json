@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "minecraft:bone"
-    },
-    "i": {
-      "item": "minecraft:iron_ingot"
-    },
-    "w": {
-      "item": "minecraft:water_bucket"
-    }
+    "b": "minecraft:bone",
+    "i": "minecraft:iron_ingot",
+    "w": "minecraft:water_bucket"
   },
   "pattern": [
     "ibi",

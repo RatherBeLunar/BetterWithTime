@@ -3,9 +3,7 @@
   "category": "redstone",
   "group": "wooden_pressure_plate",
   "ingredients": [
-    {
-      "item": "bwt:mangrove_planks_siding"
-    }
+    "bwt:mangrove_planks_siding"
   ],
   "result": {
     "count": 1,

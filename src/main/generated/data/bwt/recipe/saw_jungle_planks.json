@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_planks"
+    "values": "minecraft:jungle_planks"
   }
 }

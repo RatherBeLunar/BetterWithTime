@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "group": "pedestal",
+  "key": {
+    "#": "minecraft:pale_oak_planks",
+    "s": "bwt:pale_oak_planks_siding"
+  },
+  "pattern": [
+    " s ",
+    "###",
+    "###"
+  ],
+  "result": {
+    "count": 6,
+    "id": "bwt:pale_oak_planks_pedestal"
+  }
+}

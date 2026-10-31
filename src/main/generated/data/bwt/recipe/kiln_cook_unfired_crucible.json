@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_crucible"
+    "values": "bwt:unfired_crucible"
   }
 }

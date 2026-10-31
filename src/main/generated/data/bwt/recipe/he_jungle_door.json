@@ -3,9 +3,7 @@
   "category": "redstone",
   "group": "wooden_door",
   "key": {
-    "#": {
-      "item": "bwt:jungle_planks_siding"
-    }
+    "#": "bwt:jungle_planks_siding"
   },
   "pattern": [
     "##",

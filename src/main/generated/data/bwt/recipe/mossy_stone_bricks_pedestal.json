@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:mossy_stone_bricks"
-    },
-    "s": {
-      "item": "bwt:mossy_stone_bricks_siding"
-    }
+    "#": "minecraft:mossy_stone_bricks",
+    "s": "bwt:mossy_stone_bricks_siding"
   },
   "pattern": [
     " s ",

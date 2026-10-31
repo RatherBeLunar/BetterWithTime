@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:scoured_leather"
-      }
+      "ingredient": "bwt:scoured_leather"
     }
   ],
   "results": [

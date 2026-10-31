@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:bamboo_mosaic_moulding"
-    },
-    "s": {
-      "item": "bwt:bamboo_mosaic_siding"
-    }
+    "m": "bwt:bamboo_mosaic_moulding",
+    "s": "bwt:bamboo_mosaic_siding"
   },
   "pattern": [
     "sss",

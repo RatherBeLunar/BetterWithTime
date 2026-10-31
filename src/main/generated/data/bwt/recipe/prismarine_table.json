@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:prismarine_moulding"
-    },
-    "s": {
-      "item": "bwt:prismarine_siding"
-    }
+    "m": "bwt:prismarine_moulding",
+    "s": "bwt:prismarine_siding"
   },
   "pattern": [
     "sss",

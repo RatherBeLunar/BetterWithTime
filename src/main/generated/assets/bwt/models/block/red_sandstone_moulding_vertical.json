@@ -1,8 +1,0 @@
-{
-  "parent": "bwt:block/moulding_vertical",
-  "textures": {
-    "bottom": "minecraft:block/red_sandstone",
-    "side": "minecraft:block/red_sandstone",
-    "top": "minecraft:block/red_sandstone"
-  }
-}

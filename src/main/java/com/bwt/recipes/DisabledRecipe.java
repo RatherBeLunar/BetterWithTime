@@ -7,10 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.Nullable;
@@ -21,12 +18,7 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(Blocks.AIR);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<DisabledRecipe> getSerializer() {
         return BwtRecipes.DISABLED_RECIPE_SERIALIZER;
     }
 
@@ -36,17 +28,12 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return false;
+    public String group() {
+        return group;
     }
 
     @Override
-    public String getGroup() {
-        return null;
-    }
-
-    @Override
-    public RecipeType<?> getType() {
+    public RecipeType<DisabledRecipe> getType() {
         return BwtRecipes.DISABLED_RECIPE_TYPE;
     }
 
@@ -66,8 +53,13 @@ public record DisabledRecipe(String group) implements Recipe<RecipeInput> {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
-        return ItemStack.EMPTY;
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return RecipeBookCategories.CRAFTING_MISC;
     }
 
     public static class Serializer implements RecipeSerializer<DisabledRecipe> {

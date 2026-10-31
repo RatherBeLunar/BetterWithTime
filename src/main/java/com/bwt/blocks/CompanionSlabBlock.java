@@ -27,7 +27,7 @@ public class CompanionSlabBlock extends SlabBlock {
     @Nullable
     public BlockState getStateForPlacement(BlockPlaceContext ctx) {
         if (ctx.getLevel().getBlockState(ctx.getClickedPos()).is(this)) {
-            return BwtBlocks.companionCubeBlock.defaultBlockState();
+            return BwtBlocks.companionCubeBlock.defaultBlockState().setValue(CompanionCubeBlock.FACING, ctx.getHorizontalDirection().getOpposite());
         }
         return super.getStateForPlacement(ctx);
     }

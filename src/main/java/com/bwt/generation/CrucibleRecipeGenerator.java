@@ -4,16 +4,18 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.items.BwtItems;
 import com.bwt.recipes.cooking_pots.AbstractCookingPotRecipe;
 import com.bwt.recipes.cooking_pots.StokedCrucibleRecipe;
-import com.bwt.utils.Id;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import java.util.concurrent.CompletableFuture;
+import net.minecraft.world.level.ItemLike;
 
-import static com.bwt.recipes.cooking_pots.AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.Stream;
 
 
 public class CrucibleRecipeGenerator extends FabricRecipeProvider {
@@ -22,118 +24,208 @@ public class CrucibleRecipeGenerator extends FabricRecipeProvider {
     }
 
     @Override
-    public void buildRecipes(RecipeOutput exporter) {
-        generateUnstoked(exporter);
-        generateStoked(exporter);
+    protected RecipeProvider createRecipeProvider(HolderLookup.Provider registryLookup, RecipeOutput output) {
+        return new SharedRecipeProvider(registryLookup, output) {
+            @Override
+            public void buildRecipes() {
+                generateUnstoked();
+                generateStoked();
+            }
+
+            private void generateUnstoked() {
+                // Probably never gonna put anything here
+            }
+
+            private void generateStoked() {
+                createStoked().ingredient(Items.IRON_INGOT).ingredient(Items.GOLD_INGOT).ingredient(BwtItems.coalDustItem).ingredient(BwtItems.soulUrnItem).result(Items.NETHERITE_INGOT).save(output, "netherite_ingot_smelting");
+                createStoked().ingredient(Items.NETHERITE_SCRAP, 4).ingredient(Items.GOLD_INGOT, 4).result(Items.NETHERITE_INGOT).save(output, "netherite_ingot_from_scrap");
+                createStoked().ingredient(Items.COBBLESTONE).result(Items.STONE).save(output);
+                createStoked().ingredient(Items.SAND).result(Items.GLASS).save(output);
+
+                createStoked().ingredient(Items.GOLD_INGOT).ingredient(BwtItems.concentratedHellfireItem, 9).result(Items.REDSTONE, 63).save(output, "redstone_synthesis_from_gold_ingots");
+                createStoked().ingredient(Items.GOLD_NUGGET).ingredient(BwtItems.concentratedHellfireItem, 1).result(Items.REDSTONE, 7).save(output, "redstone_synthesis_from_gold_nuggets");
+
+                generateResmelting();
+            }
+
+            private void generateResmelting() {
+                // Chain armor
+                reclaim(Items.CHAINMAIL_HELMET, Items.IRON_INGOT, 5);
+                reclaim(Items.CHAINMAIL_CHESTPLATE, Items.IRON_INGOT, 8);
+                reclaim(Items.CHAINMAIL_LEGGINGS, Items.IRON_INGOT, 7);
+                reclaim(Items.CHAINMAIL_BOOTS, Items.IRON_INGOT, 4);
+
+                resmeltIronStuff();
+                resmeltCopperStuff();
+                resmeltGoldStuff();
+                resmeltNetheriteStuff();
+            }
+
+            private void resmeltIronStuff() {
+                // Iron armor
+                reclaim(Items.IRON_HELMET, Items.IRON_INGOT, 5);
+                reclaim(Items.IRON_CHESTPLATE, Items.IRON_INGOT, 8);
+                reclaim(Items.IRON_LEGGINGS, Items.IRON_INGOT, 7);
+                reclaim(Items.IRON_BOOTS, Items.IRON_INGOT, 4);
+                // Iron tools
+                reclaim(Items.IRON_PICKAXE, Items.IRON_INGOT, 3);
+                reclaim(Items.IRON_SHOVEL, Items.IRON_INGOT, 1);
+                reclaim(Items.IRON_AXE, Items.IRON_INGOT, 3);
+                reclaim(Items.IRON_HOE, Items.IRON_INGOT, 2);
+                reclaim(Items.IRON_SWORD, Items.IRON_INGOT, 2);
+                reclaim(Items.IRON_SPEAR, Items.IRON_INGOT, 1);
+                // Iron misc
+                reclaim(Items.ACTIVATOR_RAIL, Items.IRON_INGOT, 1);
+                reclaim().ingredient(ItemTags.ANVIL).result(Items.IRON_INGOT, 9).save(output, "smelt_anvil_in_crucible");
+                reclaim(Items.BUCKET, Items.IRON_INGOT, 3);
+                reclaim().ingredient(Items.CAULDRON).result(Items.IRON_INGOT, 7).save(output, "smelt_vanilla_cauldron_in_crucible");
+                reclaim(BwtBlocks.cauldronBlock, Items.IRON_INGOT, 7);
+                reclaim(Items.COMPASS, Items.IRON_INGOT, 4);
+                reclaim(Items.CROSSBOW, Items.IRON_INGOT, 1);
+                reclaim(Items.DETECTOR_RAIL, Items.IRON_INGOT, 1);
+                reclaim(Items.FLINT_AND_STEEL, Items.IRON_INGOT, 1);
+                reclaim(Items.HEAVY_WEIGHTED_PRESSURE_PLATE, Items.IRON_INGOT, 2);
+                reclaim(Items.IRON_BARS, 8, Items.IRON_INGOT, 3);
+                reclaim(Items.IRON_CHAIN, Items.IRON_INGOT, 1);
+                reclaim(Items.IRON_DOOR, Items.IRON_INGOT, 2);
+                reclaim(Items.IRON_TRAPDOOR, Items.IRON_INGOT, 4);
+                reclaim(Items.MINECART, Items.IRON_INGOT, 5);
+                reclaim(Items.RAIL, 8, Items.IRON_INGOT, 3);
+                reclaim(Items.SHEARS, Items.IRON_INGOT, 2);
+
+                reclaim(Items.IRON_HORSE_ARMOR, Items.IRON_INGOT, 7);
+                reclaim(Items.IRON_NAUTILUS_ARMOR, Items.IRON_INGOT, 8);
+
+                reclaim(BwtBlocks.stoneDetectorRailBlock, Items.IRON_INGOT, 1);
+                reclaim(BwtBlocks.obsidianDetectorRailBlock, Items.IRON_INGOT, 1);
+
+                reclaim(Items.IRON_NUGGET, 9, Items.IRON_INGOT, 1);
+            }
+
+            private void resmeltCopperStuff() {
+                // Copper armor
+                reclaim(Items.COPPER_HELMET, Items.COPPER_INGOT, 5);
+                reclaim(Items.COPPER_CHESTPLATE, Items.COPPER_INGOT, 8);
+                reclaim(Items.COPPER_LEGGINGS, Items.COPPER_INGOT, 7);
+                reclaim(Items.COPPER_BOOTS, Items.COPPER_INGOT, 4);
+                // Copper tools
+                reclaim(Items.COPPER_PICKAXE, Items.COPPER_INGOT, 3);
+                reclaim(Items.COPPER_SHOVEL, Items.COPPER_INGOT, 1);
+                reclaim(Items.COPPER_AXE, Items.COPPER_INGOT, 3);
+                reclaim(Items.COPPER_HOE, Items.COPPER_INGOT, 2);
+                reclaim(Items.COPPER_SWORD, Items.COPPER_INGOT, 2);
+                reclaim(Items.COPPER_SPEAR, Items.COPPER_INGOT, 1);
+                // Copper misc
+                reclaim(Items.BRUSH, Items.COPPER_INGOT, 1);
+                Items.COPPER_BARS.forEach(copperBars -> reclaim(copperBars, 8, Items.COPPER_INGOT, 3));
+                Items.COPPER_CHAIN.forEach(copperChain -> reclaim(copperChain, Items.COPPER_INGOT, 1));
+                Stream.of(
+                        Items.COPPER_CHEST, Items.WAXED_COPPER_CHEST,
+                        Items.EXPOSED_COPPER_CHEST, Items.WAXED_EXPOSED_COPPER_CHEST,
+                        Items.WEATHERED_COPPER_CHEST, Items.WAXED_WEATHERED_COPPER_CHEST,
+                        Items.OXIDIZED_COPPER_CHEST, Items.WAXED_OXIDIZED_COPPER_CHEST
+                ).forEach(copperChest ->
+                        reclaim(copperChest, Items.COPPER_INGOT, 8)
+                );
+                Stream.of(
+                        Items.COPPER_DOOR, Items.WAXED_COPPER_DOOR,
+                        Items.EXPOSED_COPPER_DOOR, Items.WAXED_EXPOSED_COPPER_DOOR,
+                        Items.WEATHERED_COPPER_DOOR, Items.WAXED_WEATHERED_COPPER_DOOR,
+                        Items.OXIDIZED_COPPER_DOOR, Items.WAXED_OXIDIZED_COPPER_DOOR
+                ).forEach(copperDoor ->
+                        reclaim(copperDoor, Items.COPPER_INGOT, 2)
+                );
+                Stream.of(
+                        Items.COPPER_TRAPDOOR, Items.WAXED_COPPER_TRAPDOOR,
+                        Items.EXPOSED_COPPER_TRAPDOOR, Items.WAXED_EXPOSED_COPPER_TRAPDOOR,
+                        Items.WEATHERED_COPPER_TRAPDOOR, Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
+                        Items.OXIDIZED_COPPER_TRAPDOOR, Items.WAXED_OXIDIZED_COPPER_TRAPDOOR
+                ).forEach(copperTrapDoor ->
+                        reclaim(copperTrapDoor, Items.COPPER_INGOT, 4)
+                );
+                reclaim(Items.LIGHTNING_ROD, Items.COPPER_INGOT, 3);
+                reclaim(Items.SPYGLASS, Items.COPPER_INGOT, 2);
+
+                Stream.of(
+                        Items.COPPER_BULB, Items.WAXED_COPPER_BULB,
+                        Items.EXPOSED_COPPER_BULB, Items.WAXED_EXPOSED_COPPER_BULB,
+                        Items.WEATHERED_COPPER_BULB, Items.WAXED_WEATHERED_COPPER_BULB,
+                        Items.OXIDIZED_COPPER_BULB, Items.WAXED_OXIDIZED_COPPER_BULB
+                ).forEach(copperBulb ->
+                        reclaim(copperBulb, Items.COPPER_INGOT, 6)
+                );
+
+                reclaim(Items.COPPER_HORSE_ARMOR, Items.COPPER_INGOT, 7);
+                reclaim(Items.COPPER_NAUTILUS_ARMOR, Items.COPPER_INGOT, 8);
+
+                reclaim(Items.COPPER_NUGGET, 9, Items.COPPER_INGOT, 1);
+            }
+
+            private void resmeltGoldStuff() {
+                // Gold armor
+                reclaim(Items.GOLDEN_HELMET, Items.GOLD_INGOT, 5);
+                reclaim(Items.GOLDEN_CHESTPLATE, Items.GOLD_INGOT, 8);
+                reclaim(Items.GOLDEN_LEGGINGS, Items.GOLD_INGOT, 7);
+                reclaim(Items.GOLDEN_BOOTS, Items.GOLD_INGOT, 4);
+                // Gold tools
+                reclaim(Items.GOLDEN_PICKAXE, Items.GOLD_INGOT, 3);
+                reclaim(Items.GOLDEN_SHOVEL, Items.GOLD_INGOT, 1);
+                reclaim(Items.GOLDEN_AXE, Items.GOLD_INGOT, 3);
+                reclaim(Items.GOLDEN_HOE, Items.GOLD_INGOT, 2);
+                reclaim(Items.GOLDEN_SWORD, Items.GOLD_INGOT, 2);
+                reclaim(Items.GOLDEN_SPEAR, Items.GOLD_INGOT, 1);
+                // Gold misc
+                reclaim(Items.CLOCK, Items.GOLD_INGOT, 4);
+                reclaim(Items.LIGHT_WEIGHTED_PRESSURE_PLATE, Items.GOLD_INGOT, 2);
+                reclaim(Items.POWERED_RAIL, Items.GOLD_INGOT, 1);
+
+                reclaim(Items.GOLDEN_HORSE_ARMOR, Items.GOLD_INGOT, 7);
+                reclaim(Items.GOLDEN_NAUTILUS_ARMOR, Items.GOLD_INGOT, 8);
+
+                reclaim(Items.GOLD_NUGGET, 9, Items.GOLD_INGOT, 1);
+            }
+
+            private void resmeltNetheriteStuff() {
+                // Netherite armor
+                reclaim(Items.NETHERITE_HELMET, Items.NETHERITE_INGOT, 8);
+                reclaim(Items.NETHERITE_CHESTPLATE, Items.NETHERITE_INGOT, 12);
+                reclaim(Items.NETHERITE_LEGGINGS, Items.NETHERITE_INGOT, 6);
+                reclaim(Items.NETHERITE_BOOTS, Items.NETHERITE_INGOT, 6);
+                // Netherite tools and block
+                reclaim(BwtItems.netheriteMattockItem, Items.NETHERITE_INGOT, 4);
+                reclaim(BwtItems.netheriteBattleAxeItem, Items.NETHERITE_INGOT, 5);
+                reclaim(Items.NETHERITE_PICKAXE, Items.NETHERITE_INGOT, 3);
+                reclaim(Items.NETHERITE_SHOVEL, Items.NETHERITE_INGOT, 1);
+                reclaim(Items.NETHERITE_AXE, Items.NETHERITE_INGOT, 3);
+                reclaim(Items.NETHERITE_HOE, Items.NETHERITE_INGOT, 2);
+                reclaim(Items.NETHERITE_SWORD, Items.NETHERITE_INGOT, 3);
+                reclaim(Items.NETHERITE_SPEAR, Items.NETHERITE_INGOT, 1);
+                reclaim(Items.NETHERITE_BLOCK, Items.NETHERITE_INGOT, 16);
+
+                reclaim(Items.NETHERITE_HORSE_ARMOR, Items.NETHERITE_INGOT, 7);
+                reclaim(Items.NETHERITE_NAUTILUS_ARMOR, Items.NETHERITE_INGOT, 8);
+            }
+
+            StokedCrucibleRecipe.JsonBuilder createStoked() {
+                return StokedCrucibleRecipe.JsonBuilder.create(this);
+            }
+
+            StokedCrucibleRecipe.JsonBuilder reclaim() {
+                return (StokedCrucibleRecipe.JsonBuilder) createStoked().cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM);
+            }
+
+            void reclaim(ItemLike input, Item result, int resultCount) {
+                reclaim().ingredient(input.asItem()).result(result, resultCount).save(output);
+            }
+
+            void reclaim(ItemLike input, int inputCount, Item result, int resultCount) {
+                reclaim().ingredient(input.asItem(), inputCount).result(result, resultCount).save(output);
+            }
+        };
     }
 
-    private void generateUnstoked(RecipeOutput exporter) {
-        // Probably never gonna put anything here
-    }
-
-    private void generateStoked(RecipeOutput exporter) {
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_INGOT).ingredient(Items.GOLD_INGOT).ingredient(BwtItems.coalDustItem).ingredient(BwtItems.soulUrnItem).result(Items.NETHERITE_INGOT).markDefault().save(exporter, Id.of("netherite_ingot_smelting"));
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_SCRAP, 4).ingredient(Items.GOLD_INGOT, 4).result(Items.NETHERITE_INGOT).save(exporter, Id.of("netherite_ingot_from_scrap"));
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COBBLESTONE).result(Items.STONE).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SAND).result(Items.GLASS).save(exporter);
-
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_INGOT).ingredient(BwtItems.concentratedHellfireItem, 9).result(Items.REDSTONE, 63).save(exporter, Id.of("redstone_synthesis_from_gold_ingots"));
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_NUGGET).ingredient(BwtItems.concentratedHellfireItem, 1).result(Items.REDSTONE, 7).save(exporter, Id.of("redstone_synthesis_from_gold_nuggets"));
-
-        generateResmelting(exporter);
-    }
-
-    private void generateResmelting(RecipeOutput exporter) {
-        // Iron armor
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_HELMET).result(Items.IRON_INGOT, 5).cookingCategory(RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_CHESTPLATE).result(Items.IRON_INGOT, 8).cookingCategory(RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_LEGGINGS).result(Items.IRON_INGOT, 7).cookingCategory(RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_BOOTS).result(Items.IRON_INGOT, 4).cookingCategory(RECLAIM).save(exporter);
-        // Iron tools
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_PICKAXE).result(Items.IRON_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_SHOVEL).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_AXE).result(Items.IRON_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_HOE).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_SWORD).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        // Chain armor
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CHAINMAIL_HELMET).result(Items.IRON_INGOT, 5).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CHAINMAIL_CHESTPLATE).result(Items.IRON_INGOT, 8).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CHAINMAIL_LEGGINGS).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CHAINMAIL_BOOTS).result(Items.IRON_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        // Gold armor
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_HELMET).result(Items.GOLD_INGOT, 5).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_CHESTPLATE).result(Items.GOLD_INGOT, 8).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_LEGGINGS).result(Items.GOLD_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_BOOTS).result(Items.GOLD_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        // Gold tools
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_PICKAXE).result(Items.GOLD_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_SHOVEL).result(Items.GOLD_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_AXE).result(Items.GOLD_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_HOE).result(Items.GOLD_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_SWORD).result(Items.GOLD_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        // Netherite armor
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_HELMET).result(Items.NETHERITE_INGOT, 8).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_CHESTPLATE).result(Items.NETHERITE_INGOT, 12).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_LEGGINGS).result(Items.NETHERITE_INGOT, 6).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_BOOTS).result(Items.NETHERITE_INGOT, 6).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        // Netherite tools and block
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtItems.netheriteMattockItem).result(Items.NETHERITE_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtItems.netheriteBattleAxeItem).result(Items.NETHERITE_INGOT, 5).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_PICKAXE).result(Items.NETHERITE_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_SHOVEL).result(Items.NETHERITE_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_AXE).result(Items.NETHERITE_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_HOE).result(Items.NETHERITE_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_SWORD).result(Items.NETHERITE_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.NETHERITE_BLOCK).result(Items.NETHERITE_INGOT, 16).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtBlocks.cauldronBlock.asItem()).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.RAIL, 8).result(Items.IRON_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.POWERED_RAIL).result(Items.GOLD_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.DETECTOR_RAIL).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_DOOR).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_TRAPDOOR).result(Items.IRON_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtBlocks.stoneDetectorRailBlock.asItem()).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(BwtBlocks.obsidianDetectorRailBlock.asItem()).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COMPASS).result(Items.IRON_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CLOCK).result(Items.GOLD_INGOT, 4).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.MINECART).result(Items.IRON_INGOT, 5).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SHEARS).result(Items.IRON_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.FLINT_AND_STEEL).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.CROSSBOW).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_HORSE_ARMOR).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLDEN_HORSE_ARMOR).result(Items.IRON_INGOT, 7).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.GOLD_NUGGET, 9).result(Items.GOLD_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.IRON_NUGGET, 9).result(Items.IRON_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-
-        // Copper stuff
-//        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.COPPER_NUGGET, 9).result(Items.COPPER_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).offerTo(exporter);
-        for (Item copperBulb : new Item[]{
-                Items.COPPER_BULB, Items.WAXED_COPPER_BULB,
-                Items.EXPOSED_COPPER_BULB, Items.WAXED_EXPOSED_COPPER_BULB,
-                Items.WEATHERED_COPPER_BULB, Items.WAXED_WEATHERED_COPPER_BULB,
-                Items.OXIDIZED_COPPER_BULB, Items.WAXED_OXIDIZED_COPPER_BULB,
-        }) {
-            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperBulb).result(Items.COPPER_INGOT, 6).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        }
-        for (Item copperDoor : new Item[]{
-                Items.COPPER_DOOR, Items.WAXED_COPPER_DOOR,
-                Items.EXPOSED_COPPER_DOOR, Items.WAXED_EXPOSED_COPPER_DOOR,
-                Items.WEATHERED_COPPER_DOOR, Items.WAXED_WEATHERED_COPPER_DOOR,
-                Items.OXIDIZED_COPPER_DOOR, Items.WAXED_OXIDIZED_COPPER_DOOR,
-        }) {
-            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperDoor).result(Items.COPPER_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        }
-        for (Item copperTrapDoor : new Item[]{
-                Items.COPPER_TRAPDOOR, Items.WAXED_COPPER_TRAPDOOR,
-                Items.EXPOSED_COPPER_TRAPDOOR, Items.WAXED_EXPOSED_COPPER_TRAPDOOR,
-                Items.WEATHERED_COPPER_TRAPDOOR, Items.WAXED_WEATHERED_COPPER_TRAPDOOR,
-                Items.OXIDIZED_COPPER_TRAPDOOR, Items.WAXED_OXIDIZED_COPPER_TRAPDOOR,
-        }) {
-            // TODO change this to 4 once the recipe changes in 1.21.9
-            StokedCrucibleRecipe.JsonBuilder.create().ingredient(copperTrapDoor).result(Items.COPPER_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        }
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.BRUSH).result(Items.COPPER_INGOT, 1).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.LIGHTNING_ROD).result(Items.COPPER_INGOT, 3).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
-        StokedCrucibleRecipe.JsonBuilder.create().ingredient(Items.SPYGLASS).result(Items.COPPER_INGOT, 2).cookingCategory(AbstractCookingPotRecipe.CookingPotRecipeCategory.RECLAIM).save(exporter);
+    @Override
+    public String getName() {
+        return "CrucibleRecipeGenerator";
     }
 }

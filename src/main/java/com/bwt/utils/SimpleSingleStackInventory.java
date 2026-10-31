@@ -3,10 +3,14 @@ package com.bwt.utils;
 import java.util.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.ticks.ContainerSingleItem;
 
 public class SimpleSingleStackInventory implements ContainerSingleItem.BlockContainerSingleItem {
@@ -61,18 +65,23 @@ public class SimpleSingleStackInventory implements ContainerSingleItem.BlockCont
         return true;
     }
 
-    public void readNbt(CompoundTag nbtCompound, HolderLookup.Provider registryLookup) {
+    public void readData(ValueInput valueInput, String key) {
         this.clearContent();
-        if (nbtCompound.isEmpty()) {
-            return;
-        }
-        Optional<ItemStack> itemStack = ItemStack.parse(registryLookup, nbtCompound);
+        Optional<ItemStack> itemStack = valueInput.read(key, ItemStack.CODEC);
         itemStack.ifPresent(this::setTheItem);
     }
 
-    public Tag toNbt(HolderLookup.Provider registryLookup) {
+    public void saveData(ValueOutput valueOutput, String key) {
         ItemStack itemStack = this.getTheItem();
-        if (itemStack.isEmpty()) return new CompoundTag();
-        return itemStack.save(registryLookup);
+        if (!itemStack.isEmpty()) {
+            valueOutput.store(key, ItemStack.CODEC, itemStack);
+        }
+    }
+
+    public Optional<Tag> toTag(HolderLookup.Provider provider) {
+        ItemStack itemStack = this.getTheItem();
+        if (itemStack.isEmpty()) return Optional.empty();
+        RegistryOps<Tag> registryOps = provider.createSerializationContext(NbtOps.INSTANCE);
+        return Optional.of(ItemStack.CODEC.encodeStart(registryOps, getTheItem()).getOrThrow());
     }
 }

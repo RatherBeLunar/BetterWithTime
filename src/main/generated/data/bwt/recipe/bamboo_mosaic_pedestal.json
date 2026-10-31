@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:bamboo_mosaic"
-    },
-    "s": {
-      "item": "bwt:bamboo_mosaic_siding"
-    }
+    "#": "minecraft:bamboo_mosaic",
+    "s": "bwt:bamboo_mosaic_siding"
   },
   "pattern": [
     " s ",

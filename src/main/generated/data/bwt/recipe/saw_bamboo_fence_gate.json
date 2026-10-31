@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:bamboo_fence_gate"
+    "values": "minecraft:bamboo_fence_gate"
   }
 }

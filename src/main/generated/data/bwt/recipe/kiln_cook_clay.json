@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:clay"
+    "values": "minecraft:clay"
   }
 }

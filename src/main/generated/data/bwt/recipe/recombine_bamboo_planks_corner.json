@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:bamboo_planks_corner"
-    },
-    {
-      "item": "bwt:bamboo_planks_corner"
-    }
+    "bwt:bamboo_planks_corner",
+    "bwt:bamboo_planks_corner"
   ],
   "result": {
     "count": 1,

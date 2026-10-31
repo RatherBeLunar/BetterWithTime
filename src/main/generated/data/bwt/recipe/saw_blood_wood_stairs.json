@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:blood_wood_stairs"
+    "values": "bwt:blood_wood_stairs"
   }
 }

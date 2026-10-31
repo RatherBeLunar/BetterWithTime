@@ -4,8 +4,6 @@
   "category": "misc",
   "ingredient": {
     "count": 9,
-    "ingredient": {
-      "item": "minecraft:raw_iron"
-    }
+    "ingredient": "minecraft:raw_iron"
   }
 }

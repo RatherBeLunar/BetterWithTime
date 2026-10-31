@@ -3,9 +3,7 @@
   "category": "building",
   "group": "mycelium_slab",
   "key": {
-    "#": {
-      "item": "minecraft:mycelium"
-    }
+    "#": "minecraft:mycelium"
   },
   "pattern": [
     "##"

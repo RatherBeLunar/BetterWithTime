@@ -4,14 +4,12 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:netherite_sword"
-      }
+      "ingredient": "minecraft:netherite_sword"
     }
   ],
   "results": [
     {
-      "count": 2,
+      "count": 3,
       "id": "minecraft:netherite_ingot"
     }
   ]

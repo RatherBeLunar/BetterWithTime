@@ -29,10 +29,9 @@ public class SoulForgeCraftingResultSlot extends ResultSlot {
         CraftingInput craftingRecipeInput = positioned.input();
         int i = positioned.left();
         int j = positioned.top();
-        NonNullList<ItemStack> defaultedList = OrderedRecipeMatcher.getRemainingStacks(
+        NonNullList<ItemStack> defaultedList = OrderedRecipeMatcher.getRemainingStacksForSoulForge(
                 player.level(),
-                craftingRecipeInput,
-                List.of(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, RecipeType.CRAFTING)
+                craftingRecipeInput
         );
 
         for (int k = 0; k < craftingRecipeInput.height(); k++) {

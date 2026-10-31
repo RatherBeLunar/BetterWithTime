@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "#": {
-      "item": "bwt:blood_wood_planks"
-    }
+    "#": "bwt:blood_wood_planks"
   },
   "pattern": [
     "#  ",

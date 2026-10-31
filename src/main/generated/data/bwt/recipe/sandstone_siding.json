@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:sandstone"
-    }
+    "X": "minecraft:sandstone"
   },
   "pattern": [
     "XXXX"

@@ -3,9 +3,7 @@
   "category": "food",
   "cookingtime": 200,
   "experience": 0.35,
-  "ingredient": {
-    "item": "bwt:raw_egg"
-  },
+  "ingredient": "bwt:raw_egg",
   "result": {
     "id": "bwt:fried_egg"
   }

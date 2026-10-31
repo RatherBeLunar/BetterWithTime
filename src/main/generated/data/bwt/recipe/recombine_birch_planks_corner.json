@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:birch_planks_corner"
-    },
-    {
-      "item": "bwt:birch_planks_corner"
-    }
+    "bwt:birch_planks_corner",
+    "bwt:birch_planks_corner"
   ],
   "result": {
     "count": 1,

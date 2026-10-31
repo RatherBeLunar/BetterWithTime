@@ -3,9 +3,7 @@
   "category": "building",
   "group": "planks",
   "ingredients": [
-    {
-      "tag": "bwt:blood_wood_logs"
-    }
+    "#bwt:blood_wood_logs"
   ],
   "result": {
     "count": 4,

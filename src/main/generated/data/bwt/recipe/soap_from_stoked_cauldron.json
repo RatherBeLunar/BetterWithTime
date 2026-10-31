@@ -4,14 +4,10 @@
   "group": "soap",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:potash"
-      }
+      "ingredient": "bwt:potash"
     },
     {
-      "ingredient": {
-        "item": "bwt:tallow"
-      }
+      "ingredient": "bwt:tallow"
     }
   ],
   "results": [

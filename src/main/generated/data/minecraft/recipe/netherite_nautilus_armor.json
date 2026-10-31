@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "s": "minecraft:netherite_ingot"
+  },
+  "pattern": [
+    "sss",
+    "s s",
+    "ss "
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:netherite_nautilus_armor"
+  }
+}

@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:white_wool_slab"
-      }
+      "ingredient": "bwt:white_wool_slab"
     },
     {
-      "ingredient": {
-        "item": "minecraft:orange_dye"
-      }
+      "ingredient": "minecraft:orange_dye"
     }
   ],
   "results": [

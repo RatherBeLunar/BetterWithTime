@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:oak_wood"
+    "values": "minecraft:oak_wood"
   }
 }

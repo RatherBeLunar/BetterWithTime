@@ -4,24 +4,16 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:iron_ingot"
-      }
+      "ingredient": "minecraft:iron_ingot"
     },
     {
-      "ingredient": {
-        "item": "minecraft:gold_ingot"
-      }
+      "ingredient": "minecraft:gold_ingot"
     },
     {
-      "ingredient": {
-        "item": "bwt:coal_dust"
-      }
+      "ingredient": "bwt:coal_dust"
     },
     {
-      "ingredient": {
-        "item": "bwt:soul_urn"
-      }
+      "ingredient": "bwt:soul_urn"
     }
   ],
   "results": [

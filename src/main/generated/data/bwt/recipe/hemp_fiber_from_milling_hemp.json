@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:hemp"
-      }
+      "ingredient": "bwt:hemp"
     }
   ],
   "results": [

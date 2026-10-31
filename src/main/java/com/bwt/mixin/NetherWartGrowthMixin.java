@@ -1,5 +1,6 @@
 package com.bwt.mixin;
 
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -16,8 +17,8 @@ public abstract class NetherWartGrowthMixin {
      * Don't grow nether wart unless in the nether or a similar dimension
      */
     @Inject(method = "randomTick", at = @At("HEAD"), cancellable = true)
-    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
-        if (!level.dimensionType().ultraWarm()) {
+    public void bwt$randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random, CallbackInfo ci) {
+        if (!level.environmentAttributes().getValue(BwtEnvironmentAttributes.NETHER_GROTH_SPREADS, pos)) {
             ci.cancel();
         }
     }

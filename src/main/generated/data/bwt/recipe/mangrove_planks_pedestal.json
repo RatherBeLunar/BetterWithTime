@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:mangrove_planks"
-    },
-    "s": {
-      "item": "bwt:mangrove_planks_siding"
-    }
+    "#": "minecraft:mangrove_planks",
+    "s": "bwt:mangrove_planks_siding"
   },
   "pattern": [
     " s ",

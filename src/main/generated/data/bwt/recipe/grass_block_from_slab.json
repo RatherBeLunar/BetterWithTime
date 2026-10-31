@@ -3,9 +3,7 @@
   "category": "building",
   "group": "grass_block",
   "key": {
-    "#": {
-      "item": "bwt:grass_slab"
-    }
+    "#": "bwt:grass_slab"
   },
   "pattern": [
     "#",

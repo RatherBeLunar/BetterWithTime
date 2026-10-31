@@ -3,9 +3,7 @@
   "category": "building",
   "group": "podzol_slab",
   "key": {
-    "#": {
-      "item": "minecraft:podzol"
-    }
+    "#": "minecraft:podzol"
   },
   "pattern": [
     "##"

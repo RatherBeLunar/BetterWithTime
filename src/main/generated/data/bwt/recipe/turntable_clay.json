@@ -3,7 +3,7 @@
   "category": "misc",
   "drops": [],
   "ingredient": {
-    "block": "minecraft:clay"
+    "values": "minecraft:clay"
   },
   "output": "bwt:unfired_decorated_pot"
 }

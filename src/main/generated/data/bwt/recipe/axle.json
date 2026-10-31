@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "p": {
-      "tag": "minecraft:planks"
-    },
-    "r": {
-      "item": "bwt:rope"
-    }
+    "p": "#minecraft:planks",
+    "r": "bwt:rope"
   },
   "pattern": [
     "prp"

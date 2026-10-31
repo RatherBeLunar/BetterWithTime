@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:obsidian_detector_rail"
-      }
+      "ingredient": "bwt:obsidian_detector_rail"
     }
   ],
   "results": [

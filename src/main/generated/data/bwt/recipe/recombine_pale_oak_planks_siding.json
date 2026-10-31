@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "planks",
+  "ingredients": [
+    "bwt:pale_oak_planks_siding",
+    "bwt:pale_oak_planks_siding"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:pale_oak_planks"
+  }
+}

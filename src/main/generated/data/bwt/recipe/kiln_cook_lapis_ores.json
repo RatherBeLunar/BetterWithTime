@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:lapis_ores"
+    "values": "#minecraft:lapis_ores"
   }
 }

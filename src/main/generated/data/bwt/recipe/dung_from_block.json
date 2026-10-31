@@ -3,9 +3,7 @@
   "category": "misc",
   "group": "dung",
   "ingredients": [
-    {
-      "item": "bwt:dung_block"
-    }
+    "bwt:dung_block"
   ],
   "result": {
     "count": 9,

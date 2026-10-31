@@ -3,6 +3,8 @@ package com.bwt.blocks;
 import com.bwt.blocks.axles.AxleBlock;
 import com.bwt.items.BwtItems;
 import com.bwt.sounds.BwtSoundEvents;
+import net.minecraft.world.level.*;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Predicate;
@@ -16,9 +18,6 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.PipeBlock;
@@ -27,6 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.Nullable;
 
 public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBase, RotateWithEmptyHand {
     public static final BooleanProperty NORTH = PipeBlock.NORTH;
@@ -118,7 +118,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         if (pos.north().equals(neighborPos)) {
             return state.trySetValue(NORTH, (neighborState.is(BwtBlocks.axleBlock) || neighborState.is(BwtBlocks.axlePowerSourceBlock)) && neighborState.getValue(AxleBlock.AXIS).equals(Direction.Axis.Z));
         }
@@ -158,11 +158,11 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean bl) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {
@@ -194,8 +194,7 @@ public class GearBoxBlock extends SimpleFacingBlock implements MechPowerBlockBas
     }
 
     private void emitGearBoxParticles(Level level, BlockPos pos, RandomSource random) {
-        for ( int iTempCount = 0; iTempCount < 5; iTempCount++ )
-        {
+        for (int i = 0; i < 5; i++) {
             float smokeX = (float)pos.getX() + random.nextFloat();
             float smokeY = (float)pos.getY() + random.nextFloat() * 0.5F + 1.0F;
             float smokeZ = (float)pos.getZ() + random.nextFloat();

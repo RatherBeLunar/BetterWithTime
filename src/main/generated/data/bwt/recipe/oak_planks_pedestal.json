@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:oak_planks"
-    },
-    "s": {
-      "item": "bwt:oak_planks_siding"
-    }
+    "#": "minecraft:oak_planks",
+    "s": "bwt:oak_planks_siding"
   },
   "pattern": [
     " s ",

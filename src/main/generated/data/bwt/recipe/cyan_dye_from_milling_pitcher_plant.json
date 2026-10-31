@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:pitcher_plant"
-      }
+      "ingredient": "minecraft:pitcher_plant"
     }
   ],
   "results": [

@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "minecraft:bone"
-    },
-    "m": {
-      "tag": "bwt:wooden_moulding_blocks"
-    },
-    "s": {
-      "item": "minecraft:string"
-    }
+    "b": "minecraft:bone",
+    "m": "#bwt:wooden_moulding_blocks",
+    "s": "minecraft:string"
   },
   "pattern": [
     " mb",

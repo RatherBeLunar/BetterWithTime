@@ -4,19 +4,13 @@
   "group": "filament",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:glowstone_dust"
-      }
+      "ingredient": "minecraft:glowstone_dust"
     },
     {
-      "ingredient": {
-        "item": "minecraft:redstone"
-      }
+      "ingredient": "minecraft:redstone"
     },
     {
-      "ingredient": {
-        "item": "bwt:hemp_fiber"
-      }
+      "ingredient": "bwt:hemp_fiber"
     }
   ],
   "results": [

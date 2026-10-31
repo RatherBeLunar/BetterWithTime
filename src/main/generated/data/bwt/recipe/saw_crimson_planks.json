@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:crimson_planks"
+    "values": "minecraft:crimson_planks"
   }
 }

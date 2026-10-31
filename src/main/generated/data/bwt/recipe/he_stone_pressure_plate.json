@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shapeless",
   "category": "redstone",
   "ingredients": [
-    {
-      "item": "bwt:stone_siding"
-    }
+    "bwt:stone_siding"
   ],
   "result": {
     "count": 1,

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:jungle_wood"
+    "values": "minecraft:jungle_wood"
   }
 }

@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_vase"
+    "values": "bwt:unfired_vase"
   }
 }

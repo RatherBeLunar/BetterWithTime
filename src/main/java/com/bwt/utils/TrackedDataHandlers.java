@@ -1,6 +1,7 @@
 package com.bwt.utils;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricTrackedDataRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.CompoundTag;
@@ -10,13 +11,19 @@ import net.minecraft.network.syncher.EntityDataSerializer;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Map;
+import java.util.Objects;
 
 public class TrackedDataHandlers implements ModInitializer {
     public static final EntityDataSerializer<Map<Vec3i, BlockState>> blockStateMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, BlockState> decode(RegistryFriendlyByteBuf buf) {
-            return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, innerBuf -> Block.BLOCK_STATE_REGISTRY.byId(innerBuf.readInt()));
+        public @NotNull Map<Vec3i, BlockState> decode(RegistryFriendlyByteBuf buf) {
+            return buf.readMap(
+                    RegistryFriendlyByteBuf::readBlockPos,
+                    innerBuf -> Objects.requireNonNull(Block.BLOCK_STATE_REGISTRY.byId(innerBuf.readInt()))
+            );
         }
 
         @Override
@@ -26,7 +33,7 @@ public class TrackedDataHandlers implements ModInitializer {
     });
     public static final EntityDataSerializer<Map<Vec3i, CompoundTag>> blockEntityMapHandler = EntityDataSerializer.forValueType(new StreamCodec<>() {
         @Override
-        public Map<Vec3i, CompoundTag> decode(RegistryFriendlyByteBuf buf) {
+        public @NotNull Map<Vec3i, CompoundTag> decode(RegistryFriendlyByteBuf buf) {
             return buf.readMap(RegistryFriendlyByteBuf::readBlockPos, RegistryFriendlyByteBuf::readNbt);
         }
 
@@ -38,7 +45,7 @@ public class TrackedDataHandlers implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        EntityDataSerializers.registerSerializer(blockStateMapHandler);
-        EntityDataSerializers.registerSerializer(blockEntityMapHandler);
+        FabricTrackedDataRegistry.register(Id.of("block_state_map"), blockStateMapHandler);
+        FabricTrackedDataRegistry.register(Id.of("block_entity_map"), blockEntityMapHandler);
     }
 }

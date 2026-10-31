@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:unfired_planter"
+    "values": "bwt:unfired_planter"
   }
 }

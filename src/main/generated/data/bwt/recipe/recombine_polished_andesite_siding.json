@@ -2,12 +2,8 @@
   "type": "bwt:soul_forge_shapeless",
   "category": "building",
   "ingredients": [
-    {
-      "item": "bwt:polished_andesite_siding"
-    },
-    {
-      "item": "bwt:polished_andesite_siding"
-    }
+    "bwt:polished_andesite_siding",
+    "bwt:polished_andesite_siding"
   ],
   "result": {
     "count": 1,

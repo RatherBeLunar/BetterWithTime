@@ -12,7 +12,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -50,19 +51,20 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
-        if (!newState.is(this) || !newState.getValue(FACING).equals(state.getValue(FACING))) {
-            LensBeamHelper.killBeam(level, pos, state.getValue(FACING));
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        BlockState newState = serverLevel.getBlockState(blockPos);
+        if (!newState.is(this) || !newState.getValue(FACING).equals(blockState.getValue(FACING))) {
+            LensBeamHelper.killBeam(serverLevel, blockPos, blockState.getValue(FACING));
         }
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!level.getBlockTicks().willTickThisTick(pos, this)) {
-            level.scheduleTick(pos, this, lensTickRate);
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        if (!scheduledTickAccess.getBlockTicks().willTickThisTick(pos, this)) {
+            scheduledTickAccess.scheduleTick(pos, this, lensTickRate);
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource);
     }
 
     @Override
@@ -138,8 +140,8 @@ public class LensBlock extends SimpleFacingBlock implements RotateWithEmptyHand 
             }
             BlockPos targetPos = pos.relative(direction);
             BlockState neighborState = level.getBlockState(targetPos);
-            level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 511);
-            level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
+            level.neighborShapeChanged(direction.getOpposite(), targetPos, pos, state, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 511);
+            level.neighborChanged(neighborState, targetPos, state.getBlock(), null, false);
         }
     }
 }

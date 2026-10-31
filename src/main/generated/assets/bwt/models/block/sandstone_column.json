@@ -1,8 +1,0 @@
-{
-  "parent": "bwt:block/column",
-  "textures": {
-    "bottom": "minecraft:block/sandstone",
-    "side": "minecraft:block/sandstone",
-    "top": "minecraft:block/sandstone"
-  }
-}

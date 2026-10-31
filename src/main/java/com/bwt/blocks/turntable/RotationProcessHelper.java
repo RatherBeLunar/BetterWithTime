@@ -42,11 +42,11 @@ public interface RotationProcessHelper {
         register(DiodeBlock.class, (level, pos, originalState, rotatedState, rotatingBlockEntity) -> {
             rotatedState = Block.updateFromNeighbourShapes(rotatedState, level, pos);
             setBlockStateWithForcedUpdates(level, pos, rotatedState);
-            rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, pos.below(), true);
+            rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, null, true);
         });
         register(DoorBlock.class, (level, pos, originalState, rotatedState, rotatingBlockEntity) -> {
             setBlockStateWithForcedUpdates(level, pos, rotatedState);
-            rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, pos.below(), true);
+            rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, null, true);
         });
     }
 
@@ -57,11 +57,11 @@ public interface RotationProcessHelper {
             return;
         }
         setBlockStateWithForcedUpdates(level, pos, rotatedState);
-        rotatedState.getBlock().setPlacedBy(level, pos, rotatedState, null, rotatedState.getBlock().getCloneItemStack(level, pos, rotatedState));
+        rotatedState.getBlock().setPlacedBy(level, pos, rotatedState, null, rotatedState.getCloneItemStack(level, pos, true));
         if (rotatingBlockEntity != null) {
             level.setBlockEntity(rotatingBlockEntity);
         }
-        rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, pos.below(), true);
+        rotatedState.handleNeighborChanged(level, pos, BwtBlocks.turntableBlock, null, true);
     }
 
     static void setBlockStateWithForcedUpdates(Level level, BlockPos pos, BlockState state) {
@@ -84,8 +84,8 @@ public interface RotationProcessHelper {
         Block block = state.getBlock();
 
         if ((flags & Block.UPDATE_NEIGHBORS) != 0) {
-            level.blockUpdated(pos, block);
-            if (!level.isClientSide && state.hasAnalogOutputSignal()) {
+            level.updateNeighborsAt(pos, block);
+            if (!level.isClientSide() && state.hasAnalogOutputSignal()) {
                 level.updateNeighbourForOutputSignal(pos, block);
             }
         }

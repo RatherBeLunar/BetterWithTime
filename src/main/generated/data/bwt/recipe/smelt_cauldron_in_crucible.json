@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:cauldron"
-      }
+      "ingredient": "minecraft:cauldron"
     }
   ],
   "results": [

@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:crimson_planks_moulding"
-    }
+    "#": "bwt:crimson_planks_moulding"
   },
   "pattern": [
     "#",

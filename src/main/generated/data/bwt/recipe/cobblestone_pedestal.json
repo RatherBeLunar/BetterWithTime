@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:cobblestone"
-    },
-    "s": {
-      "item": "bwt:cobblestone_siding"
-    }
+    "#": "minecraft:cobblestone",
+    "s": "bwt:cobblestone_siding"
   },
   "pattern": [
     " s ",

@@ -33,7 +33,7 @@ public interface HorizontalBlockAttachmentHelper {
         static IsAttachedPredicate directional(DirectionalIsAttachedPredicate directionalIsAttachedPredicate) {
             return (attachedToPos, attachedToState, thisPos, thisState) -> {
                 Vec3i directionVector = thisPos.subtract(attachedToPos);
-                Direction direction = Direction.fromDelta(directionVector.getX(), 0, directionVector.getZ());
+                Direction direction = Direction.getApproximateNearest(directionVector.getX(), 0, directionVector.getZ());
                 return directionalIsAttachedPredicate.test(attachedToState, thisState, direction);
             };
         }

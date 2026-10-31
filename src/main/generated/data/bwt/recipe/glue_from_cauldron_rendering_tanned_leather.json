@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:tanned_leather"
-      }
+      "ingredient": "bwt:tanned_leather"
     }
   ],
   "results": [

@@ -1,6 +1,7 @@
 package com.bwt.blocks.blood_wood;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.utils.BlockPosAndState;
 import com.bwt.utils.RadiusAroundBlockStream;
@@ -10,6 +11,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -46,7 +48,7 @@ public class BloodWoodLogBlock extends RotatedPillarBlock {
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.randomTick(state, level, pos, random);
         if (canGrow(state)) {
-            if (level.dimensionType().ultraWarm()) {
+            if (level.environmentAttributes().getValue(BwtEnvironmentAttributes.BLOOD_WOOD_SPREADS, pos)) {
                 grow(level, pos, state, random);
             }
             level.setBlockAndUpdate(pos, state.setValue(CAN_GROW, false));
@@ -140,8 +142,8 @@ public class BloodWoodLogBlock extends RotatedPillarBlock {
                 // split
                 Direction[] growthDirections = new Direction[2];
 
-                for (int iTempCount = 0; iTempCount < 2; iTempCount++) {
-                    growthDirections[iTempCount] = Direction.DOWN;
+                for (int i = 0; i < 2; i++) {
+                    growthDirections[i] = Direction.DOWN;
 
                     Direction targetFacing = randomHorizontalDirection(random);
 
@@ -158,7 +160,7 @@ public class BloodWoodLogBlock extends RotatedPillarBlock {
                     }
 
                     if (attemptToGrowIntoBlock(serverLevel, targetPos, iTargetGrowthDirection)) {
-                        growthDirections[iTempCount] = targetFacing;
+                        growthDirections[i] = targetFacing;
                     }
                 }
 

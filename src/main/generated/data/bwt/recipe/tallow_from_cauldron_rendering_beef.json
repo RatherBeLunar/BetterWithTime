@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:beef"
-      }
+      "ingredient": "minecraft:beef"
     }
   ],
   "results": [

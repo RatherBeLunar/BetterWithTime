@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "b": {
-      "item": "bwt:wood_blade"
-    }
+    "b": "bwt:wood_blade"
   },
   "pattern": [
     "bbb",

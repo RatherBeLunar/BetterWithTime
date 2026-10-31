@@ -5,15 +5,11 @@
   "ingredients": [
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:netherite_scrap"
-      }
+      "ingredient": "minecraft:netherite_scrap"
     },
     {
       "count": 4,
-      "ingredient": {
-        "item": "minecraft:gold_ingot"
-      }
+      "ingredient": "minecraft:gold_ingot"
     }
   ],
   "results": [

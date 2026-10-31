@@ -4,14 +4,10 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:black_wool_slab"
-      }
+      "ingredient": "bwt:black_wool_slab"
     },
     {
-      "ingredient": {
-        "item": "bwt:potash"
-      }
+      "ingredient": "bwt:potash"
     }
   ],
   "results": [

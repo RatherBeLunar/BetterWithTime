@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_fence_gate"
+    "values": "minecraft:cherry_fence_gate"
   }
 }

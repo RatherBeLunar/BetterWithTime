@@ -61,7 +61,7 @@ public class SpawnerMossyCobbleMixin {
             return;
         }
         MobSpawnerConversionRecipeInput recipeInput = new MobSpawnerConversionRecipeInput(blockState.getBlock());
-        Optional<MobSpawnerConversionRecipe> recipe = level.getRecipeManager().getRecipeFor(
+        Optional<MobSpawnerConversionRecipe> recipe = level.recipeAccess().getRecipeFor(
                 BwtRecipes.MOB_SPAWNER_CONVERSION_RECIPE_TYPE,
                 recipeInput,
                 level
@@ -70,7 +70,7 @@ public class SpawnerMossyCobbleMixin {
             return;
         }
 
-        Block blockToPlace = recipe.get().getResult();
+        Block blockToPlace = recipe.get().result();
         BlockState newState = copyProperties(blockState, blockToPlace);
         level.setBlockAndUpdate(randomPos, newState);
     }

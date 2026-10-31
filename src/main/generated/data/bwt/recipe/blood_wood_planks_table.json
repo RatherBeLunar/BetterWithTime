@@ -3,12 +3,8 @@
   "category": "building",
   "group": "table",
   "key": {
-    "m": {
-      "item": "bwt:blood_wood_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:blood_wood_planks_siding"
-    }
+    "m": "bwt:blood_wood_planks_moulding",
+    "s": "bwt:blood_wood_planks_siding"
   },
   "pattern": [
     "sss",

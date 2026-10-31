@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:cobbled_deepslate_moulding"
-    }
+    "#": "bwt:cobbled_deepslate_moulding"
   },
   "pattern": [
     "#",

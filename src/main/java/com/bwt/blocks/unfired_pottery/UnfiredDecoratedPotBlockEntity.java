@@ -2,6 +2,11 @@ package com.bwt.blocks.unfired_pottery;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.world.item.component.ItemContainerContents;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -34,15 +39,17 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        this.sherds.save(nbt);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        if (!this.sherds.equals(PotDecorations.EMPTY)) {
+            valueOutput.store(SHERDS_NBT_KEY, PotDecorations.CODEC, this.sherds);
+        }
     }
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.sherds = PotDecorations.load(nbt);
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.sherds = valueInput.read(SHERDS_NBT_KEY, PotDecorations.CODEC).orElse(PotDecorations.EMPTY);
     }
 
     @Nullable
@@ -52,10 +59,8 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
     }
 
     @Override
-    public CompoundTag getUpdateTag(HolderLookup.Provider registryLookup) {
-        CompoundTag nbtCompound = saveWithoutMetadata(registryLookup);
-        sherds.save(nbtCompound);
-        return nbtCompound;
+    public CompoundTag getUpdateTag(HolderLookup.Provider provider) {
+        return this.saveCustomOnly(provider);
     }
 
     private void updateListeners() {
@@ -103,6 +108,10 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
 
     public List<Optional<Item>> getRotationalSherds() {
         return List.of(sherds.front(), sherds.right(), sherds.back(), sherds.left());
+    }
+
+    public PotDecorations getPotDecorations() {
+        return new PotDecorations(sherds.back(), sherds.left(), sherds.right(), sherds.front());
     }
 
     public void setRotationalSherds(List<Optional<Item>> rotationalSherds) {
@@ -178,14 +187,15 @@ public class UnfiredDecoratedPotBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void applyImplicitComponents(BlockEntity.DataComponentInput components) {
-        super.applyImplicitComponents(components);
-        this.sherds = components.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
+    protected void applyImplicitComponents(DataComponentGetter dataComponentGetter) {
+        super.applyImplicitComponents(dataComponentGetter);
+        this.sherds = dataComponentGetter.getOrDefault(DataComponents.POT_DECORATIONS, PotDecorations.EMPTY);
     }
 
+
     @Override
-    public void removeComponentsFromTag(CompoundTag nbt) {
-        super.removeComponentsFromTag(nbt);
-        nbt.remove(SHERDS_NBT_KEY);
+    public void removeComponentsFromTag(ValueOutput valueOutput) {
+        super.removeComponentsFromTag(valueOutput);
+        valueOutput.discard(SHERDS_NBT_KEY);
     }
 }

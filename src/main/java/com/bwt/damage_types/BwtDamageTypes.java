@@ -16,6 +16,6 @@ public class BwtDamageTypes implements ModInitializer {
     }
 
     public static DamageSource of(Level level, ResourceKey<DamageType> key) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key));
+        return new DamageSource(level.registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(key));
     }
 }

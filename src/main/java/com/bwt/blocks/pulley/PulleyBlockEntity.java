@@ -6,22 +6,18 @@ import com.bwt.blocks.BwtBlocks;
 import com.bwt.blocks.RopeBlock;
 import com.bwt.entities.MovingRopeEntity;
 import com.bwt.items.BwtItems;
+import com.bwt.utils.SlotPreservingSimpleContainer;
 import net.fabricmc.fabric.api.transfer.v1.item.InventoryStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemVariant;
 import net.fabricmc.fabric.api.transfer.v1.transaction.Transaction;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -36,6 +32,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.RailShape;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+
 import java.util.*;
 
 public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Container {
@@ -95,7 +94,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
     }
 
     public static void tick(Level level, BlockPos pos, BlockState state, PulleyBlockEntity blockEntity) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         blockEntity.tryNextOperation(level, pos, state);
@@ -166,7 +165,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         BlockPos newPos = RopeBlock.getBottomRopePos(level, pos).below();
         BlockState newState = level.getBlockState(newPos);
         boolean flag = !isMoving && validRopeConnector(newState);
-        return newPos.getY() > level.getMinBuildHeight() && (newState.canBeReplaced() || flag) && newPos.above().getY() > level.getMinBuildHeight();
+        return level.isInsideBuildHeight(newPos.getY()) && (newState.canBeReplaced() || flag) && level.isInsideBuildHeight(newPos.above().getY());
     }
 
     private void goUp(Level level, BlockPos pos) {
@@ -217,7 +216,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         }
 
 
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             for (BlockPos blockPos : platformBlocks) {
                 Vec3i offset = blockPos.subtract(anchor.above());
                 rope.addBlock(offset, level, blockPos, level.getBlockState(blockPos));
@@ -297,7 +296,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         return fails.isEmpty();
     }
 
-    public boolean onJobCompleted(Level level, BlockPos pulleyPos, BlockState pulleyState, boolean up, int targetY) {
+    public boolean onJobCompleted(ServerLevel level, BlockPos pulleyPos, BlockState pulleyState, boolean up, int targetY) {
         BlockPos ropePos = new BlockPos(pulleyPos.getX(), targetY - (up ? 1 : 0), pulleyPos.getZ());
         BlockState state = level.getBlockState(ropePos);
         BlockState defaultRopeState = BwtBlocks.ropeBlock.defaultBlockState();
@@ -376,22 +375,19 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
 
 
     @Override
-    protected void loadAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.loadAdditional(nbt, registryLookup);
-        this.inventory.fromTag(nbt.getList("Inventory", Tag.TAG_COMPOUND), registryLookup);
-        this.mechPower = nbt.getInt("mechPower");
-        if (nbt.contains("ropeId")) {
-            this.ropeId = nbt.getUUID("ropeId");
-        }
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        this.inventory.fromSlots(valueInput.listOrEmpty("Inventory", ItemStackWithSlot.CODEC));
+        this.mechPower = valueInput.getIntOr("mechPower", 0);
+        valueInput.read("ropeId", UUIDUtil.CODEC).ifPresent(uUID -> this.ropeId = uUID);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag nbt, HolderLookup.Provider registryLookup) {
-        super.saveAdditional(nbt, registryLookup);
-        nbt.put("Inventory", this.inventory.createTag(registryLookup));
-        nbt.putInt("mechPower", this.mechPower);
+    protected void saveAdditional(ValueOutput valueOutput) {
+        this.inventory.storeAsSlots(valueOutput.list("Inventory", ItemStackWithSlot.CODEC));
+        valueOutput.putInt("mechPower", this.mechPower);
         if (this.rope != null && !rope.isRemoved()) {
-            nbt.putUUID("ropeId", this.rope.getUUID());
+            valueOutput.store("ropeId", UUIDUtil.CODEC, this.rope.getUUID());
         }
     }
 
@@ -450,7 +446,7 @@ public class PulleyBlockEntity extends BlockEntity implements MenuProvider, Cont
         inventory.clearContent();
     }
 
-    public class Inventory extends SimpleContainer {
+    public class Inventory extends SlotPreservingSimpleContainer {
         public Inventory(int size) {
             super(size);
         }

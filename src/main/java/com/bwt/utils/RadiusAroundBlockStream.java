@@ -75,11 +75,11 @@ public class RadiusAroundBlockStream {
         return radiusAroundBlock2D(centerPos, radius, radius, false);
     }
 
-    public static Stream<BlockPos> allNeighbors(BlockPos centerPos) {
-        return neighboringBlocksInRadius(centerPos, 1);
-    }
-
-    public static Stream<BlockPos> allHorizontalNeighbors(BlockPos centerPos) {
-        return neighboringBlocksInHorizontalRadius(centerPos, 1);
-    }
+//    public static Stream<BlockPos> allNeighbors(BlockPos centerPos) {
+//        return neighboringBlocksInRadius(centerPos, 1);
+//    }
+//
+//    public static Stream<BlockPos> allHorizontalNeighbors(BlockPos centerPos) {
+//        return neighboringBlocksInHorizontalRadius(centerPos, 1);
+//    }
 }

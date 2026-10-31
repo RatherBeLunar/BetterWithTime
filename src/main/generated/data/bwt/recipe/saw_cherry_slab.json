@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_slab"
+    "values": "minecraft:cherry_slab"
   }
 }

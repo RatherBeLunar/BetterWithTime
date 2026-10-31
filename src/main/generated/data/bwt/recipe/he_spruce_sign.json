@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "wooden_sign",
   "key": {
-    "m": {
-      "item": "bwt:spruce_planks_moulding"
-    },
-    "s": {
-      "item": "bwt:spruce_planks_siding"
-    }
+    "m": "bwt:spruce_planks_moulding",
+    "s": "bwt:spruce_planks_siding"
   },
   "pattern": [
     "s",

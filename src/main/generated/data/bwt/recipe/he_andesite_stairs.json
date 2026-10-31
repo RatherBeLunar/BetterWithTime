@@ -2,9 +2,7 @@
   "type": "bwt:soul_forge_shaped",
   "category": "building",
   "key": {
-    "m": {
-      "item": "bwt:andesite_moulding"
-    }
+    "m": "bwt:andesite_moulding"
   },
   "pattern": [
     "m ",

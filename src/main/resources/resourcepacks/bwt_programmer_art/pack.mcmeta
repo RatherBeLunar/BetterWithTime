@@ -1,6 +1,8 @@
 {
     "pack": {
-        "pack_format": 34,
+        "pack_format": 75,
+        "min_format": 65,
+        "max_format": 84,
         "description": "The classic look of BTW"
     }
 }

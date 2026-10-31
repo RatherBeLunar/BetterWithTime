@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:bamboo_mosaic_siding"
+    "values": "bwt:bamboo_mosaic_siding"
   }
 }

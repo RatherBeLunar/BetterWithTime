@@ -22,10 +22,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FaceAttachedHorizontalDirectionalBlock;
@@ -33,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.AttachFace;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -102,31 +100,31 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         return state;
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.hasNeighborSignal(pos)) {
-            level.scheduleTick(pos, this, 1);
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.hasNeighborSignal(blockPos)) {
+            level.scheduleTick(blockPos, this, 1);
         }
-        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
-        if (canSurvive(state, level, pos)) {
+        if (canSurvive(blockState, level, blockPos)) {
             return;
         }
-        dropResources(state, level, pos);
-        level.removeBlock(pos, notify);
+        dropResources(blockState, level, blockPos);
+        level.removeBlock(blockPos, notify);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
         if (moved) {
             return;
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override
@@ -141,7 +139,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
             return;
         }
         level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, explosion.getIndirectSourceEntity());
@@ -150,7 +148,7 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
     }
 
     private static void prime(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity igniter) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         MiningChargeEntity miningChargeEntity = new MiningChargeEntity(level, pos.getCenter().subtract(0, 0.5, 0), state, igniter);
@@ -170,24 +168,25 @@ public class MiningChargeBlock extends FaceAttachedHorizontalDirectionalBlock {
         Item item = itemStack.getItem();
         if (!player.isCreative()) {
             if (itemStack.is(Items.FLINT_AND_STEEL)) {
-                itemStack.hurtAndBreak(1, player, Player.getSlotForHand(player.getUsedItemHand()));
+                itemStack.hurtAndBreak(1, player, player.getUsedItemHand());
             } else {
                 itemStack.shrink(1);
             }
         }
         player.awardStat(Stats.ITEM_USED.get(item));
-        return InteractionResult.sidedSuccess(level.isClientSide);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
     public void onProjectileHit(Level level, BlockState state, BlockHitResult hit, Projectile projectile) {
-        if (!level.isClientSide) {
-            BlockPos blockPos = hit.getBlockPos();
-            Entity entity = projectile.getOwner();
-            if (projectile.isOnFire() && projectile.mayInteract(level, blockPos)) {
-                prime(level, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
-                level.removeBlock(blockPos, false);
-            }
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        BlockPos blockPos = hit.getBlockPos();
+        Entity entity = projectile.getOwner();
+        if (projectile.isOnFire() && projectile.mayInteract(serverLevel, blockPos)) {
+            prime(serverLevel, blockPos, state, entity instanceof LivingEntity ? (LivingEntity)entity : null);
+            serverLevel.removeBlock(blockPos, false);
         }
     }
 

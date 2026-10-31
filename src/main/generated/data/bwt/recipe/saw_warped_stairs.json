@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_stairs"
+    "values": "minecraft:warped_stairs"
   }
 }

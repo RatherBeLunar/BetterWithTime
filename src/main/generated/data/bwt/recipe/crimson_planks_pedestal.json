@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:crimson_planks"
-    },
-    "s": {
-      "item": "bwt:crimson_planks_siding"
-    }
+    "#": "minecraft:crimson_planks",
+    "s": "bwt:crimson_planks_siding"
   },
   "pattern": [
     " s ",

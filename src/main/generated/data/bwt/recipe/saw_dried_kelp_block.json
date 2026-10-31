@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:dried_kelp_block"
+    "values": "minecraft:dried_kelp_block"
   }
 }

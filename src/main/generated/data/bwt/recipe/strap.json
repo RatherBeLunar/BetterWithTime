@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    {
-      "item": "bwt:tanned_leather"
-    }
+    "bwt:tanned_leather"
   ],
   "result": {
     "count": 8,

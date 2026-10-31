@@ -2,7 +2,7 @@
   "type": "bwt:mob_spawner_conversion",
   "category": "misc",
   "ingredient": {
-    "block": "minecraft:cobblestone_wall"
+    "values": "minecraft:cobblestone_wall"
   },
   "result": "minecraft:mossy_cobblestone_wall"
 }

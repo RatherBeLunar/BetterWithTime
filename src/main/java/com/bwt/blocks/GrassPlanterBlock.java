@@ -35,7 +35,7 @@ public class GrassPlanterBlock extends PlanterBlock {
 
         BlockPos abovePlanterPos = pos.above();
         BlockState shortGrassState = Blocks.SHORT_GRASS.defaultBlockState();
-        Optional<Holder.Reference<PlacedFeature>> optionalPlacedFeature = level.registryAccess().registryOrThrow(Registries.PLACED_FEATURE).getHolder(VegetationPlacements.GRASS_BONEMEAL);
+        Optional<Holder.Reference<PlacedFeature>> optionalPlacedFeature = level.registryAccess().lookupOrThrow(Registries.PLACED_FEATURE).get(VegetationPlacements.GRASS_BONEMEAL);
         block0: for (int i = 0; i < 128; ++i) {
             Holder<PlacedFeature> registryEntry;
             BlockPos aboveNeighborPos = abovePlanterPos;
@@ -53,7 +53,7 @@ public class GrassPlanterBlock extends PlanterBlock {
             if (random.nextInt(8) == 0) {
                 List<ConfiguredFeature<?, ?>> list = level.getBiome(aboveNeighborPos).value().getGenerationSettings().getFlowerFeatures();
                 if (list.isEmpty()) continue;
-                registryEntry = ((RandomPatchConfiguration)list.get(0).config()).feature();
+                registryEntry = ((RandomPatchConfiguration)list.getFirst().config()).feature();
             } else {
                 if (optionalPlacedFeature.isEmpty()) continue;
                 registryEntry = optionalPlacedFeature.get();

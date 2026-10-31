@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -126,11 +127,6 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState state) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-
-    @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return OUTLINE_SHAPE;
     }
@@ -153,17 +149,17 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, level, pos);
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(blockState, serverLevel, blockPos);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public BlockState getPowerStates(BlockState state, Level level, BlockPos pos) {
@@ -186,18 +182,18 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
 
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-        if (level.isClientSide) {
+        if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        BlockEntity blockEntity = level.getBlockEntity(pos);
+        BlockEntity blockEntity = serverLevel.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
-            hopperBlockEntity.onEntityCollided(level, entity);
+            hopperBlockEntity.onEntityCollided(serverLevel, entity);
         }
     }
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MechHopperBlockEntity hopperBlockEntity) {
             player.openMenu(hopperBlockEntity);
@@ -212,7 +208,15 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
 
     @Nullable
     protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
-        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.mechHopperBlockEntity, MechHopperBlockEntity::tick);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return createTickerHelper(
+                givenType,
+                BwtBlockEntities.mechHopperBlockEntity,
+                (_level, blockPos, blockState, blockEntity) ->
+                        MechHopperBlockEntity.serverTick(serverLevel, blockPos, blockState, blockEntity)
+        );
     }
 
     @Nullable
@@ -227,7 +231,7 @@ public class MechHopperBlock extends BaseEntityBlock implements MechPowerBlockBa
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 }

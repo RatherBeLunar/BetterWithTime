@@ -1,7 +1,5 @@
 {
   "animation": {
-    "frametime": 1,
-    "width": 16,
-    "height": 32
+    "frametime": 1
   }
 }

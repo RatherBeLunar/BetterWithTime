@@ -2,15 +2,9 @@
   "type": "bwt:soul_forge_shaped",
   "category": "equipment",
   "key": {
-    "S": {
-      "item": "bwt:strap"
-    },
-    "n": {
-      "item": "minecraft:netherite_ingot"
-    },
-    "p": {
-      "item": "bwt:padding"
-    }
+    "S": "bwt:strap",
+    "n": "minecraft:netherite_ingot",
+    "p": "bwt:padding"
   },
   "pattern": [
     "SnpS"

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:blood_wood_fence_gate"
+    "values": "bwt:blood_wood_fence_gate"
   }
 }

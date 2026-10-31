@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:nether_bricks_siding"
-    }
+    "X": "bwt:nether_bricks_siding"
   },
   "pattern": [
     "XXXX"

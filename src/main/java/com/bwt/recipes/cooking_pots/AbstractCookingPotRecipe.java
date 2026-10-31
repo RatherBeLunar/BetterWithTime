@@ -1,53 +1,58 @@
 package com.bwt.recipes.cooking_pots;
 
+import com.bwt.generation.SharedRecipeProvider;
+import com.bwt.recipes.IngredientsWithCountRecipe;
 import com.bwt.recipes.IngredientWithCount;
-import com.bwt.generation.EmiDefaultsGenerator;
 import com.bwt.utils.Id;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
-public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecipeInput> {
+public abstract class AbstractCookingPotRecipe implements IngredientsWithCountRecipe<CookingPotRecipeInput> {
     protected final AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type;
     protected final String group;
     protected final CookingPotRecipeCategory category;
-    final NonNullList<IngredientWithCount> ingredients;
-    protected final NonNullList<ItemStack> results;
+    final List<IngredientWithCount> ingredients;
+    protected final List<ItemStack> results;
 
     public AbstractCookingPotRecipe(AbstractCookingPotRecipeType<? extends AbstractCookingPotRecipe> type, String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
         this.type = type;
         this.group = group;
         this.category = category;
-        this.ingredients = NonNullList.of(IngredientWithCount.EMPTY, ingredients.toArray(new IngredientWithCount[0]));
-        this.results = NonNullList.of(ItemStack.EMPTY, results.toArray(new ItemStack[0]));
+        this.ingredients = ingredients;
+        this.results = results;
     }
 
     @Override
@@ -55,19 +60,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         return ingredients.stream().allMatch(input::matches);
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
-    }
-
-    @Override
-    public NonNullList<Ingredient> getIngredients() {
-        NonNullList<Ingredient> defaultedList = NonNullList.create();
-        defaultedList.addAll(this.ingredients.stream().map(IngredientWithCount::toVanilla).toList());
-        return defaultedList;
-    }
-
-    public NonNullList<IngredientWithCount> getIngredientsWithCount() {
+    public List<IngredientWithCount> getIngredientsWithCount() {
         return ingredients;
     }
 
@@ -76,12 +69,12 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
     }
 
     @Override
-    public String getGroup() {
+    public String group() {
         return this.group;
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<? extends AbstractCookingPotRecipe> getType() {
         return this.type;
     }
 
@@ -99,24 +92,36 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         return false;
     }
 
+    @Override
+    public PlacementInfo placementInfo() {
+        return PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of();
+    }
+
+    @Override
+    public RecipeBookCategory recipeBookCategory() {
+        return switch (this.category) {
+            case BLOCKS -> RecipeBookCategories.FURNACE_BLOCKS;
+            case FOOD -> RecipeBookCategories.FURNACE_FOOD;
+            case MISC, RECLAIM -> RecipeBookCategories.FURNACE_MISC;
+        };
+    }
+
 
     @Override
     public ItemStack assemble(CookingPotRecipeInput input, HolderLookup.Provider lookup) {
-        return getResultItem(lookup);
-    }
-
-    @Override
-    public ItemStack getResultItem(HolderLookup.Provider registriesLookup) {
-        return results.get(0);
+        return results.getFirst();
     }
 
     public static class Serializer implements RecipeSerializer<AbstractCookingPotRecipe> {
-        private final RecipeFactory<AbstractCookingPotRecipe> recipeFactory;
         public final MapCodec<AbstractCookingPotRecipe> CODEC;
         public final StreamCodec<RegistryFriendlyByteBuf, AbstractCookingPotRecipe> PACKET_CODEC;
 
         public Serializer(RecipeFactory<AbstractCookingPotRecipe> recipeFactory) {
-            this.recipeFactory = recipeFactory;
             this.CODEC = RecordCodecBuilder.mapCodec(
                     instance->instance.group(
                             Codec.STRING.fieldOf("group")
@@ -124,7 +129,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
                             CookingPotRecipeCategory.CODEC.fieldOf("category")
                                     .orElse(CookingPotRecipeCategory.MISC)
                                     .forGetter(recipe -> recipe.category),
-                            IngredientWithCount.Serializer.DISALLOW_EMPTY_CODEC.codec()
+                            IngredientWithCount.Serializer.CODEC.codec()
                                     .listOf()
                                     .fieldOf("ingredients")
                                     .forGetter(recipe -> recipe.ingredients),
@@ -134,8 +139,12 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
                                     .forGetter(AbstractCookingPotRecipe::getResults)
                     ).apply(instance, recipeFactory::create)
             );
-            this.PACKET_CODEC = StreamCodec.of(
-                    this::write, this::read
+            this.PACKET_CODEC = StreamCodec.composite(
+                    ByteBufCodecs.STRING_UTF8, AbstractCookingPotRecipe::group,
+                    CookingPotRecipeCategory.STREAM_CODEC, AbstractCookingPotRecipe::getCategory,
+                    IngredientWithCount.Serializer.PACKET_CODEC.apply(ByteBufCodecs.list()), AbstractCookingPotRecipe::getIngredientsWithCount,
+                    ItemStack.STREAM_CODEC.apply(ByteBufCodecs.list()), AbstractCookingPotRecipe::getResults,
+                    recipeFactory::create
             );
         }
 
@@ -148,26 +157,6 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         public StreamCodec<RegistryFriendlyByteBuf, AbstractCookingPotRecipe> streamCodec() {
             return PACKET_CODEC;
         }
-
-        protected AbstractCookingPotRecipe read(RegistryFriendlyByteBuf buf) {
-            String group = buf.readUtf();
-            CookingPotRecipeCategory category = buf.readEnum(CookingPotRecipeCategory.class);
-            int ingredientsSize = buf.readVarInt();
-            NonNullList<IngredientWithCount> ingredients = NonNullList.withSize(ingredientsSize, IngredientWithCount.EMPTY);
-            ingredients.replaceAll(ignored -> IngredientWithCount.Serializer.read(buf));
-            List<ItemStack> results = ItemStack.LIST_STREAM_CODEC.decode(buf);
-            return this.recipeFactory.create(group, category, ingredients, results);
-        }
-
-        protected void write(RegistryFriendlyByteBuf buf, AbstractCookingPotRecipe recipe) {
-            buf.writeUtf(recipe.group);
-            buf.writeEnum(recipe.category);
-            buf.writeVarInt(recipe.ingredients.size());
-            for (IngredientWithCount ingredient : recipe.ingredients) {
-                IngredientWithCount.Serializer.write(buf, ingredient);
-            }
-            ItemStack.LIST_STREAM_CODEC.encode(buf, recipe.getResults());
-        }
     }
 
     public interface RecipeFactory<T extends AbstractCookingPotRecipe> {
@@ -176,6 +165,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
 
     public abstract static class JsonBuilder<T extends AbstractCookingPotRecipe>
             implements RecipeBuilder {
+        protected final SharedRecipeProvider recipeProvider;
         protected RecipeCategory category;
         protected CookingPotRecipeCategory cookingCategory;
         protected final NonNullList<IngredientWithCount> ingredients = NonNullList.create();
@@ -185,6 +175,10 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         @Nullable
         protected String group;
         protected abstract RecipeFactory<T> getRecipeFactory();
+
+        protected JsonBuilder(SharedRecipeProvider recipeProvider) {
+            this.recipeProvider = recipeProvider;
+        }
 
         public JsonBuilder<T> category(RecipeCategory category) {
             this.category = category;
@@ -209,8 +203,8 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         }
 
         public JsonBuilder<T> ingredient(ItemStack itemStack) {
-            this.unlockedBy(RecipeProvider.getHasName(itemStack.getItem()), RecipeProvider.has(itemStack.getItem()));
-            return this.ingredient(IngredientWithCount.fromStack(itemStack));
+            this.unlockedBy(RecipeProvider.getHasName(itemStack.getItem()), recipeProvider.has(itemStack.getItem()));
+            return this.ingredient(IngredientWithCount.of(itemStack));
         }
 
         public JsonBuilder<T> ingredient(Item item, int count) {
@@ -222,8 +216,8 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
         }
 
         public JsonBuilder<T> ingredient(TagKey<Item> itemTag, int count) {
-            this.unlockedBy("has_" + itemTag.location().getPath(), RecipeProvider.has(itemTag));
-            return this.ingredient(IngredientWithCount.fromTag(itemTag, count));
+            this.unlockedBy("has_" + itemTag.location().getPath(), recipeProvider.has(itemTag));
+            return this.ingredient(recipeProvider.ingredientWithCountOf(itemTag, count));
         }
 
         public JsonBuilder<T> ingredient(TagKey<Item> itemTag) {
@@ -262,37 +256,29 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
             return this;
         }
 
-        protected boolean isDefaultRecipe;
-        public JsonBuilder<T> markDefault() {
-            this.isDefaultRecipe = true;
-            return this;
-        }
-        public void addToDefaults(ResourceLocation recipeId) {
-            if (this.isDefaultRecipe) {
-                EmiDefaultsGenerator.addBwtRecipe(recipeId.withPrefix("/"));
-            }
-        }
-
         @Override
         public Item getResult() {
-            return results.get(0).getItem();
+            return results.getFirst().getItem();
         }
 
         @Override
-        public void save(RecipeOutput exporter, String recipePath) {
-            this.save(exporter, Id.of(recipePath));
+        public void save(RecipeOutput recipeOutput, String recipePath) {
+            this.save(recipeOutput, Id.of(recipePath));
+        }
+
+        public void save(RecipeOutput recipeOutput, Identifier recipeId) {
+            this.save(recipeOutput, ResourceKey.create(Registries.RECIPE, recipeId));
         }
 
         @Override
-        public void save(RecipeOutput exporter, ResourceLocation recipeId) {
-            this.validate(recipeId);
-            this.addToDefaults(recipeId);
+        public void save(RecipeOutput recipeOutput, ResourceKey<Recipe<?>> resourceKey) {
+            this.validate(resourceKey);
 
             if (cookingCategory == null) {
                 cookingCategory(getCookingPotRecipeCategory(results));
             }
 
-            Advancement.Builder advancementBuilder = exporter.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(recipeId)).rewards(AdvancementRewards.Builder.recipe(recipeId)).requirements(AdvancementRequirements.Strategy.OR);
+            Advancement.Builder advancementBuilder = recipeOutput.advancement().addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(resourceKey)).rewards(AdvancementRewards.Builder.recipe(resourceKey)).requirements(AdvancementRequirements.Strategy.OR);
             this.criteria.forEach(advancementBuilder::addCriterion);
             AbstractCookingPotRecipe cookingPotRecipe = this.getRecipeFactory().create(
                     Objects.requireNonNullElse(this.group, ""),
@@ -300,7 +286,7 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
                     this.ingredients,
                     this.results
             );
-            exporter.accept(recipeId, cookingPotRecipe, advancementBuilder.build(recipeId.withPrefix("recipes/" + this.category.getFolderName() + "/")));
+            recipeOutput.accept(resourceKey, cookingPotRecipe, advancementBuilder.build(resourceKey.identifier().withPrefix("recipes/" + this.category.getFolderName() + "/")));
         }
 
         private static CookingPotRecipeCategory getCookingPotRecipeCategory(NonNullList<ItemStack> results) {
@@ -310,9 +296,9 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
             return CookingPotRecipeCategory.MISC;
         }
 
-        private void validate(ResourceLocation recipeId) {
+        private void validate(ResourceKey<Recipe<?>> recipeId) {
             if (this.criteria.isEmpty()) {
-                throw new IllegalStateException("No way of obtaining recipe " + recipeId);
+                throw new IllegalStateException("No way of obtaining recipe " + recipeId.identifier());
             }
         }
 
@@ -320,20 +306,26 @@ public abstract class AbstractCookingPotRecipe implements Recipe<CookingPotRecip
 
 
     public enum CookingPotRecipeCategory implements StringRepresentable {
-        FOOD("food"),
-        BLOCKS("blocks"),
-        MISC("misc"),
-        RECLAIM("reclaim");
+        FOOD(0, "food"),
+        BLOCKS(1, "blocks"),
+        MISC(2, "misc"),
+        RECLAIM(3, "reclaim");
 
-        public static final StringRepresentable.EnumCodec<CookingPotRecipeCategory> CODEC = StringRepresentable.fromEnum(CookingPotRecipeCategory::values);
-        private final String id;
+        private static final IntFunction<CookingPotRecipeCategory> BY_ID = ByIdMap.continuous(
+                cookingPotRecipeCategory -> cookingPotRecipeCategory.id, values(), ByIdMap.OutOfBoundsStrategy.ZERO
+        );
+        public static final Codec<CookingPotRecipeCategory> CODEC = StringRepresentable.fromEnum(CookingPotRecipeCategory::values);
+        public static final StreamCodec<ByteBuf, CookingPotRecipeCategory> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, cookingPotRecipeCategory -> cookingPotRecipeCategory.id);
+        private final int id;
+        private final String name;
 
-        CookingPotRecipeCategory(final String id) {
+        CookingPotRecipeCategory(int id, String name) {
             this.id = id;
+            this.name = name;
         }
 
         public String getSerializedName() {
-            return this.id;
+            return this.name;
         }
     }
 

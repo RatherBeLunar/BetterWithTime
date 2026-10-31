@@ -10,8 +10,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,6 +21,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.entity.EntityTypeTest;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -47,8 +49,13 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        level.scheduleTick(pos, this, tickRate);
+    protected VoxelShape getEntityInsideCollisionShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Entity entity) {
+        return Shapes.block();
+    }
+
+    @Override
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        scheduledTickAccess.scheduleTick(pos, this, tickRate);
         return state;
     }
 
@@ -60,18 +67,20 @@ public class DetectorLogicBlock extends AirBlock {
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
+        BlockState newState = serverLevel.getBlockState(blockPos);
         if (!newState.is(this)) {
-            notifyNeighborDetectors(newState, level, pos);
+            notifyNeighborDetectors(newState, serverLevel, blockPos);
         }
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        boolean updated = updateIntersectStates(state, level, pos, true, null);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
+        boolean updated = updateIntersectStates(blockState, level, blockPos, true, null);
         if (updated) {
-            level.scheduleTick(pos, this, tickRate);
+            level.scheduleTick(blockPos, this, tickRate);
         }
     }
 
@@ -147,8 +156,8 @@ public class DetectorLogicBlock extends AirBlock {
             BlockState neighborState = level.getBlockState(targetPos);
             if (neighborState.is(BwtBlocks.detectorBlock) && neighborState.getValue(DetectorBlock.FACING).equals(direction.getOpposite())) {
                 numDetectorsUpdated += 1;
-                level.neighborShapeChanged(direction.getOpposite(), state, targetPos, pos, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
-                level.neighborChanged(neighborState, targetPos, state.getBlock(), pos, false);
+                level.neighborShapeChanged(direction.getOpposite(), targetPos, pos, state, Block.UPDATE_ALL & ~(Block.UPDATE_NEIGHBORS | Block.UPDATE_SUPPRESS_DROPS), 512);
+                level.neighborChanged(neighborState, targetPos, state.getBlock(), null, false);
             }
         }
         return numDetectorsUpdated;

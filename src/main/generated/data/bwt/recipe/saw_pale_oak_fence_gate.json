@@ -1,0 +1,17 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 1,
+      "id": "bwt:pale_oak_planks_corner"
+    },
+    {
+      "count": 1,
+      "id": "minecraft:stick"
+    }
+  ],
+  "ingredient": {
+    "values": "minecraft:pale_oak_fence_gate"
+  }
+}

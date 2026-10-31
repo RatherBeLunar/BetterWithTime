@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:birch_log"
+    "values": "minecraft:birch_log"
   }
 }

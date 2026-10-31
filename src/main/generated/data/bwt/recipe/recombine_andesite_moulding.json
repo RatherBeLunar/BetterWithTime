@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:andesite_moulding"
-    },
-    {
-      "item": "bwt:andesite_moulding"
-    }
+    "bwt:andesite_moulding",
+    "bwt:andesite_moulding"
   ],
   "result": {
     "count": 1,

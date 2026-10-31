@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:acacia_planks_moulding"
-    }
+    "#": "bwt:acacia_planks_moulding"
   },
   "pattern": [
     "#",

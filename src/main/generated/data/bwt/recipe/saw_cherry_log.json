@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_log"
+    "values": "minecraft:cherry_log"
   }
 }

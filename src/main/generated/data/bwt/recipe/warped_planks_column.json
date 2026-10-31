@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:warped_planks_moulding"
-    }
+    "#": "bwt:warped_planks_moulding"
   },
   "pattern": [
     "#",

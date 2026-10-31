@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:golden_pickaxe"
-      }
+      "ingredient": "minecraft:golden_pickaxe"
     }
   ],
   "results": [

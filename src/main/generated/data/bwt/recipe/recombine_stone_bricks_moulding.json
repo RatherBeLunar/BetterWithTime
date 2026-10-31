@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:stone_bricks_moulding"
-    },
-    {
-      "item": "bwt:stone_bricks_moulding"
-    }
+    "bwt:stone_bricks_moulding",
+    "bwt:stone_bricks_moulding"
   ],
   "result": {
     "count": 1,

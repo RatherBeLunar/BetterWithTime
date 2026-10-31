@@ -3,12 +3,8 @@
   "category": "building",
   "group": "wool",
   "ingredients": [
-    {
-      "item": "bwt:cyan_wool_slab"
-    },
-    {
-      "item": "bwt:cyan_wool_slab"
-    }
+    "bwt:cyan_wool_slab",
+    "bwt:cyan_wool_slab"
   ],
   "result": {
     "count": 1,

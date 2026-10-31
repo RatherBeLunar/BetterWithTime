@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "group": "wooden_fence_gate",
+  "key": {
+    "m": "bwt:pale_oak_planks_moulding",
+    "s": "bwt:pale_oak_planks_siding"
+  },
+  "pattern": [
+    "msm",
+    "msm"
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:pale_oak_fence_gate"
+  }
+}

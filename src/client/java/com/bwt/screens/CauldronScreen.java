@@ -2,16 +2,15 @@ package com.bwt.screens;
 
 import com.bwt.blocks.cauldron.CauldronScreenHandler;
 import com.bwt.utils.Id;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class CauldronScreen extends AbstractContainerScreen<CauldronScreenHandler> {
-    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/cauldron.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/cauldron.png");
 
     static final int fireIconHeight = 14;
 
@@ -23,12 +22,9 @@ public class CauldronScreen extends AbstractContainerScreen<CauldronScreenHandle
 
     @Override
     protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 256, 256);
 
         // draw the cooking indicator
 
@@ -37,13 +33,16 @@ public class CauldronScreen extends AbstractContainerScreen<CauldronScreenHandle
         {
             int scaledIconHeight = Math.round(fireIconHeight * cookProgress);
             context.blit(
+                RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
                 x + 80,
                 y + 18 + fireIconHeight - scaledIconHeight,
                 176,
                 fireIconHeight - scaledIconHeight,
                 14,
-                scaledIconHeight + 2
+                scaledIconHeight + 2,
+                256,
+                256
             );
         }
     }

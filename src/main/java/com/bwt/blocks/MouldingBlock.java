@@ -48,13 +48,9 @@ public class MouldingBlock extends MiniBlock {
         this.registerDefaultState(this.defaultBlockState().setValue(ORIENTATION, 0));
     }
 
-    public static MouldingBlock ofBlock(Block fullBlock) {
-        return new MouldingBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static MouldingBlock ofWoodBlock(Block woodBlock) {
-        MouldingBlock mouldingBlock = ofBlock(woodBlock);
-        mouldingBlock.isWood = true;
+    public static MouldingBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        MouldingBlock mouldingBlock = new MouldingBlock(properties, fullBlock);
+        mouldingBlock.isWood = isWood;
         return mouldingBlock;
     }
 

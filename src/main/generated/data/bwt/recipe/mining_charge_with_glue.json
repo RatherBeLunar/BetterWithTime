@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "d": {
-      "item": "bwt:dynamite"
-    },
-    "g": {
-      "item": "bwt:glue"
-    },
-    "r": {
-      "item": "bwt:rope"
-    }
+    "d": "bwt:dynamite",
+    "g": "bwt:glue",
+    "r": "bwt:rope"
   },
   "pattern": [
     "rgr",

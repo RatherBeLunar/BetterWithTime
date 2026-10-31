@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:potato"
-      }
+      "ingredient": "minecraft:potato"
     }
   ],
   "results": [

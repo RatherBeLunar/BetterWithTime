@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:polished_andesite"
-    },
-    "s": {
-      "item": "bwt:polished_andesite_siding"
-    }
+    "#": "minecraft:polished_andesite",
+    "s": "bwt:polished_andesite_siding"
   },
   "pattern": [
     " s ",

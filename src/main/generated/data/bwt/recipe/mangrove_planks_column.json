@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:mangrove_planks_moulding"
-    }
+    "#": "bwt:mangrove_planks_moulding"
   },
   "pattern": [
     "#",

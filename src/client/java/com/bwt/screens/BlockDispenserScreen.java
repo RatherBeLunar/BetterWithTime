@@ -2,16 +2,15 @@ package com.bwt.screens;
 
 import com.bwt.blocks.block_dispenser.BlockDispenserScreenHandler;
 import com.bwt.utils.Id;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 
 public class BlockDispenserScreen extends AbstractContainerScreen<BlockDispenserScreenHandler> {
-    private static final ResourceLocation TEXTURE = Id.of("textures/gui/container/block_dispenser.png");
+    private static final Identifier TEXTURE = Id.of("textures/gui/container/block_dispenser.png");
     static final int selectionIconWidth = 20;
     static final int selectionIconHeight = 20;
 
@@ -22,13 +21,10 @@ public class BlockDispenserScreen extends AbstractContainerScreen<BlockDispenser
     }
 
     @Override
-    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
+    protected void renderBg(GuiGraphics guiGraphics, float delta, int mouseX, int mouseY) {
         int x = (width - imageWidth) / 2;
         int y = (height - imageHeight) / 2;
-        context.blit(TEXTURE, x, y, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, x, y, 0, 0, imageWidth, imageHeight, 256, 256);
 
         // draw the selection rectangle
         int selectedSlot = this.menu.getSelectedSlot();
@@ -39,13 +35,17 @@ public class BlockDispenserScreen extends AbstractContainerScreen<BlockDispenser
         int xOffset = ( selectedSlot % 4 ) * 18;
         int yOffset = ( selectedSlot / 4 ) * 18;
 
-        context.blit(TEXTURE,
+        guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
                 x + 51 + xOffset,
                 y + 15 + yOffset,
                 176,
                 0,
                 selectionIconWidth,
-                selectionIconHeight
+                selectionIconHeight,
+                256,
+                256
         );
     }
 

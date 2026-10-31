@@ -47,11 +47,17 @@ public interface CanRotateHelper {
 
     static boolean canRotate(Level level, BlockPos pos, BlockState state) {
         Block block = state.getBlock();
-        return canRotateClassPredicates.entrySet().stream()
-                .filter(entry -> entry.getKey().isInstance(block))
+        return canRotateBlockPredicates.entrySet().stream()
+                .filter(entry -> entry.getKey().equals(block))
                 .findAny()
                 .map(Map.Entry::getValue)
-                .orElse(CanRotatePredicate.TRUE)
+                .orElseGet(
+                        () -> canRotateClassPredicates.entrySet().stream()
+                                .filter(entry -> entry.getKey().isInstance(block))
+                                .findAny()
+                                .map(Map.Entry::getValue)
+                                .orElse(CanRotatePredicate.TRUE)
+                )
                 .test(level, pos, state);
     }
 

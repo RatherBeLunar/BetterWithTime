@@ -7,13 +7,15 @@ import com.bwt.utils.Id;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.placement.HorizontalAlignment;
 import mezz.jei.api.gui.placement.VerticalAlignment;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
-import mezz.jei.api.recipe.RecipeType;
+import mezz.jei.api.recipe.types.IRecipeType;
 
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -22,8 +24,8 @@ import java.util.List;
 
 public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
 
-    public static final RecipeType<TurntableRecipe> TYPE =
-            RecipeType.create(Id.MOD_ID, "turntable", TurntableRecipe.class);
+    public static final IRecipeType<TurntableRecipe> TYPE =
+            IRecipeType.create(Id.MOD_ID, "turntable", TurntableRecipe.class);
 
     public TurntableCategory(IGuiHelper guiHelper) {
         super(
@@ -37,16 +39,16 @@ public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
     }
 
     @Override
-    public @NotNull RecipeType<TurntableRecipe> getRecipeType() {
+    public @NotNull IRecipeType<TurntableRecipe> getRecipeType() {
         return TYPE;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, TurntableRecipe recipe, IFocusGroup focusGroup) {
-        IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 1);
-        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks());
+        IRecipeSlotBuilder inputSlot = builder.addInputSlot(2, 7);
+        inputSlot.addIngredients(VanillaTypes.ITEM_STACK, recipe.getIngredient().getMatchingStacks().toList());
 
-        IRecipeSlotBuilder outputBlockSlot = builder.addOutputSlot(56, 1);
+        IRecipeSlotBuilder outputBlockSlot = builder.addOutputSlot(56, 7);
         outputBlockSlot.addIngredients(VanillaTypes.ITEM_STACK, List.of(recipe.getOutput().asItem().getDefaultInstance()));
         List<ItemStack> outputs = recipe.getDrops();
         for (int i = 0; i < outputs.size(); i++) {
@@ -56,9 +58,14 @@ public class TurntableCategory extends BwtRecipeCategoryBase<TurntableRecipe> {
     }
 
     @Override
+    public void draw(TurntableRecipe recipe, IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
+        super.draw(recipe, recipeSlotsView, guiGraphics, mouseX, mouseY);
+        guiHelper.createDrawableItemLike(BwtBlocks.turntableBlock).draw(guiGraphics, 2, 7 + 8);
+        guiHelper.createDrawableItemLike(BwtBlocks.turntableBlock).draw(guiGraphics, 56, 7 + 8);
+    }
+
+    @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, TurntableRecipe recipe, IFocusGroup focuses) {
-        builder.addDrawableWidget(guiHelper.createDrawableItemLike(BwtBlocks.turntableBlock)).setPosition(2, 1 + 15);
-        builder.addDrawableWidget(guiHelper.createDrawableItemLike(BwtBlocks.turntableBlock)).setPosition(56, 1 + 15);
         builder.addDrawableWidget(getAnimatedGearDrawable(40))
                 .setPosition(24, 0, getWidth() - 61, getHeight(), HorizontalAlignment.LEFT, VerticalAlignment.TOP);
         builder.addRecipeArrowWidget()

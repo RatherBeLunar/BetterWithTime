@@ -5,12 +5,8 @@
     "id": "bwt:saw_dust"
   },
   "category": "misc",
-  "filter": {
-    "item": "minecraft:soul_sand"
-  },
-  "ingredient": {
-    "item": "bwt:soul_dust"
-  },
+  "filter": "minecraft:soul_sand",
+  "ingredient": "bwt:soul_dust",
   "result": {},
   "soulCount": 1
 }

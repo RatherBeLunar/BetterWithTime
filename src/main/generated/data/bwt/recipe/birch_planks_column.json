@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:birch_planks_moulding"
-    }
+    "#": "bwt:birch_planks_moulding"
   },
   "pattern": [
     "#",

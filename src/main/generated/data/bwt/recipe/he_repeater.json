@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "r": {
-      "item": "minecraft:redstone"
-    },
-    "s": {
-      "item": "bwt:stone_siding"
-    },
-    "t": {
-      "item": "minecraft:redstone_torch"
-    }
+    "r": "minecraft:redstone",
+    "s": "bwt:stone_siding",
+    "t": "minecraft:redstone_torch"
   },
   "pattern": [
     "trt",

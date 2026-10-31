@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:bamboo_mosaic_column"
+    "values": "bwt:bamboo_mosaic_column"
   }
 }

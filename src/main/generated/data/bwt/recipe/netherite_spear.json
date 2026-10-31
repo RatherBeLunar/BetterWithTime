@@ -1,0 +1,18 @@
+{
+  "type": "bwt:soul_forge_shaped",
+  "category": "equipment",
+  "key": {
+    "h": "bwt:haft",
+    "s": "minecraft:netherite_ingot"
+  },
+  "pattern": [
+    "   s",
+    "  h ",
+    " h  ",
+    "h   "
+  ],
+  "result": {
+    "count": 1,
+    "id": "minecraft:netherite_spear"
+  }
+}

@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:stripped_cherry_log"
+    "values": "minecraft:stripped_cherry_log"
   }
 }

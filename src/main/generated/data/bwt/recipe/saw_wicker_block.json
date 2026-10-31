@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:wicker_block"
+    "values": "bwt:wicker_block"
   }
 }

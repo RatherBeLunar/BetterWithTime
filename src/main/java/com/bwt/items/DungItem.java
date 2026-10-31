@@ -1,6 +1,6 @@
 package com.bwt.items;
 
-import com.bwt.mixin.accessors.DyeItemAccessorMixin;
+import com.bwt.mixin.accessor.DyeItemAccessorMixin;
 import java.util.Map;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.DyeItem;

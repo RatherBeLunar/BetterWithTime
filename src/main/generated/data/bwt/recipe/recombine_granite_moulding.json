@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:granite_moulding"
-    },
-    {
-      "item": "bwt:granite_moulding"
-    }
+    "bwt:granite_moulding",
+    "bwt:granite_moulding"
   ],
   "result": {
     "count": 1,

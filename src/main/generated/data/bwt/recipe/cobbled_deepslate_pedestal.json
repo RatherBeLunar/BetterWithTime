@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:cobbled_deepslate"
-    },
-    "s": {
-      "item": "bwt:cobbled_deepslate_siding"
-    }
+    "#": "minecraft:cobbled_deepslate",
+    "s": "bwt:cobbled_deepslate_siding"
   },
   "pattern": [
     " s ",

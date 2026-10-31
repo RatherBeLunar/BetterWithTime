@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:rabbit"
-      }
+      "ingredient": "minecraft:rabbit"
     }
   ],
   "results": [

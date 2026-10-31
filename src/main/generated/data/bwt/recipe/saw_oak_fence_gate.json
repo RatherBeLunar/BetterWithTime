@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:oak_fence_gate"
+    "values": "minecraft:oak_fence_gate"
   }
 }

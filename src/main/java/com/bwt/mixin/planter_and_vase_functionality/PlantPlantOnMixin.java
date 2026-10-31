@@ -6,18 +6,19 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.FlowerBlock;
+import net.minecraft.world.level.block.VegetationBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(BushBlock.class)
+@Mixin(VegetationBlock.class)
 public abstract class PlantPlantOnMixin {
     @Inject(method = "mayPlaceOn", at = @At("HEAD"), cancellable = true)
-    public void canPlantOnTop(BlockState floor, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
+    public void bwt$mayPlaceOn(BlockState floor, BlockGetter level, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
         boolean result = floor.is(BlockTags.DIRT) || floor.is(BwtBlockTags.CROPS_CAN_PLANT_ON);
-        if ((BushBlock)((Object) this) instanceof FlowerBlock) {
+        if ((VegetationBlock)((Object) this) instanceof FlowerBlock) {
             result = result || floor.is(BwtBlockTags.VASES);
         }
         cir.setReturnValue(result);

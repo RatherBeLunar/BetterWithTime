@@ -2,33 +2,51 @@ package com.bwt;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.BwtBlocks;
-import com.bwt.blocks.unfired_pottery.UnfiredDecoratedPotBlockEntity;
 import com.bwt.entities.BwtEntities;
-import com.bwt.items.BwtItems;
+import com.bwt.particles.BwtParticles;
+import com.bwt.rendering.broadhead_arrow.BroadheadArrowEntityRenderer;
+import com.bwt.rendering.canvas.CanvasRenderer;
+import com.bwt.rendering.cooking_pot.CookingPotEntityRenderer;
+import com.bwt.rendering.dynamite.DynamiteEntityRenderer;
+import com.bwt.rendering.mech_hopper.MechHopperBlockEntityRenderer;
+import com.bwt.rendering.ContainerFillLayerModel;
+import com.bwt.rendering.mining_charge.MiningChargeEntityRenderer;
+import com.bwt.rendering.moving_rope_platform.MovingRopeEntityRenderer;
+import com.bwt.rendering.rotted_arrow.RottedArrowEntityRenderer;
+import com.bwt.rendering.unfired_decorated_pot.UnfiredDecoratedPotBlockEntityRenderer;
+import com.bwt.rendering.unfired_decorated_pot.UnfiredDecoratedPotSpecialRenderer;
+import com.bwt.rendering.water_wheel.WaterWheelEntityModel;
+import com.bwt.rendering.water_wheel.WaterWheelEntityRenderer;
+import com.bwt.rendering.windmill.WindmillEntityModel;
+import com.bwt.rendering.windmill.WindmillEntityRenderer;
 import com.bwt.utils.KilnBlockCookProgressSetter;
 import com.bwt.utils.kiln_block_cook_overlay.KilnBlockCookingProgressPayload;
-import com.bwt.models.*;
 import com.bwt.screens.*;
 import com.bwt.utils.Id;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.particle.FallingLeavesParticle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.ParticleResources;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
-import net.minecraft.client.renderer.entity.PaintingRenderer;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
+import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.core.BlockPos;
+import net.minecraft.client.renderer.special.SpecialModelRenderers;
 import net.minecraft.core.Holder;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.biome.Biome;
 
@@ -36,11 +54,7 @@ import net.minecraft.world.level.biome.Biome;
 public class BetterWithTimeClient implements ClientModInitializer {
 	public static final ModelLayerLocation MODEL_WINDMILL_LAYER = new ModelLayerLocation(Id.of("windmill"), "main");
 	public static final ModelLayerLocation MODEL_WATER_WHEEL_LAYER = new ModelLayerLocation(Id.of("water_wheel"), "main");
-	public static final ModelLayerLocation MECH_HOPPER_FILL_LAYER = new ModelLayerLocation(Id.of("mech_hopper_fill"), "main");
-	public static final ModelLayerLocation CAULDRON_FILL_LAYER = new ModelLayerLocation(Id.of("cauldron_fill"), "main");
-	public static final ModelLayerLocation CRUCIBLE_FILL_LAYER = new ModelLayerLocation(Id.of("crucible_fill"), "main");
-
-    private final UnfiredDecoratedPotBlockEntity renderUnfiredDecoratedPot = new UnfiredDecoratedPotBlockEntity(BlockPos.ZERO, BwtBlocks.unfiredDecoratedPotBlockWithSherds.defaultBlockState());
+	public static final ModelLayerLocation CONTAINER_FILL_LAYER = new ModelLayerLocation(Id.of("hopper_fill"), "main");
 
 	@Override
 	public void onInitializeClient() {
@@ -49,27 +63,26 @@ public class BetterWithTimeClient implements ClientModInitializer {
         BlockEntityRenderers.register(BwtBlockEntities.unfiredDecoratedPotBlockEntity, UnfiredDecoratedPotBlockEntityRenderer::new);
         BlockEntityRenderers.register(BwtBlockEntities.cauldronBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/cauldron_stew.png")));
         BlockEntityRenderers.register(BwtBlockEntities.crucibleBlockEntity, ctx -> new CookingPotEntityRenderer(ctx, Id.of("textures/block/crucible_fill.png")));
-		EntityRendererRegistry.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.broadheadArrowEntity, BroadheadArrowEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.rottedArrowEntity, RottedArrowEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.dynamiteEntity, DynamiteEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.miningChargeEntity, MiningChargeEntityRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.soulUrnProjectileEntity, ThrownItemRenderer::new);
-		EntityRendererRegistry.register(BwtEntities.canvasEntity, PaintingRenderer::new);
+
+		EntityRenderers.register(BwtEntities.windmillEntity, WindmillEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.waterWheelEntity, WaterWheelEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.movingRopeEntity, MovingRopeEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.broadheadArrowEntity, BroadheadArrowEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.rottedArrowEntity, RottedArrowEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.dynamiteEntity, DynamiteEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.miningChargeEntity, MiningChargeEntityRenderer::new);
+		EntityRenderers.register(BwtEntities.soulUrnProjectileEntity, ThrownItemRenderer::new);
+		EntityRenderers.register(BwtEntities.canvasEntity, CanvasRenderer::new);
+
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WINDMILL_LAYER, WindmillEntityModel::getTexturedModelData);
 		EntityModelLayerRegistry.registerModelLayer(MODEL_WATER_WHEEL_LAYER, WaterWheelEntityModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(MECH_HOPPER_FILL_LAYER, MechHopperFillModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(CAULDRON_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
-		EntityModelLayerRegistry.registerModelLayer(CRUCIBLE_FILL_LAYER, CookingPotFillModel::getTexturedModelData);
-        BuiltinItemRendererRegistry.INSTANCE.register(
-                BwtBlocks.unfiredDecoratedPotBlockWithSherds.asItem(),
-                (stack, mode, matrices, vertexConsumers, light, overlay) -> {
-                    renderUnfiredDecoratedPot.readFrom(stack);
-                    Minecraft.getInstance().getBlockEntityRenderDispatcher().renderItem(renderUnfiredDecoratedPot, matrices, vertexConsumers, light, overlay);
-                });
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutout(),
+		EntityModelLayerRegistry.registerModelLayer(CONTAINER_FILL_LAYER, ContainerFillLayerModel::getTexturedModelData);
+
+		SpecialModelRenderers.ID_MAPPER.put(
+                Id.of("unfired_decorated_pot_with_sherds"),
+				UnfiredDecoratedPotSpecialRenderer.Unbaked.MAP_CODEC
+		);
+		BlockRenderLayerMap.putBlocks(ChunkSectionLayer.CUTOUT,
 				BwtBlocks.lightBlockBlock,
 				BwtBlocks.lensBeamGlassBlock,
 				BwtBlocks.hempCropBlock,
@@ -84,9 +97,7 @@ public class BetterWithTimeClient implements ClientModInitializer {
 				BwtBlocks.bloodWoodBlocks.saplingBlock,
 				BwtBlocks.bloodWoodBlocks.pottedSaplingBlock,
 				BwtBlocks.bloodWoodBlocks.doorBlock,
-				BwtBlocks.bloodWoodBlocks.trapdoorBlock
-		);
-		BlockRenderLayerMap.INSTANCE.putBlocks(RenderType.cutoutMipped(),
+				BwtBlocks.bloodWoodBlocks.trapdoorBlock,
 				BwtBlocks.bloodWoodBlocks.leavesBlock,
 				BwtBlocks.grassSlabBlock
 		);
@@ -102,46 +113,21 @@ public class BetterWithTimeClient implements ClientModInitializer {
 			if (view == null || pos == null) {
 				return GrassColor.getDefaultColor();
 			}
-            Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
-			if (biomeEntry == null) {
-				return GrassColor.getDefaultColor();
-			}
-			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
-		}, BwtBlocks.grassPlanterBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassPlanterBlock);
-
-		ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-			if (view == null || pos == null) {
-				return GrassColor.getDefaultColor();
-			}
 			Holder<Biome> biomeEntry = view.getBiomeFabric(pos);
 			if (biomeEntry == null) {
 				return GrassColor.getDefaultColor();
 			}
 			return biomeEntry.value().getGrassColor(pos.getX(), pos.getZ());
-		}, BwtBlocks.grassSlabBlock);
-		ColorProviderRegistry.ITEM.register((stack, tintIndex) -> GrassColor.getDefaultColor(), BwtBlocks.grassSlabBlock);
-
-		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pull"), (itemStack, clientWorld, livingEntity, seed) -> {
-			if (livingEntity == null) {
-				return 0.0F;
-			}
-			return livingEntity.getMainHandItem() != itemStack ? 0.0F : (itemStack.getUseDuration(livingEntity) - livingEntity.getUseItemRemainingTicks()) / 20.0F;
-		});
-
-		ItemProperties.register(BwtItems.compositeBowItem, Id.mc("pulling"), (itemStack, clientWorld, livingEntity, seed) -> {
-			if (livingEntity == null) {
-				return 0.0F;
-			}
-			return livingEntity.isUsingItem() && livingEntity.getUseItem() == itemStack ? 1.0F : 0.0F;
-		});
+		}, BwtBlocks.grassPlanterBlock, BwtBlocks.grassSlabBlock);
 
 		ClientPlayNetworking.registerGlobalReceiver(KilnBlockCookingProgressPayload.ID, (payload, context) ->
 			context.client().execute(() -> {
 				if (context.client().levelRenderer instanceof KilnBlockCookProgressSetter cookProgressSetter) {
-					cookProgressSetter.betterWithTime$setKilnBlockCookingInfo(payload.blockPos(), payload.progress());
+					cookProgressSetter.bwt$setKilnBlockCookingInfo(payload.blockPos(), payload.progress());
 				}
 			})
 		);
+
+		ParticleFactoryRegistry.getInstance().register(BwtParticles.BLOOD_WOOD_LEAVES, FallingLeavesParticle.PaleOakProvider::new);
 	}
 }

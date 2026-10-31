@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "m": {
-      "item": "bwt:spruce_planks_moulding"
-    }
+    "m": "bwt:spruce_planks_moulding"
   },
   "pattern": [
     "m ",

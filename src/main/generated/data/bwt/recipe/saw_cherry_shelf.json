@@ -1,0 +1,13 @@
+{
+  "type": "bwt:saw",
+  "category": "misc",
+  "drops": [
+    {
+      "count": 6,
+      "id": "bwt:cherry_planks_moulding"
+    }
+  ],
+  "ingredient": {
+    "values": "minecraft:cherry_shelf"
+  }
+}

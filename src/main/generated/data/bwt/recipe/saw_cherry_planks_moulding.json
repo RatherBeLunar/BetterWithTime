@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:cherry_planks_moulding"
+    "values": "bwt:cherry_planks_moulding"
   }
 }

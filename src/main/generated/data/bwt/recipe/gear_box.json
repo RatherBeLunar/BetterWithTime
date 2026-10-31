@@ -3,12 +3,8 @@
   "category": "redstone",
   "group": "gear_box",
   "key": {
-    "g": {
-      "item": "bwt:gear"
-    },
-    "p": {
-      "tag": "minecraft:planks"
-    }
+    "g": "bwt:gear",
+    "p": "#minecraft:planks"
   },
   "pattern": [
     "pgp",

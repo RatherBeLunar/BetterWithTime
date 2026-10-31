@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:polished_diorite_corner"
-    },
-    {
-      "item": "bwt:polished_diorite_corner"
-    }
+    "bwt:polished_diorite_corner",
+    "bwt:polished_diorite_corner"
   ],
   "result": {
     "count": 1,

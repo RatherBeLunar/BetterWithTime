@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "bwt:item/unfired_decorated_pot_with_sherds",
+    "model": {
+      "type": "bwt:unfired_decorated_pot_with_sherds"
+    }
+  }
+}

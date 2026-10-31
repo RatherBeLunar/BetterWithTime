@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_pale_oak_planks_moulding": {
+      "conditions": {
+        "items": [
+          {
+            "items": "bwt:pale_oak_planks_moulding"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "bwt:pale_oak_planks_column"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_pale_oak_planks_moulding"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "bwt:pale_oak_planks_column"
+    ]
+  }
+}

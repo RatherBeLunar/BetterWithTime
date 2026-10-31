@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_fence_gate"
+    "values": "minecraft:warped_fence_gate"
   }
 }

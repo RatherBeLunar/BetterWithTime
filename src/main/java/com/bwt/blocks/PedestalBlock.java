@@ -8,14 +8,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class PedestalBlock extends DecorativeBlock {
-    public static final DirectionProperty VERTICAL_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
+    public static final EnumProperty<Direction> VERTICAL_DIRECTION = BlockStateProperties.VERTICAL_DIRECTION;
 
     final VoxelShape UP_SHAPE = Shapes.or(
             Block.box(0, 0, 0, 16, 14, 16),
@@ -33,13 +33,9 @@ public class PedestalBlock extends DecorativeBlock {
         registerDefaultState(defaultBlockState().setValue(VERTICAL_DIRECTION, Direction.UP));
     }
 
-    public static PedestalBlock ofBlock(Block fullBlock) {
-        return new PedestalBlock(Properties.ofFullCopy(fullBlock), fullBlock);
-    }
-
-    public static PedestalBlock ofWoodBlock(Block woodBlock) {
-        PedestalBlock pedestalBlock = ofBlock(woodBlock);
-        pedestalBlock.isWood = true;
+    public static PedestalBlock ofBlock(Properties properties, Block fullBlock, boolean isWood) {
+        PedestalBlock pedestalBlock = new PedestalBlock(properties, fullBlock);
+        pedestalBlock.isWood = isWood;
         return pedestalBlock;
     }
 

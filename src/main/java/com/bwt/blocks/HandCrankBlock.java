@@ -24,8 +24,9 @@ import net.minecraft.world.level.block.SupportType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -33,7 +34,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
 public class HandCrankBlock extends Block {
-    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final EnumProperty<Direction>FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final IntegerProperty CLICK_TIMER = IntegerProperty.create("click_timer", 0, 7);
     private static final int tickRate = 3;
     private static final int delayBeforeReset = 15;
@@ -86,14 +87,14 @@ public class HandCrankBlock extends Block {
             return InteractionResult.FAIL;
         }
         if (player.getFoodData().getFoodLevel() <= 8) {
-            if (level.isClientSide) {
+            if (level.isClientSide()) {
                 player.displayClientMessage(Component.nullToEmpty("You're too exhausted for manual labor."), true);
             }
             return InteractionResult.FAIL;
         }
         player.causeFoodExhaustion( 2.0F ); // every two pulls results in a half pip of hunger
 
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -185,22 +186,22 @@ public class HandCrankBlock extends Block {
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide || !level.getBlockState(pos).is(this)) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide() || !level.getBlockState(blockPos).is(this)) {
             return;
         }
-        if (canSurvive(state, level, pos)) {
+        if (canSurvive(blockState, level, blockPos)) {
             return;
         }
-        dropResources(state, level, pos);
-        level.removeBlock(pos, notify);
+        dropResources(blockState, level, blockPos);
+        level.removeBlock(blockPos, notify);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
         if (moved) {
             return;
         }
-        super.onRemove(state, level, pos, newState, moved);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, false);
     }
 }

@@ -9,6 +9,6 @@
     }
   ],
   "ingredient": {
-    "blockTag": "#minecraft:coal_ores"
+    "values": "#minecraft:coal_ores"
   }
 }

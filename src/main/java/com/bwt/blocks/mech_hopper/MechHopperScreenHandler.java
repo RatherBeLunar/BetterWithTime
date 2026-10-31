@@ -73,7 +73,7 @@ public class MechHopperScreenHandler extends AbstractContainerMenu {
                 }
             }
             else {
-                Slot slot0 = this.slots.get(0);
+                Slot slot0 = this.slots.getFirst();
                 if (slot0.mayPlace(itemStack2)) {
                     ItemStack result = slot0.safeInsert(itemStack2);
                     if (!result.isEmpty()) {

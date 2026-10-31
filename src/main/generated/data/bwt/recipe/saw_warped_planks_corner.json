@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:warped_planks_corner"
+    "values": "bwt:warped_planks_corner"
   }
 }

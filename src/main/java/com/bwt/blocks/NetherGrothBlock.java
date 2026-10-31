@@ -1,5 +1,6 @@
 package com.bwt.blocks;
 
+import com.bwt.environment_attributes.BwtEnvironmentAttributes;
 import com.bwt.tags.BwtBlockTags;
 import com.bwt.tags.BwtItemTags;
 import com.bwt.utils.BlockPosAndState;
@@ -14,19 +15,14 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ArmorItem;
-import net.minecraft.world.item.ArmorMaterials;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,7 +33,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.stream.IntStream;
 
 // TODO: Does not include logic for nether groth growing to its max age when a soul urn entity collides with it,
@@ -81,11 +77,11 @@ public class NetherGrothBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (!state.canSurvive(level, pos)) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        if (!state.canSurvive(levelReader, pos)) {
             return Blocks.AIR.defaultBlockState();
         }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        return super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource);
     }
 
     // Set the block below to Grothed Netherrack block when placed
@@ -113,7 +109,7 @@ public class NetherGrothBlock extends Block {
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         // Only grow in the nether
-        if (!level.dimensionType().ultraWarm()) {
+        if (!level.environmentAttributes().getValue(BwtEnvironmentAttributes.NETHER_GROTH_SPREADS, pos)) {
             return;
         }
 
@@ -169,7 +165,7 @@ public class NetherGrothBlock extends Block {
                     0.5F, 2.6F + (level.getRandom().nextFloat() - level.getRandom().nextFloat()) * 0.8F
             );
         } else if (state.is(BwtBlockTags.NETHER_GROTH_CAN_EAT)) {
-            level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.BLOCKS,
+            level.playSound(null, pos, SoundEvents.GENERIC_EAT.value(), SoundSource.BLOCKS,
                     1.0F, level.getRandom().nextFloat() * 0.4F + 0.7F
             );
         }
@@ -201,8 +197,9 @@ public class NetherGrothBlock extends Block {
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        if (level.isClientSide) {
+    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(state, level, pos, entity, insideBlockEffectApplier, bl);
+        if (level.isClientSide()) {
             return;
         }
 
@@ -215,7 +212,7 @@ public class NetherGrothBlock extends Block {
             if (entity instanceof Player player && wearingPlateBoots(player)) {
                 return;
             }
-            if (livingEntity.hurt(level.damageSources().magic(), 2)) {
+            if (livingEntity.hurtOrSimulate(level.damageSources().magic(), 2)) {
                 entity.setDeltaMovement(entity.getDeltaMovement().x, 0.84, entity.getDeltaMovement().z);
                 entity.hurtMarked = true;
                 level.playSound(null, pos, SoundEvents.GHAST_SCREAM, SoundSource.BLOCKS, 1.0f, 1.0f);
@@ -227,7 +224,7 @@ public class NetherGrothBlock extends Block {
             ItemStack stack = itemEntity.getItem();
             if (stack.getComponents().has(DataComponents.FOOD) || stack.is(BwtItemTags.NETHER_GROTH_CAN_EAT)) {
                 itemEntity.remove(Entity.RemovalReason.DISCARDED);
-                level.playSound(null, pos, SoundEvents.GENERIC_EAT, SoundSource.BLOCKS, 1.0f, 1.0f);
+                level.playSound(null, pos, SoundEvents.GENERIC_EAT.value(), SoundSource.BLOCKS, 1.0f, 1.0f);
             }
         }
     }
@@ -300,24 +297,28 @@ public class NetherGrothBlock extends Block {
                 .filter(target -> !(target instanceof Player player) || !wearingFullNetherite(player))
                 .forEach(target -> {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, 15 * 20, 0));
-                    target.hurt(server.damageSources().magic(), 15.0f);
+                    target.hurtOrSimulate(server.damageSources().magic(), 15.0f);
                 });
     }
 
     private boolean wearingPlateBoots(Player player) {
-        ItemStack boots = player.getInventory().getArmor(0);
+        ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
         return boots.is(Items.NETHERITE_BOOTS);
     }
 
     private boolean wearingFullNetherite(Player player) {
-        Inventory inventory = player.getInventory();
-        return IntStream
-                .range(0, 3)
-                .mapToObj(inventory::getArmor)
+        List<Item> netheriteArmor = List.of(
+                Items.NETHERITE_HELMET,
+                Items.NETHERITE_CHESTPLATE,
+                Items.NETHERITE_LEGGINGS,
+                Items.NETHERITE_BOOTS
+        );
+        return EquipmentSlotGroup.ARMOR
+                .slots()
+                .stream()
+                .map(player::getItemBySlot)
                 .map(ItemStack::getItem)
-                .map(item -> Optional.ofNullable(item instanceof ArmorItem armorItem ? armorItem : null))
-                .map(optionalArmor -> optionalArmor.map(ArmorItem::getMaterial))
-                .allMatch(optionalMaterial -> optionalMaterial.isPresent() && ArmorMaterials.NETHERITE.is(optionalMaterial.get()));
+                .allMatch(netheriteArmor::contains);
     }
 
 }

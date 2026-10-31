@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:hay_block"
+    "values": "minecraft:hay_block"
   }
 }

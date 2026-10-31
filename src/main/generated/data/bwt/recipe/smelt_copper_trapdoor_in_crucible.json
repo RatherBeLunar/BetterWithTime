@@ -4,14 +4,12 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:copper_trapdoor"
-      }
+      "ingredient": "minecraft:copper_trapdoor"
     }
   ],
   "results": [
     {
-      "count": 3,
+      "count": 4,
       "id": "minecraft:copper_ingot"
     }
   ]

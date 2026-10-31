@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:birch_planks_corner"
+    "values": "bwt:birch_planks_corner"
   }
 }

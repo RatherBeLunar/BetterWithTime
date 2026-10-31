@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:warped_hyphae"
+    "values": "minecraft:warped_hyphae"
   }
 }

@@ -3,7 +3,7 @@
   "category": "misc",
   "drops": [],
   "ingredient": {
-    "block": "bwt:unfired_crucible"
+    "values": "bwt:unfired_crucible"
   },
   "output": "bwt:unfired_planter"
 }

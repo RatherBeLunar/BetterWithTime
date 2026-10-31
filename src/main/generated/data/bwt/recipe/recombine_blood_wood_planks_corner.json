@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:blood_wood_planks_corner"
-    },
-    {
-      "item": "bwt:blood_wood_planks_corner"
-    }
+    "bwt:blood_wood_planks_corner",
+    "bwt:blood_wood_planks_corner"
   ],
   "result": {
     "count": 1,

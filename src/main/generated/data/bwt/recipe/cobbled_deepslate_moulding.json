@@ -3,9 +3,7 @@
   "category": "building",
   "group": "moulding",
   "key": {
-    "X": {
-      "item": "bwt:cobbled_deepslate_siding"
-    }
+    "X": "bwt:cobbled_deepslate_siding"
   },
   "pattern": [
     "XXXX"

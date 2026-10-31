@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:waxed_copper_door"
-      }
+      "ingredient": "minecraft:waxed_copper_door"
     }
   ],
   "results": [

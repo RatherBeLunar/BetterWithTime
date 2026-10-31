@@ -5,9 +5,7 @@
   "ingredients": [
     {
       "count": 16,
-      "ingredient": {
-        "item": "bwt:soul_dust"
-      }
+      "ingredient": "bwt:soul_dust"
     }
   ],
   "results": [

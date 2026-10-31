@@ -2,8 +2,8 @@ package com.bwt.blocks.mill_stone;
 
 import com.bwt.block_entities.BwtBlockEntities;
 import com.bwt.blocks.MechPowerBlockBase;
-import com.bwt.sounds.BwtSoundEvents;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.redstone.Orientation;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
@@ -11,7 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
@@ -59,9 +58,9 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        Containers.dropContentsOnDestroy(state, newState, level, pos);
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        Containers.updateNeighboursAfterDestroy(blockState, serverLevel, blockPos);
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
     }
 
     @Override
@@ -82,7 +81,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
 
     @Override
     public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hit) {
-        if (level.isClientSide) return InteractionResult.SUCCESS;
+        if (level.isClientSide()) return InteractionResult.SUCCESS;
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof MillStoneBlockEntity millStoneBlockEntity) {
             player.openMenu(millStoneBlockEntity);
@@ -91,14 +90,17 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Nullable
-    protected static <A extends BlockEntity> BlockEntityTicker<A> validateTicker(Level level, BlockEntityType<A> givenType) {
-        return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(givenType, BwtBlockEntities.millStoneBlockEntity, MillStoneBlockEntity::tick);
-    }
-
-    @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> givenType) {
-        return MillStoneBlock.validateTicker(level, givenType);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return null;
+        }
+        return createTickerHelper(
+                givenType,
+                BwtBlockEntities.millStoneBlockEntity,
+                (_level, blockPos, blockState, blockEntity) ->
+                        MillStoneBlockEntity.serverTick(serverLevel, blockPos, blockState, blockEntity)
+        );
     }
 
     public BlockState getPowerStates(BlockState state, Level level, BlockPos pos) {
@@ -118,11 +120,11 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Override
-    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        if (level.isClientSide) {
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        if (level.isClientSide()) {
             return;
         }
-        schedulePowerUpdate(state, level, pos);
+        schedulePowerUpdate(blockState, level, blockPos);
     }
 
     public void updatePowerTransfer(Level level, BlockState blockState, BlockPos pos) {
@@ -136,8 +138,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     private void emitGearBoxParticles(Level level, BlockPos pos, RandomSource random) {
-        for ( int iTempCount = 0; iTempCount < 5; iTempCount++ )
-        {
+        for (int i = 0; i < 5; i++) {
             float smokeX = (float)pos.getX() + random.nextFloat();
             float smokeY = (float)pos.getY() + random.nextFloat() * 0.5F + 1.0F;
             float smokeZ = (float)pos.getZ() + random.nextFloat();
@@ -151,7 +152,7 @@ public class MillStoneBlock extends BaseEntityBlock implements MechPowerBlockBas
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(pos));
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
+        return AbstractContainerMenu.getRedstoneSignalFromBlockEntity(level.getBlockEntity(blockPos));
     }
 }

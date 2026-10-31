@@ -12,6 +12,6 @@
     }
   ],
   "ingredient": {
-    "block": "minecraft:cherry_stairs"
+    "values": "minecraft:cherry_stairs"
   }
 }

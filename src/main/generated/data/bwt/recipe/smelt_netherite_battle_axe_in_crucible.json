@@ -4,9 +4,7 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "bwt:netherite_battle_axe"
-      }
+      "ingredient": "bwt:netherite_battle_axe"
     }
   ],
   "results": [

@@ -4,40 +4,26 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:oak_sapling"
-      }
+      "ingredient": "minecraft:oak_sapling"
     },
     {
-      "ingredient": {
-        "item": "minecraft:nether_wart"
-      }
+      "ingredient": "minecraft:nether_wart"
     },
     {
-      "ingredient": {
-        "item": "minecraft:red_mushroom"
-      }
+      "ingredient": "minecraft:red_mushroom"
     },
     {
-      "ingredient": {
-        "item": "minecraft:brown_mushroom"
-      }
+      "ingredient": "minecraft:brown_mushroom"
     },
     {
-      "ingredient": {
-        "item": "minecraft:crimson_fungus"
-      }
+      "ingredient": "minecraft:crimson_fungus"
     },
     {
-      "ingredient": {
-        "item": "minecraft:warped_fungus"
-      }
+      "ingredient": "minecraft:warped_fungus"
     },
     {
       "count": 8,
-      "ingredient": {
-        "item": "bwt:soul_urn"
-      }
+      "ingredient": "bwt:soul_urn"
     }
   ],
   "results": [

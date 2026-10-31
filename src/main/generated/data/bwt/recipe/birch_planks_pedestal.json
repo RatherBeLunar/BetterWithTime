@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:birch_planks"
-    },
-    "s": {
-      "item": "bwt:birch_planks_siding"
-    }
+    "#": "minecraft:birch_planks",
+    "s": "bwt:birch_planks_siding"
   },
   "pattern": [
     " s ",

@@ -1,36 +1,67 @@
 package com.bwt.recipes;
 
 import com.bwt.utils.Id;
+import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredient;
 import net.fabricmc.fabric.api.recipe.v1.ingredient.CustomIngredientSerializer;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
+import net.minecraft.resources.HolderSetCodec;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
-public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optional<Block> optionalBlock) implements CustomIngredient {
+public record BlockIngredient(HolderSet<Block> values) implements CustomIngredient {
+    public static final Codec<Holder<Block>> BLOCK_CODEC = BuiltInRegistries.BLOCK
+            .holderByNameCodec()
+            .validate(holder -> holder.is(Blocks.AIR.builtInRegistryHolder()) ? DataResult.error(() -> "Block must not be minecraft:air") : DataResult.success(holder));
+    public static final StreamCodec<RegistryFriendlyByteBuf, BlockIngredient> CONTENTS_STREAM_CODEC = ByteBufCodecs.holderSet(Registries.BLOCK)
+            .map(BlockIngredient::new, BlockIngredient::values);
+    public static final StreamCodec<RegistryFriendlyByteBuf, Optional<BlockIngredient>> OPTIONAL_CONTENTS_STREAM_CODEC = ByteBufCodecs.holderSet(Registries.BLOCK)
+            .map(
+                    holderSet -> holderSet.size() == 0 ? Optional.empty() : Optional.of(new BlockIngredient(holderSet)),
+                    optional -> optional.map(BlockIngredient::values).orElse(HolderSet.direct())
+            );
+    public static final Codec<HolderSet<Block>> NON_AIR_HOLDER_SET_CODEC = HolderSetCodec.create(Registries.BLOCK, BLOCK_CODEC, false);
+    public static final Codec<BlockIngredient> CODEC = ExtraCodecs.nonEmptyHolderSet(NON_AIR_HOLDER_SET_CODEC).xmap(BlockIngredient::new, BlockIngredient::values);
+
     public static final Serializer SERIALIZER = new Serializer();
 
-    public static BlockIngredient fromBlock(Block block) {
-        return new BlockIngredient(Optional.empty(), Optional.of(block));
+    public static BlockIngredient of(Block block) {
+        return new BlockIngredient(HolderSet.direct(block.builtInRegistryHolder()));
     }
 
-    public static BlockIngredient fromTag(TagKey<Block> tagKey) {
-        return new BlockIngredient(Optional.of(tagKey), Optional.empty());
+    public static BlockIngredient of(Block... blocks) {
+        return of(Arrays.stream(blocks));
+    }
+
+    public static BlockIngredient of(Stream<? extends Block> stream) {
+        return new BlockIngredient(HolderSet.direct(stream.map(Block::builtInRegistryHolder).toList()));
+    }
+
+    public static BlockIngredient of(HolderSet<Block> holderSet) {
+        return new BlockIngredient(holderSet);
     }
 
     @Override
@@ -42,24 +73,25 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
     }
 
     public boolean test(Block block) {
-        return optionalBlockTagKey.filter(blockTagKey -> block.defaultBlockState().is(blockTagKey)).isPresent()
-                || optionalBlock.filter(block::equals).isPresent();
+        BlockState state = block.defaultBlockState();
+        return this.values.stream().anyMatch(state::is);
     }
 
-    public List<Block> getMatchingBlocks() {
-        return Stream.concat(
-                this.optionalBlockTagKey
-                        .map(BuiltInRegistries.BLOCK::getTagOrEmpty)
-                        .map(blocks -> StreamSupport.stream(blocks.spliterator(), false))
-                        .orElse(Stream.of())
-                        .map(Holder::value),
-                this.optionalBlock.stream()
-        ).toList();
+    public List<Holder<Block>> getMatchingBlocks() {
+        return ImmutableList.copyOf(this.values);
     }
 
     @Override
-    public List<ItemStack> getMatchingStacks() {
-        return getMatchingBlocks().stream().map(Block::asItem).map(Item::getDefaultInstance).toList();
+    public Stream<Holder<Item>> getMatchingItems() {
+        return getMatchingBlocks().stream().map(Holder::value).map(Block::asItem).map(Holder::direct);
+    }
+
+    public Stream<ItemStack> getMatchingStacks() {
+        return getMatchingItems().map(Holder::value).map(Item::getDefaultInstance);
+    }
+
+    public Item getFirstMatchingItem() {
+        return getMatchingItems().map(Holder::value).findFirst().orElse(Items.AIR);
     }
 
     @Override
@@ -73,48 +105,27 @@ public record BlockIngredient(Optional<TagKey<Block>> optionalBlockTagKey, Optio
     }
 
     public static class Serializer implements CustomIngredientSerializer<BlockIngredient> {
-        private static final ResourceLocation ID = Id.of("block_ingredient");
-        public static final MapCodec<BlockIngredient> CODEC = createCodec();
-        public static final StreamCodec<RegistryFriendlyByteBuf, BlockIngredient> PACKET_CODEC = StreamCodec.of(
-                Serializer::write, Serializer::read
+        private static final Identifier ID = Id.of("block_ingredient");
+        public static final MapCodec<BlockIngredient> CODEC = RecordCodecBuilder.mapCodec(instance ->
+                instance.group(
+                        RegistryCodecs.homogeneousList(Registries.BLOCK).fieldOf("values").forGetter(BlockIngredient::values)
+                ).apply(instance, BlockIngredient::new)
         );
 
-        public static MapCodec<BlockIngredient> createCodec() {
-            return RecordCodecBuilder.mapCodec(instance ->
-                    instance.group(
-                            TagKey.hashedCodec(Registries.BLOCK).optionalFieldOf("blockTag").forGetter(blockIngredient -> blockIngredient.optionalBlockTagKey),
-                            BuiltInRegistries.BLOCK.byNameCodec().optionalFieldOf("block").forGetter(blockIngredient -> blockIngredient.optionalBlock)
-                    ).apply(instance, BlockIngredient::new)
-            );
-        }
-
         @Override
-        public ResourceLocation getIdentifier() {
+        public Identifier getIdentifier() {
             return ID;
         }
 
 
         @Override
         public StreamCodec<RegistryFriendlyByteBuf, BlockIngredient> getPacketCodec() {
-            return PACKET_CODEC;
+            return CONTENTS_STREAM_CODEC;
         }
 
         @Override
-        public MapCodec<BlockIngredient> getCodec(boolean allowEmpty) {
+        public MapCodec<BlockIngredient> getCodec() {
             return CODEC;
-        }
-
-        public static BlockIngredient read(RegistryFriendlyByteBuf buf) {
-            ResourceLocation blockTagKeyId = buf.readResourceLocation();
-            Optional<TagKey<Block>> blockTagKey = blockTagKeyId.getNamespace().isBlank() ? Optional.empty() : Optional.of(TagKey.create(Registries.BLOCK, blockTagKeyId));
-            ResourceLocation blockId = buf.readResourceLocation();
-            Block block = BuiltInRegistries.BLOCK.get(blockId);
-            return new BlockIngredient(blockTagKey, block.equals(Blocks.AIR) ? Optional.empty() : Optional.of(block));
-        }
-
-        public static void write(RegistryFriendlyByteBuf buf, BlockIngredient ingredient) {
-            buf.writeResourceLocation(ingredient.optionalBlockTagKey.map(TagKey::location).orElse(Id.of("", "")));
-            buf.writeResourceLocation(ingredient.optionalBlock.map(BuiltInRegistries.BLOCK::getKey).orElse(Id.of("", "")));
         }
     }
 }

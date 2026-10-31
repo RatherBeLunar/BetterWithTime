@@ -2,7 +2,7 @@ package com.bwt.blocks.lens;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,9 +10,8 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.entity.InsideBlockEffectApplier;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
@@ -21,9 +20,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -65,57 +67,67 @@ public class LensBeamBlock extends Block {
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
+        // Change to
+        // return super.getRenderShape(state);
+        // to render the debug model
         return RenderShape.INVISIBLE;
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
+        return super.getVisualShape(state, level, pos, context);
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean moved) {
-        super.onRemove(state, level, pos, newState, moved);
+    protected void affectNeighborsAfterRemoval(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, boolean moved) {
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, moved);
+        BlockState newState = serverLevel.getBlockState(blockPos);
+
         // Kill beams in all directions that were on before
-        Stream<Map.Entry<Direction, BooleanProperty>> stream = LensBeamHelper.streamFacingDirections(state);
+        Stream<Map.Entry<Direction, BooleanProperty>> stream = LensBeamHelper.streamFacingDirections(blockState);
 
         if (newState.is(this)) {
             stream = stream.filter(entry -> !newState.getValue(entry.getValue()));
         }
-        stream.forEachOrdered(entry -> LensBeamHelper.killBeam(level, pos, entry.getKey()));
+        stream.forEachOrdered(entry -> LensBeamHelper.killBeam(serverLevel, blockPos, entry.getKey()));
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
         // If any neighbor the beam is facing into is solid, it's a terminus
-        return state.setValue(TERMINUS, LensBeamHelper.anyNeighborNotPropagable(level, pos, state));
+        return state.setValue(TERMINUS, LensBeamHelper.anyNeighborNotPropagable(levelReader, pos, state));
     }
 
     @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block sourceBlock, BlockPos sourcePos, boolean notify) {
-        super.neighborChanged(state, level, pos, sourceBlock, sourcePos, notify);
-        Vec3i vec = sourcePos.subtract(pos);
-        Direction direction = Direction.fromDelta(vec.getX(), vec.getY(), vec.getZ());
-        if (direction == null) {
+    protected void updateIndirectNeighbourShapes(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos, int i, int j) {
+        super.updateIndirectNeighbourShapes(blockState, levelAccessor, blockPos, i, j);
+    }
+
+    @Override
+    protected void neighborChanged(BlockState blockState, Level level, BlockPos blockPos, Block block, @Nullable Orientation orientation, boolean notify) {
+        super.neighborChanged(blockState, level, blockPos, block, orientation, notify);
+        if (!(level instanceof ServerLevel serverLevel)) {
             return;
         }
-        if (!state.getValue(FACING_PROPERTIES.get(direction))) {
-            return;
-        }
-        int range = LensBeamHelper.getRemainingRange(level, pos, direction);
-        if (range > 0 && !LensBeamHelper.anyEntitiesIntersecting(level, pos)) {
-            LensBeamHelper.propagateBeam(level, pos, state, direction, range);
+        for (Direction direction : Direction.values()) {
+            if (!blockState.getValue(FACING_PROPERTIES.get(direction))) {
+                continue;
+            }
+            int range = LensBeamHelper.getRemainingRange(serverLevel, blockPos, direction);
+            if (range > 0 && !LensBeamHelper.anyEntitiesIntersecting(serverLevel, blockPos)) {
+                LensBeamHelper.propagateBeam(level, blockPos, blockState, direction, range);
+            }
         }
     }
 
     @Override
-    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
-        super.entityInside(state, level, pos, entity);
-        BlockState finalState = LensBeamHelper.setTerminus(level, pos, state, true);
+    protected void entityInside(BlockState blockState, Level level, BlockPos blockPos, Entity entity, InsideBlockEffectApplier insideBlockEffectApplier, boolean bl) {
+        super.entityInside(blockState, level, blockPos, entity, insideBlockEffectApplier, bl);
+        BlockState finalState = LensBeamHelper.setTerminus(level, blockPos, blockState, true);
         LensBeamHelper.streamFacingDirections(finalState)
-                .forEach(entry -> LensBeamHelper.killBeam(level, pos, entry.getKey()));
+                .forEach(entry -> LensBeamHelper.killBeam(level, blockPos, entry.getKey()));
         // Need to keep checking for the entity leaving
-        level.scheduleTick(pos, this, 1);
+        level.scheduleTick(blockPos, this, 1);
     }
 
     @Override

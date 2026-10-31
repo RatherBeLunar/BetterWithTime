@@ -3,9 +3,7 @@
   "category": "building",
   "group": "column",
   "key": {
-    "#": {
-      "item": "bwt:tuff_moulding"
-    }
+    "#": "bwt:tuff_moulding"
   },
   "pattern": [
     "#",

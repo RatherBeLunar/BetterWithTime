@@ -1,14 +1,22 @@
 package com.bwt.recipes.cooking_pots;
 
 import com.bwt.blocks.BwtBlocks;
+import com.bwt.generation.SharedRecipeProvider;
 import com.bwt.recipes.BwtRecipes;
 import com.bwt.recipes.IngredientWithCount;
 import java.util.List;
+
+import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.PlacementInfo;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategory;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 
 public class CauldronRecipe extends AbstractCookingPotRecipe {
     public CauldronRecipe(String group, CookingPotRecipeCategory category, List<IngredientWithCount> ingredients, List<ItemStack> results) {
@@ -16,22 +24,21 @@ public class CauldronRecipe extends AbstractCookingPotRecipe {
     }
 
     @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(BwtBlocks.cauldronBlock);
-    }
-
-    @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends AbstractCookingPotRecipe> getSerializer() {
         return BwtRecipes.CAULDRON_RECIPE_SERIALIZER;
     }
 
     public static class JsonBuilder extends AbstractCookingPotRecipe.JsonBuilder<CauldronRecipe> {
-        public static CauldronRecipe.JsonBuilder create() {
-            return (CauldronRecipe.JsonBuilder) new CauldronRecipe.JsonBuilder().category(RecipeCategory.MISC);
+        protected JsonBuilder(SharedRecipeProvider recipeProvider) {
+            super(recipeProvider);
         }
 
-        public static CauldronRecipe.JsonBuilder createFood() {
-            return (CauldronRecipe.JsonBuilder) create().category(RecipeCategory.FOOD).cookingCategory(CookingPotRecipeCategory.FOOD);
+        public static CauldronRecipe.JsonBuilder create(SharedRecipeProvider recipeProvider) {
+            return (CauldronRecipe.JsonBuilder) new CauldronRecipe.JsonBuilder(recipeProvider).category(RecipeCategory.MISC);
+        }
+
+        public static CauldronRecipe.JsonBuilder createFood(SharedRecipeProvider recipeProvider) {
+            return (CauldronRecipe.JsonBuilder) create(recipeProvider).category(RecipeCategory.FOOD).cookingCategory(CookingPotRecipeCategory.FOOD);
         }
 
         @Override
@@ -41,7 +48,7 @@ public class CauldronRecipe extends AbstractCookingPotRecipe {
 
         @Override
         public void save(RecipeOutput exporter) {
-            this.save(exporter, RecipeProvider.getItemName(results.get(0).getItem()) + "_from_cauldron");
+            this.save(exporter, RecipeProvider.getItemName(results.getFirst().getItem()) + "_from_cauldron");
         }
     }
 }

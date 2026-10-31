@@ -1,5 +1,13 @@
 {
   "asset_id": "bwt:gifts",
+  "author": {
+    "color": "gray",
+    "translate": "canvas.bwt.gifts.author"
+  },
+  "title": {
+    "color": "yellow",
+    "translate": "canvas.bwt.gifts.title"
+  },
   "height": 4,
   "width": 5
 }

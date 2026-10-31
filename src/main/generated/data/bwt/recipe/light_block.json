@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "misc",
   "key": {
-    "f": {
-      "item": "bwt:filament"
-    },
-    "p": {
-      "tag": "c:glass_panes"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    }
+    "f": "bwt:filament",
+    "p": "#c:glass_panes",
+    "r": "minecraft:redstone"
   },
   "pattern": [
     " p ",

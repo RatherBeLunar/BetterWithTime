@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:sugar_cane"
-      }
+      "ingredient": "minecraft:sugar_cane"
     }
   ],
   "results": [

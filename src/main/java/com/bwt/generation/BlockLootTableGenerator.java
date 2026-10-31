@@ -6,7 +6,7 @@ import com.bwt.items.BwtItems;
 import com.bwt.utils.DyeUtils;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootTableProvider;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
@@ -14,11 +14,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.DecoratedPotBlock;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.DynamicLoot;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
 import net.minecraft.world.level.storage.loot.functions.ApplyBonusCount;
 import net.minecraft.world.level.storage.loot.functions.CopyComponentsFunction;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
@@ -95,7 +98,6 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
         dropSelf(BwtBlocks.screwPumpBlock);
         dropSelf(BwtBlocks.slatsBlock);
 //        addDrop(BwtBlocks.stakeBlock);
-        dropSelf(BwtBlocks.stokedFireBlock);
         dropSelf(BwtBlocks.stoneDetectorRailBlock);
         dropSelf(BwtBlocks.turntableBlock);
         dropSelf(BwtBlocks.unfiredCrucibleBlock);
@@ -155,7 +157,7 @@ public class BlockLootTableGenerator extends FabricBlockLootTableProvider {
                                 .setRolls(ConstantValue.exactly(1.0F))
                                 .add(
                                         LootItem.lootTableItem(block)
-                                                .apply(CopyComponentsFunction.copyComponents(CopyComponentsFunction.Source.BLOCK_ENTITY)
+                                                .apply(CopyComponentsFunction.copyComponentsFromBlockEntity(LootContextParams.BLOCK_ENTITY)
                                                         .include(DataComponents.POT_DECORATIONS)
                                                 )
                                 )

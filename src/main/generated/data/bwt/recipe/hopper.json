@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "C": {
-      "item": "minecraft:chest"
-    },
-    "N": {
-      "item": "minecraft:netherite_ingot"
-    }
+    "C": "minecraft:chest",
+    "N": "minecraft:netherite_ingot"
   },
   "pattern": [
     "N N",

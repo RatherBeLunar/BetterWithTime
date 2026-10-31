@@ -4,15 +4,18 @@ import com.bwt.entities.GoToAndPickUpBreedingItemGoal;
 import com.bwt.entities.PickUpBreedingItemWhileSittingGoal;
 import com.bwt.entities.WolfIsFedAccess;
 import com.bwt.items.BwtItems;
-import com.bwt.mixin.accessors.MobEntityAccessorMixin;
+import com.bwt.mixin.accessor.MobEntityAccessorMixin;
+import com.bwt.mixin.accessor.WolfEntityAccessorMixin;
 import com.bwt.sounds.BwtSoundEvents;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -20,7 +23,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.animal.Wolf;
+import net.minecraft.world.entity.animal.wolf.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
@@ -29,6 +32,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -48,24 +53,24 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
 
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    public void initDataTracker(SynchedEntityData.Builder builder, CallbackInfo ci) {
+    public void bwt$defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo ci) {
         builder.define(IS_FED, false);
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$writeCustomDataToNbt(CompoundTag nbt, CallbackInfo ci) {
-        nbt.putBoolean("IsFed", this.bwt$isFed());
+    public void bwt$writeCustomDataToNbt(ValueOutput valueOutput, CallbackInfo ci) {
+        valueOutput.putBoolean("IsFed", this.bwt$isFed());
     }
 
     @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
-    public void bwt$readCustomDataFromNbt(CompoundTag nbt, CallbackInfo ci) {
-        if (nbt.contains("IsFed")) {
-            this.bwt$setIsFed(nbt.getBoolean("IsFed"));
+    public void bwt$readCustomDataFromNbt(ValueInput valueInput, CallbackInfo ci) {
+        if (valueInput.contains("IsFed")) {
+            this.bwt$setIsFed(valueInput.getBooleanOr("IsFed", false));
         }
     }
 
     @Inject(method = "registerGoals", at = @At("TAIL"))
-    public void addGoal(CallbackInfo ci) {
+    public void bwt$addGoal(CallbackInfo ci) {
         this.getGoalSelector().addGoal(1, new PickUpBreedingItemWhileSittingGoal(
                 this,
                 1.7,
@@ -83,7 +88,7 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "mobInteract", at = @At("HEAD"), cancellable = true)
-    public void interactMob(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
+    public void bwt$mobInteract(Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResult> cir) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (!this.isBaby() && this.isTame() && this.isFood(itemStack) && !bwt$isFed()) {
             if (this.level().isClientSide()) {
@@ -94,12 +99,12 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
                 itemStack.shrink(1);
             }
             this.bwt$feed(itemStack);
-            cir.setReturnValue(InteractionResult.sidedSuccess(this.level().isClientSide()));
+            cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }
 
     @Inject(method = "isFood", at = @At("HEAD"), cancellable = true)
-    public void isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
+    public void bwt$isBreedingItem(ItemStack stack, CallbackInfoReturnable<Boolean> cir) {
         if (stack.is(BwtItems.kibbleItem)) {
             cir.setReturnValue(true);
             return;
@@ -110,10 +115,10 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    public void tick(CallbackInfo ci) {
+    public void bwt$tick(CallbackInfo ci) {
         Level level = level();
         RandomSource random = level.getRandom();
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return;
         }
         if (isBaby() || !bwt$isFed()) {
@@ -161,7 +166,8 @@ public abstract class WolfEntityMixin extends TamableAnimal implements MobEntity
         itemEntity.setPickUpDelay(10);
         level.addFreshEntity(itemEntity);
         level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_PRODUCTION, getSoundSource(), 0.2f, 1.25f);
-        level.playSound(this, blockPosition(), BwtSoundEvents.WOLF_DUNG_EFFORT, getSoundSource(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
+        SoundEvent growlSound = ((WolfEntityAccessorMixin) this).bwt$getSoundVariant().value().growlSound().value();
+        level.playSound(this, blockPosition(), growlSound, getSoundSource(), getSoundVolume(), (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
         
         for (int counter = 0; counter < 5; counter++) {
             double smokeX = getX() + (dungVectorX * 0.5f) + (random.nextDouble() * 0.25F);

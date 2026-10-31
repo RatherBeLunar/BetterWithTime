@@ -4,35 +4,23 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:nether_wart"
-      }
+      "ingredient": "minecraft:nether_wart"
     },
     {
-      "ingredient": {
-        "item": "minecraft:red_mushroom"
-      }
+      "ingredient": "minecraft:red_mushroom"
     },
     {
-      "ingredient": {
-        "item": "minecraft:brown_mushroom"
-      }
+      "ingredient": "minecraft:brown_mushroom"
     },
     {
-      "ingredient": {
-        "item": "minecraft:mycelium"
-      }
+      "ingredient": "minecraft:mycelium"
     },
     {
-      "ingredient": {
-        "item": "bwt:dung"
-      }
+      "ingredient": "bwt:dung"
     },
     {
       "count": 8,
-      "ingredient": {
-        "item": "bwt:soul_urn"
-      }
+      "ingredient": "bwt:soul_urn"
     }
   ],
   "results": [

@@ -1,12 +1,8 @@
 package com.bwt.blocks;
 
-import com.bwt.utils.Id;
+import com.bwt.utils.RegistrationBase;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -28,15 +24,16 @@ public class VaseBlock extends Block {
 
     public static void registerColors(HashMap<DyeColor, VaseBlock> vaseBlocks) {
         Arrays.stream(DyeColor.values()).forEach(dyeColor -> {
-            VaseBlock vaseBlock = new VaseBlock(dyeColor, Properties.of()
-                    .noOcclusion()
-                    .isRedstoneConductor(Blocks::never)
-                    .sound(SoundType.GLASS)
-                    .destroyTime(0f)
+            VaseBlock vaseBlock = RegistrationBase.registerBlockWithItem(
+                    "vase_" + dyeColor.getName(),
+                    properties -> new VaseBlock(dyeColor, properties),
+                    Properties.of()
+                            .noOcclusion()
+                            .isRedstoneConductor(Blocks::never)
+                            .sound(SoundType.GLASS)
+                            .destroyTime(0f)
             );
             vaseBlocks.put(dyeColor, vaseBlock);
-            Registry.register(BuiltInRegistries.BLOCK, Id.of("vase_" + dyeColor.getName()), vaseBlock);
-            Registry.register(BuiltInRegistries.ITEM, Id.of("vase_" + dyeColor.getName()), new BlockItem(vaseBlock, new Item.Properties()));
         });
     }
 

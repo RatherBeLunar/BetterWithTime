@@ -1,9 +1,10 @@
 package com.bwt.entities;
 
 import com.bwt.items.BwtItems;
+import com.bwt.mixin.accessor.AbstractArrowAccessorMixin;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
@@ -28,6 +29,6 @@ public class BroadheadArrowEntity extends AbstractArrow {
     }
 
     public void initFromStack(ItemStack stack) {
-        setBaseDamage(super.getBaseDamage() * 2);
+        setBaseDamage(((AbstractArrowAccessorMixin) this).getBaseDamage() * 2);
     }
 }

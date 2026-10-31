@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:cobbled_deepslate"
-    }
+    "X": "minecraft:cobbled_deepslate"
   },
   "pattern": [
     "XXXX"

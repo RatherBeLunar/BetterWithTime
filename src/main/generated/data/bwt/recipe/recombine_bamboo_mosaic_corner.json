@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:bamboo_mosaic_corner"
-    },
-    {
-      "item": "bwt:bamboo_mosaic_corner"
-    }
+    "bwt:bamboo_mosaic_corner",
+    "bwt:bamboo_mosaic_corner"
   ],
   "result": {
     "count": 1,

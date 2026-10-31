@@ -1,0 +1,16 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "ingredient": "minecraft:heavy_weighted_pressure_plate"
+    }
+  ],
+  "results": [
+    {
+      "count": 2,
+      "id": "minecraft:iron_ingot"
+    }
+  ]
+}

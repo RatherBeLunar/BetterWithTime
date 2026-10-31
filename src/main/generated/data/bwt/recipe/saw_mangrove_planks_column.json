@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:mangrove_planks_column"
+    "values": "bwt:mangrove_planks_column"
   }
 }

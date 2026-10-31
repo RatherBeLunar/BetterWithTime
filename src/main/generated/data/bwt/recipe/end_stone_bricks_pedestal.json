@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:end_stone_bricks"
-    },
-    "s": {
-      "item": "bwt:end_stone_bricks_siding"
-    }
+    "#": "minecraft:end_stone_bricks",
+    "s": "bwt:end_stone_bricks_siding"
   },
   "pattern": [
     " s ",

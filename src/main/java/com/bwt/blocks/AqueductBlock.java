@@ -4,10 +4,13 @@ import com.bwt.tags.BwtFluidTags;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Map;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.Rotation;
@@ -46,8 +49,8 @@ public class AqueductBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        state = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+    public BlockState updateShape(BlockState state, LevelReader levelReader, ScheduledTickAccess scheduledTickAccess, BlockPos pos, Direction direction, BlockPos neighborPos, BlockState neighborState, RandomSource randomSource) {
+        state = super.updateShape(state, levelReader, scheduledTickAccess, pos, direction, neighborPos, neighborState, randomSource);
         if (!neighborPos.equals(pos.above())) {
             return state;
         }
@@ -62,11 +65,11 @@ public class AqueductBlock extends Block {
         }
         for (Direction fluidAdjacentDirection : Direction.Plane.HORIZONTAL) {
             BlockPos fluidAdjacentPos = neighborPos.relative(fluidAdjacentDirection);
-            FluidState fluidAdjacentState = level.getFluidState(fluidAdjacentPos);
+            FluidState fluidAdjacentState = levelReader.getFluidState(fluidAdjacentPos);
             if (!fluidAdjacentState.getType().isSame(aboveFluidState.getType())) {
                 continue;
             }
-            BlockState neighborSupportingBlockState = level.getBlockState(fluidAdjacentPos.below());
+            BlockState neighborSupportingBlockState = levelReader.getBlockState(fluidAdjacentPos.below());
             FluidState neighborSupportingFluidState = neighborSupportingBlockState.getFluidState();
             if (!neighborSupportingBlockState.isSolid() && (!neighborSupportingFluidState.getType().isSame(fluidAdjacentState.getType()) || !neighborSupportingFluidState.isSource())) {
                 continue;

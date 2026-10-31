@@ -3,15 +3,9 @@
   "category": "redstone",
   "group": "redstone_clutch",
   "key": {
-    "g": {
-      "item": "bwt:gear"
-    },
-    "r": {
-      "item": "minecraft:redstone"
-    },
-    "s": {
-      "tag": "bwt:wooden_siding_blocks"
-    }
+    "g": "bwt:gear",
+    "r": "minecraft:redstone",
+    "s": "#bwt:wooden_siding_blocks"
   },
   "pattern": [
     "sgs",

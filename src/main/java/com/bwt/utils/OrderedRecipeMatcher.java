@@ -1,14 +1,12 @@
 package com.bwt.utils;
 
+import com.bwt.mixin.accessor.RecipeManagerAccessorMixin;
+import com.bwt.recipes.BwtRecipes;
+import com.bwt.recipes.IngredientsWithCountRecipe;
 import net.minecraft.core.NonNullList;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeInput;
-import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 
 import java.util.Comparator;
@@ -16,31 +14,35 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class OrderedRecipeMatcher {
-    public static Optional<? extends RecipeHolder<? extends CraftingRecipe>> getFirstRecipeOfMultipleTypes(
-            Level level,
-            CraftingInput input,
-            List<RecipeType<? extends CraftingRecipe>> recipeTypes
+    public static Optional<RecipeHolder<CraftingRecipe>> getFirstRecipeForSoulForge(
+            ServerLevel serverLevel,
+            CraftingInput input
     ) {
-        RecipeManager recipeManager = level.getRecipeManager();
-        for (RecipeType<? extends CraftingRecipe> recipeType: recipeTypes) {
-            Optional<? extends RecipeHolder<? extends CraftingRecipe>> optionalResult = recipeManager.getRecipeFor(recipeType, input, level);
-            if (optionalResult.isPresent()) {
-                return optionalResult;
-            }
+        RecipeManager recipeManager = serverLevel.getServer().getRecipeManager();
+
+        Optional<RecipeHolder<CraftingRecipe>> resultA = recipeManager.getRecipeFor(BwtRecipes.SOUL_FORGE_RECIPE_TYPE, input, serverLevel);
+        if (resultA.isPresent()) {
+            return resultA;
         }
-        return Optional.empty();
+        return recipeManager.getRecipeFor(RecipeType.CRAFTING, input, serverLevel);
     }
 
-    public static NonNullList<ItemStack> getRemainingStacks(
+    public static NonNullList<ItemStack> getRemainingStacksForSoulForge(
             Level level,
-            CraftingInput input,
-            List<RecipeType<? extends CraftingRecipe>> recipeTypes
+            CraftingInput input
     ) {
-        Optional<? extends RecipeHolder<? extends CraftingRecipe>> optional = getFirstRecipeOfMultipleTypes(level, input, recipeTypes);
-        if (optional.isPresent()) {
-            return optional.get().value().getRemainingItems(input);
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return CraftingRecipe.defaultCraftingReminder(input);
+        }
+
+        Optional<RecipeHolder<CraftingRecipe>> optionalRecipeHolder = getFirstRecipeForSoulForge(serverLevel, input);
+        Optional<NonNullList<ItemStack>> optionalRemainingItems = optionalRecipeHolder
+                .map(holder -> holder.value().getRemainingItems(input));
+        if (optionalRemainingItems.isPresent()) {
+            return optionalRemainingItems.get();
         } else {
             NonNullList<ItemStack> defaultedList = NonNullList.withSize(input.size(), ItemStack.EMPTY);
 
@@ -52,14 +54,19 @@ public class OrderedRecipeMatcher {
         }
     }
 
-    public static <I extends RecipeInput, R extends Recipe<I>> void getFirstRecipe(List<RecipeHolder<R>> matches, NonNullList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
+    public static <I extends RecipeInput, T extends Recipe<I>> Stream<RecipeHolder<T>> getRecipesFor(RecipeType<T> recipeType, I recipeInput, ServerLevel serverLevel) {
+        RecipeMap recipeMap = ((RecipeManagerAccessorMixin) serverLevel.recipeAccess()).getRecipeMap();
+        return recipeMap.getRecipesFor(recipeType, recipeInput, serverLevel);
+    }
+
+    public static <I extends RecipeInput, R extends IngredientsWithCountRecipe<I>> void getFirstRecipe(List<RecipeHolder<R>> matches, NonNullList<ItemStack> inventoryItems, Predicate<R> predicateConsumer) {
         // For each inventory item, in order
         for (ItemStack inventoryStack : inventoryItems) {
             // Filter down to recipes that contain that item in its ingredients.
             // If there are multiple that match the first ingredient, get the one with the most ingredients
             Iterator<RecipeHolder<R>> matchIterator = matches.stream()
-                    .filter(match -> match.value().getIngredients().stream().anyMatch(ingredient -> ingredient.test(inventoryStack)))
-                    .sorted(Comparator.comparing((RecipeHolder<R> match) -> match.value().getIngredients().size()).reversed())
+                    .filter(match -> match.value().getIngredientsWithCount().stream().anyMatch(ingredient -> ingredient.ingredient().test(inventoryStack)))
+                    .sorted(Comparator.comparing((RecipeHolder<R> match) -> match.value().getIngredientsWithCount().size()).reversed())
                     .iterator();
             while (matchIterator.hasNext()) {
                 R match = matchIterator.next().value();

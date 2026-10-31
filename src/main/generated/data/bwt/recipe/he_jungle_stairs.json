@@ -3,9 +3,7 @@
   "category": "building",
   "group": "wooden_stairs",
   "key": {
-    "m": {
-      "item": "bwt:jungle_planks_moulding"
-    }
+    "m": "bwt:jungle_planks_moulding"
   },
   "pattern": [
     "m ",

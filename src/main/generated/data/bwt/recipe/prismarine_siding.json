@@ -3,9 +3,7 @@
   "category": "building",
   "group": "siding",
   "key": {
-    "X": {
-      "item": "minecraft:prismarine"
-    }
+    "X": "minecraft:prismarine"
   },
   "pattern": [
     "XXXX"

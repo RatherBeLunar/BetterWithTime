@@ -3,12 +3,8 @@
   "category": "misc",
   "group": "padding",
   "key": {
-    "F": {
-      "item": "bwt:fabric"
-    },
-    "f": {
-      "item": "minecraft:feather"
-    }
+    "F": "bwt:fabric",
+    "f": "minecraft:feather"
   },
   "pattern": [
     " F ",

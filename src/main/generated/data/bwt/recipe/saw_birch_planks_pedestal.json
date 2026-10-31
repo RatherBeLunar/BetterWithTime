@@ -8,6 +8,6 @@
     }
   ],
   "ingredient": {
-    "block": "bwt:birch_planks_pedestal"
+    "values": "bwt:birch_planks_pedestal"
   }
 }

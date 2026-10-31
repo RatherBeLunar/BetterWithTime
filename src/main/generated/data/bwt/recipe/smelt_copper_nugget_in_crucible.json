@@ -1,0 +1,17 @@
+{
+  "type": "bwt:stoked_crucible",
+  "category": "reclaim",
+  "group": "",
+  "ingredients": [
+    {
+      "count": 9,
+      "ingredient": "minecraft:copper_nugget"
+    }
+  ],
+  "results": [
+    {
+      "count": 1,
+      "id": "minecraft:copper_ingot"
+    }
+  ]
+}

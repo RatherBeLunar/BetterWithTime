@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:pink_petals"
-      }
+      "ingredient": "minecraft:pink_petals"
     }
   ],
   "results": [

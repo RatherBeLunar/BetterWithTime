@@ -3,12 +3,8 @@
   "category": "building",
   "group": "wool",
   "ingredients": [
-    {
-      "item": "bwt:lime_wool_slab"
-    },
-    {
-      "item": "bwt:lime_wool_slab"
-    }
+    "bwt:lime_wool_slab",
+    "bwt:lime_wool_slab"
   ],
   "result": {
     "count": 1,

@@ -2,7 +2,7 @@
   "type": "bwt:mob_spawner_conversion",
   "category": "misc",
   "ingredient": {
-    "block": "minecraft:cobblestone_stairs"
+    "values": "minecraft:cobblestone_stairs"
   },
   "result": "minecraft:mossy_cobblestone_stairs"
 }

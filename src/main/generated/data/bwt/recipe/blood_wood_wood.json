@@ -3,9 +3,7 @@
   "category": "building",
   "group": "bark",
   "key": {
-    "#": {
-      "item": "bwt:blood_wood_log"
-    }
+    "#": "bwt:blood_wood_log"
   },
   "pattern": [
     "##",

@@ -4,15 +4,13 @@
   "group": "",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:golden_horse_armor"
-      }
+      "ingredient": "minecraft:golden_horse_armor"
     }
   ],
   "results": [
     {
       "count": 7,
-      "id": "minecraft:iron_ingot"
+      "id": "minecraft:gold_ingot"
     }
   ]
 }

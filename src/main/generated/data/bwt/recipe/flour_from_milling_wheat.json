@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:wheat"
-      }
+      "ingredient": "minecraft:wheat"
     }
   ],
   "results": [

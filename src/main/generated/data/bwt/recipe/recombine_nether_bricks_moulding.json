@@ -3,12 +3,8 @@
   "category": "building",
   "group": "siding",
   "ingredients": [
-    {
-      "item": "bwt:nether_bricks_moulding"
-    },
-    {
-      "item": "bwt:nether_bricks_moulding"
-    }
+    "bwt:nether_bricks_moulding",
+    "bwt:nether_bricks_moulding"
   ],
   "result": {
     "count": 1,

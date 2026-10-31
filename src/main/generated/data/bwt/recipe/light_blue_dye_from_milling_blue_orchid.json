@@ -3,9 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "ingredient": {
-        "item": "minecraft:blue_orchid"
-      }
+      "ingredient": "minecraft:blue_orchid"
     }
   ],
   "results": [

@@ -3,12 +3,8 @@
   "category": "building",
   "group": "pedestal",
   "key": {
-    "#": {
-      "item": "minecraft:polished_granite"
-    },
-    "s": {
-      "item": "bwt:polished_granite_siding"
-    }
+    "#": "minecraft:polished_granite",
+    "s": "bwt:polished_granite_siding"
   },
   "pattern": [
     " s ",

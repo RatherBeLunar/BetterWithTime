@@ -3,12 +3,8 @@
   "category": "building",
   "group": "moulding",
   "ingredients": [
-    {
-      "item": "bwt:andesite_corner"
-    },
-    {
-      "item": "bwt:andesite_corner"
-    }
+    "bwt:andesite_corner",
+    "bwt:andesite_corner"
   ],
   "result": {
     "count": 1,
