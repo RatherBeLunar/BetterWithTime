@@ -67,12 +67,15 @@ public class LensBeamBlock extends Block {
 
     @Override
     protected RenderShape getRenderShape(BlockState state) {
+        // Change to
+        // return super.getRenderShape(state);
+        // to render the debug model
         return RenderShape.INVISIBLE;
     }
 
     @Override
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return Shapes.empty();
+        return super.getVisualShape(state, level, pos, context);
     }
 
     @Override
